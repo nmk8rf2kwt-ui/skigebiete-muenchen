@@ -1,0 +1,233 @@
+[
+    {
+        "id": "spitzingsee",
+        "name": "Spitzingsee - Tegernsee",
+        "distance": 60,
+        "piste_km": 20,
+        "lifts": 10,
+        "price": 49.50,
+        "classification": "Beginner",
+        "website": "https://www.alpenbahnen-spitzingsee.de",
+        "latitude": 47.6667,
+        "longitude": 11.8833,
+        "webcam": "https://www.foto-webcam.eu/webcam/spitzingsee/"
+    },
+    {
+        "id": "brauneck",
+        "name": "Brauneck / Lenggries",
+        "distance": 60,
+        "piste_km": 34,
+        "lifts": 15,
+        "price": 49.50,
+        "classification": "Intermediate",
+        "website": "https://www.brauneck-bergbahn.de",
+        "latitude": 47.6500,
+        "longitude": 11.5667,
+        "webcam": "https://www.foto-webcam.eu/webcam/brauneck/"
+    },
+    {
+        "id": "garmisch",
+        "name": "Garmisch-Classic",
+        "distance": 75,
+        "piste_km": 40,
+        "lifts": 18,
+        "price": 64.00,
+        "classification": "Advanced",
+        "website": "https://zugspitze.de",
+        "latitude": 47.4814,
+        "longitude": 11.0953,
+        "webcam": "https://www.foto-webcam.eu/webcam/garmisch/"
+    },
+    {
+        "id": "sudelfeld",
+        "name": "Sudelfeld - Bayrischzell",
+        "distance": 75,
+        "piste_km": 31,
+        "lifts": 13,
+        "price": 52.00,
+        "classification": "Family",
+        "website": "https://www.sudelfeld.de",
+        "latitude": 47.6833,
+        "longitude": 12.0833,
+        "webcam": "https://www.foto-webcam.eu/webcam/sudelfeld/"
+    },
+    {
+        "id": "zugspitze",
+        "name": "Zugspitze",
+        "distance": 90,
+        "piste_km": 20,
+        "lifts": 10,
+        "price": 68.00,
+        "classification": "Glacier",
+        "website": "https://zugspitze.de",
+        "latitude": 47.4211,
+        "longitude": 10.9853,
+        "webcam": "https://www.foto-webcam.eu/webcam/zugspitze/"
+    },
+    {
+        "id": "wilder-kaiser",
+        "name": "SkiWelt Wilder Kaiser",
+        "distance": 80,
+        "piste_km": 270,
+        "lifts": 80,
+        "price": 69.00,
+        "classification": "Allrounder",
+        "website": "https://www.skiwelt.at",
+        "latitude": 47.4500,
+        "longitude": 12.1833
+    },
+    {
+        "id": "hochkoessen",
+        "name": "Hochkössen",
+        "distance": 80,
+        "piste_km": 22,
+        "lifts": 11,
+        "price": 52.00,
+        "classification": "Family",
+        "website": "https://www.bergbahnen-koessen.at",
+        "latitude": 47.6500,
+        "longitude": 12.4167
+    },
+    {
+        "id": "winklmoos",
+        "name": "Reit im Winkl (Winklmoos)",
+        "distance": 90,
+        "piste_km": 44,
+        "lifts": 12,
+        "price": 54.50,
+        "classification": "Beginner",
+        "website": "https://www.winklmoosalm.de",
+        "latitude": 47.6667,
+        "longitude": 12.5167
+    },
+    {
+        "id": "steinplatte",
+        "name": "Steinplatte Waidring",
+        "distance": 95,
+        "piste_km": 42,
+        "lifts": 14,
+        "price": 63.00,
+        "classification": "Intermediate",
+        "website": "https://www.steinplatte.tirol"
+    },
+    {
+        "id": "ehrwald",
+        "name": "Ehrwalder Almbahn",
+        "distance": 90,
+        "piste_km": 27,
+        "lifts": 7,
+        "price": 63.50,
+        "classification": "Family",
+        "website": "https://www.almbahn.at"
+    },
+    {
+        "id": "lermoos",
+        "name": "Lermoos / Grubigstein",
+        "distance": 95,
+        "piste_km": 27,
+        "lifts": 8,
+        "price": 63.50,
+        "classification": "Intermediate",
+        "website": "https://www.bergbahnen-langes.at"
+    },
+    {
+        "id": "tiroler-zugspitzbahn",
+        "name": "Tiroler Zugspitzbahn",
+        "distance": 95,
+        "piste_km": 17,
+        "lifts": 9,
+        "price": 63.50,
+        "classification": "Scenic",
+        "website": "https://www.zugspitze.at"
+    },
+    {
+        "id": "st_johann",
+        "name": "St. Johann in Tirol",
+        "distance": 95,
+        "piste_km": 40,
+        "lifts": 16,
+        "price": 62.00,
+        "classification": "Family",
+        "website": "https://www.kitzbueheler-alpen.com/de/stjo/aktuelles/geoeffnete-lifte.html"
+    },
+    {
+        "id": "ski_juwel",
+        "name": "Ski Juwel Alpbachtal",
+        "distance": 100,
+        "piste_km": 113,
+        "lifts": 45,
+        "price": 68.50,
+        "classification": "Huge",
+        "website": "https://www.skijuwel.com/de/winter/lifte-und-pisten"
+    },
+    {
+        "id": "kitzbuehel",
+        "name": "Kitzbühel / Kirchberg",
+        "distance": 100,
+        "piste_km": 233,
+        "lifts": 58,
+        "price": 72.00,
+        "classification": "Premium",
+        "website": "https://www.kitzski.at"
+    },
+    {
+        "id": "berwang",
+        "name": "Berwang",
+        "distance": 110,
+        "piste_km": 36,
+        "lifts": 12,
+        "price": 63.50,
+        "classification": "High Alpine",
+        "website": "https://www.berwang.tirol"
+    },
+    {
+        "id": "seefeld",
+        "name": "Seefeld / Rosshütte",
+        "distance": 100,
+        "piste_km": 19,
+        "lifts": 10,
+        "price": 61.50,
+        "classification": "Family",
+        "website": "https://www.seefeld.com"
+    },
+    {
+        "id": "hahnenkamm",
+        "name": "Hahnenkamm (Reutte)",
+        "distance": 110,
+        "piste_km": 16,
+        "lifts": 5,
+        "price": 52.00,
+        "classification": "View",
+        "website": "https://www.bergwelt-hahnenkamm.at"
+    },
+    {
+        "id": "lofer",
+        "name": "Lofer / Almenwelt",
+        "distance": 110,
+        "piste_km": 46,
+        "lifts": 10,
+        "price": 62.00,
+        "classification": "Family",
+        "website": "https://www.skialm-lofer.com"
+    },
+    {
+        "id": "ofterschwang",
+        "name": "Ofterschwang",
+        "distance": 110,
+        "piste_km": 16,
+        "lifts": 7,
+        "price": 54.50,
+        "classification": "World Cup",
+        "website": "https://www.go-ofterschwang.de"
+    },
+    {
+        "id": "bolsterlang",
+        "name": "Bolsterlang",
+        "distance": 110,
+        "piste_km": 17,
+        "lifts": 5,
+        "price": 54.50,
+        "classification": "Scenic",
+        "website": "https://www.hoernerbahn.de"
+    }
+]

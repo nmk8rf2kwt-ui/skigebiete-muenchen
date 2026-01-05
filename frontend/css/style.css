@@ -1,0 +1,450 @@
+/* ================= Base ================= */
+
+body {
+  font-family: system-ui, Arial, sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  padding: 16px;
+}
+
+h1 {
+  position: sticky;
+  top: 0;
+  background: #f4f6f9;
+  padding: 8px 0;
+  z-index: 100;
+}
+
+.meta {
+  font-size: 0.9em;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.controls {
+  position: sticky;
+  top: 56px;
+  background: #f4f6f9;
+  padding: 8px 0;
+  z-index: 90;
+  margin-bottom: 12px;
+}
+
+/* ================= Sort Mobile ================= */
+
+.sort-mobile {
+  display: none;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sort-mobile button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #fff;
+}
+
+/* ================= Table ================= */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th,
+td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  background: #e9eef3;
+  cursor: pointer;
+}
+
+thead th {
+  position: sticky;
+  top: 104px;
+  background: #e9eef3;
+  z-index: 80;
+}
+
+/* Zebra rows */
+tr:nth-child(even):not(.good):not(.ok):not(.bad):not(.rank1):not(.unavailable) {
+  background: #fafbfd;
+}
+
+/* ================= Ranking ================= */
+
+.rank1 {
+  background: #e6f4ea;
+  font-weight: 700;
+}
+
+tr.good {
+  background: #e8f6ea;
+}
+
+tr.ok {
+  background: #fff7e6;
+}
+
+tr.bad {
+  background: #fdeaea;
+}
+
+/* ================= Unavailable ================= */
+
+tr.unavailable {
+  background: #f5f5f5;
+  color: #666;
+}
+
+tr.unavailable strong {
+  color: #a40000;
+}
+
+tr.unavailable small {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #777;
+}
+
+/* Snow */
+.snow-high {
+  color: #0a7d2c;
+  font-weight: 700;
+}
+
+.snow-mid {
+  color: #b26a00;
+}
+
+.snow-low {
+  color: #a40000;
+  font-weight: 700;
+}
+
+/* Lifts */
+.lifts-good {
+  color: #0a7d2c;
+  font-weight: 700;
+}
+
+.lifts-mid {
+  color: #b26a00;
+}
+
+.lifts-bad {
+  color: #a40000;
+  font-weight: 700;
+}
+
+/* Weather */
+.weather {
+  white-space: nowrap;
+}
+
+/* ================= Mobile Cards ================= */
+
+@media (max-width: 768px) {
+
+  .sort-mobile {
+    display: flex;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 14px;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border-left: 6px solid transparent;
+    transition: transform 0.1s ease;
+  }
+
+  tr.good {
+    background: #d9f2e3;
+    border-left-color: #1a7f37;
+  }
+
+  tr.ok {
+    background: #fff1cc;
+    border-left-color: #b26a00;
+  }
+
+  tr.bad {
+    background: #f8d7da;
+    border-left-color: #b42318;
+  }
+
+  tr.unavailable {
+    border-left-color: #999;
+  }
+
+  tr:active {
+    transform: scale(0.99);
+  }
+
+  td {
+    border: none;
+    padding: 4px 0;
+    display: flex;
+    /* Flex to align label and value */
+    justify-content: space-between;
+  }
+
+  td:nth-child(1) {
+    display: none;
+  }
+
+  /* Hide Rank in card view */
+  td:nth-child(2) {
+    font-size: 1.2em;
+    font-weight: 700;
+    display: block;
+    /* Name takes full width */
+    margin-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+  }
+
+  td:nth-child(3)::before {
+    content: "🚗 Reisezeit";
+    color: #777;
+  }
+
+  td:nth-child(4)::before {
+    content: "🎿 Pisten";
+    color: #777;
+  }
+
+  td:nth-child(5)::before {
+    content: "🚠 Lifte";
+    color: #777;
+  }
+
+  td:nth-child(6)::before {
+    content: "💶 Preis";
+    color: #777;
+  }
+
+  td:nth-child(7)::before {
+    content: "👶 Typ";
+    color: #777;
+  }
+
+  td:nth-child(8)::before {
+    content: "❄️ Schnee";
+    color: #777;
+  }
+
+  td:nth-child(9)::before {
+    content: "🌤️ Wetter";
+    color: #777;
+  }
+
+  td:nth-child(10)::before {
+    content: "📷 Cam";
+    color: #777;
+  }
+
+  td:nth-child(11)::before {
+    content: "🏆 Score";
+    color: #777;
+    font-weight: bold;
+  }
+
+  td:nth-child(11) {
+    background: #fdfdfd;
+    font-weight: bold;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #eee;
+  }
+}
+
+/* ================= Weather Button ================= */
+
+.weather-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  padding: 4px 8px;
+  margin-left: 8px;
+  transition: transform 0.2s;
+}
+
+.weather-btn:hover {
+  transform: scale(1.2);
+}
+
+/* ================= Modal ================= */
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+}
+
+.weather-forecast {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  justify-content: space-around;
+}
+
+.weather-day {
+  text-align: center;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.weather-day .date {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.weather-day .emoji {
+  font-size: 3em;
+  margin: 12px 0;
+}
+
+.weather-day .temp {
+  font-size: 1.1em;
+  color: #333;
+}
+
+.weather-day .temp-max {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.weather-day .temp-min {
+  color: #1976d2;
+}
+
+/* ================= Webcam ================= */
+
+.webcam-link {
+  font-size: 1.5em;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.webcam-link:hover {
+  transform: scale(1.2);
+}
+
+/* Webcam hover thumbnail - would require actual image URLs */
+.webcam-link::after {
+  content: "View live webcam";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.6em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  margin-bottom: 4px;
+}
+
+.webcam-link:hover::after {
+  opacity: 1;
+}
+
+/* ================= History Button ================= */
+
+.history-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  padding: 4px 8px;
+  margin-left: 4px;
+  transition: transform 0.2s;
+}
+
+.history-btn:hover {
+  transform: scale(1.2);
+}
+
+/* History chart canvas */
+#historyChart {
+  max-height: 400px;
+  margin-top: 20px;
+}
+
+/* Export button */
+.export-btn {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  margin: 10px 0;
+  transition: background 0.2s;
+}
+
+.export-btn:hover {
+  background: #1565c0;
+}

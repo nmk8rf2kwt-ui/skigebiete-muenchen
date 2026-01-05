@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skigebiete ab München – Live Ranking</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <h1>🏔️ Skigebiete ab München – Live-Ranking</h1>
+
+  <div class="meta">
+    Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten
+  </div>
+
+  <div class="controls">
+    <button id="exportCsv">📤 CSV Export</button>
+    <button id="top3">🏆 Nur Top-3 heute</button>
+  </div>
+
+  <!-- Mobile Sort Buttons -->
+  <div class="sort-mobile">
+    <button data-sort="score">🏆 Score</button>
+    <button data-sort="snow">❄️ Schnee</button>
+    <button data-sort="km">📍 Nähe</button>
+    <button data-sort="pistes">🎿 Pisten</button>
+  </div>
+
+  <table id="skiTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Skigebiet</th>
+        <th data-sort="km">Reisezeit</th>
+        <th data-sort="pistes">Pisten</th>
+        <th>Lifte</th>
+        <th data-sort="price">Preis</th>
+        <th>Typ</th>
+        <th data-sort="snow">Schnee</th>
+        <th>Wetter</th>
+        <th>Cam</th>
+        <th data-sort="score">Score</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Weather Modal -->
+  <div id="weatherModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="weatherResortName">Weather Forecast</h2>
+      <div id="weatherForecast" class="weather-forecast">
+        <p>Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div id="historyModal" class="modal">
+    <div class="modal-content">
+      <span class="close-history">&times;</span>
+      <h2 id="historyResortName">7-Day History</h2>
+      <button id="exportCsvBtn" class="export-btn">📥 Export CSV</button>
+      <canvas id="historyChart"></canvas>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
