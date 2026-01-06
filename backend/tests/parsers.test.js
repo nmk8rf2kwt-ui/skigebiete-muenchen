@@ -1,7 +1,11 @@
-
+import { describe, test, expect } from '@jest/globals';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { jest } from '@jest/globals';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const PARSERS_DIR = path.join(__dirname, '../parsers');
 const parserFiles = fs.readdirSync(PARSERS_DIR).filter(f => f.endsWith('.js'));
