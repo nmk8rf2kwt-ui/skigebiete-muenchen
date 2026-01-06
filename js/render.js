@@ -158,8 +158,8 @@ export function renderRow(row, data) {
 
   // History button (Dedicated Column)
   const historyDisplay = (data.latitude && data.longitude)
-    ? `<button class="history-btn" data-resort-id="${data.id}" data-resort-name="${data.name}" title="View 7-day history">📊</button>`
-    : '-';
+    ? `<button class="history-btn" data-resort-id="${data.id}" data-resort-name="${data.name}" title="7-Tage Verlauf anzeigen">📊</button>`
+    : '<span title="Keine Verlaufsdaten verfügbar">-</span>';
 
   // Score
   const score = data.score ?? "-";
