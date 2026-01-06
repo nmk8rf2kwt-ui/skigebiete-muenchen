@@ -26,6 +26,11 @@ import { oberstdorf } from "./oberstdorf.js";
 import { oberjoch } from "./oberjoch.js";
 import { wendelstein } from "./wendelstein.js";
 
+// New Resorts
+import { parse as winterberg } from "./winterberg.js";
+import { parse as todtnauberg } from "./todtnauberg.js";
+import { parse as feldberg } from "./feldberg.js";
+
 export const PARSERS = {
     spitzingsee,
     brauneck,
@@ -53,4 +58,7 @@ export const PARSERS = {
     oberstdorf,
     oberjoch,
     wendelstein,
+    winterberg,
+    todtnauberg,
+    feldberg,
 };

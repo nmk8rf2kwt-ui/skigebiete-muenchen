@@ -104,7 +104,7 @@ This document defines the standardized check-up process for releasing new versio
     - Sections: "Lifte", "Pisten", "7-Tage Verlauf".
     - History Chart: Canvas rendered.
 - [ ] **Tooltips**:
-    - Prices: Hover `ℹ️` -> Shows Adult/Youth/Child.
+    - Prices: Shows vertical list (Adult/Youth/Child) with link.
     - Difficulty: Hover Badge -> Shows description.
 
 ### 💾 Export & Mobile

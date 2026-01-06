@@ -45,6 +45,13 @@ export async function saveDailySnapshots() {
                     data = await parser();
                 }
 
+                // Inject static price data for history tracking
+                data = {
+                    ...data,
+                    price: resort.price,
+                    priceDetail: resort.priceDetail
+                };
+
                 saveSnapshot(resort.id, data);
                 console.log(`  ✓ Saved snapshot for ${resort.id}`);
             } catch (error) {

@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2026-01-06
+
+### 🚀 Features
+- **Extended Pricing**: Added detailed price breakdown (Adult, Youth, Child) for all resorts (2025/2026).
+- **UI Update**:
+    - "Preis" column now displaying tabular prices vertically.
+    - Updated column header to "Preis (Tagesskipass)".
+    - Linked prices to official resort pricing pages.
+
 ## [1.3.0] - 2026-01-06
 
 ### 🚀 Features

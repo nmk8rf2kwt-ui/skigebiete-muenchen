@@ -59,7 +59,10 @@ export function saveSnapshot(resortId, data) {
                 weather: data.weather || null,
                 // NEW: Store detailed lift/slope data if available
                 lifts: data.lifts || null,
-                slopes: data.slopes || null
+                slopes: data.slopes || null,
+                // NEW: Store pricing history
+                price: data.price || null,
+                priceDetail: data.priceDetail || null
             }
         };
 

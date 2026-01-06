@@ -504,5 +504,56 @@
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
+    },
+    {
+        "id": "winterberg",
+        "name": "Skiliftkarussell Winterberg",
+        "distance": 600,
+        "piste_km": 27.5,
+        "lifts": 26,
+        "price": 48.00,
+        "classification": "Familie",
+        "website": "https://www.skiliftkarussell.de",
+        "latitude": 51.196,
+        "longitude": 8.526,
+        "priceDetail": {
+            "adult": 48.00,
+            "currency": "€",
+            "info": "Tageskarte Hauptsaison"
+        }
+    },
+    {
+        "id": "feldberg",
+        "name": "Feldberg (Schwarzwald)",
+        "distance": 320,
+        "piste_km": 30,
+        "lifts": 14,
+        "price": 47.00,
+        "classification": "Sportlich",
+        "website": "https://www.feldberg-erlebnis.de",
+        "latitude": 47.859,
+        "longitude": 8.005,
+        "priceDetail": {
+            "adult": 47.00,
+            "currency": "€",
+            "info": "Tageskarte Hauptsaison"
+        }
+    },
+    {
+        "id": "todtnauberg",
+        "name": "Todtnauberg",
+        "distance": 330,
+        "piste_km": 13,
+        "lifts": 6,
+        "price": 38.00,
+        "classification": "Familie",
+        "website": "https://www.skilifte-todtnauberg.de",
+        "latitude": 47.848,
+        "longitude": 7.945,
+        "priceDetail": {
+            "adult": 38.00,
+            "currency": "€",
+            "info": "Tageskarte 2025/26"
+        }
     }
 ]

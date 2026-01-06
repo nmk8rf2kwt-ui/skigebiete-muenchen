@@ -88,7 +88,7 @@ app.get("/health", (req, res) => {
   const cacheStats = parserCache.getStats();
   res.json({
     status: "ok",
-    version: "1.0.0",
+    version: "1.3.1",
     service: "skigebiete-backend",
     resorts: resorts.length,
     cache: cacheStats
