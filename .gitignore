@@ -4,14 +4,26 @@ backend/node_modules/
 
 # Environment variables
 .env
-backend/.env
-
-# Logs
+backenode_modules/
+.env
+.DS_Store
 *.log
 logs/
-backend/logs/
+backend/cache/
+.vscode/
+.idea/
 
-# OS files
+# Temporary test files
+*_status.html
+*_home.html
+*_lifte.html
+*_page.html
+*_api_dump.json
+temp_*.html
+test-parser*.mjs
+widget.js
+detailView.js
+variables.jss
 .DS_Store
 Thumbs.db
 
