@@ -236,22 +236,31 @@ ${pd.info || ""}
       // Ensure we have a symbol. If backend sends text (e.g. "Overcast" or "Fog"), derive icon from it.
       // Emojis are usually non-Latin characters. Use regex to check for letters.
       let icon = f.weatherEmoji;
+      let desc = f.weatherDesc || f.weather || "";
 
-      // If icon is missing OR contains Latin letters (meaning it's a text description like "Rain", "Fog"), derive it.
+      // If icon is missing OR contains Latin letters, derive it.
       if (!icon || /[a-zA-Z]/.test(icon)) {
         icon = getWeatherIcon(f.weather || f.weatherDesc || icon || "");
       }
 
-      // Tooltip: "Mon: 5°C"
-      const date = new Date(f.date).toLocaleDateString('de-DE', { weekday: 'short' });
-      return `<span title="${date}: ${f.tempMax}°C / ${f.tempMin}°C" style="cursor: help; margin-right: 4px;">${icon}</span>`;
+      // If we derived the icon from text, use that text as description if none exists
+      if (!desc && /[a-zA-Z]/.test(f.weather)) desc = f.weather;
+
+      // Tooltip: "Mo, 06.01.: Leicht bewölkt, 5°C / -2°C"
+      const dateObj = new Date(f.date);
+      const dateStr = dateObj.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+      const tempStr = `${f.tempMax}°C / ${f.tempMin}°C`;
+      const tooltip = `${dateStr}: ${desc ? desc + ', ' : ''}${tempStr}`;
+
+      return `<span title="${tooltip}" style="cursor: help; margin-right: 6px; font-size: 1.2em;">${icon}</span>`;
     }).join("");
     weatherDisplay = icons;
   } else if (data.status === "error") {
     weatherDisplay = "n.a.";
   } else if (data.weather) {
     // Fallback to single icon
-    weatherDisplay = `${weatherIcon} ${data.weather}`;
+    const tooltip = `Aktuell: ${data.weather}`;
+    weatherDisplay = `<span title="${tooltip}" style="cursor: help; font-size: 1.2em;">${weatherIcon}</span>`;
   } else if (data.status === "static_only") {
     weatherDisplay = "⏳";
   }

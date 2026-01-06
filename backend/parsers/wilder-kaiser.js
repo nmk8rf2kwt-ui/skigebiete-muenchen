@@ -10,31 +10,51 @@ export const details = {
 };
 
 export async function parse(options = {}) {
-    const res = await fetchWithHeaders(details.apiUrl, options);
-    if (!res.ok) throw new Error("Failed to fetch SkiWelt API");
+    // Unfiltered URL (removed typeIDs=1)
+    const apiUrl = "https://www.skiwelt.at/webapi/micadoweb?api=Micado.Ski.Web/Micado.Ski.Web.IO.Api.FacilityApi/List.api&client=https%3A%2F%2Fsgm.skiwelt.at&lang=de&region=skiwelt&season=winter";
 
-    const data = await res.json();
+    // Strategy 2: Parallel Fetch
+    const [resLifts, resSlopes] = await Promise.all([
+        fetchWithHeaders(details.apiUrl, options), // lifts (typeIDs=1)
+        fetchWithHeaders(details.apiUrl.replace("typeIDs=1", "typeIDs=2"), options) // slopes
+    ]);
 
-    // API returns object with 'items' array
-    const items = data.items || [];
+    if (!resLifts.ok) throw new Error("Failed to fetch SkiWelt Lifts API");
+    if (!resSlopes.ok) throw new Error("Failed to fetch SkiWelt Slopes API");
 
-    let liftsTotal = 0;
-    let liftsOpen = 0;
+    const liftsData = await resLifts.json();
+    const slopesData = await resSlopes.json();
 
-    items.forEach(item => {
-        liftsTotal++;
-        // state: "opened", "closed"
-        if (item.state === "opened") {
-            liftsOpen++;
-        }
+    const liftsItems = liftsData.items || [];
+    const slopesItems = slopesData.items || [];
+
+    const lifts = [];
+    const slopes = [];
+
+    // Process Lifts
+    liftsItems.forEach(item => {
+        lifts.push({
+            name: item.title,
+            status: item.state === "opened" ? "open" : "closed",
+            type: item.facilityTypeIdentifier || "lift"
+        });
     });
+
+    // Process Slopes
+    slopesItems.forEach(item => {
+        slopes.push({
+            name: item.title,
+            status: item.state === "opened" ? "open" : "closed",
+            type: item.facilityTypeIdentifier || "slope"
+        });
+    });
+
+    const liftsOpen = lifts.filter(l => l.status === "open").length;
+    const liftsTotal = lifts.length;
 
     if (liftsTotal === 0) {
         throw new Error("SkiWelt parsing returned zero lifts from API");
     }
 
-    // Snow data: The API might have regions with snow info?
-    // Often separate API. For now focus on lifts.
-
-    return createResult(details.id, { liftsOpen, liftsTotal }, "skiwelt.at (API)");
+    return createResult(details.id, { liftsOpen, liftsTotal, lifts, slopes }, "skiwelt.at (API)");
 }

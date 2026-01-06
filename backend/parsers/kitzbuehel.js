@@ -10,37 +10,53 @@ export const details = {
 };
 
 export async function parse(options = {}) {
-  const res = await fetchWithHeaders(details.apiUrl, options);
+  // Unfiltered URL to fetch all facilities
+  const apiUrl = "https://www.kitzski.at/webapi/micadoweb?api=SkigebieteManager/Micado.SkigebieteManager.Plugin.FacilityApi/ListFacilities.api&extensions=o&client=https%3A%2F%2Fsgm.kitzski.at&lang=de&location=&omitClosed=0&region=kitzski&season=winter";
+
+  const res = await fetchWithHeaders(apiUrl, options);
   if (!res.ok) throw new Error("Failed to fetch KitzSki API");
 
   const data = await res.json();
-
-  // API returns object with 'facilities' array (or sometimes just array?)
-  // Agent said: "The response contains a facilities array."
-  const facilities = data.facilities || [];
+  const facilities = data.facilities || (Array.isArray(data) ? data : []);
 
   if (facilities.length === 0) {
-    // Sometimes just 'data' is the array? Let's check keys if we fail
-    if (Array.isArray(data)) {
-      facilities.push(...data);
-    }
+    throw new Error("KitzSki parsing returned zero items from API");
   }
 
-  let liftsTotal = 0;
-  let liftsOpen = 0;
+  const lifts = [];
+  const slopes = [];
 
-  facilities.forEach(lift => {
-    liftsTotal++;
-    // status: 1 = Open, 2 = Closed? 
-    // Agent said: "status / operatingState: Integer value (1 usually indicates Geöffnet / Open)"
-    if (lift.operatingState === 1 || lift.status === 1 || lift.status === "opened") {
-      liftsOpen++;
+  facilities.forEach(item => {
+    // Check status: 1 = Open
+    const isLive = item.operatingState === 1 || item.status === 1 || item.status === "opened";
+    const status = isLive ? "open" : (item.operatingState === 2 || item.status === 2 || item.status === "closed" ? "closed" : "unknown");
+
+    const type = item.type || "";
+    const name = item.title || item.name || item.identifier;
+
+    // Classification
+    if (type.includes("piste") || type.includes("skiroute")) {
+      slopes.push({ name, status, type: item.typename || type });
+    } else if (
+      type.includes("chairlift") ||
+      type.includes("ropeway") ||
+      type.includes("draglift") ||
+      type.includes("conveyor") ||
+      type.includes("gondola") ||
+      type.includes("cablecar")
+    ) {
+      lifts.push({ name, status, type: item.typename || type });
     }
+    // Ignore huts, parking, webcams
   });
 
+  const liftsOpen = lifts.filter(l => l.status === "open").length;
+  const liftsTotal = lifts.length;
+
   if (liftsTotal === 0) {
-    throw new Error("KitzSki parsing returned zero lifts from API");
+    throw new Error("KitzSki parsing returned zero lifts");
   }
 
-  return createResult(details.id, { liftsOpen, liftsTotal }, "kitzski.at (API)");
+  return createResult(details.id, { liftsOpen, liftsTotal, lifts, slopes }, "kitzski.at (API)");
 }
+
