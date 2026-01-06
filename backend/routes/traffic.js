@@ -7,15 +7,16 @@ import { getStaticResorts } from "../services/resortManager.js";
 const router = express.Router();
 
 // Stricter rate limiting for traffic endpoints to protect ORS quota
+// Stricter rate limiting for traffic endpoints to protect ORS quota
 const trafficCalculateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 10, // Max 10 requests per 15 minutes per IP
+    max: 60, // Max 60 requests per 15 minutes per IP
     message: { error: "Too many traffic calculation requests. Please try again later." }
 });
 
 const geocodeLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 20, // Max 20 requests per 15 minutes per IP
+    max: 60, // Max 60 requests per 15 minutes per IP
     message: { error: "Too many geocoding requests. Please try again later." }
 });
 
