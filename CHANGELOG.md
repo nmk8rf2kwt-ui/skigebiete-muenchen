@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-01-06
+
+### 🚀 Features
+- **New Resorts**: Added Oberstdorf/Kleinwalsertal, Oberjoch, and Balderschwang.
+- **UI Overhaul**: Redesigned toolbar layout (Search and Actions in separate rows), improved table headers (Categories).
+- **Weather Display**: Enhanced weather and snow depth presentation (combined column).
+
 ## [1.2.0] - 2026-01-06
 
 ### 🚀 Features

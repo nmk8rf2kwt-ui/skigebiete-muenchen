@@ -337,5 +337,18 @@
         "latitude": 47.5136,
         "longitude": 10.4042,
         "webcam": "https://www.foto-webcam.eu/webcam/iseler/"
+    },
+    {
+        "id": "balderschwang",
+        "name": "Balderschwang",
+        "distance": 170,
+        "piste_km": 41,
+        "lifts": 12,
+        "price": 42.00,
+        "classification": "Familie",
+        "website": "https://www.skigebiet-balderschwang.de",
+        "latitude": 47.4622,
+        "longitude": 10.1038,
+        "webcam": "https://www.skigebiet-balderschwang.de/webcams/"
     }
 ]
