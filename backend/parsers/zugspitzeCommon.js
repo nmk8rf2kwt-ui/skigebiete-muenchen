@@ -41,8 +41,14 @@ export async function parseZugspitzeCommon(resortId, headerText, options = {}) {
 
                 const type = $row.find(".facilities-item__type").attr("title");
 
+                // Extract operating hours
+                const timeDiv = $row.find(".facilities-item__time");
+                const operatingHours = timeDiv.length > 0 ? timeDiv.text().trim().replace(/\s*Uhr\s*/g, '').trim() : undefined;
+
                 if (name) {
-                    items.push({ name, status, type });
+                    const item = { name, status, type };
+                    if (operatingHours) item.operatingHours = operatingHours;
+                    items.push(item);
                 }
             });
         }

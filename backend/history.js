@@ -56,7 +56,10 @@ export function saveSnapshot(resortId, data) {
                 liftsOpen: data.liftsOpen || null,
                 liftsTotal: data.liftsTotal || null,
                 snow: data.snow || null,
-                weather: data.weather || null
+                weather: data.weather || null,
+                // NEW: Store detailed lift/slope data if available
+                lifts: data.lifts || null,
+                slopes: data.slopes || null
             }
         };
 

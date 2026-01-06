@@ -18,7 +18,10 @@ export const ResortDataSchema = z.object({
         capacity: z.number().optional(),
         length: z.number().optional(), // meters
         altitudeStart: z.number().optional(),
-        altitudeEnd: z.number().optional()
+        altitudeEnd: z.number().optional(),
+        operatingHours: z.string().optional(), // "08:30 - 16:00"
+        seasonStart: z.string().optional(), // "2025-11-22"
+        seasonEnd: z.string().optional() // "2026-04-06"
     })).optional(),
 
     slopes: z.array(z.object({
@@ -27,7 +30,10 @@ export const ResortDataSchema = z.object({
         difficulty: z.enum(["blue", "red", "black", "freeride", "unknown"]).optional(),
         length: z.number().optional(), // meters
         altitudeStart: z.number().optional(),
-        altitudeEnd: z.number().optional()
+        altitudeEnd: z.number().optional(),
+        operatingHours: z.string().optional(), // "08:30 - 16:00"
+        seasonStart: z.string().optional(), // "2025-11-22"
+        seasonEnd: z.string().optional() // "2026-04-06"
     })).optional(),
 
     // Allow other fields but strict on the core ones

@@ -267,6 +267,12 @@ ${pd.info || ""}
 
 
 
+  // Details button (for resorts with lift/slope data)
+  const hasDetails = (data.lifts && data.lifts.length > 0) || (data.slopes && data.slopes.length > 0);
+  const detailsDisplay = hasDetails
+    ? `<button class="details-btn" data-resort-id="${data.id}" data-resort-name="${data.name}" title="Lifte & Pisten Details anzeigen">📋</button>`
+    : '<span title="Keine Details verfügbar">-</span>';
+
   // History button (Dedicated Column)
   const historyDisplay = (data.latitude && data.longitude)
     ? `<button class="history-btn" data-resort-id="${data.id}" data-resort-name="${data.name}" title="7-Tage Verlauf anzeigen">📊</button>`
@@ -348,6 +354,7 @@ ${pd.info || ""}
     <td>${lastSnowfallDisplay}</td>
     <td>${weatherDisplay}</td>
     <td>${webcamDisplay}</td>
+    <td>${detailsDisplay}</td>
     <td>${historyDisplay}</td>
     <td><strong>${score}</strong></td>
   `;

@@ -86,6 +86,7 @@
         <th title="Datum des letzten Schneefalls">Letzter Schneefall</th>
         <th title="3-Tage Wettervorhersage">Wetter heute, morgen, übermorgen</th>
         <th title="Webcam-Link">Cam</th>
+        <th title="Lifte & Pisten Details">Details</th>
         <th title="7-Tage Verlauf">History</th>
         <th data-sort="score" title="Gesamtbewertung - Klicken zum Sortieren" style="cursor: pointer;">Score ↕️</th>
       </tr>
@@ -99,6 +100,17 @@
       <span class="close">&times;</span>
       <h2 id="weatherResortName">Weather Forecast</h2>
       <div id="weatherForecast" class="weather-forecast">
+        <p>Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Details Modal (Lifts & Slopes) -->
+  <div id="detailsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-details">&times;</span>
+      <h2 id="detailsResortName">Resort Details</h2>
+      <div id="detailsContent" class="details-content">
         <p>Loading...</p>
       </div>
     </div>
