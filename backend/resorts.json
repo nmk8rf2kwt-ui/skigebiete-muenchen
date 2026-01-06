@@ -280,5 +280,36 @@
         "website": "https://www.hoernerbahn.de",
         "latitude": 47.4666,
         "longitude": 10.2333
+    },
+    {
+        "id": "oberaudorf",
+        "name": "Oberaudorf - Hocheck",
+        "distance": 85,
+        "piste_km": 12,
+        "lifts": 5,
+        "price": 38.00,
+        "classification": "Familie",
+        "website": "https://www.hocheck.com",
+        "latitude": 47.6461,
+        "longitude": 12.1764,
+        "priceDetail": {
+            "adult": 38.00,
+            "youth": 34.00,
+            "child": 24.00,
+            "currency": "€",
+            "info": "Tageskarte inkl. Nachtski"
+        }
+    },
+    {
+        "id": "kampenwand",
+        "name": "Kampenwand",
+        "distance": 90,
+        "piste_km": 12,
+        "lifts": 4,
+        "price": 49.00,
+        "classification": "Sportlich",
+        "website": "https://www.kampenwand.de",
+        "latitude": 47.7644,
+        "longitude": 12.3551
     }
 ]
