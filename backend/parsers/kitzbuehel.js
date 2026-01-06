@@ -25,8 +25,8 @@ export async function parse(options = {}) {
   // Unfiltered URL to fetch all facilities
   const liftApiUrl = "https://www.kitzski.at/webapi/micadoweb?api=SkigebieteManager/Micado.SkigebieteManager.Plugin.FacilityApi/ListFacilities.api&extensions=o&client=https%3A%2F%2Fsgm.kitzski.at&lang=de&location=&omitClosed=0&region=kitzski&season=winter";
 
-  // Snow Report Page (Corrected)
-  const snowUrl = "https://www.kitzski.at/de/winter/skigebiet-kitzbuehel/schneebericht-kitzski.html";
+  // Snow Report Page (Corrected URL)
+  const snowUrl = "https://www.kitzski.at/de/aktuelle-info/schneebericht-kitzski.html";
 
   // Parallel fetch: API for lifts (JSON) and Website for Snow (HTML)
   // We use Promise.allSettled to ensure lift data success even if snow fails
@@ -106,27 +106,31 @@ export async function parse(options = {}) {
     try {
       const html = await snowRes.value.text();
       const $ = cheerio.load(html);
-      const bodyText = $('body').text().replace(/\s+/g, ' ');
 
-      // Regex extraction based on search results:
-      // "Pisten-Schneehöhe Berg: 62 cm"
-      // "Pisten-Schneehöhe Tal: 42 cm"
-      // "Letzter Schneefall: 03.11.2024" (assumption of label) or just date near text
-
-      const mountainMatch = bodyText.match(/Schneehöhe Berg[^\d]*(\d+)\s*cm/i);
-      const valleyMatch = bodyText.match(/Schneehöhe Tal[^\d]*(\d+)\s*cm/i);
-
-      // Date match: Look for "Letzter Schneefall"
-      const dateMatch = bodyText.match(/Letzter Schneefall\s*(\d{2}\.\d{2}\.\d{4})/i) || bodyText.match(/(\d{2}\.\d{2}\.\d{4})\s*Letzter Schneefall/i);
-
+      // Extract snow data from items using CSS selectors
+      const items = $(".Item_item__yGeur");
+      let mountain = null;
+      let valley = null;
       let lastSnowISO = null;
-      if (dateMatch) {
-        const parts = dateMatch[1].split('.');
-        lastSnowISO = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-      }
 
-      const mountain = mountainMatch ? parseInt(mountainMatch[1], 10) : null;
-      const valley = valleyMatch ? parseInt(valleyMatch[1], 10) : null;
+      items.each((i, item) => {
+        const label = $(item).find(".Item_label__9iJqL p").text().trim();
+        const value = $(item).find(".Item_value__LgB_1 p").text().trim();
+
+        if (label === "Pisten-Schneehöhe Berg") {
+          const match = value.match(/(\d+)\s*cm/);
+          if (match) mountain = parseInt(match[1], 10);
+        } else if (label === "Pisten-Schneehöhe Tal") {
+          const match = value.match(/(\d+)\s*cm/);
+          if (match) valley = parseInt(match[1], 10);
+        } else if (label === "Letzter Schneefall") {
+          // Parse date: "03.01.2026" -> ISO
+          const dateMatch = value.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+          if (dateMatch) {
+            lastSnowISO = `${dateMatch[3]}-${dateMatch[2]}-${dateMatch[1]}`;
+          }
+        }
+      });
 
       if (mountain !== null || valley !== null) {
         snowData = {

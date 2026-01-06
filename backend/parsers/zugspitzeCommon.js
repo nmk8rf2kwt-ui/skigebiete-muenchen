@@ -65,13 +65,61 @@ export async function parseZugspitzeCommon(resortId, headerText, options = {}) {
         throw new Error(`${headerText} parsing returned zero lifts`);
     }
 
-    // Snow logic (shared global script check)
-    let snow = null;
-    const scriptContent = $("script").map((i, el) => $(el).html()).get().join(" ");
-    const snowMatch = scriptContent.match(/"snow[^"]*"\s*:\s*"?(\d+)/i);
-    if (snowMatch) {
-        snow = `${snowMatch[1]}cm`;
+    // Snow logic: Fetch from weather page
+    let snowData = null;
+    try {
+        const weatherUrl = "https://zugspitze.de/de/Service-Informationen/Wetter";
+        const $weather = await fetchHtml(weatherUrl, options);
+        
+        // Find the section for this specific resort (Zugspitze or Garmisch-Classic)
+        const sections = $weather("h2");
+        let targetSection = null;
+        
+        sections.each((i, el) => {
+            const sectionTitle = $weather(el).text().trim();
+            if (sectionTitle === headerText) {
+                targetSection = $weather(el).closest("section");
+            }
+        });
+        
+        if (targetSection && targetSection.length > 0) {
+            // Find the snow height container
+            const snowContainer = targetSection.find(".weather-item__container").filter((i, el) => {
+                return $weather(el).find(".weather-item__title").text().includes("Schneehöhe");
+            }).first();
+            
+            if (snowContainer.length > 0) {
+                let mountain = null;
+                let valley = null;
+                
+                // Extract Berg and Tal values
+                snowContainer.find(".weather-item__info").each((i, info) => {
+                    const title = $weather(info).find(".weather-item__title").text().trim();
+                    const valueText = $weather(info).find("div").last().text().trim();
+                    const valueMatch = valueText.match(/(\d+)\s*cm/);
+                    
+                    if (valueMatch) {
+                        const value = parseInt(valueMatch[1], 10);
+                        if (title === "Berg") mountain = value;
+                        if (title === "Tal") valley = value;
+                    }
+                });
+                
+                if (mountain !== null || valley !== null) {
+                    snowData = {
+                        valley: valley,
+                        mountain: mountain,
+                        state: null,
+                        lastSnowfall: null, // Could be extracted if available
+                        source: "resort",
+                        timestamp: new Date().toISOString()
+                    };
+                }
+            }
+        }
+    } catch (err) {
+        console.error(`Failed to fetch snow data for ${headerText}:`, err.message);
     }
 
-    return createResult(resortId, { liftsOpen, liftsTotal, snow, lifts, slopes }, "zugspitze.de");
+    return createResult(resortId, { liftsOpen, liftsTotal, snow: snowData, lifts, slopes }, "zugspitze.de");
 }
