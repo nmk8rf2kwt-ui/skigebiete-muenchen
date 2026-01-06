@@ -15,6 +15,29 @@ export function initMap(resorts) {
     updateMap(resorts);
 }
 
+// Update or add user location marker
+export function showUserLocation(lat, lng) {
+    if (!map) return;
+
+    // Remove existing user marker if any (we should track it but for now let's just add new one or relying on map clearnup)
+    // To do it properly, let's add a global variable for it
+    if (window.userMarker) {
+        map.removeLayer(window.userMarker);
+    }
+
+    const icon = L.divIcon({
+        className: 'user-location-marker',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+    });
+
+    window.userMarker = L.marker([lat, lng], { icon: icon }).addTo(map);
+    window.userMarker.bindPopup("Ihr Standort").openPopup();
+
+    // Zoom to fit user and resorts? Or just pan?
+    // map.setView([lat, lng], 10);
+}
+
 export function updateMap(resorts) {
     if (!map) return;
 

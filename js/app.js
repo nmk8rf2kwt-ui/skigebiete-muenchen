@@ -1,5 +1,4 @@
-import { renderTable, calculateScore } from "./render.js";
-import { initMap, updateMap } from "./map.js";
+import { initMap, updateMap, showUserLocation } from "./map.js";
 import { API_BASE_URL } from "./config.js";
 import { store } from "./store.js";
 
@@ -200,6 +199,7 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
       distance: data.distance * 1000 // backend km -> frontend meters
     }));
 
+    showUserLocation(lat, lon);
     logToUI(`✅ Loaded traffic data for ${locationName}`);
 
     // Update resorts with distance and duration
