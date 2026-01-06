@@ -124,6 +124,32 @@
     <tbody></tbody>
   </table>
 
+  <!-- Traffic History Section -->
+  <div id="trafficHistorySection" class="history-section"
+    style="margin-top: 40px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="margin: 0;">🚦 Verkehrshistorie (Wöchentlich)</h2>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <label for="citySelect">Stadt:</label>
+        <select id="citySelect" style="padding: 5px;">
+          <option value="muenchen">München</option>
+          <option value="stuttgart">Stuttgart</option>
+          <option value="nuernberg">Nürnberg</option>
+          <option value="augsburg">Augsburg</option>
+          <option value="salzburg">Salzburg</option>
+        </select>
+      </div>
+    </div>
+    <p style="color: #666; font-size: 0.9em; margin-bottom: 20px;">
+      Durchschnittliche Verkehrsverzögerung zu allen Skigebieten (Mo 00:00 - So 23:30).
+      <br>Wählen Sie ein Skigebiet in der Tabelle, um die spezifische Route zu sehen (Feature folgt).
+      Aktuell: Durchschnitt aller Routen.
+    </p>
+    <div style="height: 300px;">
+      <canvas id="trafficHistoryChart"></canvas>
+    </div>
+  </div>
+
   <!-- Weather Modal -->
   <div id="weatherModal" class="modal">
     <div class="modal-content">

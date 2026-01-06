@@ -115,33 +115,110 @@ export async function fetchTravelTimes(destinations, origin = null) {
 
         return results;
 
-    } catch (error) {
-        console.error("TomTom fetch failed:", error.message);
-        return null;
-    }
-}
+        // ... (previous code)
 
-export async function geocodeAddress(query) {
-    if (!TOMTOM_API_KEY) throw new Error("Missing TomTom Key");
+        /**
+         * Fetches traffic data for N origins to M destinations.
+         * @param {Array} origins Array of { id, latitude, longitude }
+         * @param {Array} destinations Array of { id, latitude, longitude }
+         * @returns {Object} { [originId]: { [destId]: { duration, delay } } }
+         */
+        export async function fetchTrafficMatrix(origins, destinations) {
+            if (!TOMTOM_API_KEY) {
+                console.warn("⚠️ TOMTOM_API_KEY not found.");
+                return null;
+            }
 
-    const url = `https://api.tomtom.com/search/2/search/${encodeURIComponent(query)}.json?key=${TOMTOM_API_KEY}&limit=1`;
+            const locations = [];
 
-    try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Geocode failed: ${res.status}`);
+            // Prepare origins
+            const originCoords = origins.map(o => ({
+                point: { latitude: o.latitude, longitude: o.longitude }
+            }));
 
-        const data = await res.json();
-        if (!data.results || data.results.length === 0) return null;
+            // Prepare destinations
+            const destCoords = destinations.map(d => ({
+                point: { latitude: d.latitude, longitude: d.longitude }
+            }));
 
-        const result = data.results[0];
+            const body = {
+                origins: originCoords,
+                destinations: destCoords
+            };
 
-        return {
-            name: result.address?.freeformAddress || result.poi?.name || query,
-            latitude: result.position.lat,
-            longitude: result.position.lon
-        };
-    } catch (error) {
-        console.error("TomTom Geocode error:", error.message);
-        return null;
-    }
-}
+            const url = `https://api.tomtom.com/routing/matrix/2?key=${TOMTOM_API_KEY}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`TomTom Matrix Error: ${response.status} ${errText}`);
+                }
+
+                const data = await response.json();
+
+                // Response data is in data.data (array of results)
+                // Ordered by Origin, then Destination.
+                // Index = originIndex * numDestinations + destIndex
+
+                const results = {};
+                const nDest = destinations.length;
+
+                origins.forEach((origin, oIdx) => {
+                    results[origin.id] = {};
+                    destinations.forEach((dest, dIdx) => {
+                        const flatIndex = oIdx * nDest + dIdx;
+                        const routeData = data.data[flatIndex];
+
+                        if (routeData && routeData.routeSummary) {
+                            const travelTime = routeData.routeSummary.travelTimeInSeconds; // live
+                            const trafficDelay = routeData.routeSummary.trafficDelayInSeconds; // delay
+
+                            results[origin.id][dest.id] = {
+                                duration: Math.round(travelTime / 60),
+                                delay: Math.round(trafficDelay / 60)
+                            };
+                        } else {
+                            results[origin.id][dest.id] = null;
+                        }
+                    });
+                });
+
+                return results;
+
+            } catch (error) {
+                console.error("Traffic Matrix fetch failed:", error.message);
+                return null;
+            }
+        }
+
+
+        export async function geocodeAddress(query) {
+            if (!TOMTOM_API_KEY) throw new Error("Missing TomTom Key");
+
+            const url = `https://api.tomtom.com/search/2/search/${encodeURIComponent(query)}.json?key=${TOMTOM_API_KEY}&limit=1`;
+
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`Geocode failed: ${res.status}`);
+
+                const data = await res.json();
+                if (!data.results || data.results.length === 0) return null;
+
+                const result = data.results[0];
+
+                return {
+                    name: result.address?.freeformAddress || result.poi?.name || query,
+                    latitude: result.position.lat,
+                    longitude: result.position.lon
+                };
+            } catch (error) {
+                console.error("TomTom Geocode error:", error.message);
+                return null;
+            }
+        }

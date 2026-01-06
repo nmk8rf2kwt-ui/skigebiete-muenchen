@@ -1,15 +1,14 @@
 import { getStaticResorts } from "./resortManager.js";
 import { getWeatherForecast, getCurrentConditions } from "../weather.js";
-import { weatherCache, parserCache } from "../cache.js"; // Needed for snapshotting
+import { weatherCache, parserCache, trafficCache } from "../cache.js";
 import { PARSERS } from "../parsers/index.js";
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveCityTrafficLog } from "../history.js";
-import { fetchTravelTimes } from "./tomtom.js";
-import { trafficCache } from "../cache.js";
+import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog } from "../history.js";
+import { fetchTrafficMatrix } from "./tomtom.js";
 
 // -- JOBS --
 
@@ -67,84 +66,90 @@ export async function saveDailySnapshots() {
     console.log("📸 Daily snapshots complete");
 }
 
-// 3. Refresh Traffic (Hourly)
-export async function refreshTraffic() {
-    console.log("🚦 Refreshing traffic data...");
-    const resorts = getStaticResorts();
-    const destinations = resorts.filter(r => r.latitude && r.longitude);
-
-    const trafficData = await fetchTravelTimes(destinations);
-
-    if (trafficData) {
-        // Update cache
-        for (const [id, data] of Object.entries(trafficData)) {
-            trafficCache.set(id, data);
-        }
-        console.log(`✅ Updated traffic for ${Object.keys(trafficData).length} resorts.`);
-
-        // Log to history if within 06:00 - 22:00
-        const now = new Date();
-        const hour = now.getHours();
-
-        if (hour >= 6 && hour < 22) {
-            console.log("📝 Logging traffic history...");
-            for (const resort of resorts) {
-                // Determine Standard Time (from static distance)
-                // Note: resort.distance is in minutes (e.g. 60) in resorts.json
-                const standard = resort.distance || 0;
-
-                // Determine Current Time (from traffic fetch)
-                const traffficInfo = trafficData[resort.id];
-
-                if (traffficInfo && traffficInfo.duration) {
-                    saveTrafficLog(resort.id, standard, traffficInfo.duration);
-                }
-            }
-        }
-    }
-}
-
-// 4. Track City Traffic (Every 30 mins)
-export async function trackCityTraffic() {
+// 3. Unified Traffic Matrix Job (Hourly 06-22)
+// Replaces refreshTraffic and trackCityTraffic
+export async function updateTrafficMatrix() {
     const now = new Date();
     const hour = now.getHours();
 
     // Run only between 06:00 and 22:00
-    if (hour < 6 || hour >= 22) return;
+    if (hour < 6 || hour >= 22) {
+        console.log("💤 Traffic logs skipped (night time).");
+        return;
+    }
 
-    console.log("🏙️ Tracking city traffic...");
+    console.log("🚦 Updating Traffic Matrix (5 Cities)...");
 
     try {
+        // 1. Load Data
+        const resorts = getStaticResorts().filter(r => r.latitude && r.longitude);
         const citiesPath = path.join(__dirname, '../data/reference_cities.json');
+
         if (!fs.existsSync(citiesPath)) {
-            console.warn("City reference file not found.");
+            console.warn("City reference file missing. Aborting matrix update.");
+            return;
+        }
+        const cities = JSON.parse(fs.readFileSync(citiesPath, 'utf-8'));
+
+        // 2. Fetch Matrix (Cities x Resorts)
+        const trafficMatrix = await fetchTrafficMatrix(cities, resorts);
+
+        if (!trafficMatrix) {
+            console.error("Failed to fetch traffic matrix.");
             return;
         }
 
-        const citiesData = JSON.parse(fs.readFileSync(citiesPath, 'utf-8'));
+        // 3. Process & Log Data
+        // trafficMatrix structure: { [cityId]: { [resortId]: { duration, delay } } }
 
-        // Fetch traffic
-        const trafficData = await fetchTravelTimes(citiesData);
-
-        if (trafficData) {
-            let loggedCount = 0;
-            citiesData.forEach(city => {
-                const data = trafficData[city.id];
+        // A. Update "Standard" Cache (Munich Data)
+        const munichData = trafficMatrix['muenchen'];
+        if (munichData) {
+            // Update in-memory cache for frontend (Standard View)
+            for (const [resortId, data] of Object.entries(munichData)) {
                 if (data) {
-                    saveCityTrafficLog({
-                        cityId: city.id,
-                        cityName: city.name,
-                        duration: data.duration,
-                        delay: data.delay || 0
-                    });
-                    loggedCount++;
+                    trafficCache.set(resortId, data);
+
+                    // Log Standard History (Legacy format for main chart?)
+                    // Or do we rely on the matrix logs now? 
+                    // Let's keep the standard log for continuity if saveTrafficLog relies on it.
+                    // saveTrafficLog uses standardTime vs currentTime.
+                    const resort = resorts.find(r => r.id === resortId);
+                    if (resort) {
+                        const standard = resort.distance || 0;
+                        saveTrafficLog(resortId, standard, data.duration);
+                    }
                 }
-            });
-            console.log(`✅ Logged traffic for ${loggedCount} cities.`);
+            }
+            console.log("✅ Updated Standard Traffic Cache (Munich).");
+        } else {
+            console.warn("⚠️ Munich data missing in matrix response. Cache not updated.");
         }
 
-    } catch (err) {
-        console.error("Failed to track city traffic:", err);
+        // B. Log Detailed Matrix History (All 5 Cities)
+        let logCount = 0;
+        for (const city of cities) {
+            const cityData = trafficMatrix[city.id];
+            if (cityData) {
+                for (const resort of resorts) {
+                    const data = cityData[resort.id];
+                    if (data) {
+                        saveMatrixTrafficLog(
+                            city.id,
+                            city.name,
+                            resort.id,
+                            data.duration,
+                            data.delay
+                        );
+                        logCount++;
+                    }
+                }
+            }
+        }
+        console.log(`📝 Logged ${logCount} matrix entries.`);
+
+    } catch (error) {
+        console.error("Error in updateTrafficMatrix:", error);
     }
 }
 
@@ -158,23 +163,13 @@ export function initScheduler() {
     // A. Weather Loop (1 hour)
     setInterval(refreshWeather, 60 * 60 * 1000);
 
-    // B. Traffic Loop (1 hour) -- Resorst
+    // B. Traffic Matrix Loop (1 hour)
     setTimeout(() => {
-        // Periodic
-        setInterval(refreshTraffic, 60 * 60 * 1000);
-        // Immediate
-        refreshTraffic();
+        setInterval(updateTrafficMatrix, 60 * 60 * 1000);
+        updateTrafficMatrix(); // Initial run
     }, 5000);
 
-    // C. City Traffic Loop (30 mins)
-    // Offset by 2 mins to avoid conflict with Resort Traffic
-    setTimeout(() => {
-        setInterval(trackCityTraffic, 30 * 60 * 1000);
-        trackCityTraffic(); // Validating immediate run
-    }, 2 * 60 * 1000);
-
-
-    // Initial fetch for weather
+    // C. Initial fetch for weather
     setTimeout(refreshWeather, 2000);
 
     // D. Snapshot Loop (Check every hour)

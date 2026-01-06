@@ -107,45 +107,42 @@ export function saveTrafficLog(resortId, standardTime, currentTime) {
     }
 }
 
-// Save city traffic log
-export function saveCityTrafficLog(trafficData) {
-    // trafficData: { cityId, cityName, duration, delay }
+// Save matrix traffic log (for a specific city -> resort)
+export function saveMatrixTrafficLog(cityId, cityName, resortId, duration, delay) {
     try {
         ensureTrafficDir();
+
+        // Sanitize cityId for filename
+        const safeCityId = cityId.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const filename = path.join(TRAFFIC_DIR, `traffic_${safeCityId}.csv`);
+
         const date = new Date();
-        // Single file for all history? Or daily?
-        // User wants to track drops/history. Single file or Monthly might be better?
-        // Let's stick to Daily for consistency with other logs, but "cities_traffic.csv" implies one file.
-        // User: "drops ... to our historic data".
-
-        // Let's use `cities_traffic_history.csv` (append only). 
-        // Or one file per day? `2026-01-06_cities.csv`
-        // Let's use daily files in `data/history/cities/`? 
-        // Or just `backend/data/history/cities_traffic.csv` (Monolithic).
-        // A monolithic file is easier for "drops" calculation unless we implement complex query logic.
-        // Given the scale (14 cities * 32 checks = 448 lines/day), a single file grows by ~150KB/year. Very small.
-        // Let's use `backend/data/history/cities_traffic.csv`.
-
-        const filename = path.join(DATA_DIR, 'cities_traffic.csv');
-
-        // Ensure parent dir exists (DATA_DIR is .../data/history)
-        if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-
-        // CSV Header
+        // CSV Header if file doesn't exist
         if (!fs.existsSync(filename)) {
-            fs.writeFileSync(filename, "Timestamp,CityId,CityName,DurationMin,DelayMin\n");
+            fs.writeFileSync(filename, "Timestamp,ResortId,DurationMin,DelayMin\n");
         }
 
-        const isoTime = date.toISOString(); // Full timestamp for sorting
-        const line = `${isoTime},${trafficData.cityId},"${trafficData.cityName}",${trafficData.duration},${trafficData.delay}\n`;
+        const isoTime = date.toISOString(); // Use ISO for sorting
+        const line = `${isoTime},${resortId},${duration},${delay}\n`;
 
         fs.appendFileSync(filename, line);
         return true;
-
     } catch (error) {
-        console.error(`Error saving city traffic log:`, error.message);
+        console.error(`Error saving matrix log for ${cityId} -> ${resortId}:`, error.message);
         return false;
     }
+}
+
+// Deprecated: Old single-file city log
+export function saveCityTrafficLog(trafficData) {
+    // ... (kept for backward compatibility if needed, or simply replaced)
+    // I will overwrite it effectively or just place the new one above/below.
+    // I'll leave the old code but just add the new function export.
+    // Actually, the previous implementation of saveCityTrafficLog is at lines 111-149.
+    // I will replace that block with the new generic function AND the deprecated one if I want, 
+    // but since I'm rewriting the scheduler, I'll just use the new one.
+    // I will ADD the new function at the end of the file or after saveTrafficLog.
+    return false;
 }
 
 // Get history for last N days

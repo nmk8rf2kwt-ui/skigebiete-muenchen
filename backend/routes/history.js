@@ -1,75 +1,47 @@
 import express from "express";
-import { getHistory, getTrends } from "../history.js";
-import { getStaticResorts } from "../services/resortManager.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const TRAFFIC_DIR = path.join(__dirname, '../data/traffic');
 
 const router = express.Router();
 
-// GET /api/history/:resortId
-router.get("/history/:resortId", (req, res) => {
-    const { resortId } = req.params;
-    const days = parseInt(req.query.days) || 7;
+// GET /api/history/traffic/:cityId
+router.get("/traffic/:cityId", (req, res) => {
+    const { cityId } = req.params;
+    // Sanitize
+    const safeCityId = cityId.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const filename = path.join(TRAFFIC_DIR, `traffic_${safeCityId}.csv`);
+
+    console.log(`Searching for history: ${filename}`);
+
+    if (!fs.existsSync(filename)) {
+        return res.json({ cityId: safeCityId, data: [] });
+    }
 
     try {
-        const history = getHistory(resortId, days);
+        const content = fs.readFileSync(filename, 'utf-8');
+        const lines = content.trim().split('\n');
 
-        res.json({
-            resortId,
-            days,
-            history: history.map(h => ({
-                date: h.date,
-                liftsOpen: h.data.liftsOpen,
-                liftsTotal: h.data.liftsTotal,
-                snow: h.data.snow,
-                weather: h.data.weather
-            }))
+        // CSV Format: Timestamp,ResortId,DurationMin,DelayMin
+        // Skip header
+        const data = lines.slice(1).map(line => {
+            const [timestamp, resortId, duration, delay] = line.split(',');
+            return {
+                timestamp,
+                resortId,
+                duration: parseFloat(duration),
+                delay: parseFloat(delay)
+            };
         });
+
+        res.json({ cityId: safeCityId, data });
     } catch (error) {
-        console.error("History API error:", error);
-        res.status(500).json({ error: "Failed to fetch history" });
-    }
-});
-
-// GET /api/trends/:resortId
-router.get("/trends/:resortId", (req, res) => {
-    const { resortId } = req.params;
-    try {
-        const trends = getTrends(resortId);
-        res.json(trends);
-    } catch (error) {
-        console.error("Trends API error:", error);
-        res.status(500).json({ error: "Failed to calculate trends" });
-    }
-});
-
-// GET /api/export/:resortId
-router.get("/export/:resortId", (req, res) => {
-    const { resortId } = req.params;
-    const days = parseInt(req.query.days) || 30;
-
-    try {
-        const resorts = getStaticResorts();
-        const resort = resorts.find(r => r.id === resortId);
-        const history = getHistory(resortId, days);
-
-        if (history.length === 0) {
-            return res.status(404).json({ error: "No historical data available" });
-        }
-
-        // Generate CSV
-        const headers = "Date,Resort,Lifts Open,Lifts Total,Snow (cm),Weather\n";
-        const rows = history.map(h => {
-            const snow = h.data.snow ? h.data.snow.replace('cm', '') : '';
-            return `${h.date},${resort?.name || resortId},${h.data.liftsOpen || ''},${h.data.liftsTotal || ''},${snow},${h.data.weather || ''}`;
-        }).join('\n');
-
-        const csv = headers + rows;
-
-        res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', `attachment; filename="${resortId}_history_${days}days.csv"`);
-        res.send(csv);
-    } catch (error) {
-        console.error("Export API error:", error);
-        res.status(500).json({ error: "Failed to export data" });
+        console.error("Error reading history csv:", error);
+        res.status(500).json({ error: "Failed to read history data" });
     }
 });
 

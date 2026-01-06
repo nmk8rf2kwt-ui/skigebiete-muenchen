@@ -696,7 +696,131 @@ function displayHistoryChart(history) {
   });
 }
 
+// ... (previous history chart code)
+    }
+  });
+}
+
+// -- TRAFFIC HISTORY CHART --
+let trafficChartInstance = null;
+
+async function initTrafficChart() {
+  const ctx = document.getElementById("trafficHistoryChart");
+  const citySelect = document.getElementById("citySelect");
+
+  if (!ctx || !citySelect) return;
+
+  // Load initial (Munich)
+  await loadTrafficHistory(citySelect.value);
+
+  // Listener
+  citySelect.addEventListener("change", (e) => {
+    loadTrafficHistory(e.target.value);
+  });
+}
+
+async function loadTrafficHistory(cityId) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/history/traffic/${cityId}`);
+    if (!res.ok) throw new Error("Failed to fetch traffic history");
+
+    const response = await res.json();
+    const data = response.data; // [{ timestamp, resortId, duration, delay }, ...]
+
+    renderTrafficChart(data, cityId);
+
+  } catch (error) {
+    console.error("Traffic history error:", error);
+    // Optionally show error state in chart container
+  }
+}
+
+function renderTrafficChart(data, cityId) {
+  const ctx = document.getElementById("trafficHistoryChart");
+
+  if (trafficChartInstance) {
+    trafficChartInstance.destroy();
+  }
+
+  if (!data || data.length === 0) {
+    // Show empty state?
+    return;
+  }
+
+  // 1. Group by Timestamp (to average delay across all resorts for that time)
+  // Map: Timestamp iso string -> { totalDelay, count }
+  const timeMap = new Map();
+
+  data.forEach(entry => {
+    // Normalize time to Hour? Entry timestamp is ISO.
+    // Let's keep distinct timestamps for now as they are generated per run (same second).
+    const ts = entry.timestamp; // e.g. "2026-01-06T12:00:00.000Z"
+    if (!timeMap.has(ts)) {
+      timeMap.set(ts, { totalDelay: 0, count: 0 });
+    }
+    const bucket = timeMap.get(ts);
+    bucket.totalDelay += entry.delay;
+    bucket.count++;
+  });
+
+  // 2. Prepare Chart Data
+  const labels = [];
+  const avgDelays = [];
+
+  // Sort timestamps
+  const sortedTimestamps = Array.from(timeMap.keys()).sort();
+
+  sortedTimestamps.forEach(ts => {
+    const bucket = timeMap.get(ts);
+    const date = new Date(ts);
+    const day = date.toLocaleDateString('de-DE', { weekday: 'short' });
+    const time = date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+
+    labels.push(`${day} ${time}`);
+    avgDelays.push((bucket.totalDelay / bucket.count).toFixed(1));
+  });
+
+  trafficChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: `Ø Verzögerung ab ${getCityName(cityId)} (min)`,
+        data: avgDelays,
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Verzögerung (Minuten)'
+          }
+        }
+      }
+    }
+  });
+}
+
+function getCityName(id) {
+  const map = {
+    'muenchen': 'München',
+    'stuttgart': 'Stuttgart',
+    'nuernberg': 'Nürnberg',
+    'augsburg': 'Augsburg',
+    'salzburg': 'Salzburg'
+  };
+  return map[id] || id;
+}
+
 function displayWeather(forecast) {
+  // ...
   const container = document.getElementById("weatherForecast");
 
   if (!forecast || forecast.length === 0) {
