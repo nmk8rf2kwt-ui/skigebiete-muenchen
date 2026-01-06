@@ -14,11 +14,16 @@
 │   ├── index.js             # Main entry point (Express App + Schedules)
 │   ├── resorts.json         # Static configuration of all supported resorts
 │   ├── parsers/             # Individual scrapers/fetchers for each resort
-│   ├── scripts/             # Maintenance and debugging tools
-│   │   ├── debug_parsers.js # Tool to test individual scrapers
-│   │   └── seed_history.js  # Tool to generate dummy data for testing
-│   ├── data/                # Persisted runtime data (JSON history files)
-│   └── utils/               # Shared helpers (network fetchers, etc.)
+│   ├── routes/              # API Routes
+│   ├── services/            # Business logic (Manager, Traffic, etc.)
+│   └── tests/               # Backend Unit Tests
+│
+├── docs/                    # Documentation
+│   ├── reports/             # Archived release reports
+│   └── TABLE_STRUCTURE.md
+│
+├── scripts/                 # Root maintenance scripts
+│   └── deploy.sh            # Manual deployment helper
 │
 ├── css/                     # Frontend Styles
 │   └── style.css
@@ -26,9 +31,11 @@
 ├── js/                      # Frontend Logic
 │   ├── app.js               # Main application controller
 │   ├── render.js            # UI Rendering & DOM manipulation
-│   └── config.js            # API Configuration
+│   └── map.js               # Map Logic (Leaflet)
 │
-└── index.html               # Main Entry Point
+├── index.html               # Main Entry Point
+├── package.json             # Root Tooling (Linting)
+└── eslint.config.mjs        # ESLint Configuration
 ```
 
 ## Key Components

@@ -8,8 +8,8 @@ backend/.env
 
 # Logs
 *.log
+logs/
 backend/logs/
-backend/logs/*.log
 
 # OS files
 .DS_Store
