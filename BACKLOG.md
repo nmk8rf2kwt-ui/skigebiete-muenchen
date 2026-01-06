@@ -503,16 +503,72 @@ Regelmäßige Qualitätsprüfung durch Menschen, um Parser-Fehler frühzeitig zu
 **Technische Implementierung:**
 
 ```javascript
-// Backend: Validation API
+// Backend: Validation API mit alternativen Quellen
 app.get('/admin/validation/next', async (req, res) => {
   const resort = await getNextResortForValidation();
   const parsedData = await parseResort(resort.id);
+  
+  // Alternative Quellen parallel abrufen
+  const [bergfex, skiresort, onthesnow, snowplaza] = await Promise.allSettled([
+    fetchBergfexData(resort.id),
+    fetchSkiresortData(resort.id),
+    fetchOnTheSnowData(resort.id),
+    fetchSnowplazaData(resort.id)
+  ]);
+  
+  // Konsens berechnen
+  const consensus = calculateConsensus([
+    bergfex.value,
+    skiresort.value,
+    onthesnow.value,
+    snowplaza.value
+  ]);
+  
   res.json({
     resort,
     parsedData,
-    websiteUrl: resort.website
+    websiteUrl: resort.website,
+    alternativeSources: {
+      bergfex: bergfex.status === 'fulfilled' ? bergfex.value : null,
+      skiresort: skiresort.status === 'fulfilled' ? skiresort.value : null,
+      onthesnow: onthesnow.status === 'fulfilled' ? onthesnow.value : null,
+      snowplaza: snowplaza.status === 'fulfilled' ? snowplaza.value : null,
+      consensus
+    }
   });
 });
+
+// Konsens-Berechnung
+function calculateConsensus(sources) {
+  const validSources = sources.filter(s => s && s.liftsOpen);
+  if (validSources.length === 0) return null;
+  
+  // Median für liftsOpen
+  const liftsOpen = validSources.map(s => s.liftsOpen).sort((a, b) => a - b);
+  const medianLiftsOpen = liftsOpen[Math.floor(liftsOpen.length / 2)];
+  
+  return {
+    liftsOpen: medianLiftsOpen,
+    liftsTotal: validSources[0].liftsTotal,
+    confidence: validSources.length / 4 // 0-1 basierend auf verfügbaren Quellen
+  };
+}
+
+// Alternative Quelle als neue Primärquelle verwenden
+app.post('/admin/validation/use-alternative', async (req, res) => {
+  const { resortId, source } = req.body; // source: 'bergfex', 'skiresort', etc.
+  
+  // Parser-Konfiguration aktualisieren
+  await updateParserConfig(resortId, {
+    primarySource: source,
+    reason: 'Manual override via validation interface',
+    changedBy: req.user.email,
+    changedAt: new Date()
+  });
+  
+  res.json({ success: true });
+});
+
 
 app.post('/admin/validation/submit', async (req, res) => {
   const { resortId, status, issues, notes } = req.body;
@@ -539,7 +595,7 @@ app.post('/admin/validation/submit', async (req, res) => {
 ```html
 <!-- Frontend: Validation Interface -->
 <div class="validation-container">
-  <div class="split-view">
+  <div class="triple-view">
     <div class="original-site">
       <h3>Original-Website</h3>
       <iframe :src="currentResort.website"></iframe>
@@ -557,6 +613,30 @@ app.post('/admin/validation/submit', async (req, res) => {
         <button @click="addNote()">📝 Notiz</button>
       </div>
     </div>
+    <div class="alternative-sources">
+      <h3>Alternative Quellen</h3>
+      <div class="source-list">
+        <div v-for="source in ['bergfex', 'skiresort', 'onthesnow', 'snowplaza']" 
+             :key="source"
+             :class="getDeviationClass(source)">
+          <span class="source-name">{{ source }}:</span>
+          <span class="source-data">{{ getSourceData(source) }}</span>
+          <span class="deviation-icon">{{ getDeviationIcon(source) }}</span>
+        </div>
+      </div>
+      <div class="consensus">
+        <strong>Konsens:</strong> {{ consensus.liftsOpen }}/{{ consensus.liftsTotal }}
+        <br>
+        <strong>Unsere:</strong> {{ parsedData.liftsOpen }}/{{ parsedData.liftsTotal }}
+        <span v-if="matchesConsensus">✅</span>
+        <span v-else>⚠️</span>
+      </div>
+      <button @click="useAlternativeSource()" 
+              v-if="!matchesConsensus"
+              class="use-alt-btn">
+        🔄 Alternative Quelle verwenden
+      </button>
+    </div>
   </div>
   <div class="navigation">
     <button @click="prev()">&lt; Prev</button>
@@ -564,6 +644,43 @@ app.post('/admin/validation/submit', async (req, res) => {
     <button @click="next()">Next &gt;</button>
   </div>
 </div>
+
+<script>
+export default {
+  computed: {
+    matchesConsensus() {
+      return this.parsedData.liftsOpen === this.consensus.liftsOpen;
+    }
+  },
+  methods: {
+    getDeviationClass(source) {
+      const sourceData = this.alternativeSources[source];
+      if (!sourceData) return 'unavailable';
+      
+      const diff = Math.abs(sourceData.liftsOpen - this.parsedData.liftsOpen);
+      if (diff === 0) return 'match';
+      if (diff === 1) return 'slight-deviation';
+      return 'large-deviation';
+    },
+    getDeviationIcon(source) {
+      const cls = this.getDeviationClass(source);
+      if (cls === 'match') return '🟢';
+      if (cls === 'slight-deviation') return '🟡';
+      if (cls === 'large-deviation') return '🔴';
+      return '⚪';
+    },
+    async useAlternativeSource() {
+      // Zeige Auswahl-Dialog
+      const source = await this.selectAlternativeSource();
+      await this.$http.post('/admin/validation/use-alternative', {
+        resortId: this.currentResort.id,
+        source
+      });
+      this.$notify('Parser-Quelle aktualisiert');
+    }
+  }
+}
+</script>
 ```
 
 **Zugriffskontrolle:**
@@ -684,6 +801,251 @@ app.post('/admin/validation/submit', async (req, res) => {
 
 ---
 
+#### BACK-021: Skigebiets-Expansion (DE/AT/CH) mit dynamischen Filtern
+**Status:** 🔴 Nicht implementiert  
+**Priorität:** P2 (Medium)  
+**Beschreibung:** Erweiterung der Skigebiets-Datenbank auf alle relevanten Skigebiete in Deutschland, Österreich und später Schweiz mit dynamischen Filtern basierend auf Benutzerstandort.
+
+**Ziel:**
+Von aktuell ~20 Skigebieten auf alle Skigebiete mit mindestens 10 km Pistengröße in DE/AT/CH erweitern.
+
+**Umfang:**
+- **Deutschland**: ~50 Skigebiete (≥10 km)
+- **Österreich**: ~150 Skigebiete (≥10 km)
+- **Schweiz**: ~120 Skigebiete (≥10 km)
+- **Gesamt**: ~320 Skigebiete
+
+**Phase 1: Datensammlung**
+
+1. **Skigebiets-Liste erstellen**
+   - Datenquelle: Bergfex, Skiresort.info, Wikipedia
+   - Kriterien: Mindestens 10 km Pisten
+   - Felder erfassen:
+     - Name
+     - Land (DE/AT/CH)
+     - Region
+     - Geokoordinaten (Talstation)
+     - Pistengröße (km)
+     - Anzahl Lifte
+     - Höhe (Tal/Berg)
+     - Offizielle Website
+     - Webcam-URL (falls vorhanden)
+
+2. **Geo-Koordinaten**
+   - Alle Skigebiete bekommen präzise Koordinaten
+   - Talstation als Referenzpunkt
+   - Format: `{ lat: 47.6667, lon: 11.8833 }`
+
+3. **Datenbank-Schema erweitern**
+   ```javascript
+   {
+     "id": "zugspitze",
+     "name": "Zugspitze",
+     "country": "DE",  // Neu
+     "region": "Bayern",  // Neu
+     "latitude": 47.4566,
+     "longitude": 10.9922,
+     "piste_km": 20,
+     "lifts": 10,
+     "elevation": {  // Neu
+       "valley": 1000,
+       "peak": 2962
+     },
+     "website": "https://zugspitze.de",
+     "webcam": "https://...",
+     "price": 68.00,
+     "classification": "Gletscher"
+   }
+   ```
+
+**Phase 2: Parser-Entwicklung**
+
+1. **Parser-Strategie**
+   - Primär: Offizielle Websites (wie aktuell)
+   - Fallback: Bergfex API (siehe BACK-019)
+   - Batch-Verarbeitung für initiales Crawling
+
+2. **Parser-Templates**
+   - Generische Parser für häufige Plattformen:
+     - Axess (viele österreichische Gebiete)
+     - Skiline (Dolomiti Superski, etc.)
+     - Leitner/Prinoth Systeme
+   - Custom Parser für große Gebiete
+
+3. **Priorisierung**
+   - Phase 1: Top 50 nach Pistengröße
+   - Phase 2: Alle DE/AT Gebiete
+   - Phase 3: Schweiz
+
+**Phase 3: Dynamische Filter-UI**
+
+**UI-Design:**
+```
++--------------------------------------------------+
+| 📍 Standort: München                          |
++--------------------------------------------------+
+| Filter:                                          |
+|                                                  |
+| Max. Fahrzeit:     [====|====] 120 min          |
+|                    30        180                 |
+|                                                  |
+| Max. Distanz:      [======|==] 150 km            |
+|                    50        300                 |
+|                                                  |
+| Min. Pistengröße:  [==|======] 20 km             |
+|                    10        100                 |
+|                                                  |
+| Länder: [✓] DE  [✓] AT  [ ] CH                   |
+|                                                  |
+| [Filter zurücksetzen] [Anwenden]                |
++--------------------------------------------------+
+| Gefundene Skigebiete: 45                         |
++--------------------------------------------------+
+```
+
+**Filter-Optionen:**
+
+1. **Max. Fahrzeit (Schieberegler)**
+   - Range: 30 - 180 Minuten
+   - Standard: 120 Minuten
+   - Berechnung: Basierend auf Benutzerstandort
+   - Live-Update bei Standortänderung
+
+2. **Max. Distanz (Schieberegler)**
+   - Range: 50 - 300 km
+   - Standard: 150 km
+   - Berechnung: Luftlinie vom Standort
+
+3. **Min. Pistengröße (Schieberegler)**
+   - Range: 10 - 100+ km
+   - Standard: 10 km
+   - Filtert kleine Skigebiete aus
+
+4. **Länder-Filter (Checkboxen)**
+   - DE, AT, CH
+   - Multi-Select
+   - Standard: DE + AT aktiv
+
+5. **Erweiterte Filter (Optional)**
+   - Höhenlage (für Schneesicherheit)
+   - Schwierigkeitsgrad
+   - Preis-Range
+   - Nur geöffnete Gebiete
+
+**Technische Implementierung:**
+
+```javascript
+// Frontend: Filter-Logik
+function filterResorts(resorts, filters, userLocation) {
+  return resorts.filter(resort => {
+    // Fahrzeit-Filter
+    if (filters.maxTravelTime) {
+      const travelTime = calculateTravelTime(userLocation, resort);
+      if (travelTime > filters.maxTravelTime) return false;
+    }
+    
+    // Distanz-Filter
+    if (filters.maxDistance) {
+      const distance = calculateDistance(userLocation, resort);
+      if (distance > filters.maxDistance) return false;
+    }
+    
+    // Pistengröße-Filter
+    if (filters.minPisteKm) {
+      if (resort.piste_km < filters.minPisteKm) return false;
+    }
+    
+    // Länder-Filter
+    if (filters.countries && filters.countries.length > 0) {
+      if (!filters.countries.includes(resort.country)) return false;
+    }
+    
+    return true;
+  });
+}
+
+// Distanz-Berechnung (Haversine-Formel)
+function calculateDistance(point1, point2) {
+  const R = 6371; // Erdradius in km
+  const dLat = toRad(point2.lat - point1.lat);
+  const dLon = toRad(point2.lon - point1.lon);
+  
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(toRad(point1.lat)) * Math.cos(toRad(point2.lat)) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c; // Distanz in km
+}
+```
+
+**LocalStorage für Filter-Einstellungen:**
+```javascript
+// Filter speichern
+localStorage.setItem('resortFilters', JSON.stringify({
+  maxTravelTime: 120,
+  maxDistance: 150,
+  minPisteKm: 10,
+  countries: ['DE', 'AT']
+}));
+
+// Filter laden
+const savedFilters = JSON.parse(localStorage.getItem('resortFilters'));
+```
+
+**Performance-Optimierung:**
+
+1. **Lazy Loading**
+   - Nur sichtbare Skigebiete rendern
+   - Virtuelles Scrolling bei vielen Ergebnissen
+
+2. **Caching**
+   - Distanz-Berechnungen cachen
+   - Traffic-Daten für häufig angefragte Routen
+
+3. **Backend-Filtering**
+   - API-Endpoint: `GET /api/resorts?lat=48.1&lon=11.5&maxDistance=150&minPisteKm=20`
+   - Server-seitige Filterung für bessere Performance
+
+**Rollout-Plan:**
+
+**Phase 1 (Woche 1-2): Deutschland**
+- 50 Skigebiete hinzufügen
+- Parser entwickeln
+- Filter-UI implementieren
+
+**Phase 2 (Woche 3-6): Österreich**
+- 150 Skigebiete hinzufügen
+- Regionale Parser (Tirol, Salzburg, Vorarlberg)
+- Performance-Tests
+
+**Phase 3 (Woche 7-8): Schweiz**
+- 120 Skigebiete hinzufügen
+- Mehrsprachigkeit (DE/FR/IT)
+- CHF-Preise
+
+**Datenquellen für Skigebiets-Listen:**
+- Bergfex.com (Komplette Listen)
+- Skiresort.info (Detaillierte Daten)
+- Wikipedia (Verifizierung)
+- Offizielle Tourismusverbände
+
+**Aufwand:** 15-20 Tage  
+**Dateien:** 
+- `backend/resorts.json` (massiv erweitert)
+- `backend/parsers/*.js` (~300 neue Parser)
+- `js/filters.js` (neu)
+- `index.html` (Filter-UI)
+- `css/filters.css` (neu)
+
+**Abhängigkeiten:** 
+- Bergfex API-Zugang (für Fallback)
+- Erweiterte Datenbank/Storage
+- Performance-Optimierungen
+
+---
+
 ### 🔵 P3 - Low Priority / Ideen
 
 #### BACK-010: Mobile App (PWA)
@@ -775,24 +1137,28 @@ app.post('/admin/validation/submit', async (req, res) => {
 
 ## 📊 Statistik
 
-**Gesamt:** 20 Backlog Items
+**Gesamt:** 21 Backlog Items
 
 **Nach Priorität:**
 - P0 (Critical): 1
 - P1 (High): 8
-- P2 (Medium): 6
+- P2 (Medium): 7
 - P3 (Low): 5
 
 **Nach Status:**
-- 🔴 Nicht implementiert: 17
+- 🔴 Nicht implementiert: 18
 - 🟡 Teilweise implementiert: 3
 - 🟢 Implementiert: 0
 
-**Geschätzter Gesamtaufwand:** 95-137 Tage
+**Geschätzter Gesamtaufwand:** 110-157 Tage
 
 ---
 
 ## 🔄 Changelog
+
+### 2026-01-06 (Update 4)
+- BACK-021 hinzugefügt: Skigebiets-Expansion (DE/AT/CH) mit dynamischen Filtern
+- Gesamt: 21 Items
 
 ### 2026-01-06 (Update 3)
 - BACK-019 hinzugefügt: Alternative APIs und Parser-Fallbacks

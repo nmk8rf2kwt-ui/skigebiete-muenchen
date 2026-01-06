@@ -1,5 +1,6 @@
 import * as cheerio from "cheerio";
 import { fetchWithHeaders } from "../utils/fetcher.js";
+import { createResult } from "../utils/parserUtils.js";
 
 export default async function parseLermoos() {
     const url = "https://www.bergbahnen-langes.at/winter/anlagen-pisten/";
@@ -12,11 +13,10 @@ export default async function parseLermoos() {
         const html = await response.text();
         const $ = cheerio.load(html);
 
-        let liftsOpen = 0;
-        let liftsTotal = 0;
+        const lifts = [];
+        const slopes = [];
 
         // Select rows in the table
-        // The specific selector found was section.ampelsystem table.pure-table tbody tr
         $("section.ampelsystem table.pure-table, table.pure-table").find("tbody tr").each((i, el) => {
             const tds = $(el).find("td");
             if (tds.length >= 3) {
@@ -29,24 +29,41 @@ export default async function parseLermoos() {
                 const imgTitle = img.attr("title") || "";
 
                 if (name) {
-                    liftsTotal++;
-                    // Check for "on.svg" in src or "offen" in title
+                    // Determine status
+                    let status = "unknown";
                     if (imgSrc.includes("on.svg") || imgTitle.toLowerCase().includes("offen")) {
-                        liftsOpen++;
+                        status = "open";
+                    } else if (imgSrc.includes("off.svg") || imgTitle.toLowerCase().includes("geschlossen")) {
+                        status = "closed";
+                    }
+
+                    // Determine if lift or slope
+                    const nameLower = name.toLowerCase();
+                    if (nameLower.includes("bahn") || nameLower.includes("lift") || nameLower.includes("sessellift")) {
+                        lifts.push({ name, status });
+                    } else if (nameLower.includes("piste") || nameLower.includes("abfahrt")) {
+                        slopes.push({ name, status });
+                    } else {
+                        // Default to lift
+                        lifts.push({ name, status });
                     }
                 }
             }
         });
 
-        return {
+        const liftsOpen = lifts.filter(l => l.status === "open").length;
+        const liftsTotal = lifts.length;
+
+        return createResult("lermoos", {
             liftsOpen,
             liftsTotal,
-            snow: null, // Snow depth not easily available in this table
-            weather: null,
-            lastUpdated: new Date().toISOString()
-        };
+            lifts,
+            slopes
+        }, "bergbahnen-langes.at");
     } catch (error) {
         console.error("Error parsing Lermoos:", error);
-        return null;
+        throw error;
     }
 }
+
+export const parse = parseLermoos;
