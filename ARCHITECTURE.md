@@ -39,6 +39,7 @@
     *   Caching layer (in-memory).
     *   Scheduler for fetching weather and snow data.
     *   Saving daily history snapshots.
+    *   **Traffic Calculation**: Handles `POST /api/traffic/calculate` to fetch matrix data from OpenRouteService.
 *   **`parsers/`**: Contains the logic to extract data for each resort. Each file exports a function that returns standardization data (`liftsOpen`, `snow`, `weather`).
 *   **`resorts.json`**: The "Source of Truth" for static data (Names, IDs, coordinates, URLs, Base Prices).
     *   **New**: Supports `priceDetail` object for Adult/Youth/Child breakdown.
