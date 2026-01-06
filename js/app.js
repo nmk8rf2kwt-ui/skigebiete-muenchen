@@ -132,13 +132,6 @@ function exportToCsv() {
   document.body.removeChild(link);
 }
 
-// Munich Marienplatz coordinates (default)
-const MUNICH_DEFAULT = {
-  latitude: 48.1351,
-  longitude: 11.5820,
-  name: "München Innenstadt"
-};
-
 async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
   try {
     const res = await fetch(`${API_BASE_URL}/traffic/calculate`, {
