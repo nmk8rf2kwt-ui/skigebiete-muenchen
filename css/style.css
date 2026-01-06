@@ -5,6 +5,13 @@ body {
   background: #f4f6f9;
   margin: 0;
   padding: 16px;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 h1 {
@@ -15,6 +22,8 @@ h1 {
   padding: 16px 0;
   /* Increased padding to maintain spacing without margin transparency */
   z-index: 1000;
+  max-width: 100%;
+  width: 100%;
 }
 
 .meta {
@@ -32,6 +41,35 @@ h1 {
   padding: 8px 0 16px 0;
   /* Padding bottom covers space to table header */
   z-index: 900;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* ================= Search Container ================= */
+
+.search-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.search-container input {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.search-container button {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 /* ================= Sort Mobile ================= */
@@ -524,6 +562,11 @@ tr.unavailable small {
 .tooltip-container {
   position: relative;
   cursor: help;
+  white-space: nowrap;
+}
+
+.tooltip-container:hover .tooltip-content {
+  display: block;
 }
 
 .tooltip-content {
@@ -538,12 +581,14 @@ tr.unavailable small {
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 200px;
-  z-index: 1000;
+  z-index: 1001;
   font-weight: normal;
   text-align: left;
   font-size: 0.9em;
   line-height: 1.4;
-  transition: transform 0.2s;
+  transition: opacity 0.2s;
+  white-space: normal;
+  margin-top: 4px;
 }
 
 .details-btn:hover {
