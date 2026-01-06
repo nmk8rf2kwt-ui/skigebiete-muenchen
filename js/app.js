@@ -236,20 +236,34 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
     showUserLocation(lat, lon);
 
     // 2. Update resorts with traffic data
+    // Note: OpenRouteService Matrix API (free) usually returns "driving times based on speed limits", 
+    // effectively "Standard Time without Traffic". Real-time traffic is not included in standard ORS Matrix.
+
+    const isDefaultLocation = locationName === "München Innenstadt" || locationName === "München"; // Basic check
+
     const updatedResorts = currentResorts.map(resort => {
       const data = trafficMap[resort.id];
       if (data) {
+        // If we are searching from a NEW location (not the default Munich one),
+        // we must update the "Standard Travel Time" (distance) because the static JSON value 
+        // (e.g. 60min from Munich) is irrelevant for Stuttgart.
+        // For custom locations, Standard Time = Calculated Time (approx).
+
+        const newStandardTime = isDefaultLocation ? resort.distance : data.duration;
+
         return {
           ...resort,
+          distance: newStandardTime, // Update Standard Time if custom location
           traffic: {
-            duration: data.duration, // minutes (current time with traffic)
-            distanceKm: data.distanceKm // km as string
+            duration: data.duration, // Current Time (from API)
+            distanceKm: data.distanceKm, // km
+            loading: false
           }
         };
       }
       return {
         ...resort,
-        traffic: null // No traffic data available
+        traffic: null
       };
     });
 

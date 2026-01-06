@@ -124,16 +124,27 @@ export function renderRow(row, data) {
   const hasLive = data.status === "live";
 
   // Format price
-  let price = data.price ? `€${data.price.toFixed(2)}` : "-";
+  // Format price
+  let price = "-";
+
   if (data.priceDetail) {
     const pd = data.priceDetail;
-    const info = `
-Erwachsene: ${pd.currency}${pd.adult.toFixed(2)}
-Jugend: ${pd.currency}${pd.youth.toFixed(2)}
-Kinder: ${pd.currency}${pd.child.toFixed(2)}
-${pd.info || ""}
-`.trim();
-    price += ` <span title="${info}" style="cursor: help; margin-left: 2px;">ℹ️</span>`;
+    const cur = pd.currency || "€";
+    const fmt = (v) => v ? v.toFixed(2).replace('.', ',') + ' ' + cur : null;
+
+    const pAdult = fmt(pd.adult);
+    const pYouth = fmt(pd.youth);
+    const pChild = fmt(pd.child);
+
+    price = `
+      <a href="${data.website}" target="_blank" style="text-decoration: none; color: inherit; display: block; font-size: 0.8em; line-height: 1.3; text-align: left;" title="${pd.info || 'Zur Preisübersicht'}">
+        ${pAdult ? `<div style="white-space: nowrap;">Erw.: ${pAdult}</div>` : ''}
+        ${pYouth ? `<div style="white-space: nowrap;">Jugendl.: ${pYouth}</div>` : ''}
+        ${pChild ? `<div style="white-space: nowrap;">Kind: ${pChild}</div>` : ''}
+      </a>
+    `;
+  } else if (data.price) {
+    price = `€${data.price.toFixed(2)}`;
   }
 
   // Format lifts

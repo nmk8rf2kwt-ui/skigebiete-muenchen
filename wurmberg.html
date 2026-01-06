@@ -1,0 +1,1703 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wurmberg Seilbahn – Winter-Infos</title>
+<meta name="robots" content="noindex,nofollow">
+
+<style>
+  * { box-sizing: border-box; }
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    line-height:1.45;
+    color:#111;
+    background: url("img/bg.jpg") center/cover no-repeat fixed;
+  }
+  .overlay{ background: rgba(250,250,250,.88); min-height:100vh; }
+  .wrap{ max-width:1040px; margin:0 auto; padding:16px; }
+
+  .logo-wrap{ display:flex; justify-content:center; padding:18px 0 8px; }
+  .logo-wrap img{
+    width: min(170px, 60vw);
+    height:auto;
+    display:block;
+  }
+
+  .nav{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin: 6px 0 12px; }
+  .nav a{
+    text-decoration:none;
+    padding:8px 12px;
+    border:1px solid #ddd;
+    border-radius:999px;
+    color:#111;
+    background:#fff;
+    font-size:14px;
+  }
+
+  .hero{
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:14px;
+    padding:14px;
+    margin: 0 0 12px;
+  }
+  .muted{ color:#666; }
+  .small{ font-size:13px; }
+
+  .social-bar{
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:14px;
+    padding:12px 14px;
+    margin: 0 0 18px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .social-bar .label{
+    font-size:14px;
+    color:#333;
+    margin-right:6px;
+  }
+  .social-link{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    border:1px solid #e5e5e5;
+    border-radius:12px;
+    text-decoration:none;
+    color:#111;
+    background:#fafafa;
+  }
+  .social-link:focus, .social-link:hover{ background:#f3f3f3; }
+  .social-icon{ width:22px; height:22px; display:block; }
+  .social-text{ font-size:14px; font-weight:600; white-space:nowrap; }
+
+  main.grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:12px;
+  }
+  @media (min-width: 980px){
+    main.grid{ grid-template-columns: 1fr 1fr; }
+  }
+
+  .card{
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:14px;
+    padding:12px;
+    overflow:hidden;
+    min-width: 0;
+  }
+  .card h2{ margin:0 0 8px; font-size:18px; }
+
+  .content{
+    font-size:14px;
+    min-width:0;
+    overflow-wrap:anywhere;
+  }
+  .content *{ max-width:100%; }
+  .content table{
+    width:100%;
+    border-collapse: collapse;
+    display:table;
+    max-width:100%;
+  }
+  .content td, .content th{
+    border:1px solid #e5e5e5;
+    padding:8px;
+    vertical-align:top;
+  }
+  .content iframe{ max-width:100%; }
+  .content img{ max-width:100%; height:auto; }
+  .content a{ word-break: break-word; }
+
+  .subhead{
+    margin: 0 0 10px;
+    font-size: 16px;
+  }
+  .winter-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  @media (min-width: 700px){
+    .winter-grid{ grid-template-columns: 1fr 1fr; }
+  }
+  .zoomable{
+    display:block;
+    border:1px solid #e5e5e5;
+    border-radius:12px;
+    overflow:hidden;
+    background:#fafafa;
+  }
+  .zoomable img{
+    display:block;
+    width:100%;
+    height:auto;
+  }
+
+  .simple-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top: 12px;
+  }
+  .simple-table th, .simple-table td{
+    border:1px solid #e5e5e5;
+    padding:8px;
+  }
+  .simple-table th{
+    background: rgba(0,0,0,0.04);
+    text-align:left;
+  }
+
+  .lightbox{
+    position:fixed;
+    inset:0;
+    background: rgba(0,0,0,.75);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding: 18px;
+    z-index: 9999;
+  }
+  .lightbox.is-open{ display:flex; }
+  .lightbox-inner{
+    max-width: min(1100px, 95vw);
+    max-height: 90vh;
+    position: relative;
+  }
+  .lightbox-inner img{
+    display:block;
+    max-width: 95vw;
+    max-height: 90vh;
+    width:auto;
+    height:auto;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.35);
+    background:#fff;
+  }
+  .lightbox-close{
+    position:absolute;
+    top: -12px;
+    right: -12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.35);
+    background: rgba(0,0,0,.45);
+    color: #fff;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 36px;
+  }
+
+  .parking-box{
+    border-radius:14px;
+    padding:12px;
+    border:1px solid #ddd;
+    margin: 0 0 12px;
+  }
+  .parking-box h2{ margin:0 0 6px; font-size:16px; }
+  .parking-box p{ margin:6px 0; }
+
+  .parking-box.blue { background: rgba(0, 120, 255, 0.10); }
+  .parking-box.lightgreen { background: rgba(100, 200, 100, 0.12); }
+  .parking-box.green { background: rgba(0, 170, 80, 0.12); }
+  .parking-box.yellowgreen { background: rgba(170, 200, 60, 0.14); }
+  .parking-box.yellow { background: rgba(255, 220, 0, 0.16); }
+  .parking-box.gold { background: rgba(255, 180, 0, 0.16); }
+  .parking-box.orange { background: rgba(255, 140, 0, 0.16); }
+  .parking-box.darkorange { background: rgba(255, 100, 0, 0.16); }
+  .parking-box.orangered { background: rgba(255, 70, 0, 0.16); }
+  .parking-box.red { background: rgba(255, 0, 0, 0.14); }
+  .parking-box.gray { background: rgba(0, 0, 0, 0.06); }
+
+  footer{
+    margin:20px 0 18px;
+    font-size:13px;
+    color:#555;
+    text-align:center;
+  }
+  footer a{ color:inherit; }
+</style>
+</head>
+
+<body>
+<div class="overlay">
+  <div class="wrap">
+
+    <div class="logo-wrap">
+      <img src="img/wbs_logo.svg" alt="Wurmberg Seilbahn">
+    </div>
+
+    <nav class="nav" aria-label="Sprungmarken">
+      <a href="#status">Betrieb</a>
+      <a href="#wetter">Wetter</a>
+      <a href="#webcams">Webcams</a>
+      <a href="#preise">Preise</a>
+      <a href="#gastro">Gastronomie</a>
+      <a href="#anfahrt">Anfahrt</a>
+    </nav>
+
+    <div class="hero">
+      <p>++ Liebe Gäste, die Wurmbergseilbahn ist täglich von 08:45 - 16:30 Uhr in Betrieb.++ Skibetrieb täglich am Hexenritt Schlepplift &amp; Nordliften von 09:00 - 16:00 Uhr. Skifahren über Nordhang, Obere gr. Wurmbergabf.- zur Mittelstation, sowie am Hexenritt möglich. Rodeln am Hexenritt mit Förderband, sowie auf der 1,6 Kilometer langen Rodelbahn ab Mittelstation ins Tal. ++ Nachtskifahren am 07.01. von 17:00 - 21:00 Uhr. ++ Ausführlichere Infos: Instagram &amp; Facebook: wurmbergseilbahn_braunlage ++ Letzte Aktualisierung: 06.01. 09:12 Uhr</p>    </div>
+
+    <div class="social-bar" aria-label="Social Media">
+      <span class="label">Folge uns</span>
+
+      <a class="social-link" href="https://www.facebook.com/p/Wurmbergseilbahn-Braunlage-100092617786010/" target="_blank" rel="noopener noreferrer" aria-label="Wurmbergseilbahn auf Facebook">
+        <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.77l-.44 2.89h-2.33v6.99A10 10 0 0 0 22 12z"/>
+        </svg>
+        <span class="social-text">Facebook</span>
+      </a>
+
+      <a class="social-link" href="https://www.instagram.com/wurmbergseilbahn_braunlage/?hl=de" target="_blank" rel="noopener noreferrer" aria-label="Wurmbergseilbahn auf Instagram">
+        <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4A5.8 5.8 0 0 1 16.2 22H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm8.4 2H7.8A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4z"/>
+          <path fill="currentColor" d="M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+          <path fill="currentColor" d="M17.5 6.6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+        </svg>
+        <span class="social-text">Instagram</span>
+      </a>
+    </div>
+
+    <main class="grid">
+      <section id="status" class="card"><h2>Betrieb &amp; Status</h2><div class="content">
+    <h3 class="subhead">Übersicht Winter</h3>
+    <div class="winter-grid">
+      <a class="zoomable" href="img/winterkarte-1.png" data-lightbox="img/winterkarte-1.png" aria-label="Winterkarte 1 vergrößern">
+        <img src="img/winterkarte-1.png" alt="Übersicht Winterkarte 1" loading="lazy">
+      </a>
+      <a class="zoomable" href="img/winterkarte-2.png" data-lightbox="img/winterkarte-2.png" aria-label="Winterkarte 2 vergrößern">
+        <img src="img/winterkarte-2.png" alt="Übersicht Winterkarte 2" loading="lazy">
+      </a>
+    </div>
+    <p class="muted small">Zum Vergrößern auf ein Bild klicken</p>
+  <div class="ce_table block"><table class="simple-table"><tr><th></th><th>Anzahl</th><th>davon geöffnet</th></tr><tr><td>Lifte</td><td>5</td><td>4</td></tr><tr><td>Pisten</td><td>16</td><td>8</td></tr></table></div></div></section>      <section id="wetter" class="card"><h2>Wetter</h2><div class="content"><div class="inside">
+								
+
+
+<div class="mod_article article_14540 block " id="article-14540">
+
+<div class="container">
+  
+      
+<div class="ce_text block">
+
+            <h2>Wurmbergwetter</h2>
+      
+  
+      <p><strong>Station Braunlage-Wurmberg</strong><br>Breite: 51.76°, Länge: 10.62°, Höhe: 965m</p>
+<p><img loading="lazy" style="float: left; margin-left: auto; margin-top: 15px; margin-right: auto; display: block;" src="http://wetterstationen.meteomedia.de/messnetz/betreiber/cur_037470.png" alt="" width="100" height="460"> <a href="http://wetterstationen.meteomedia.de/messnetz/betreiber/mos_037470.png" data-lightbox=""> <img style="float: left; margin-top: 15px; display: block; margin-left: auto; margin-right: auto;" title="Vorhersagegrafik Wurmberg" src="http://wetterstationen.meteomedia.de/messnetz/betreiber/mos_037470.png" alt="Wetter Wurmberg Copyright MeteoGroup" width="520" height="520"></a></p>  
+  
+  
+
+</div>
+
+<div class="ce_text block">
+
+            <h2>Status</h2>
+      
+  
+      <p><span class="status offen">Geöffnet</span></p>  
+  
+  
+
+</div>
+  
+  
+</div>
+</div>
+
+
+
+							</div></div></section>      <section id="webcams" class="card"><h2>Webcams</h2><div class="content"><div class="inside">
+								
+
+
+<div class="mod_article article_14533 block fullwidth-boxed article-pt article-pb" id="article-14533">
+
+<div class="container">
+  
+      
+<iframe src="//webtv.feratel.com/webtv/?design=v4&amp;cam=3257&amp;c1=0" name="feratel_mediaplayer" width="100%" height="370px" frameborder="0" allowfullscreen=""></iframe>
+
+<div class="ce_text block">
+
+            <h2>Live aus der Wasserwelt</h2>
+      
+  
+      <p><a href="https://www.webcam-profi.de/bilder/wurmberg/wasserwelt.jpg" data-lightbox="lb124546"><img loading="lazy" src="https://www.webcam-profi.de/bilder/wurmberg/wasserwelt.jpg" width="100%"></a></p>  
+  
+  
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_text block">
+
+            <h2>Hexenexpress / FIS-Abfahrt Hexenritt</h2>
+      
+  
+      <p><a href="https://www.webcam-profi.de/bilder/wurmberg/abfahrt.jpg" data-lightbox="lb124546"><img loading="lazy" src="https://www.webcam-profi.de/bilder/wurmberg/abfahrt.jpg" alt="" width="100%"></a></p>  
+  
+  
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_text block">
+
+            <h2>Hexenlift</h2>
+      
+  
+      <p><a href="https://www.webcam-profi.de/bilder/wurmberg/hexenlift.jpg" data-lightbox="lb124546"><img loading="lazy" title="Hexenlift/Hexenritt-Alm" src="https://www.webcam-profi.de/bilder/wurmberg/hexenlift.jpg" alt="Hexenlift/Hexenritt-Alm" width="100%"></a></p>  
+  
+  
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_text block">
+
+            <h2>Blick auf den Brocken</h2>
+      
+  
+      <p><a href="https://www.webcam-profi.de/bilder/wurmberg/brocken.jpg" data-lightbox="lb124546"><img loading="lazy" title="Nordhang / BROCKEN" src="https://www.webcam-profi.de/bilder/wurmberg/brocken.jpg" alt="Nordhang / BROCKEN" width="100%"></a></p>  
+  
+  
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_text block">
+
+            <h2>Unsere Ziegenwelt</h2>
+      
+  
+      <p><a href="https://www.webcam-profi.de/bilder/wurmberg/ziegengehege.jpg" data-lightbox="lb124546"><img loading="lazy" src="https://www.webcam-profi.de/bilder/wurmberg/ziegengehege.jpg" width="100%"></a></p>  
+  
+  
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_text block">
+
+            <h2>Panorama von der Bergstation</h2>
+      
+  
+      <p><a href="https://www.webcam-profi.de/bilder/wurmberg/seilbahn.jpg" data-lightbox="lb124546"><img loading="lazy" src="https://www.webcam-profi.de/bilder/wurmberg/seilbahn.jpg" width="100%"></a></p>  
+  
+  
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_text block">
+
+            <h2>Blick nach Braunlage</h2>
+      
+  
+      <p><a href="http://www.webcam-profi.de/bilder/wurmberg/braunlage.jpg" data-lightbox="lb124546"><img loading="lazy" src="http://www.webcam-profi.de/bilder/wurmberg/braunlage.jpg" width="100%"></a></p>  
+  
+  
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+  
+  
+</div>
+</div>
+
+
+
+							</div></div></section>      <section id="preise" class="card"><h2>Preise</h2><div class="content"><div class="inside">
+								
+
+
+<div class="mod_article article_14539 block " id="article-14539">
+
+<div class="container">
+  
+      
+<div class="ce_text block">
+
+            <h1>PREISE</h1>
+      
+  
+      <h2 class="vorspann">Unsere Eintrittskarten in einen erlebnisreichen Tag</h2>
+<p>Ob alpiner Skifahrer, Snowboarder, Langläufer, Rodler, Familie mit Kindern, Winterwanderer oder Gipfelstauner – wir haben für jeden Gast das passende Ticket. Dank unseres modernen Ticketsystems brauchen Wintersportler nur ein einziges Ticket zu lösen, um sämtliche Anlagen entsprechend des gewählten Tarifs nutzen zu können.</p>
+<p>An den Kassen der <strong>Talstation</strong> der Wurmberg-Seilbahn und am Hexenritt können Sie mit <strong>Bargeld</strong>, <strong>EC-Bankkarten</strong> (Maestro, V-Pay) und <strong>Kreditkarten ( Mastercard, Visa)</strong> bezahlen.</p>
+<p>An den <strong>Ticketautomaten</strong> an der Talstation der Wurmberg-Seilbahn und am Hexenritt können Sie <strong>nur mit </strong><span style="font-weight: 600;">EC-Bankkarten</span> (Maestro, V-Pay) und <span style="font-weight: 600;">Kreditkarten ( Mastercard, Visa)</span> bezahlen.</p>  
+  
+  
+
+</div>
+
+<div class="ce_table table-striped block">
+
+            <h2>Einzel und Rundfahrten</h2>
+      
+  
+  <table id="table_124757">
+    
+          <thead>
+        <tr>
+                      <th class="head_0 col_first unsortable">Gondelbahn</th>
+                      <th class="head_1">Tal ↔️ Mitte <br>
+(Einzelfahrt)</th>
+                      <th class="head_2">Tal ↔️ Berg<br>
+(Einzelfahrt)</th>
+                      <th class="head_3">Tal ➡️ Mitte ➡️ Tal<br>
+(Rundfahrt)</th>
+                      <th class="head_4 col_last">Tal ➡️ Berg ➡️ Tal<br>
+(Rundfahrt)</th>
+                  </tr>
+      </thead>
+    
+    
+    <tbody>
+              <tr class="row_0 row_first odd">
+                                    <th scope="row" class="col_0 col_first">Erwachsene</th>
+                                                <td class="col_1">8,00 €</td>
+                                                <td class="col_2">12,00 €</td>
+                                                <td class="col_3">12,00 €</td>
+                                                <td class="col_4 col_last">19,50 €</td>
+                              </tr>
+              <tr class="row_1 even">
+                                    <th scope="row" class="col_0 col_first">Senioren ab 60 /<br>
+Menschen mit Behinderung*</th>
+                                                <td class="col_1">7,50 €</td>
+                                                <td class="col_2">11,50 €</td>
+                                                <td class="col_3">11,50 €</td>
+                                                <td class="col_4 col_last">18,50 €</td>
+                              </tr>
+              <tr class="row_2 odd">
+                                    <th scope="row" class="col_0 col_first">Jugend (13-17 Jahre) /<br>
+Studenten*</th>
+                                                <td class="col_1">6,00 €</td>
+                                                <td class="col_2">10,00 €</td>
+                                                <td class="col_3">10,00 €</td>
+                                                <td class="col_4 col_last">16,00 €</td>
+                              </tr>
+              <tr class="row_3 even">
+                                    <th scope="row" class="col_0 col_first">Kinder (6-12 Jahre)</th>
+                                                <td class="col_1">5,00 €</td>
+                                                <td class="col_2">9,00 €</td>
+                                                <td class="col_3">9,00 €</td>
+                                                <td class="col_4 col_last">12,50 €</td>
+                              </tr>
+              <tr class="row_4 row_last odd">
+                                    <th scope="row" class="col_0 col_first">Kinder (bis 5 Jahre)</th>
+                                                <td class="col_1">frei</td>
+                                                <td class="col_2">frei</td>
+                                                <td class="col_3">frei</td>
+                                                <td class="col_4 col_last">frei</td>
+                              </tr>
+          </tbody>
+  </table>
+
+
+</div>
+
+<div class="ce_text block">
+
+        
+  
+      <p class="small"><span class="font-size-xxs font-size-xxxxs">Gebühr für - ein Kinderwagen: 1,-€; -einen Hund: 2,– €; - ein Bollerwagen/Fahrrad: 3,- €</span></p>  
+  
+  
+
+</div>
+
+<div class="ce_table table-striped block">
+
+            <h2>GRUPPEN (ab 20 Personen)</h2>
+      
+  
+  <table id="table_124759">
+    
+          <thead>
+        <tr>
+                      <th class="head_0 col_first unsortable">Gondelbahn</th>
+                      <th class="head_1">Tal ↔️ Mitte<br>
+(Einzelfahrt)</th>
+                      <th class="head_2">Tal ↔️ Berg<br>
+(Einzelfahrt)</th>
+                      <th class="head_3">Tal ➡️ Mitte ➡️ Tal<br>
+(Rundfahrt)</th>
+                      <th class="head_4 col_last">Tal ➡️ Berg ➡️ Tal<br>
+(Rundfahrt)</th>
+                  </tr>
+      </thead>
+    
+    
+    <tbody>
+              <tr class="row_0 row_first odd">
+                                    <th scope="row" class="col_0 col_first">Erwachsene</th>
+                                                <td class="col_1">7,50 €</td>
+                                                <td class="col_2">11,50 €</td>
+                                                <td class="col_3">11,50 €</td>
+                                                <td class="col_4 col_last">18,50 €</td>
+                              </tr>
+              <tr class="row_1 even">
+                                    <th scope="row" class="col_0 col_first">Senioren ab 60 /<br>
+Menschen mit Behinderung*</th>
+                                                <td class="col_1">7,00 €</td>
+                                                <td class="col_2">11,00 €</td>
+                                                <td class="col_3">11,00 €</td>
+                                                <td class="col_4 col_last">17,50 €</td>
+                              </tr>
+              <tr class="row_2 odd">
+                                    <th scope="row" class="col_0 col_first">Jugendliche (13-17 Jahre) /<br>
+Studenten*</th>
+                                                <td class="col_1">5,50 €</td>
+                                                <td class="col_2">9,00 €</td>
+                                                <td class="col_3">9,00 €</td>
+                                                <td class="col_4 col_last">15,00 €</td>
+                              </tr>
+              <tr class="row_3 even">
+                                    <th scope="row" class="col_0 col_first">Kinder (6-12 Jahre)</th>
+                                                <td class="col_1">4,50 €</td>
+                                                <td class="col_2">8,00 €</td>
+                                                <td class="col_3">8,50 €</td>
+                                                <td class="col_4 col_last">11,50 €</td>
+                              </tr>
+              <tr class="row_4 row_last odd">
+                                    <th scope="row" class="col_0 col_first">Kinder (bis 5 Jahre)</th>
+                                                <td class="col_1">frei</td>
+                                                <td class="col_2">frei</td>
+                                                <td class="col_3">frei</td>
+                                                <td class="col_4 col_last">frei</td>
+                              </tr>
+          </tbody>
+  </table>
+
+
+</div>
+
+<section class="ce_accordionStart style1 ce_accordion block">
+
+  <div class="toggler">
+    WINTERSPORTKARTEN SAISON 2025/2026  </div>
+
+  <div class="accordion">
+    <div>
+
+<div class="ce_table block">
+
+            <h3>Wintersport (diverse Bahnen/Lifte)</h3>
+      
+  
+  <table id="table_124763">
+    
+          <thead>
+        <tr>
+                      <th class="head_0 col_first unsortable"> </th>
+                      <th class="head_1">Erwachsene</th>
+                      <th class="head_2">Senioren ( ab 60 Jahre)*</th>
+                      <th class="head_3">Schüler ( 13 bis 17 Jahre) / Studenten*</th>
+                      <th class="head_4">Kinder (6 bis 12 Jahre)</th>
+                      <th class="head_5 col_last">Kinder (bis 5 Jahre)</th>
+                  </tr>
+      </thead>
+    
+    
+    <tbody>
+              <tr class="row_0 row_first odd">
+                                    <th scope="row" class="col_0 col_first">3 Stunden</th>
+                                                <td class="col_1">28,00 €</td>
+                                                <td class="col_2">27,00 €</td>
+                                                <td class="col_3">24,00 €</td>
+                                                <td class="col_4">17,00 €</td>
+                                                <td class="col_5 col_last">frei</td>
+                              </tr>
+              <tr class="row_1 even">
+                                    <th scope="row" class="col_0 col_first">4 Stunden</th>
+                                                <td class="col_1">33,00 €</td>
+                                                <td class="col_2">32,00 €</td>
+                                                <td class="col_3">28,00 €</td>
+                                                <td class="col_4">22,00 €</td>
+                                                <td class="col_5 col_last">frei</td>
+                              </tr>
+              <tr class="row_2 odd">
+                                    <th scope="row" class="col_0 col_first">1 Tag</th>
+                                                <td class="col_1">45,00 €</td>
+                                                <td class="col_2">44,00 €</td>
+                                                <td class="col_3">39,00 €</td>
+                                                <td class="col_4">28,00 €</td>
+                                                <td class="col_5 col_last">frei</td>
+                              </tr>
+              <tr class="row_3 row_last even">
+                                    <th scope="row" class="col_0 col_first">2 Tag</th>
+                                                <td class="col_1">79,00 €</td>
+                                                <td class="col_2">77,00 €</td>
+                                                <td class="col_3">65,00 €</td>
+                                                <td class="col_4">46,00 €</td>
+                                                <td class="col_5 col_last">frei</td>
+                              </tr>
+          </tbody>
+  </table>
+
+
+</div>
+
+<div class="ce_table block">
+
+            <h3>Hexenlift (=Schlepplift)</h3>
+      
+  
+  <table id="table_124764">
+    
+          <thead>
+        <tr>
+                      <th class="head_0 col_first unsortable"> </th>
+                      <th class="head_1">Erwachsene</th>
+                      <th class="head_2">Schüler (13 bis 17 Jahre), Studenten*</th>
+                      <th class="head_3">Kinder (6-12 Jahre)</th>
+                      <th class="head_4 col_last">Kinder (bis 5 Jahre)</th>
+                  </tr>
+      </thead>
+    
+    
+    <tbody>
+              <tr class="row_0 row_first odd">
+                                    <th scope="row" class="col_0 col_first">Einzelkarte</th>
+                                                <td class="col_1">3,00 €</td>
+                                                <td class="col_2">2,50 €</td>
+                                                <td class="col_3">2,00 €</td>
+                                                <td class="col_4 col_last">frei</td>
+                              </tr>
+              <tr class="row_1 even">
+                                    <th scope="row" class="col_0 col_first">5er-Karte</th>
+                                                <td class="col_1">14,00 €</td>
+                                                <td class="col_2">10,00 €</td>
+                                                <td class="col_3">8,00 €</td>
+                                                <td class="col_4 col_last">frei</td>
+                              </tr>
+              <tr class="row_2 row_last odd">
+                                    <th scope="row" class="col_0 col_first">10er-Karte</th>
+                                                <td class="col_1">21,00 €</td>
+                                                <td class="col_2">16,00 €</td>
+                                                <td class="col_3">12,00 €</td>
+                                                <td class="col_4 col_last">frei</td>
+                              </tr>
+          </tbody>
+  </table>
+
+
+</div>
+
+<div class="ce_table block">
+
+            <h3>Rodelarena am Hexenritt</h3>
+      
+  
+  <table id="table_124765">
+    
+          <thead>
+        <tr>
+                      <th class="head_0 col_first unsortable"> </th>
+                      <th class="head_1">Erwachsene</th>
+                      <th class="head_2">Schüler (13 bis 17 Jahre), Studenten*</th>
+                      <th class="head_3">Kinder (6-12 Jahre)</th>
+                      <th class="head_4 col_last">Kinder (bis 5 Jahre)</th>
+                  </tr>
+      </thead>
+    
+    
+    <tbody>
+              <tr class="row_0 row_first odd">
+                                    <th scope="row" class="col_0 col_first">Einzelkarte</th>
+                                                <td class="col_1">1,50 €</td>
+                                                <td class="col_2">1,50 €</td>
+                                                <td class="col_3">1,50 €</td>
+                                                <td class="col_4 col_last">frei</td>
+                              </tr>
+              <tr class="row_1 even">
+                                    <th scope="row" class="col_0 col_first">5er-Karte</th>
+                                                <td class="col_1">7,00 €</td>
+                                                <td class="col_2">7,00 €</td>
+                                                <td class="col_3">7,00 €</td>
+                                                <td class="col_4 col_last">frei</td>
+                              </tr>
+              <tr class="row_2 row_last odd">
+                                    <th scope="row" class="col_0 col_first">10er-Karte</th>
+                                                <td class="col_1">13,00 €</td>
+                                                <td class="col_2">13,00 €</td>
+                                                <td class="col_3">13,00 €</td>
+                                                <td class="col_4 col_last">frei</td>
+                              </tr>
+          </tbody>
+  </table>
+
+
+</div>
+
+<div class="ce_text block">
+
+        
+  
+      <p><span class="font-size-xxxxs">Preise in Euro – Irrtümer und Änderungen vorbehalten.</span></p>
+<p><span class="font-size-xxxxs">* mit gültigem Ausweis</span></p>
+<p><span class="font-size-xxxxs">Tickets sind nicht übertragbar. Rückvergütung nur bei Skiunfall. Bei Verlust, Schlechtwetter, Sperrung von Skiabfahrten, Liften und Bahnen, vorzeitiger Abreise usw. besteht kein Anspruch auf Ersatz. Die oben genannten Preise gelten auch, wenn nicht alle Lifte und Bahnen geöffnet sind.</span></p>  
+  
+  
+
+</div>
+
+    </div>
+  </div>
+
+</section>
+
+<div class="ce_text block">
+
+        
+  
+      <p><span class="font-size-xxxxs">Gruppenanfrage bitte an <a href="mailto:info@wurmberg-seilbahn.de">info@wurmberg-seilbahn.de</a></span></p>  
+  
+  
+
+</div>
+
+<div class="ce_text block">
+
+        
+  
+      <p><span class="font-size-xxxxs">Preise in Euro – Irrtümer und Änderungen vorbehalten<br></span><span class="font-size-xxxxs">* mit gültigem Ausweis und ab 70%.</span></p>
+<p><span class="font-size-xxxxs">** Eltern haften für ihre Kinder. Die Fahrkarten sind nur in Verbindung mit der Mitnahme des eigenen Bikes gültig und auf einen Fahrer pro Tag beschränkt. Außerdem haben die Karten ab Kaufdatum eine Saison Gültigkeit und sind ausschließlich in der Sommersaison nutzbar. Kurzfristige Änderungen des Ticketangebots und/oder der Fahrpreise behalten wir uns vor.</span></p>
+<p><span class="font-size-xxxxs">Kinder bis einschließlich 5 Jahre sind an der Seilbahn frei, mit Ausweis und in Begleitung eines zahlenden Erwachsenen.</span></p>  
+  
+  
+
+</div>
+  
+  
+</div>
+</div>
+
+
+
+							</div></div></section>      <section id="gastro" class="card"><h2>Gastronomie</h2><div class="content"><div class="inside">
+								
+
+
+<div class="mod_article article_14552 block " id="article-14552">
+
+<div class="container">
+  
+      
+
+
+      
+<div class="ce_text block">
+
+            <h2>Aussicht und Genuss vereint</h2>
+      
+  
+      <p>Beste Aussichten für Genießer: Der Wurmberg bietet nicht nur ein 360 Grad-Panorama sondern auch ein vielfältiges Gastronomieangebot in gemütlichen Hütten, urigen Gaststuben und auf aussichtstreichen Sonnenterrassen.</p>  
+  
+  
+
+</div>
+
+<div class="autogrid_row">
+
+<div class="column col_6">
+	
+<div class="ce_image block">
+
+        
+  
+  
+<figure class="image_container">
+  
+  
+  
+
+  
+  </figure>
+
+
+
+</div>
+
+	</div>
+
+<div class="column col_1">
+	
+	</div>
+
+<div class="column col_5">
+	
+<div class="ce_text format-p-small block">
+
+        
+  
+      <p>Am Wikingerhafen</p>  
+  
+  
+
+</div>
+
+<h2 class="ce_headline">
+  WikingerImbiss</h2>
+<div class="ce_divider_extended mb-s block version5 align-left">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_list hasIcon style2 block">
+
+        
+  
+  <ul>
+          <li class="first"><span><i class="fa-check fa fa"></i><span>Getränke</span></span></li>
+          <li><span><i class="fa-check fa fa"></i><span>Eis</span></span></li>
+          <li><span><i class="fa-check fa fa"></i><span>Wurmberger in Brötchen</span></span></li>
+          <li class="last"><span><i class="fa-check fa fa"></i><span>Kaffee</span></span></li>
+      </ul>
+
+
+</div>
+<div class="ce_divider_extended mb-s block version3 align-left">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_text block">
+
+        
+  
+      <p>Lage: Am Wikingerhafen direkt am Bergsee</p>  
+  
+  
+
+</div>
+
+	</div>
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="autogrid_row">
+
+<div class="column col_6">
+	
+<div class="ce_image block">
+
+        
+  
+  
+<figure class="image_container">
+  
+  
+  
+
+  
+  </figure>
+
+
+
+</div>
+
+	</div>
+
+<div class="column col_1">
+	
+	</div>
+
+<div class="column col_5">
+	
+<div class="ce_text format-p-small block">
+
+        
+  
+      <p>Auf dem Gipfel des Wurmbergs</p>  
+  
+  
+
+</div>
+
+<h2 class="ce_headline">
+  WURMBERG ALM</h2>
+<div class="ce_divider_extended mb-s block version5 align-left">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_list hasIcon style2 block">
+
+        
+  
+  <ul>
+          <li class="first"><span><i class="fa-check fa fa"></i><span>Knapp 1000 Meter Höhe</span></span></li>
+          <li><span><i class="fa-check fa fa"></i><span>Sonnenterrasse &amp; Biergarten</span></span></li>
+          <li><span><i class="fa-check fa fa"></i><span>400 Außensitzplätze</span></span></li>
+          <li><span><i class="fa-check fa fa"></i><span>220 Sitzplätze in den Innenräumen mit Kaminzimmer</span></span></li>
+          <li class="last"><span><i class="fa-check fa fa"></i><span>Panoramastadel und Clubzimmer</span></span></li>
+      </ul>
+
+
+</div>
+
+<div class="ce_text block">
+
+        
+  
+      <p>Lage: Gipfel des Wurmbergs, 971 m ü. M, direkt neben der Bergstation der Sesselbahn Hexen-Express.<br>Tel.: 05520-721</p>  
+  
+  
+
+</div>
+
+<div class="ce_hyperlink btn-size-small btn-radius-20 mt-xs block">
+
+        
+  
+          <a href="https://www.wurmberg-alm.de" class="hyperlink_txt" title="www.wurmberg-alm.de" target="_blank" rel="noreferrer noopener">www.wurmberg-alm.de</a>
+      
+
+</div>
+
+	</div>
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="autogrid_row">
+
+<div class="column col_6">
+	
+<div class="ce_image block">
+
+        
+  
+  
+<figure class="image_container">
+  
+  
+  
+
+  
+  </figure>
+
+
+
+</div>
+
+	</div>
+
+<div class="column col_1">
+	
+	</div>
+
+<div class="column col_5">
+	
+<div class="ce_text format-p-small block">
+
+        
+  
+      <p>Direkt an der Bergstation der Wurmbergseilbahn</p>  
+  
+  
+
+</div>
+
+<h2 class="ce_headline">
+  GIPFELSTÜRMER</h2>
+<div class="ce_divider_extended mb-s block version5 align-left">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_list hasIcon style2 block">
+
+        
+  
+  <ul>
+          <li class="first"><span><i class="fa-check fa fa"></i><span>962 m ü.n.N</span></span></li>
+          <li><span><i class="fa-check fa fa"></i><span>kleine Speisen und ein breites Getränkesortiment sowie Eis und Süßes</span></span></li>
+          <li><span><i class="fa-check fa fa"></i><span>40 Innen- sowie 100 Terrassenplätze</span></span></li>
+          <li class="last"><span><i class="fa-check fa fa"></i><span>täglich in der Saison von 10.00 - 16.30 Uhr</span></span></li>
+      </ul>
+
+
+</div>
+
+<div class="ce_text block">
+
+        
+  
+      <p>Lage: Gipfel des Wurmbergs, 962 m ü. M, gegenüber der Bergstation der Wurmbergseilbahn.<br>Tel.: 01578-397 52 23</p>  
+  
+  
+
+</div>
+
+	</div>
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="autogrid_row">
+
+<div class="column col_6">
+	
+<div class="ce_image block">
+
+        
+  
+  
+<figure class="image_container">
+  
+  
+  
+
+  
+  </figure>
+
+
+
+</div>
+
+	</div>
+
+<div class="column col_1">
+	
+	</div>
+
+<div class="column col_5">
+	
+<div class="ce_text format-p-small block">
+
+        
+  
+      <p>Unmittelbar an der Mittelstation</p>  
+  
+  
+
+</div>
+
+<h2 class="ce_headline">
+  RODELHAUS</h2>
+<div class="ce_divider_extended mb-s block version5 align-left">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_list hasIcon style2 block">
+
+        
+  
+  <ul>
+          <li class="first"><span><i class="fa-check fa fa"></i><span>Slow Food-Gastronomie mit 70 Sitzplätzen</span></span></li>
+          <li class="last"><span><i class="fa-check fa fa"></i><span>Panoramaterrasse im Außenbereich</span></span></li>
+      </ul>
+
+
+</div>
+
+<div class="ce_text block">
+
+        
+  
+      <p>Lage: 150 Meter nordwestlich der Mittelstation der Wurmberg-Seilbahn auf 740 m ü. M.</p>  
+  
+  
+
+</div>
+
+<div class="ce_hyperlink btn-size-small btn-radius-20 mt-xs block">
+
+        
+  
+          <a href="https://www.das-rodelhaus.de" class="hyperlink_txt" title="www.das-rodelhaus.de" target="_blank" rel="noreferrer noopener">www.das-rodelhaus.de</a>
+      
+
+</div>
+
+	</div>
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="autogrid_row">
+
+<div class="column col_6">
+	
+<div class="ce_image block">
+
+        
+  
+  
+<figure class="image_container">
+  
+  
+  
+
+  
+  </figure>
+
+
+
+</div>
+
+	</div>
+
+<div class="column col_1">
+	
+	</div>
+
+<div class="column col_5">
+	
+<div class="ce_text format-p-small block">
+
+        
+  
+      <p>An der Talstation des Hexenlift</p>  
+  
+  
+
+</div>
+
+<h2 class="ce_headline">
+  Hexenritt Alm</h2>
+<div class="ce_divider_extended mb-s block version5 align-left">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_list hasIcon style2 block">
+
+        
+  
+  <ul>
+          <li class="first"><span><i class="fa-check fa fa"></i><span>ca. 70 Indoorplätze</span></span></li>
+          <li><span><i class="fa-check fa fa"></i><span>ca. 60 Outdoorplätze</span></span></li>
+          <li><span><i class="fa-check fa fa"></i><span>Gastronomische Vollversorgung am Parkplatz Hexenritt</span></span></li>
+          <li class="last"><span><i class="fa-check fa fa"></i><span>Früher bekannt als „Kaffeehorst“</span></span></li>
+      </ul>
+
+
+</div>
+
+<div class="ce_text block">
+
+        
+  
+      <p>Lage: An der Talstation des Hexenlift auf 720 m ü. NN<br>Telefon: 0 55 20 / 999 5520</p>  
+  
+  
+
+</div>
+
+	</div>
+
+</div>
+<div class="ce_divider_extended block version9 align-center">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+  
+
+
+  
+  
+</div>
+</div>
+
+
+
+
+
+
+<div class="mod_article article_14553 block fullwidth-boxed article-pt article-pb" id="article-14553">
+
+<div class="container">
+  
+      
+<div class="autogrid_row">
+
+<div class="column col_6">
+	
+<div class="ce_image block">
+
+        
+  
+  
+<figure class="image_container">
+  
+  
+  
+
+  
+  </figure>
+
+
+
+</div>
+
+	</div>
+
+<div class="column col_1">
+	
+	</div>
+
+<div class="column col_5">
+	
+<div class="ce_text format-p-small block">
+
+        
+  
+      <p><span style="background-color: #ffffff;">An der Talstation des Hexenlift</span></p>  
+  
+  
+
+</div>
+
+<h2 class="ce_headline">
+  Schirmbar</h2>
+<div class="ce_divider_extended mb-s block version5 align-left">
+	
+		
+	<span class="divider-one"></span>
+	<span class="divider-two"></span>
+	<span class="divider-three"></span>
+	
+		
+</div>
+
+
+<div class="ce_list hasIcon style2 block">
+
+        
+  
+  <ul>
+          <li class="first"><span><i class="fa-check fa fa"></i><span>Après-Ski</span></span></li>
+          <li><span><i class="fa-check fa fa"></i><span>Bratwurststand</span></span></li>
+          <li><span><i class="fa-check fa fa"></i><span>Unmittelbar am Parkplatz Hexenritt</span></span></li>
+          <li class="last"><span><i class="fa-check fa fa"></i><span>Betrieben vom Team der Hexenritt Alm</span></span></li>
+      </ul>
+
+
+</div>
+
+<div class="ce_text block">
+
+        
+  
+      <p>Lage: An der Talstation des Hexenlift auf 720 m ü. NN<br>Telefon: 0 55 20 / 999 5520</p>  
+  
+  
+
+</div>
+
+<div class="ce_hyperlink btn-size-small btn-radius-20 mt-xs block">
+
+        
+  
+          <a href="https://hexenritt-alm.com/" class="hyperlink_txt" title="hexenritt-alm.com" target="_blank" rel="noreferrer noopener">hexenritt-alm.com</a>
+      
+
+</div>
+
+	</div>
+
+</div>
+  
+  
+</div>
+</div>
+
+
+
+							</div></div></section>      <section id="anfahrt" class="card"><h2>Anfahrt &amp; Parken</h2><div class="content">
+  <div class="parking-box blue">
+    <h2>🅿️ Parkplatzbelegung: Hexenritt</h2>
+    <p>🚀 Super viele freie Plätze - Viel Spaß am Hexenritt!</p>
+    <p>Belegung: <strong>ca. 5%</strong></p>
+  </div><div class="inside">
+								
+
+
+<div class="mod_article article_14559 block " id="article-14559">
+
+<div class="container">
+  
+      
+<div class="ce_text block">
+
+            <h1>Ihr Weg zum Wurmberg</h1>
+      
+  
+      <p>___________________</p>
+<p class="p1" style="margin: 12px 0px 0px 13px; text-indent: -13px; font-stretch: normal; line-height: normal; font-size-adjust: none; font-kerning: auto; font-variant-alternates: normal; font-variant-ligatures: normal; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-position: normal; font-feature-settings: normal; font-optical-sizing: auto; font-variation-settings: normal; color: #0e0e0e;"><span class="Apple-tab-span" style="white-space: pre;"> </span>•<span class="Apple-tab-span" style="white-space: pre;"> </span><strong>Mit dem Auto:</strong> Die Wurmbergseilbahn erreichen Sie über die B4, die direkt durch Braunlage führt.</p>  
+  
+  
+
+</div>
+
+
+
+
+<div id="leaflet_map_125108" class="ce_openstreetmap block">
+	<!-- indexer::stop -->
+	<p id="privacy_info_125108" class="privacy hidden">Das Laden von OpenStreetMap wurde nicht erlaubt. Bitte ändern Sie die <a class="privacy_optout_click">Datenschutz-Einstellungen</a></p>
+	<!-- indexer::continue -->
+	<div class="ce_leaflet_map_inside" id="gmap_125108" style="height: 350px;"></div>
+</div>
+
+
+<div class="ce_divider_image block align-default">
+	</div>
+
+
+<div class="ce_text block">
+
+        
+  
+      <p><strong><span style="caret-color: #0e0e0e; color: #0e0e0e; text-indent: -13px;">•</span><span class="Apple-tab-span" style="caret-color: #0e0e0e; color: #0e0e0e; text-indent: -13px; white-space: pre;"> </span><span style="caret-color: #0e0e0e; color: #0e0e0e; text-indent: -13px;">Mit öffentlichen Verkehrsmitteln:</span></strong><span style="caret-color: #0e0e0e; color: #0e0e0e; text-indent: -13px;"> Busse aus Bad Harzburg oder Goslar halten an der Haltestelle „Wurmbergseilbahn“, nur wenige Schritte von der Talstation entfernt.</span></p>  
+  
+  
+
+</div>
+<div class="ce_image_extended block frame-no style-default align-center">
+	<div class="ce_image_extended_inside" style="">
+				
+<figure class="image_container">
+      <a href="https://www.wurmberg-seilbahn.de/files/wurmbergseilbahn/img/winter/Parkplatz/Design%20ohne%20Titel-8.png" data-lightbox="">
+  
+  
+
+<img loading="lazy" src="https://www.wurmberg-seilbahn.de/files/wurmbergseilbahn/img/winter/Parkplatz/Design%20ohne%20Titel-8.png" width="1350" height="1350" alt="">
+
+
+      </a>
+  
+  </figure>
+
+			</div>
+</div><div class="ce_divider_image block align-default">
+	</div>
+
+
+<div class="ce_text block">
+
+            <h2>Parkmöglichkeiten an der Wurmberg-Seilbahn</h2>
+      
+  
+      <p class="p1" style="margin: 0px; font-stretch: normal; line-height: normal; font-size-adjust: none; font-kerning: auto; font-variant-alternates: normal; font-variant-ligatures: normal; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-position: normal; font-feature-settings: normal; font-optical-sizing: auto; font-variation-settings: normal; color: #0e0e0e;">Damit Ihr Besuch bei uns ganz entspannt starten kann, stehen Ihnen ausreichend Parkplätze zur Verfügung.</p>
+<p class="p1" style="margin: 0px; font-stretch: normal; line-height: normal; font-size-adjust: none; font-kerning: auto; font-variant-alternates: normal; font-variant-ligatures: normal; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-position: normal; font-feature-settings: normal; font-optical-sizing: auto; font-variation-settings: normal; color: #0e0e0e;"><strong>Wichtig zu wissen:</strong><em> Die Parkplätze werden von der Stadt Braunlage betrieben. Falls es dazu Fragen gibt, wenden Sie sich gerne direkt an die Stadt – für alles rund um die Seilbahn sind wir aber natürlich jederzeit für Sie da!</em></p>  
+  
+  
+
+</div>
+<div class="ce_divider_image block align-default">
+	</div>
+
+
+<div class="ce_text block">
+
+            <h2>Parkplätze an der Talstation</h2>
+      
+  
+      <p>(1.000 Stellplätze ) Zentral &amp; komfortabel</p>  
+  
+  
+
+</div>
+
+<div class="ce_image h-align-center block">
+
+        
+  
+  
+<figure class="image_container">
+  
+  
+
+<img loading="lazy" src="https://www.wurmberg-seilbahn.de/files/wurmbergseilbahn/img/winter/Parkplatz/1.png" width="1920" height="1080" alt="">
+
+
+  
+  </figure>
+
+
+
+</div>
+<div class="ce_divider_image block align-default">
+	</div>
+
+
+<div class="ce_text block">
+
+            <h2>Parkplätze am Hexenritt</h2>
+      
+  
+      <p>(600 Stellplätze) Modern &amp; Benutzerfreundlich</p>  
+  
+  
+
+</div>
+
+<div class="ce_image block">
+
+        
+  
+  
+<figure class="image_container">
+  
+  
+
+<img loading="lazy" src="https://www.wurmberg-seilbahn.de/files/wurmbergseilbahn/img/winter/Parkplatz/2.png" width="1920" height="1080" alt="">
+
+
+  
+  </figure>
+
+
+
+</div>
+<div class="ce_divider_image block align-center">
+	</div>
+
+
+<div class="ce_text block">
+
+            <h2>Wichtig!</h2>
+      
+  
+      <p><strong>AUTOMATISCHE KENNZEICHENERFASSUNG</strong></p>
+<p>Die Stadt Braunlage hat den Parkplatz Hexenritt modern und komfortabel für die Besucher gestaltet: Eine automatische Kennzeichenerfassung sorgt für eine unkomplizierte und zeitgemäße Abwicklung. Sobald Sie die Straße zum Hexenritt hinauffahren, startet die Parkzeitmessung automatisch.</p>
+<p>Gut zu wissen:</p>
+<p><span class="Apple-tab-span" style="white-space: pre;"> </span>•<span class="Apple-tab-span" style="white-space: pre;"> </span>Die erste halbe Stunde Parken ist kostenlos.</p>
+<p><span class="Apple-tab-span" style="white-space: pre;"> </span>•<span class="Apple-tab-span" style="white-space: pre;"> </span>Nach Ablauf der halben Stunde fällt die reguläre Parkgebühr an.</p>
+<p><strong>Wichtiger Hinweis:</strong></p>
+<p><strong>Prüfen Sie vor Ihrer Abfahrt unbedingt am Parkautomaten, wie lange Sie bereits geparkt haben</strong>. Sollte die halbe Stunde überschritten sein, muss die Parkgebühr bezahlt werden. Ein Nichtbezahlen wird als Verstoß gewertet und führt zu einer Gebühr von <strong>45 Euro</strong>, die von der SBB Verwaltung erhoben wird.</p>
+<p> </p>
+<p>Der Parkautomat hilft Ihnen dabei, Ihre Parkzeit zu überprüfen und die Gebühr bequem zu begleichen.</p>
+<p> </p>
+<p>Wir freuen uns auf Ihren Besuch und wünschen Ihnen eine tolle Zeit am Wurmberg!</p>  
+  
+  
+
+</div>
+  
+  
+</div>
+</div>
+
+
+
+							</div></div></section>    </main>
+
+    <footer>
+      <a href="impressum.php">Impressum</a> ·
+      <a href="datenschutz.php">Datenschutz</a>
+    </footer>
+
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <div class="lightbox-inner" role="dialog" aria-modal="true" aria-label="Bild vergrößert">
+    <button class="lightbox-close" type="button" id="lightboxClose" aria-label="Schließen">×</button>
+    <img src="" alt="" id="lightboxImg">
+  </div>
+</div>
+
+<script>
+  (function () {
+    const lb = document.getElementById('lightbox');
+    const img = document.getElementById('lightboxImg');
+    const closeBtn = document.getElementById('lightboxClose');
+
+    function open(src, alt) {
+      img.src = src;
+      img.alt = alt || 'Bild';
+      lb.classList.add('is-open');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+    }
+
+    function close() {
+      lb.classList.remove('is-open');
+      lb.setAttribute('aria-hidden', 'true');
+      img.src = '';
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('click', function (e) {
+      const a = e.target.closest('a[data-lightbox]');
+      if (a) {
+        e.preventDefault();
+        const src = a.getAttribute('data-lightbox') || a.getAttribute('href');
+        const im = a.querySelector('img');
+        const alt = im && im.alt ? im.alt : '';
+        open(src, alt);
+        return;
+      }
+      if (e.target === lb) close();
+    });
+
+    closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lb.classList.contains('is-open')) close();
+    });
+  })();
+</script>
+</body>
+</html>

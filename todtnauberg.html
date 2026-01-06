@@ -1,0 +1,1418 @@
+<!doctype html >
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de"
+      class="">
+<head>
+    <meta charset="utf-8">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    window._currentDevice = 'desktop';
+    window.Parameters = window.Parameters || {
+        HomeUrl: 'http://www.skilifte-todtnauberg.de/',
+        AccountUUID: 'ec67f6f7a96244188e27982dd3aee63d',
+        SystemID: '1AND1_EU_PROD',
+        SiteAlias: '9ad631e198234aa29eaabd7ece9297a9',
+        SiteType: atob('RFVEQU9ORQ=='),
+        PublicationDate: 'Mon Jan 05 22:17:46 UTC 2026',
+        ExternalUid: '7138a5c1-e19d-4db3-b621-66619f41ae02',
+        IsSiteMultilingual: false,
+        InitialPostAlias: '',
+        InitialPostPageUuid: '',
+        InitialDynamicItem: '',
+        DynamicPageInfo: {
+            isDynamicPage: false,
+            base64JsonRowData: 'null',
+        },
+        InitialPageAlias: 'home',
+        InitialPageUuid: '0b5e081cca1349a3938fa5034fdb6066',
+        InitialPageId: '699452574',
+        InitialEncodedPageAlias: 'aG9tZQ==',
+        InitialHeaderUuid: '18ceccdd888d4d4a983ea5e48f6fe5f3',
+        CurrentPageUrl: '',
+        IsCurrentHomePage: true,
+        AllowAjax: false,
+        AfterAjaxCommand: null,
+        HomeLinkText: 'Back To Home',
+        UseGalleryModule: false,
+        CurrentThemeName: 'Layout Theme',
+        ThemeVersion: '500000',
+        DefaultPageAlias: '',
+        RemoveDID: true,
+        WidgetStyleID: null,
+        IsHeaderFixed: false,
+        IsHeaderSkinny: false,
+        IsBfs: true,
+        StorePageAlias: 'null',
+        StorePagesUrls: 'e30=',
+        IsNewStore: 'false',
+        StorePath: '',
+        StoreId: 'null',
+        StoreVersion: 0,
+        StoreBaseUrl: '',
+        StoreCleanUrl: true,
+        StoreDisableScrolling: true,
+        IsStoreSuspended: false,
+        HasCustomDomain: true,
+        SimpleSite: false,
+        showCookieNotification: false,
+        cookiesNotificationMarkup: 'null',
+        translatedPageUrl: '',
+        isFastMigrationSite: false,
+        sidebarPosition: 'NA',
+        currentLanguage: 'de',
+        currentLocale: 'de',
+        NavItems: '{}',
+        errors: {
+            general: 'There was an error connecting to the page.<br/> Make sure you are not offline.',
+            password: 'Incorrect name/password combination',
+            tryAgain: 'Try again'
+        },
+        NavigationAreaParams: {
+            ShowBackToHomeOnInnerPages: true,
+            NavbarSize: 4,
+            NavbarLiveHomePage: 'http://www.skilifte-todtnauberg.de/',
+            BlockContainerSelector: '.dmBody',
+            NavbarSelector: '#dmNav:has(a)',
+            SubNavbarSelector: '#subnav_main'
+        },
+        hasCustomCode: true,
+        planID: '2002',
+        customTemplateId: 'null',
+        siteTemplateId: 'null',
+        productId: 'DM_DIRECT',
+        disableTracking: false,
+        pageType: 'FROM_SCRATCH',
+        isRuntimeServer: true,
+        isInEditor: false,
+        hasNativeStore: false,
+        defaultLang: 'de',
+        hamburgerMigration: null,
+        isFlexSite: false
+    };
+
+    window.Parameters.LayoutID = {};
+    window.Parameters.LayoutID[window._currentDevice] = 6;
+    window.Parameters.LayoutVariationID = {};
+    window.Parameters.LayoutVariationID[window._currentDevice] = 5;
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Injecting site-wide to the head -->
+
+
+
+
+<!-- End Injecting site-wide to the head -->
+
+<!-- Inject secured cdn script -->
+
+
+<!-- ========= Meta Tags ========= -->
+<!-- PWA settings -->
+<script>
+    function toHash(str) {
+        var hash = 5381, i = str.length;
+        while (i) {
+            hash = hash * 33 ^ str.charCodeAt(--i)
+        }
+        return hash >>> 0
+    }
+</script>
+<script>
+    (function (global) {
+    //const cacheKey = global.cacheKey;
+    const isOffline = 'onLine' in navigator && navigator.onLine === false;
+    const hasServiceWorkerSupport = 'serviceWorker' in navigator;
+    if (isOffline) {
+        console.log('offline mode');
+    }
+    if (!hasServiceWorkerSupport) {
+        console.log('service worker is not supported');
+    }
+    if (hasServiceWorkerSupport && !isOffline) {
+        window.addEventListener('load', function () {
+            const serviceWorkerPath = '/runtime-service-worker.js?v=3';
+            navigator.serviceWorker
+                .register(serviceWorkerPath, { scope: './' })
+                .then(
+                    function (registration) {
+                        // Registration was successful
+                        console.log(
+                            'ServiceWorker registration successful with scope: ',
+                            registration.scope
+                        );
+                    },
+                    function (err) {
+                        // registration failed :(
+                        console.log('ServiceWorker registration failed: ', err);
+                    }
+                )
+                .catch(function (err) {
+                    console.log(err);
+                });
+        });
+
+        // helper function to refresh the page
+        var refreshPage = (function () {
+            var refreshing;
+            return function () {
+                if (refreshing) return;
+                // prevent multiple refreshes
+                var refreshkey = 'refreshed' + location.href;
+                var prevRefresh = localStorage.getItem(refreshkey);
+                if (prevRefresh) {
+                    localStorage.removeItem(refreshkey);
+                    if (Date.now() - prevRefresh < 30000) {
+                        return; // dont go into a refresh loop
+                    }
+                }
+                refreshing = true;
+                localStorage.setItem(refreshkey, Date.now());
+                console.log('refereshing page');
+                window.location.reload();
+            };
+        })();
+
+        function messageServiceWorker(data) {
+            return new Promise(function (resolve, reject) {
+                if (navigator.serviceWorker.controller) {
+                    var worker = navigator.serviceWorker.controller;
+                    var messageChannel = new MessageChannel();
+                    messageChannel.port1.onmessage = replyHandler;
+                    worker.postMessage(data, [messageChannel.port2]);
+                    function replyHandler(event) {
+                        resolve(event.data);
+                    }
+                } else {
+                    resolve();
+                }
+            });
+        }
+    }
+})(window);
+</script>
+<!-- Add manifest -->
+<!-- End PWA settings -->
+
+
+
+<link rel="canonical" href="https://www.skilifte-todtnauberg.de/">
+
+<meta id="view" name="viewport" content="initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<!--Add favorites icons-->
+
+<link rel="apple-touch-icon"
+      href="https://cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/Logo_Skilift_57x46.png?Expires=1770243494&Signature=njCwjxI9PVNpfiCAZv2sih4k4RyuIcJ2iEQgWO-SHyelI9D7mvi5I9mrRRDrtDEPHmzJOMuktS4c~JCMcZqgR10OkWXBP~MkY5fACJ1QZGGQ7NaJLseZoej9wXACpc6~~hDUq70qzkRV5MvgjSO2CgyJA0Br5IvSKM~qk2p4eoIyVEcBW66GDB1WjLRug6-1YK-9fwmEN61UyROpBaP8URw0Xpb-9oltwamJ5IJ7TdwrORqgtM~zF1-yy9RjpUN6R7f759qdtccxzylsPkZJgkl2Ih-Cx8WNgZyk5Wfz7rn4Kcst7PROLqLVjVoZ1GB6rZmdbpCNzkDHwJKx9DfTVg__&Key-Pair-Id=K2NXBXLF010TJW"/>
+
+<link rel="icon" type="image/x-icon" href="https://cdn.website-editor.net/9ad631e198234aa29eaabd7ece9297a9/site_favicon_16_1603633993034.ico"/>
+
+<!-- End favorite icons -->
+<link rel="preconnect" href="https://le-cdn.website-editor.net/"/>
+
+
+
+<!-- render the required CSS and JS in the head section -->
+<script id='d-js-dmapi'>
+    window.SystemID = '1AND1_EU_PROD';
+
+    if (!window.dmAPI) {
+        window.dmAPI = {
+            registerExternalRuntimeComponent: function () {
+            },
+            getCurrentDeviceType: function () {
+                return window._currentDevice;
+            },
+            runOnReady: (ns, fn) => {
+                const safeFn = dmAPI.toSafeFn(fn);
+                ns = ns || 'global_' + Math.random().toString(36).slice(2, 11);
+                const eventName = 'afterAjax.' + ns;
+
+                if (document.readyState === 'complete') {
+                    $.DM.events.off(eventName).on(eventName, safeFn);
+                    setTimeout(function () {
+                        safeFn({
+                            isAjax: false,
+                        });
+                    }, 0);
+                } else {
+                    window?.waitForDeferred?.('dmAjax', () => {
+                        $.DM.events.off(eventName).on(eventName, safeFn);
+                        safeFn({
+                            isAjax: false,
+                        });
+                    });
+                }
+            },
+            toSafeFn: (fn) => {
+                if (fn?.safe) {
+                    return fn;
+                }
+                const safeFn = function (...args) {
+                    try {
+                        return fn?.apply(null, args);
+                    } catch (e) {
+                        console.log('function failed ' + e.message);
+                    }
+                };
+                safeFn.safe = true;
+                return safeFn;
+            }
+        };
+    }
+
+    if (!window.requestIdleCallback) {
+        window.requestIdleCallback = function (fn) {
+            setTimeout(fn, 0);
+        }
+    }
+</script>
+
+<!-- loadCSS function header.jsp-->
+
+
+
+
+
+
+<script id="d-js-load-css">
+/**
+ * There are a few <link> tags with CSS resource in them that are preloaded in the page
+ * in each of those there is a "onload" handler which invokes the loadCSS callback
+ * defined here.
+ * We are monitoring 3 main CSS files - the runtime, the global and the page.
+ * When each load we check to see if we can append them all in a batch. If threre
+ * is no page css (which may happen on inner pages) then we do not wait for it
+ */
+(function () {
+  let cssLinks = {};
+  function loadCssLink(link) {
+    link.onload = null;
+    link.rel = "stylesheet";
+    link.type = "text/css";
+  }
+  
+    function checkCss() {
+      const pageCssLink = document.querySelector("[id*='CssLink']");
+      const widgetCssLink = document.querySelector("[id*='widgetCSS']");
+
+        if (cssLinks && cssLinks.runtime && cssLinks.global && (!pageCssLink || cssLinks.page) && (!widgetCssLink || cssLinks.widget)) {
+            const storedRuntimeCssLink = cssLinks.runtime;
+            const storedPageCssLink = cssLinks.page;
+            const storedGlobalCssLink = cssLinks.global;
+            const storedWidgetCssLink = cssLinks.widget;
+
+            storedGlobalCssLink.disabled = true;
+            loadCssLink(storedGlobalCssLink);
+
+            if (storedPageCssLink) {
+                storedPageCssLink.disabled = true;
+                loadCssLink(storedPageCssLink);
+            }
+
+            if(storedWidgetCssLink) {
+                storedWidgetCssLink.disabled = true;
+                loadCssLink(storedWidgetCssLink);
+            }
+
+            storedRuntimeCssLink.disabled = true;
+            loadCssLink(storedRuntimeCssLink);
+
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    storedRuntimeCssLink.disabled = false;
+                    storedGlobalCssLink.disabled = false;
+                    if (storedPageCssLink) {
+                      storedPageCssLink.disabled = false;
+                    }
+                    if (storedWidgetCssLink) {
+                      storedWidgetCssLink.disabled = false;
+                    }
+                    // (SUP-4179) Clear the accumulated cssLinks only when we're
+                    // sure that the document has finished loading and the document 
+                    // has been parsed.
+                    if(document.readyState === 'interactive') {
+                      cssLinks = null;
+                    }
+                }, 0);
+            });
+        }
+    }
+  
+
+  function loadCSS(link) {
+    try {
+      var urlParams = new URLSearchParams(window.location.search);
+      var noCSS = !!urlParams.get("nocss");
+      var cssTimeout = urlParams.get("cssTimeout") || 0;
+
+      if (noCSS) {
+        return;
+      }
+      if (link.href && link.href.includes("d-css-runtime")) {
+        cssLinks.runtime = link;
+        checkCss();
+      } else if (link.id === "siteGlobalCss") {
+        cssLinks.global = link;
+        checkCss();
+      } 
+      
+      else if (link.id && link.id.includes("CssLink")) {
+        cssLinks.page = link;
+        checkCss();
+      } else if (link.id && link.id.includes("widgetCSS")) {
+        cssLinks.widget = link;
+        checkCss();
+      }
+      
+      else {
+        requestIdleCallback(function () {
+          window.setTimeout(function () {
+            loadCssLink(link);
+          }, parseInt(cssTimeout, 10));
+        });
+      }
+    } catch (e) {
+      throw e
+    }
+  }
+  window.loadCSS = window.loadCSS || loadCSS;
+})();
+</script>
+
+
+
+<script data-role="deferred-init" type="text/javascript">
+    /* usage: window.getDeferred(<deferred name>).resolve() or window.getDeferred(<deferred name>).promise.then(...)*/
+    function Def() {
+        this.promise = new Promise((function (a, b) {
+            this.resolve = a, this.reject = b
+        }).bind(this))
+    }
+
+    const defs = {};
+    window.getDeferred = function (a) {
+        return null == defs[a] && (defs[a] = new Def), defs[a]
+    }
+    window.waitForDeferred = function (b, a, c) {
+        let d = window?.getDeferred?.(b);
+        d
+            ? d.promise.then(a)
+            : c && ["complete", "interactive"].includes(document.readyState)
+                ? setTimeout(a, 1)
+                : c
+                    ? document.addEventListener("DOMContentLoaded", a)
+                    : console.error(`Deferred  does not exist`);
+    };
+</script>
+<style id="forceCssIncludes">
+    /* This file is auto-generated from a `scss` file with the same name */
+
+.videobgwrapper{overflow:hidden;position:absolute;z-index:0;width:100%;height:100%;top:0;left:0;pointer-events:none;border-radius:inherit}.videobgframe{position:absolute;width:101%;height:100%;top:50%;left:50%;transform:translateY(-50%) translateX(-50%);object-fit:fill}#dm video.videobgframe{margin:0}@media (max-width:767px){.dmRoot .dmPhotoGallery.newPhotoGallery:not(.photo-gallery-done){min-height:80vh}}@media (min-width:1025px){.dmRoot .dmPhotoGallery.newPhotoGallery:not(.photo-gallery-done){min-height:45vh}}@media (min-width:768px) and (max-width:1024px){.responsiveTablet .dmPhotoGallery.newPhotoGallery:not(.photo-gallery-done){min-height:45vh}}#dm [data-show-on-page-only]{display:none!important}#dmRoot div.stickyHeaderFix div.site_content{margin-top:0!important}#dmRoot div.stickyHeaderFix div.hamburger-header-container{position:relative}
+    
+
+</style>
+<style id="cssVariables" type="text/css">
+    
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Google Fonts Include -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- loadCSS function fonts.jsp-->
+
+
+
+<link type="text/css" rel="stylesheet" href="https://cdn.website-editor.net/fonts/css2?family=Amatic+SC:ital,wght@0,400;0,700&family=Cabin:ital,wght@0,400..700;1,400..700&family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;subset=latin-ext&amp;display=swap"  />
+
+
+
+
+
+<!-- RT CSS Include d-css-runtime-desktop-one-package-structured-global-->
+<link rel="stylesheet" type="text/css" href="https://static-cdn.website-editor.net/mnlt/production/6070/_dm/s/rt/dist/css/d-css-runtime-desktop-one-package-structured-global.min.css" />
+
+<!-- End of RT CSS Include -->
+
+<link type="text/css" rel="stylesheet" href="https://cdn.website-editor.net/WIDGET_CSS/a1f1648f2fe3d40ccd1d73d9f5e1dd25.css" id="widgetCSS" />
+
+<!-- Support `img` size attributes -->
+<style>img[width][height] {
+  height: auto;
+}</style>
+
+<!-- Support showing sticky element on page only -->
+<style>
+  body[data-page-alias="home"] #dm [data-show-on-page-only="home"] {
+    display: block !important;
+  }
+</style>
+
+<!-- This is populated in Ajax navigation -->
+<style id="pageAdditionalWidgetsCss" type="text/css">
+</style>
+
+
+
+
+<!-- Site CSS -->
+<link type="text/css" rel="stylesheet" href="https://cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/files/9ad631e198234aa29eaabd7ece9297a9_withFlex_1.min.css?v=2106&Expires=1770243494&Signature=Qn9OZpy~NTtKPzYF1luufb9k9lBXTJ-GsdI8VDq5CaEciOfC~xQF3w8u8uKzzv2zzYXlkriYMk-MFPDoZK3rxkrDnpqtCuYlU0IvyOwXEcxOzdCar6Z5~vzdJRl56WADiz22HEHsiLKud~AKkvkVsjNJvnU-xH9G~Dwb2CH2XWh0fwoizSrgYeQxjZdInkeHhhuOy2lW4bgVN307FdbUnF-O77eIDIGhI6cudyvTRqx0w1oqekIokp9l-TmG3NEzOA2f42o3ItPiUTLFtOUvHLRa3bfBEEl3RubR4o~1-TsSbcHR8hr9CyqmLWKRsgNWwe18axP2stMi2EWfOkDiKQ__&Key-Pair-Id=K2NXBXLF010TJW" id="siteGlobalCss" />
+
+
+<!-- additional css file per platform -->
+<link
+        type="text/css" rel="stylesheet"
+        href="/_dm/s/rt/css/oneUndOne/1and1-runtime.css?version=2026-01-05T13_50_17"
+/>
+
+
+<style id="customWidgetStyle" type="text/css">
+    
+</style>
+<style id="innerPagesStyle" type="text/css">
+    
+</style>
+
+
+<style
+        id="additionalGlobalCss" type="text/css"
+>
+</style>
+
+<!-- Page CSS -->
+<link type="text/css" rel="stylesheet" href="https://cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/files/9ad631e198234aa29eaabd7ece9297a9_home_withFlex_1.min.css?v=2106&Expires=1770243494&Signature=ferCeDq8QaeCmbT2ZtF8TZm61xYIgB-aK9EPbH1lNs7dir5jyNcoAprn-S6lQPSTtGU04DwNMhk4H6Y2IDsqu2FvulFrjVhDLWrcP~kqgl5XtBSirkysm~NItmJNFLKO3r4IkxRtWtKleIVFMmlOFXz3HTyLiXWEm4LFqFMSCOaMiErGSPfoiLLbYUF~n2iOQ~sLI~HSTHr7KPYWjITqOWtbBgNV3Fs5cJa-2mK1A9Q76wFuexJFM5l9lnIai6Mtqg~tmRc-Y01865PCOKlQP~1AmvY2AHRavACSNyQObalN0sJ9-2Dp5HNjvZVowXfDd9HythayleyVFK1AAk~RuA__&Key-Pair-Id=K2NXBXLF010TJW" id="homeCssLink" />
+
+<style id="pagestyle" type="text/css">
+    
+</style>
+
+<style id="pagestyleDevice" type="text/css">
+    
+</style>
+
+<!-- Flex Sections CSS -->
+
+
+
+
+
+<style id="globalFontSizeStyle" type="text/css">
+    .font-size-22, .size-22, .size-22 > font { font-size: 22px !important; }.font-size-18, .size-18, .size-18 > font { font-size: 18px !important; }.font-size-72, .size-72, .size-72 > font { font-size: 72px !important; }.font-size-24, .size-24, .size-24 > font { font-size: 24px !important; }.font-size-60, .size-60, .size-60 > font { font-size: 60px !important; }.font-size-16, .size-16, .size-16 > font { font-size: 16px !important; }.font-size-12, .size-12, .size-12 > font { font-size: 12px !important; }
+</style>
+<style id="pageFontSizeStyle" type="text/css">
+</style>
+
+
+
+
+<style id="hideAnimFix">
+  .dmDesktopBody:not(.editGrid) [data-anim-desktop]:not([data-anim-desktop='none']), .dmDesktopBody:not(.editGrid) [data-anim-extended] {
+    visibility: hidden;
+  }
+
+  .dmDesktopBody:not(.editGrid) .dmNewParagraph[data-anim-desktop]:not([data-anim-desktop='none']), .dmDesktopBody:not(.editGrid) .dmNewParagraph[data-anim-extended] {
+    visibility: hidden !important;
+  }
+
+
+  #dmRoot:not(.editGrid) .flex-element [data-anim-extended] {
+    visibility: hidden;
+  }
+
+</style>
+
+
+
+
+<style id="fontFallbacks">
+    @font-face {
+  font-family: "Amatic SC Fallback";
+  src: local('Arial');
+  ascent-override: 156.2609%;
+  descent-override: 37.681%;
+  size-adjust: 65.0195%;
+  line-gap-override: 0%;
+ }@font-face {
+  font-family: "Cabin Fallback";
+  src: local('Arial');
+  ascent-override: 101.7818%;
+  descent-override: 26.3684%;
+  size-adjust: 94.8106%;
+  line-gap-override: 0%;
+ }@font-face {
+  font-family: "Helvetica Fallback";
+  src: local('Arial');
+  ascent-override: 77.002%;
+  descent-override: 22.998%;
+  line-gap-override: 0%;
+ }@font-face {
+  font-family: "Open Sans Fallback";
+  src: local('Arial');
+  ascent-override: 101.1768%;
+  descent-override: 27.7323%;
+  size-adjust: 105.6416%;
+  line-gap-override: 0%;
+ }
+</style>
+
+
+<!-- End render the required css and JS in the head section -->
+
+
+
+
+
+
+
+
+
+  <link type="application/rss+xml" rel="alternate" href="https://www.skilifte-todtnauberg.de/feed/rss2"/>
+  <link type="application/atom+xml" rel="alternate" href="https://www.skilifte-todtnauberg.de/feed/atom"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://www.skilifte-todtnauberg.de/"/>
+  <script type="application/ld+json">
+
+
+    {
+        "@context" : "https://schema.org",
+        "@type" : "WebSite",
+        "name" : "Skilifte Todtnauberg",
+        "url" : "https://www.skilifte-todtnauberg.de/"
+    }
+
+
+  </script>
+  <title>
+    
+    skilifte-todtnauberg.de
+  
+  </title>
+  <meta name="description" content="Das Skigebiet Todtnauberg liegt auf der Höhe von 1.000 - 1.400 m üM an der Südseite des Feldbergs. Mitten im südlichen Hochschwarzwald erwarten Sie 5 Liftanlagen, 16 Pistenkilometer und unendliche Weitsicht."/>
+
+  <meta name="twitter:card" content="summary"/>
+  <meta name="twitter:title" content="skilifte-todtnauberg.de"/>
+  <meta name="twitter:description" content="Das Skigebiet Todtnauberg liegt auf der Höhe von 1.000 - 1.400 m üM an der Südseite des Feldbergs. Mitten im südlichen Hochschwarzwald erwarten Sie 5 Liftanlagen, 16 Pistenkilometer und unendliche Weitsicht."/>
+  <meta name="twitter:image" content="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/logo%2Bskilifte-724686d3-1920w.jpg?Expires=1770243494&amp;Signature=WfIt1lu7RYGxgqkToRowswMb6kFyOugJu~uxpJbVYQ7fA8N9nFrtvw8KnNwvnJlKq0I7zbYQX-3DHEOVtsNKq6O8azgn5rRQGeFOW-7jbyp1XKLS87pasO6I1vHWQ4-YfAi9HvqMEcEFf3MLw20UmyDpFrVpewMde1sgIlAloSPWpzzO9Ew81GSh~7vFroLthrKk9hUTcPKXYYcxAiblHWK5CueM8Qsz~evCTFCYmYnivd-e6tRE3AfCZafo0OyM5fKEXqEeYcs3j6m-UCvi9zn~zB0gEIaWF4qcElx8uDaahl0~6YFoyFSvSKBh9HHs0fmjybdmhJiWoGOsyLG-Pg__&amp;Key-Pair-Id=K2NXBXLF010TJW"/>
+  <meta property="og:description" content="Das Skigebiet Todtnauberg liegt auf der Höhe von 1.000 - 1.400 m üM an der Südseite des Feldbergs. Mitten im südlichen Hochschwarzwald erwarten Sie 5 Liftanlagen, 16 Pistenkilometer und unendliche Weitsicht."/>
+  <meta property="og:title" content="skilifte-todtnauberg.de"/>
+  <meta property="og:image" content="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/logo%2Bskilifte-724686d3-1920w.jpg?Expires=1770243494&amp;Signature=WfIt1lu7RYGxgqkToRowswMb6kFyOugJu~uxpJbVYQ7fA8N9nFrtvw8KnNwvnJlKq0I7zbYQX-3DHEOVtsNKq6O8azgn5rRQGeFOW-7jbyp1XKLS87pasO6I1vHWQ4-YfAi9HvqMEcEFf3MLw20UmyDpFrVpewMde1sgIlAloSPWpzzO9Ew81GSh~7vFroLthrKk9hUTcPKXYYcxAiblHWK5CueM8Qsz~evCTFCYmYnivd-e6tRE3AfCZafo0OyM5fKEXqEeYcs3j6m-UCvi9zn~zB0gEIaWF4qcElx8uDaahl0~6YFoyFSvSKBh9HHs0fmjybdmhJiWoGOsyLG-Pg__&amp;Key-Pair-Id=K2NXBXLF010TJW"/>
+
+
+
+
+<!-- SYS- MUFORDFfRVVfUFJPRA== -->
+</head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body id="dmRoot" data-page-alias="home"  class="dmRoot dmDesktopBody fix-mobile-scrolling addCanvasBorder dmResellerSite dmLargeBody responsiveTablet "
+      style="padding:0;margin:0;"
+      
+    >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ========= Site Content ========= -->
+<div id="dm" class='dmwr'>
+    
+    <div class="dm_wrapper standard-var5 widgetStyle-3 standard">
+         <div dmwrapped="true" id="1901957768" class="dm-home-page" themewaschanged="true"> <div dmtemplateid="Hamburger" data-responsive-name="ResponsiveDesktopTopTabletHamburger" class="runtime-module-container dm-bfs dm-layout-home hasAnimations hasStickyHeader dmPageBody d-page-1716942098 inputs-css-clean dmFreeHeader" id="dm-outer-wrapper" data-page-class="1716942098" data-soch="true" data-background-parallax-selector=".dmHomeSection1, .dmSectionParallex"> <div id="dmStyle_outerContainer" class="dmOuter"> <div id="dmStyle_innerContainer" class="dmInner"> <div class="dmLayoutWrapper standard-var dmStandardDesktop"> <div id="site_content"> <div class="p_hfcontainer showOnMedium"> <div id="hamburger-drawer" class="hamburger-drawer layout-drawer" layout="e9d510f4eb904e939c2be8efaf777e6e===header" data-origin="side"> <div class="u_1775605612 dmRespRow" style="text-align: center;" id="1775605612"> <div class="dmRespColsWrapper" id="1919673597"> <div class="u_1887198629 dmRespCol small-12 medium-12 large-12 empty-column" id="1887198629"></div> 
+</div> 
+</div> 
+ <div class="u_1167950747 dmRespRow middleDrawerRow" style="text-align: center;" id="1167950747"> <div class="dmRespColsWrapper" id="1238701738"> <div class="dmRespCol small-12 u_1055029551 medium-12 large-12" id="1055029551"> <nav class="u_1030485948 effect-bottom main-navigation unifiednav dmLinksMenu" role="navigation" layout-main="vertical_nav_layout_2" layout-sub="" data-show-vertical-sub-items="HIDE" id="1030485948" dmle_extension="onelinksmenu" data-element-type="onelinksmenu" data-logo-src="" alt="" data-nav-structure="VERTICAL" wr="true" icon="true" surround="true" adwords="" navigation-id="unifiedNav"> <ul role="menubar" class="unifiednav__container  " data-auto="navigation-pages"> <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0"> <a href="/" class="unifiednav__item  dmNavItemSelected  dmUDNavigationItem_00  " target="" data-target-page-alias="" aria-current="page" data-auto="selected-page"> <span class="nav-item-text " data-link-text="
+         Home
+        " data-auto="page-text-style">Home<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" aria-haspopup="true" data-sub-nav-menu="true" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0"> <a href="/aktuelles-2" class="unifiednav__item  dmUDNavigationItem_010101878864  unifiednav__item_has-sub-nav" target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+         Aktuelles
+        " data-auto="page-text-style">Aktuelles<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+ <ul role="menu" aria-expanded="false" class="unifiednav__container unifiednav__container_sub-nav" data-depth="0" data-auto="sub-pages"> <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="1"> <a href="/aktuelles-2#Schneebericht" class="unifiednav__item  dmUDNavigationItem_01010170611  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+           Schneebericht
+          " data-auto="page-text-style">Schneebericht<span class="icon icon-angle-right"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="1"> <a href="/aktuelles-2#Webcams" class="unifiednav__item  dmUDNavigationItem_010101771716  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+           Webcams
+          " data-auto="page-text-style">Webcams<span class="icon icon-angle-right"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="1"> <a href="/aktuelles-2#Videos" class="unifiednav__item  dmUDNavigationItem_010101785453  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+           Videos
+          " data-auto="page-text-style">Videos<span class="icon icon-angle-right"></span> 
+</span> 
+</a> 
+</li> 
+</ul> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0"> <a href="/pistenplan" class="unifiednav__item  dmUDNavigationItem_010101556114  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+         Pistenplan
+        " data-auto="page-text-style">Pistenplan<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0"> <a href="/preise" class="unifiednav__item  dmUDNavigationItem_01010176960  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+         Preise & Tickets
+        " data-auto="page-text-style">Preise &amp; Tickets<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" aria-haspopup="true" data-sub-nav-menu="true" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0"> <a href="/newpage" class="unifiednav__item  dmUDNavigationItem_010101455913  unifiednav__item_has-sub-nav" target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+         Verpflegung & Skiverleih
+        " data-auto="page-text-style">Verpflegung &amp; Skiverleih<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+ <ul role="menu" aria-expanded="false" class="unifiednav__container unifiednav__container_sub-nav" data-depth="0" data-auto="sub-pages"> <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="1"> <a href="/newpage#Einkehrmoeglichkeiten" class="unifiednav__item  dmUDNavigationItem_010101187251  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+           Einkehrmöglichkeiten
+          " data-auto="page-text-style">Einkehrm&ouml;glichkeiten<span class="icon icon-angle-right"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="1"> <a href="/newpage#SkischuleundSkiverleih" class="unifiednav__item  dmUDNavigationItem_01010174651  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+           Skischule und Skiverleih
+          " data-auto="page-text-style">Skischule und Skiverleih<span class="icon icon-angle-right"></span> 
+</span> 
+</a> 
+</li> 
+</ul> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0" data-hidden-on-mobile="" data-hidden-on-tablet=""> <a href="/faq" class="unifiednav__item  dmUDNavigationItem_010101469846  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+         FAQ
+        " data-auto="page-text-style">FAQ<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+</li> 
+</ul> 
+</nav> 
+</div> 
+</div> 
+</div> 
+ <div class="dmRespRow u_1273996337" style="text-align: center;" id="1273996337"> <div class="dmRespColsWrapper" id="1841290745"> <div class="u_1271130875 dmRespCol small-12 medium-12 large-12" id="1271130875"> <div class="u_1085717581 dmNewParagraph" id="1085717581" style="transition: none;"><div style="text-align: left;"><span style=""><span style=""><font style="color: rgb(255, 255, 255);"><span style="" class="font-size-22 lh-1"><b style=""><span style="font-weight: 700;">Kontakt</span></b></span></font></span></span></div></div> <div class="u_1755055774 dmNewParagraph" id="1755055774"><div><span style="font-size: 20px;"><font style="color: rgb(255, 255, 255);"></font></span></div><div><span style="font-weight: 400;" class="font-size-18 lh-1"><font style="color: rgb(103, 103, 103);"><div style="text-align: left;"><span style="font-weight: inherit;"><font style="">555-555-5555</font></span></div><div style="text-align: left;"><span style="font-weight: inherit;"><font style="">mymail@mailservice.com</font></span></div></font></span></div><div><span style="font-size: 20px;"><font style="color: rgb(255, 255, 255);"></font></span></div></div> <div class="u_1643912538 align-center text-align-center dmSocialHub gapSpacing" id="1643912538" dmle_extension="social_hub" data-element-type="social_hub" wr="true" networks="" icon="true" surround="true" adwords=""> <div class="socialHubWrapper"> <div class="socialHubInnerDiv "> <a href="https://twitter.com/freshersmag" target="_blank" dm_dont_rewrite_url="true" aria-label="twitter" onclick="dm_gaq_push_event &amp;&amp; dm_gaq_push_event(&apos;socialLink&apos;, &apos;click&apos;, &apos;Twitter&apos;)"> <span class="dmSocialTwitter dm-social-icons-twitter oneIcon socialHubIcon style8" aria-hidden="true" data-hover-effect=""></span> 
+</a> 
+ <a href="mailto:Info@skilifte-todtnauberg.de" dm_dont_rewrite_url="true" aria-label="email" onclick="dm_gaq_push_event &amp;&amp; dm_gaq_push_event(&apos;socialLink&apos;, &apos;click&apos;, &apos;Email&apos;)"> <span class="dmSocialEmail dm-social-icons-email oneIcon socialHubIcon style8" aria-hidden="true" data-hover-effect=""></span> 
+</a> 
+ <a href="https://wa.me/+49 76711491" target="_blank" dm_dont_rewrite_url="true" aria-label="whatsapp" onclick="dm_gaq_push_event &amp;&amp; dm_gaq_push_event(&apos;socialLink&apos;, &apos;click&apos;, &apos;Whatsapp&apos;)"> <span class="dmSocialWhatsapp dm-social-icons-whatsapp oneIcon socialHubIcon style8" aria-hidden="true" data-hover-effect=""></span> 
+</a> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+ <div class="layout-drawer-overlay" id="layout-drawer-overlay"></div> 
+</div> 
+ <div class="site_content"> <div id="hamburger-header-container" class="showOnMedium hamburger-header-container p_hfcontainer"> <div id="hamburger-header" class="hamburger-header p_hfcontainer" layout="44dc38f951e9489490b055748e10ba9f===header"> <div class="u_1494686115 dmRespRow" style="text-align: center;" id="1494686115"> <div class="dmRespColsWrapper" id="1484245233"> <div class="dmRespCol small-12 u_1924854895 medium-4 large-4 empty-column content-removed" id="1924854895"></div> 
+ <div class="dmRespCol small-12 medium-4 large-4" id="1009435408"> <div class="u_1284015958 imageWidget align-center" data-element-type="image" data-widget-type="image" id="1284015958" data-binding="W3siYmluZGluZ05hbWUiOiJpbWFnZSIsInZhbHVlIjoic2l0ZV9pbWFnZXMubG9nbyJ9XQ=="> <a href="/" id="1372074936" file="false"><img src="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/logo-2Bskilifte-724686d3-1920w.jpg?Expires=1770243494&Signature=BiTEKG3eWzY8QwdZxTNNEl6r08axEdlE8YaIBZHs7y0im4SpTVfIi9mvhp9IRqINzriVE9d9KSk0xZQqGOPFP5iWO9UFmd9Dq46mfKXJ1hFwP6Zc40tzLnLfU1b7Cx~Rg45EXmKiVvMS~MLNNJW4jdvbeL5FFlUIUSW-9XZSZFLqG5BCHT6PHiMPE7WhkRFdDMkY1keDY45T4mVtUFQKcB6tVkxsRagFMDaPlfNL6iq5XkA4JLLy28UbK~FHRll~6MUXQ6D6wfW4ZhWm8uy6VrymX8OTwG3GmBt1ItXtcj8M83obO8rvfeCtnThGnwhFmwQNO9cVS4OQiT4YThN2gQ__&Key-Pair-Id=K2NXBXLF010TJW" id="1260266687" class="" data-dm-image-path="https://cdn.website-editor.net/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/logo-2Bskilifte-724686d3.jpg" data-diy-image="" alt="" onerror="handleImageLoadError(this)"/></a> 
+</div> 
+</div> 
+ <div class="dmRespCol small-12 medium-4 large-4 empty-column" id="1593473693"></div> 
+</div> 
+</div> 
+</div> 
+</div> 
+ <button class="showOnMedium layout-drawer-hamburger hamburger-on-header" id="layout-drawer-hamburger" aria-label="menu" aria-controls="hamburger-drawer" aria-expanded="false"> <span class="hamburger__slice"></span> 
+ <span class="hamburger__slice"></span> 
+ <span class="hamburger__slice"></span> 
+</button> 
+ <div class="dmHeaderContainer fHeader d-header-wrapper showOnLarge"> <div id="hcontainer" class="u_hcontainer dmHeader p_hfcontainer" freeheader="true" layout="7f3c1de367df47d5b45ab63d33101c7b===header" data-scrollable-target="body" data-scrollable-target-threshold="1" data-scroll-responder-id="1" logo-size-target="80%"> <div dm:templateorder="85" class="dmHeaderResp dmHeaderStack noSwitch" id="1709005236"> <div class="u_1825077152 dmRespRow fullBleedChanged fullBleedMode" id="1825077152"> <div class="dmRespColsWrapper" id="1353832771"> <div class="u_1581787464 dmRespCol small-12 large-2 medium-2" id="1581787464"> <div class="u_1188882928 imageWidget align-center" data-element-type="image" data-widget-type="image" id="1188882928"> <a id="1598852617" href="/" file="false"><img src="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/Logo_Skilift_png-1920w.png?Expires=1770243494&Signature=At8cfvEfEaHfr4TfGsOsMnBXyGXEdgDCxGfbf5EHRIEpkTFQw~n79PIJ4csmwo5fuq665pE3-rfVXTb8Ch-NY0YS0bnFpf0DwQBz~mis7IZ5WxHnclu3CR5mkkgcV4yKE1u5jL3ZqOW~czhEvq-BbUU7I-aEdVAE~E~cLtcN8vFmgaLKFSXqcDvvZlwpzr7JK25jwMiySMBu3MOoA0FhPPBkrDLDQ21QaeNeDOjnVIaq2sLVjzY1SiW9dMHomuPRhtgqTjVVeRm2dWu6NkUtYn8DQaokOO68hUjUlqK9~rjJ4SnpfJHUUVndIbSXUXngZ-qs3aFG2CzDHlzqa27miQ__&Key-Pair-Id=K2NXBXLF010TJW" alt="" id="1885506715" class="" data-dm-image-path="https://cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/Logo_Skilift_png.png" onerror="handleImageLoadError(this)"/></a> 
+</div> 
+</div> 
+ <div class="u_1632642327 dmRespCol small-12 large-10 medium-10" id="1632642327"> <nav class="u_1763307736 effect-text-color main-navigation unifiednav dmLinksMenu" role="navigation" layout-main="horizontal_nav_layout_2" layout-sub="submenu_horizontal_2" data-show-vertical-sub-items="HOVER" id="1763307736" dmle_extension="onelinksmenu" data-element-type="onelinksmenu" data-nav-structure="HORIZONTAL" wr="true" icon="true" surround="true" adwords="" navigation-id="unifiedNav"> <ul role="menubar" class="unifiednav__container  " data-auto="navigation-pages"> <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0"> <a href="/" class="unifiednav__item  dmNavItemSelected  dmUDNavigationItem_00  " target="" data-target-page-alias="" aria-current="page" data-auto="selected-page"> <span class="nav-item-text " data-link-text="
+         Home
+        " data-auto="page-text-style">Home<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" aria-haspopup="true" data-sub-nav-menu="true" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0"> <a href="/aktuelles-2" class="unifiednav__item  dmUDNavigationItem_010101878864  unifiednav__item_has-sub-nav" target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+         Aktuelles
+        " data-auto="page-text-style">Aktuelles<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+ <ul role="menu" aria-expanded="false" class="unifiednav__container unifiednav__container_sub-nav" data-depth="0" data-auto="sub-pages"> <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="1"> <a href="/aktuelles-2#Schneebericht" class="unifiednav__item  dmUDNavigationItem_01010170611  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+           Schneebericht
+          " data-auto="page-text-style">Schneebericht<span class="icon icon-angle-right"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="1"> <a href="/aktuelles-2#Webcams" class="unifiednav__item  dmUDNavigationItem_010101771716  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+           Webcams
+          " data-auto="page-text-style">Webcams<span class="icon icon-angle-right"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="1"> <a href="/aktuelles-2#Videos" class="unifiednav__item  dmUDNavigationItem_010101785453  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+           Videos
+          " data-auto="page-text-style">Videos<span class="icon icon-angle-right"></span> 
+</span> 
+</a> 
+</li> 
+</ul> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0"> <a href="/pistenplan" class="unifiednav__item  dmUDNavigationItem_010101556114  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+         Pistenplan
+        " data-auto="page-text-style">Pistenplan<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0"> <a href="/preise" class="unifiednav__item  dmUDNavigationItem_01010176960  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+         Preise & Tickets
+        " data-auto="page-text-style">Preise &amp; Tickets<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" aria-haspopup="true" data-sub-nav-menu="true" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0"> <a href="/newpage" class="unifiednav__item  dmUDNavigationItem_010101455913  unifiednav__item_has-sub-nav" target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+         Verpflegung & Skiverleih
+        " data-auto="page-text-style">Verpflegung &amp; Skiverleih<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+ <ul role="menu" aria-expanded="false" class="unifiednav__container unifiednav__container_sub-nav" data-depth="0" data-auto="sub-pages"> <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="1"> <a href="/newpage#Einkehrmoeglichkeiten" class="unifiednav__item  dmUDNavigationItem_010101187251  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+           Einkehrmöglichkeiten
+          " data-auto="page-text-style">Einkehrm&ouml;glichkeiten<span class="icon icon-angle-right"></span> 
+</span> 
+</a> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="1"> <a href="/newpage#SkischuleundSkiverleih" class="unifiednav__item  dmUDNavigationItem_01010174651  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+           Skischule und Skiverleih
+          " data-auto="page-text-style">Skischule und Skiverleih<span class="icon icon-angle-right"></span> 
+</span> 
+</a> 
+</li> 
+</ul> 
+</li> 
+ <li role="menuitem" class=" unifiednav__item-wrap " data-auto="more-pages" data-depth="0" data-hidden-on-mobile="" data-hidden-on-tablet=""> <a href="/faq" class="unifiednav__item  dmUDNavigationItem_010101469846  " target="" data-target-page-alias=""> <span class="nav-item-text " data-link-text="
+         FAQ
+        " data-auto="page-text-style">FAQ<span class="icon icon-angle-down"></span> 
+</span> 
+</a> 
+</li> 
+</ul> 
+</nav> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+ <div class="stickyHeaderSpacer" id="stickyHeaderSpacer" data-new="true"></div> 
+ <div dmwrapped="true" id="dmFirstContainer" class="dmBody u_dmStyle_template_home dm-home-page" themewaschanged="true"> <div id="allWrapper" class="allWrapper"><!-- navigation placeholders --> <div id="dm_content" class="dmContent" role="main"> <div dm:templateorder="170" class="dmHomeRespTmpl mainBorder dmRespRowsWrapper dmFullRowRespTmpl" id="1716942098"> <div class="u_1556338500 dmRespRow dmDividerRow dmSectionNoParallax fullBleedChanged fullBleedMode hasExtraLayerOverlay relativePos" id="1556338500" data-video-bg="eyJzcmMiOiJodHRwczovL3ZpZC1jZG4ud2Vic2l0ZS1lZGl0b3IubmV0L3MvOWFkNjMxZTE5ODIzNGFhMjllYWFiZDdlY2U5Mjk3YTkvdmlkZW9zLzFSaFFFRjNaVGlDMDhpVzdsVHJLX1QtQmVyZ19Ta2ktdi5tcDQ/RXhwaXJlcz0xNzcwMjQzNDk0JlNpZ25hdHVyZT1iZUszMVdxakdpc0dTVzd+Vn5uZ2RoMTQ4bUNpaUZ+TDN6N0VlRUpLYjJmdDZyckJoMjFrTmVuZjAxeTE1dE50dHNVbnU3d3ZhMFhyZjNxZlJKWDFuQ1JYNWE0REM0NXl2VVJWaFdJZTR4Z35vSG5qaXNrVlpOeVU2SzBWTmxibG1ofkMzZXpZT0NoaVlybVppcVhDbUJSdTVteHhUbVFxTWV1amlxOHBzOHpxTllVM0g0bFEyQ0x3RDUyTnIxT3lVdVR+TWdVc0xoMkt3NEhES0Nlb3A2cDlTWGM1QUwtSWI5UkdiTmNyMThsNlBLV3R2NzhjVmhpb3U5dEZNclgtckFETEZLbE5Uc3gyRWF5ME5zR3pqNlFIaWVFNzNzbVZkTVhDakwtRFlmM1JPczNaQWJyT2Vma1FheWRoOUFhQlo1eGNNQVNjNVlHajJKZE1rNlY1LWdfXyZLZXktUGFpci1JZD1LMk5YQlhMRjAxMFRKVyIsImlkIjoiaHR0cHM6Ly92aWQtY2RuLndlYnNpdGUtZWRpdG9yLm5ldC9zLzlhZDYzMWUxOTgyMzRhYTI5ZWFhYmQ3ZWNlOTI5N2E5L3ZpZGVvcy8xUmhRRUYzWlRpQzA4aVc3bFRyS19ULUJlcmdfU2tpLXYubXA0P0V4cGlyZXM9MTc3MDI0MzQ5NCZTaWduYXR1cmU9YmVLMzFXcWpHaXNHU1c3flZ+bmdkaDE0OG1DaWlGfkwzejdFZUVKS2IyZnQ2cnJCaDIxa05lbmYwMXkxNXROdHRzVW51N3d2YTBYcmYzcWZSSlgxbkNSWDVhNERDNDV5dlVSVmhXSWU0eGd+b0huamlza1ZaTnlVNkswVk5sYmxtaH5DM2V6WU9DaGlZcm1aaXFYQ21CUnU1bXh4VG1RcU1ldWppcThwczh6cU5ZVTNINGxRMkNMd0Q1Mk5yMU95VXVUfk1nVXNMaDJLdzRIREtDZW9wNnA5U1hjNUFMLUliOVJHYk5jcjE4bDZQS1d0djc4Y1ZoaW91OXRGTXJYLXJBRExGS2xOVHN4MkVheTBOc0d6ajZRSGllRTczc21WZE1YQ2pMLURZZjNST3MzWkFick9lZmtRYXlkaDlBYUJaNXhjTUFTYzVZR2oySmRNazZWNS1nX18mS2V5LVBhaXItSWQ9SzJOWEJYTEYwMTBUSlciLCJwcm92aWRlciI6ImNkbiIsImVtYmVkIjoiaHR0cHM6Ly92aWQtY2RuLndlYnNpdGUtZWRpdG9yLm5ldC9zLzlhZDYzMWUxOTgyMzRhYTI5ZWFhYmQ3ZWNlOTI5N2E5L3ZpZGVvcy8xUmhRRUYzWlRpQzA4aVc3bFRyS19ULUJlcmdfU2tpLXYubXA0P0V4cGlyZXM9MTc3MDI0MzQ5NCZTaWduYXR1cmU9YmVLMzFXcWpHaXNHU1c3flZ+bmdkaDE0OG1DaWlGfkwzejdFZUVKS2IyZnQ2cnJCaDIxa05lbmYwMXkxNXROdHRzVW51N3d2YTBYcmYzcWZSSlgxbkNSWDVhNERDNDV5dlVSVmhXSWU0eGd+b0huamlza1ZaTnlVNkswVk5sYmxtaH5DM2V6WU9DaGlZcm1aaXFYQ21CUnU1bXh4VG1RcU1ldWppcThwczh6cU5ZVTNINGxRMkNMd0Q1Mk5yMU95VXVUfk1nVXNMaDJLdzRIREtDZW9wNnA5U1hjNUFMLUliOVJHYk5jcjE4bDZQS1d0djc4Y1ZoaW91OXRGTXJYLXJBRExGS2xOVHN4MkVheTBOc0d6ajZRSGllRTczc21WZE1YQ2pMLURZZjNST3MzWkFick9lZmtRYXlkaDlBYUJaNXhjTUFTYzVZR2oySmRNazZWNS1nX18mS2V5LVBhaXItSWQ9SzJOWEJYTEYwMTBUSlciLCJyYXRpbyI6MC41NjI1LCJ0aHVtYm5haWwiOiJodHRwczovL2Nkbi53ZWJzaXRlLWVkaXRvci5uZXQvcy85YWQ2MzFlMTk4MjM0YWEyOWVhYWJkN2VjZTkyOTdhOS9kbXMzcmVwL211bHRpLzFSaFFFRjNaVGlDMDhpVzdsVHJLX1QtQmVyZ19Ta2kudjIuMDAwMDAwMC5qcGc/RXhwaXJlcz0xNzcwMjQzNDk0JlNpZ25hdHVyZT1yQ05iWXZZaVVLbW9lUmgxMm9KT2MxYlh4T2VMMEkwMlo1WUVmdE8xRjFXVG5sQWhkS25DeTJOa2FnWU5pdWZHSnVOV2VwdFhsNkN4ZmdHS3cyanloaDI3bnRSbkw5UE9xU2ZrWDY5cVE3YjRTNmRLaDBweTVXNlM3bWkzdnd0Ni1MbE5kSFNTeWVJc05+dFVsM28yMmdHZDVvTkFqcjJramJDVHZwWkpObEdxfjNud0ttQlhwamktYmE2T3BYWmItalFWaGJhMGg1eWFuZzRWflYtUmp3eEJXM1RVdklCUWdmcmlMMllzSDBPOWh0NXhwYVpSUWcwMUxoRVFUZ2NRaU16bGhzQm5wUkZsMDJHQkZqemxaVkt3NUZtMk1vTlluc2VXVzFmMEsyNmZZczgwVkZnVTByWkdBM1JWfkJTME5QelB1SWtkV1B3LTgyfjRIRXloLXdfXyZLZXktUGFpci1JZD1LMk5YQlhMRjAxMFRKVyIsInN1cHBvcnRCZ09uTW9iaWxlIjp0cnVlLCJzdXBwb3J0QmdMb29wIjp0cnVlLCJwb3N0ZXIiOiJodHRwczovL2Nkbi53ZWJzaXRlLWVkaXRvci5uZXQvcy85YWQ2MzFlMTk4MjM0YWEyOWVhYWJkN2VjZTkyOTdhOS9kbXMzcmVwL211bHRpLzFSaFFFRjNaVGlDMDhpVzdsVHJLX1QtQmVyZ19Ta2kudjIuMDAwMDAwMC5qcGc/RXhwaXJlcz0xNzcwMjQzNDk0JlNpZ25hdHVyZT1yQ05iWXZZaVVLbW9lUmgxMm9KT2MxYlh4T2VMMEkwMlo1WUVmdE8xRjFXVG5sQWhkS25DeTJOa2FnWU5pdWZHSnVOV2VwdFhsNkN4ZmdHS3cyanloaDI3bnRSbkw5UE9xU2ZrWDY5cVE3YjRTNmRLaDBweTVXNlM3bWkzdnd0Ni1MbE5kSFNTeWVJc05+dFVsM28yMmdHZDVvTkFqcjJramJDVHZwWkpObEdxfjNud0ttQlhwamktYmE2T3BYWmItalFWaGJhMGg1eWFuZzRWflYtUmp3eEJXM1RVdklCUWdmcmlMMllzSDBPOWh0NXhwYVpSUWcwMUxoRVFUZ2NRaU16bGhzQm5wUkZsMDJHQkZqemxaVkt3NUZtMk1vTlluc2VXVzFmMEsyNmZZczgwVkZnVTByWkdBM1JWfkJTME5QelB1SWtkV1B3LTgyfjRIRXloLXdfXyZLZXktUGFpci1JZD1LMk5YQlhMRjAxMFRKVyJ9" data-video-bg-mobile="true" data-video-init="true"> <div class="videobgwrapper video-ssr" data-ratio="0.5625"> <video autoplay="autoplay" playsinline="playsinline" muted="muted" loop="loop" class="videobgframe" poster="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/1RhQEF3ZTiC08iW7lTrK_T-Berg_Ski.v2.0000000-1920w.jpg?Expires=1770243494&Signature=rCNbYvYiUKmoeRh12oJOc1bXxOeL0I02Z5YEftO1F1WTnlAhdKnCy2NkagYNiufGJuNWeptXl6CxfgGKw2jyhh27ntRnL9POqSfkX69qQ7b4S6dKh0py5W6S7mi3vwt6-LlNdHSSyeIsN~tUl3o22gGd5oNAjr2kjbCTvpZJNlGq~3nwKmBXpji-ba6OpXZb-jQVhba0h5yang4V~V-RjwxBW3TUvIBQgfriL2YsH0O9ht5xpaZRQg01LhEQTgcQiMzlhsBnpRFl02GBFjzlZVKw5Fm2MoNYnseWW1f0K26fYs80VFgU0rZGA3RV~BS0NPzPuIkdWPw-82~4HEyh-w__&Key-Pair-Id=K2NXBXLF010TJW" src="https://vid-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/videos/1RhQEF3ZTiC08iW7lTrK_T-Berg_Ski-v.mp4?Expires=1770243494&Signature=beK31WqjGisGSW7~V~ngdh148mCiiF~L3z7EeEJKb2ft6rrBh21kNenf01y15tNttsUnu7wva0Xrf3qfRJX1nCRX5a4DC45yvURVhWIe4xg~oHnjiskVZNyU6K0VNlblmh~C3ezYOChiYrmZiqXCmBRu5mxxTmQqMeujiq8ps8zqNYU3H4lQ2CLwD52Nr1OyUuT~MgUsLh2Kw4HDKCeop6p9SXc5AL-Ib9RGbNcr18l6PKWtv78cVhiou9tFMrX-rADLFKlNTsx2Eay0NsGzj6QHieE73smVdMXCjL-DYf3ROs3ZAbrOefkQaydh9AaBZ5xcMASc5YGj2JdMk6V5-g__&Key-Pair-Id=K2NXBXLF010TJW" style="object-position: 50% 50%" id="videobgframe-1556338500"></video> 
+</div> 
+ <div class="bgExtraLayerOverlay"></div> 
+ <div class="dmRespColsWrapper" id="1292129104"> <div class="dmRespCol small-12 medium-12 large-12" id="1758433548"> <div class="u_1638379266 dmRespRow" id="1638379266"> <div class="dmRespColsWrapper" id="1589666495"> <div class="dmRespCol small-12 medium-12 large-12 content-removed" id="1645643402"> <div class="u_1458889189 dmNewParagraph hide-for-small" data-element-type="paragraph" data-version="5" id="1458889189" style="transition: none 0s ease 0s; text-align: left; display: block;"><p class="m-size-50 text-align-center size-72"><span class="m-font-size-50 font-size-72" style="color:rgb(246, 246, 246);font-weight:bold;display:initial;font-family:'Open Sans', 'Open Sans Fallback';">SO WEIT. SO GUT.</span></p><p class="text-align-center m-size-50 size-24"><span class="font-size-24 m-font-size-50" style="color: rgb(246, 246, 246); font-weight: bold; display: initial;">&nbsp;5 Lifte&nbsp; &nbsp; &nbsp;16 Pistenkilometer&nbsp; &nbsp; &nbsp;unendliche Weitsicht</span></p></div> 
+</div> 
+</div> 
+</div> 
+ <div class="u_1922135129 dmRespRow hide-for-medium hide-for-large" id="1922135129"> <div class="dmRespColsWrapper" id="1359998507"> <div class="dmRespCol small-12 medium-12 large-12 content-removed" id="1271937365"> <div class="u_1534504681 dmNewParagraph" data-element-type="paragraph" data-version="5" id="1534504681" style="" data-styletopreserve="{"background-image":""}"><p class="size-72 m-size-36 m-text-align-center"><span class="font-size-72 m-font-size-36" m-font-size-set="true" style="font-weight: bold; color: rgb(246, 246, 246);"><span class="ql-cursor">﻿</span>SO WEIT. SO GUT.</span></p><p class="m-size-13 m-text-align-center"><span class="m-font-size-13" m-font-size-set="true" style="color: rgb(255, 255, 255); font-weight: 700;">5 Lifte&nbsp; &nbsp;16 Pistenkilometer&nbsp; &nbsp;unendliche Weitsicht</span></p></div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+ <div class="u_1018029012 dmRespRow" id="1018029012"> <div class="dmRespColsWrapper" id="1612408916"> <div class="dmRespCol large-12 medium-12 small-12" id="1962671927"> <div class="u_1194471492 dmNewParagraph" data-element-type="paragraph" data-version="5" id="1194471492" data-styletopreserve="{" background-image":""}"=""><p class="text-align-center"><span class="" style="display: initial;"><span style="display: initial;">&nbsp;</span> 
+</span></p><p><span style="display: initial;"><br/></span></p><p class="text-align-center m-size-42 size-60"><span class="m-font-size-42 font-size-60" style="color:rgb(242, 196, 56);font-weight:bold;display:initial;font-family:'Amatic SC', 'Amatic SC Fallback';">Das</span><span single-space="true" class="m-font-size-42 font-size-60" style="display: initial; color: rgb(242, 196, 56);"> <span class="m-font-size-42 font-size-60" style="display: initial; color: rgb(242, 196, 56);"></span> 
+</span><span class="m-font-size-42 font-size-60" style="color:rgb(242, 196, 56);font-weight:bold;display:initial;font-family:'Amatic SC', 'Amatic SC Fallback';">Skigebiet</span><span single-space="true" class="m-font-size-42 font-size-60" style="display: initial; color: rgb(242, 196, 56);"> <span class="m-font-size-42 font-size-60" style="display: initial; color: rgb(242, 196, 56);"></span> 
+</span><span class="m-font-size-42 font-size-60" style="color:rgb(242, 196, 56);font-weight:bold;display:initial;font-family:'Amatic SC', 'Amatic SC Fallback';">Todtnauberg.</span></p><p class="text-align-center"><span style="display: initial; color: rgb(51, 51, 51);">An der S&uuml;dseite des Feldbergs,</span></p><p class="text-align-center"><span style="display: initial; color: rgb(51, 51, 51);">auf einer H&ouml;he von 1.000-1.400 m &uuml;.M. mitten im s&uuml;dlichen Hochschwarzwald.</span></p><p class="text-align-center"><span style="display: initial;"><br/></span></p><p class="text-align-center"><span style="display: initial;"><br/></span></p></div> 
+</div> 
+</div> 
+</div> 
+ <div class="u_1372006776 dmRespRow fullBleedChanged fullBleedMode mobile-columns-reversed" style="text-align: center;" id="1372006776"> <div class="dmRespColsWrapper" id="1501141356"> <div class="dmRespCol small-12 medium-6 large-6 u_1937313397" id="1937313397"> <div class="dmNewParagraph u_1503236669 text-align-center" id="1503236669" style="display: block; line-height: initial; transition: opacity 1s ease-in-out 0s; text-align: center;" data-element-type="paragraph" data-gramm_id="7db6db57-870b-f872-6c53-749020c7b1a7" data-gramm="true" spellcheck="false" data-gramm_editor="true" data-version="5"> <h2 class="m-size-30"><span class="m-font-size-30" style="display: initial; color: rgb(242, 196, 56);">Die Aussicht checken</span></h2> 
+</div> <div class="u_1799812213 dmNewParagraph" id="1799812213" style="text-align: center; transition: opacity 1s ease-in-out; display: block;" data-gramm_id="02f65ed0-bafb-7bbf-6ec5-dbe9d57a4e0a" data-gramm="true" spellcheck="false" data-gramm_editor="true"> <div style="text-align: center;"><font style="color: rgb(51, 51, 51);"><span style="caret-color: rgb(0, 0, 0);">Alles &uuml;ber aktuelle Bedingungen, Wetterlage, ge&ouml;ffnete Pisten &amp; Co.</span></font></div> 
+</div> <a data-display-type="block" class="u_1569723049 align-center dmButtonLink dmWidget dmWwr default dmOnlyButton dmDefaultGradient" file="false" href="/aktuelles-2" data-element-type="dButtonLinkId" id="1569723049" data-buttonstyle="THICK_BORDER_ROUND"> <span class="iconBg" id="1898439921"> <span class="icon hasFontIcon icon-star" id="1382066337"></span> 
+</span> 
+ <span class="text" id="1067283610">Aktuelles &amp; Webcams</span> 
+</a> 
+</div> 
+ <div class="dmRespCol small-12 medium-6 large-6 dmSectionNoParallax u_1596317634 empty-column" id="1596317634" data-gallery-bg="eyJzbGlkZXMiOlsiaHR0cHM6Ly9sZS1jZG4ud2Vic2l0ZS1lZGl0b3IubmV0L21kL2RtaXAvZG1zM3JlcC9tdWx0aS9vcHQvaG9tZS1kZWNvci1kaXktMTkyMHcuanBnIl19"></div> 
+</div> 
+</div> 
+ <div class="u_1482684879 dmRespRow fullBleedChanged fullBleedMode" style="text-align: center;" id="1482684879"> <div class="dmRespColsWrapper" id="1425716162"> <div class="u_1163893984 dmRespCol small-12 dmSectionNoParallax large-6 medium-6 empty-column" id="1163893984" data-gallery-bg="eyJzbGlkZXMiOlsiaHR0cHM6Ly9sZS1jZG4ud2Vic2l0ZS1lZGl0b3IubmV0L21kL2RtaXAvZG1zM3JlcC9tdWx0aS9vcHQvaG9tZS1kZWNvci1kaXktMTkyMHcuanBnIl19"></div> 
+ <div class="u_1185614348 dmRespCol small-12 large-6 medium-6" id="1185614348"> <div class="dmNewParagraph u_1408149247 text-align-center" id="1408149247" style="display: block; line-height: initial; transition: opacity 1s ease-in-out 0s; text-align: center;" data-element-type="paragraph" data-gramm_id="bf069a09-300f-226f-5af5-c7d7455caaa5" data-gramm="true" spellcheck="false" data-gramm_editor="true" data-version="5"> <h2 class="m-size-30"><span class="m-font-size-30" style="color: rgb(242, 196, 56); display: initial;">Ticket ins Schneevergn&uuml;gen</span></h2> 
+</div> <div class="u_1147475993 dmNewParagraph" id="1147475993" style="text-align: center; transition: opacity 1s ease-in-out; display: block;" data-gramm_id="13f6f671-2c62-689f-e0cd-8a71d3fbfd50" data-gramm="true" spellcheck="false" data-gramm_editor="true"> <div style="text-align: center;"><span style="text-align: center;"><font style="color: rgb(51, 51, 51);">Am besten vorab das Online-Ticket&nbsp;</font></span></div> 
+ <div style="text-align: center;"><span style="text-align: center;"><font style="color: rgb(51, 51, 51);">bequem von zu Hause aus kaufen&nbsp;</font></span></div> 
+ <div style="text-align: center;"><span style="text-align: center;"><font style="color: rgb(51, 51, 51);">und der entspannte Skitag kann kommen!</font></span></div> 
+</div> <a data-display-type="block" class="u_1555460804 align-center dmButtonLink dmWidget dmWwr default dmOnlyButton dmDefaultGradient" file="false" href="/preise" data-element-type="dButtonLinkId" id="1555460804" data-buttonstyle="THICK_BORDER_ROUND"> <span class="iconBg" id="1593930156"> <span class="icon hasFontIcon icon-star" id="1291412692"></span> 
+</span> 
+ <span class="text" id="1722416112">Preise &amp; Tickets</span> 
+</a> 
+</div> 
+</div> 
+</div> 
+ <div class="u_1299377718 dmRespRow fullBleedChanged fullBleedMode mobile-columns-reversed" style="text-align: center;" id="1299377718"> <div class="dmRespColsWrapper" id="1215288430"> <div class="dmRespCol small-12 medium-6 large-6 u_1541449934" id="1541449934"> <h2 class="dmNewParagraph u_1558567900" id="1558567900" style="text-align: center; transition: opacity 1s ease-in-out; display: block;" data-element-type="paragraph" data-gramm_id="7db6db57-870b-f872-6c53-749020c7b1a7" data-gramm="true" spellcheck="false" data-gramm_editor="true"><span></span><span><font style="color: rgb(242, 196, 56);"><span><span style="" class="m-specific lh-1 m-font-size-30">Unsere Pisten</span></span></font></span><div><div></div></div></h2> <div class="u_1533247778 dmNewParagraph" id="1533247778" style="text-align: center; transition: opacity 1s ease-in-out; display: block;" data-gramm_id="02f65ed0-bafb-7bbf-6ec5-dbe9d57a4e0a" data-gramm="true" spellcheck="false" data-gramm_editor="true"> <div style="text-align: center;"><span style="text-align: center;"><font style="color: rgb(51, 51, 51);">Egal ob gro&szlig;, klein, jung oder alt,&nbsp;</font></span></div> 
+ <div style="text-align: center;"><span style="text-align: center;"><font style="color: rgb(51, 51, 51);">mutiger Anf&auml;nger oder leidenschaftlicher Ski-Profi&nbsp;</font></span></div> 
+ <div style="text-align: center;"><span style="text-align: center;"><font style="color: rgb(51, 51, 51);">- es ist f&uuml;r jeden das Passende dabei -</font></span></div> 
+</div> <a data-display-type="block" class="u_1398617603 align-center dmButtonLink dmWidget dmWwr default dmOnlyButton dmDefaultGradient" file="false" href="/pistenplan" data-element-type="dButtonLinkId" id="1398617603" data-buttonstyle="THICK_BORDER_ROUND"> <span class="iconBg" id="1853353552"> <span class="icon hasFontIcon icon-star" id="1273041571"></span> 
+</span> 
+ <span class="text" id="1951298118">Pistenplan</span> 
+</a> 
+</div> 
+ <div class="dmRespCol small-12 medium-6 large-6 dmSectionNoParallax u_1935486902 empty-column" id="1935486902" data-gallery-bg="eyJzbGlkZXMiOlsiaHR0cHM6Ly9sZS1jZG4ud2Vic2l0ZS1lZGl0b3IubmV0L21kL2RtaXAvZG1zM3JlcC9tdWx0aS9vcHQvaG9tZS1kZWNvci1kaXktMTkyMHcuanBnIl19"></div> 
+</div> 
+</div> 
+ <div class="u_1190840574 dmRespRow fullBleedChanged fullBleedMode" style="text-align: center;" id="1190840574"> <div class="dmRespColsWrapper" id="1489121948"> <div class="dmRespCol small-12 medium-6 large-6 dmSectionNoParallax u_1741246969 empty-column" id="1741246969" data-gallery-bg="eyJzbGlkZXMiOlsiaHR0cHM6Ly9sZS1jZG4ud2Vic2l0ZS1lZGl0b3IubmV0L21kL2RtaXAvZG1zM3JlcC9tdWx0aS9vcHQvaG9tZS1kZWNvci1kaXktMTkyMHcuanBnIl19"></div> 
+ <div class="dmRespCol small-12 medium-6 large-6 u_1301348875" id="1301348875"> <div class="dmNewParagraph u_1519615173 text-align-center" id="1519615173" style="display: block; line-height: initial; transition: opacity 1s ease-in-out 0s; text-align: center;" data-element-type="paragraph" data-gramm_id="7db6db57-870b-f872-6c53-749020c7b1a7" data-gramm="true" spellcheck="false" data-gramm_editor="true" data-version="5"> <h2 class="m-size-30"><span class="m-font-size-30" style="color: rgb(242, 196, 56); display: initial;">Einmal Alles, Bitte</span></h2> 
+</div> <div class="u_1208881930 dmNewParagraph text-align-center" id="1208881930" style="display:block;transition:opacity 1s ease-in-out;" data-gramm_id="02f65ed0-bafb-7bbf-6ec5-dbe9d57a4e0a" data-gramm="true" spellcheck="false" data-gramm_editor="true" data-version="5"><p class="text-align-center"><span class="" style="display: initial;"><span style="display: initial;">Noch schnell die ben&ouml;tigte Ausr&uuml;stung leihen</span> 
+</span></p><p class="text-align-center"><span style="display: initial;">oder den Hunger stillen f&uuml;r neue Power</span></p><p class="text-align-center"><span style="display: initial;">beim Skifahren oder Boarden</span></p><p class="text-align-center"><span style="display: initial;">- hier geht&acute;s</span></p></div> <a data-display-type="block" class="u_1409152529 align-center dmButtonLink dmWidget dmWwr default dmOnlyButton dmDefaultGradient" file="false" href="/newpage" data-element-type="dButtonLinkId" id="1409152529" data-buttonstyle="THICK_BORDER_ROUND"> <span class="iconBg" id="1397055051"> <span class="icon hasFontIcon icon-star" id="1364646220"></span> 
+</span> 
+ <span class="text" id="1652301586">Verpflegung &amp; Skiverleih</span> 
+</a> 
+</div> 
+</div> 
+</div> 
+ <div class="u_1969717373 dmRespRow fullBleedChanged fullBleedMode mobile-columns-reversed" style="text-align: center;" id="1969717373"> <div class="dmRespColsWrapper" id="1498310780"> <div class="dmRespCol small-12 u_1656029306 medium-6 large-6" id="1656029306"> <h2 class="dmNewParagraph u_1144143893" id="1144143893" style="text-align: center; transition: opacity 1s ease-in-out; display: block;" data-element-type="paragraph" data-gramm_id="ca571186-51c8-8aa2-c124-2439697448fb" data-gramm="true" spellcheck="false" data-gramm_editor="true"><span></span><span><font style="color: rgb(242, 196, 56);"><span><span>FAQ</span></span></font></span><div><div></div></div></h2> <div class="u_1684510196 dmNewParagraph" id="1684510196" style="text-align: center; transition: opacity 1s ease-in-out; display: block;" data-gramm_id="bc5c7f96-1892-78f0-1409-198abd3116e9" data-gramm="true" spellcheck="false" data-gramm_editor="true"> <div style="text-align: center;"><span style="text-align: center;"><font style="color: rgb(51, 51, 51);">Wann ist eigentlich Flutlicht?&nbsp;</font></span></div> 
+ <div style="text-align: center;"><span style="text-align: center;"><font style="color: rgb(51, 51, 51);">Brauchen Kleinkinder ein Ticket?&nbsp;</font></span></div> 
+ <div style="text-align: center;"><span style="text-align: center;"><font style="color: rgb(51, 51, 51);">Ab wann gilt meine Stundenkarte?</font></span></div> 
+ <div style="text-align: center;"><span style="text-align: center;"><font style="color: rgb(51, 51, 51);">Ihr fragt, wir antworten!</font></span></div> 
+</div> <a data-display-type="block" class="u_1287721903 align-center dmButtonLink dmWidget dmWwr default dmOnlyButton dmDefaultGradient" file="false" href="/faq" data-element-type="dButtonLinkId" id="1287721903" data-buttonstyle="THICK_BORDER_ROUND" target="_blank"> <span class="iconBg" id="1227890794"> <span class="icon hasFontIcon icon-star" id="1412901378"></span> 
+</span> 
+ <span class="text" id="1076640584">H&auml;ufige Fragen</span> 
+</a> 
+</div> 
+ <div class="dmRespCol empty-column small-12 u_1188500033 medium-6 large-6" id="1188500033"></div> 
+</div> 
+</div> 
+ <div class="u_1706277265 dmRespRow" id="1706277265"> <div class="dmRespColsWrapper" id="1694329677"> <div class="u_1982198192 dmRespCol small-12 large-3 medium-3" id="1982198192"> <div class="u_1704450500 imageWidget align-center hide-for-large hide-for-medium" data-element-type="image" data-widget-type="image" id="1704450500"> <a id="1171787692"><img src="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/Naturparklogo-1920w.png?Expires=1770243494&Signature=qvcvoHHIXHwYM6HaM6xVLexrAqbg9zc8W69E1k52BnMct9wu1f1EKc1wybKdRFMVxRt0eNhW-ldpfMy5hUiTwivhFyvGXEb5Yy6GrKCIM-56qX6aqPyI0gc5lMwXtAbb2NCzle3ukJCdeGHkQT8p8cWzkTob324NtAh6XC4NxdM4KeOzwGFpla1nxzX1cx8Him8S-ZuqjK67jmR-RoSEUugcisg32z7cY3OcF3UinE13TIGJYlvme-Wlzw5msls78sak85HCdAhvm01d1RPyay8psWN9yqcY81Yw2tnPn6YLWL7EXuR4aMshca5juG4rrUNuSutctBkZXADQObNdJA__&Key-Pair-Id=K2NXBXLF010TJW" alt="" id="1873474438" class="" data-dm-image-path="https://cdn.website-editor.net/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/Naturparklogo.png" onerror="handleImageLoadError(this)"/></a> 
+</div> 
+ <div class="u_1333934082 imageWidget align-center hide-for-large hide-for-medium" data-element-type="image" data-widget-type="image" id="1333934082"> <a id="1527398795"><img src="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/Logo_BEwild-9dd2f735-1920w.png?Expires=1770243494&Signature=suOO1ufRY3~I4f3HVqIQGVAkpAmJCp2JMqo4YZnuLzkD6Z~WYvqMOH9RzNkRkd~Sb9pae8Dxsqq60Wqz5hOeHU-VvCVZx93r3Gzp6yQ4a75pyrNqfGYlkQxee1lDdueBgwkIauhrrMDWCFsmkpnx8UVsw6N~ctuhf5-CJ0TIEnB0OXTqHo4AlXH~~DQ~Yn56ROeh-FYKaH8JrjcDoKdjTByRy3HBJMWmRCtyDgWpgOGGyfTvyNKP6yi0y1M0t2takZ1w7KfHAWSokXqx3G~aSQpyRGxvFFkF~0TB4Uph9XfkAjo3f13cY9wMxAWN0OF5D~bZG5X~C3V1xhoSqe8gfQ__&Key-Pair-Id=K2NXBXLF010TJW" alt="" id="1310841332" class="" data-dm-image-path="https://cdn.website-editor.net/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/Logo_BEwild-9dd2f735.png" onerror="handleImageLoadError(this)"/></a> 
+</div> 
+ <div class="u_1353635888 imageWidget align-center hide-for-small" data-element-type="image" data-widget-type="image" id="1353635888"> <a id="1661628251"><img src="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/Logo_BEwild-9dd2f735-1920w.png?Expires=1770243494&Signature=suOO1ufRY3~I4f3HVqIQGVAkpAmJCp2JMqo4YZnuLzkD6Z~WYvqMOH9RzNkRkd~Sb9pae8Dxsqq60Wqz5hOeHU-VvCVZx93r3Gzp6yQ4a75pyrNqfGYlkQxee1lDdueBgwkIauhrrMDWCFsmkpnx8UVsw6N~ctuhf5-CJ0TIEnB0OXTqHo4AlXH~~DQ~Yn56ROeh-FYKaH8JrjcDoKdjTByRy3HBJMWmRCtyDgWpgOGGyfTvyNKP6yi0y1M0t2takZ1w7KfHAWSokXqx3G~aSQpyRGxvFFkF~0TB4Uph9XfkAjo3f13cY9wMxAWN0OF5D~bZG5X~C3V1xhoSqe8gfQ__&Key-Pair-Id=K2NXBXLF010TJW" alt="" id="1556203483" class="" data-dm-image-path="https://cdn.website-editor.net/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/Logo_BEwild-9dd2f735.png" onerror="handleImageLoadError(this)"/></a> 
+</div> 
+</div> 
+ <div class="u_1656716446 dmRespCol small-12 large-9 medium-9" id="1656716446"> <div class="u_1123610991 imageWidget align-center hide-for-small" data-element-type="image" data-widget-type="image" id="1123610991"> <a id="1845954028"><img src="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/Naturparklogo-1fc3d310-1920w.png?Expires=1770243494&Signature=m1QaWwVIrcB7Q1iHW6Jdo3ZMJPH4ss5IOI1TpswM3LTOHKWDES3kzCOlz0jL2prmM3XOYpIMIK5ktyZos3q13jPf0He~6QMH9vAv5XnNK~X7a395jwtFob9Kq99a-bZifueTQNjbZZaG8oDk1jBBIpVTxJnkHNzQ17WcCu679xR-ynZK9cU-rLP2pPQ4RiF69236hjDSym7r-63UjgCqt4txeCalCA4x5ufhpWQCtban-e6e2PTQ1-7fVY4CwhuegdmoJ60cNXU4FtDAWyg1HxAmZaNSTH8g41EigY5M7rNuaJP5dQE~0g4cKMggW5HhBjr-EJvkBsgJ5y8U4ET2Og__&Key-Pair-Id=K2NXBXLF010TJW" alt="" id="1627998879" class="" data-dm-image-path="https://cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/Naturparklogo-1fc3d310.png" width="637" height="155" onerror="handleImageLoadError(this)"/></a> 
+</div> 
+ <div class="u_1366501465 dmNewParagraph" data-element-type="paragraph" data-version="5" id="1366501465" style="transition: opacity 1s ease-in-out;"><p class="m-text-align-center"><span style="display: initial;"><br/></span></p><p class="m-text-align-center"><span style="display: initial; color: rgb(236, 120, 8); font-weight: 700;">Skifahrer, Snowboarder &amp; Rodler aufgepasst: Bekennt euch wild!&nbsp;</span></p><p class="m-text-align-center text-align-left"><span style="display: initial; color: rgb(51, 51, 51);">Im Winter haben es Wildtiere schwer ausreichend Nahrung und Ruhepl&auml;tze zu finden. Wir Wintersportler halten uns mitten im Lebensraum der Wildtiere auf. Aber wenn wir uns hier verantwortungsvoll verhalten, ist ein Miteinander von Menschen und Wildtieren m&ouml;glich! Deshalb bitten wir dich, dass du auf Pisten und markierten Routen bleibst, nicht in der D&auml;mmerung unterwegs bist und ausgewiesene Ruhezonen meidest. Lass dich vom Leben der Wildtiere begeistern und bekenne dich bewusst wild!</span></p><p><span style="display: initial;"><br/></span></p></div> 
+</div> 
+</div> 
+</div> 
+ <div class="u_1138279274 dmRespRow fullBleedChanged fullBleedMode hide-for-small" style="text-align: center;" id="1138279274"> <div class="dmRespColsWrapper" id="1419955330"> <div class="dmRespCol small-12 medium-12 large-12" id="1689549333"> <span id="1342015008"></span> 
+ <div class="u_1588834303 default dmDefaultGradient align-center hide-for-small inlineMap" data-type="inlineMap" data-lat="""" data-lng="""" data-address="Rüttesstr. 16, 79674 Todtnauberg, Germany" data-height="" data-msid="" data-mapurl="" data-lang="de" data-color-scheme="" data-zoom="13" data-layout="layout6" data-popup-display="" data-popup-show="false" data-popup-title="" data-popup-title-visible="false" data-popup-description="" data-popup-description-visible="false" id="1588834303" dmle_extension="mapextension" data-element-type="mapextension" modedesktop="map" modemobile="button" addresstodisplay="Rüttesstr. 16, 79674 Todtnauberg, Germany" geocompleteaddress="Rüttesstr. 16, 79674 Todtnauberg, Germany" data-popup-display-desktop="" data-popup-display-mobile="" data-display-type="block" layout="layout6" data-inject="semantic-MapAddress" modetablet="map" wr="true" icon="true" surround="true" description="Anfahrt" adwords="" icon-name="icon-map-marker" street="" city="" country="US" country_full="United States" state="" zip="" business="Skilifte Todtnauberg" provider="mapbox" lon="""" lat="""" zoom="13" dmmapsource="dm"> <div class="mapContainer" style="height: 100%; width: 100%; overflow: hidden; z-index: 0;"></div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+ <div class="sticky-widgets-container-global" id="1716550199"> <a data-display-type="block" class="u_1059740145 align-center dmButtonLink dmWidget dmWwr default dmOnlyButton dmDefaultGradient sticky-mobile-position-bottom-right sticky-desktop-position-bottom-right hide-for-medium" file="false" href="https://starjack.com/products/a13b53b5-0e73-49aa-b313-72f8e49a1cff?type=DAY&variant=SINGLE" data-element-type="dButtonLinkId" id="1059740145" target="_blank" data-buttonstyle="ROUND_SIDES"> <span class="iconBg" id="1879885014"> <span class="icon hasFontIcon icon-star" id="1713815971"></span> 
+</span> 
+ <span class="text" id="1482647445">Tickets online Rabatt 13%</span> 
+</a> 
+</div> 
+ <div class="dmFooterContainer"> <div id="fcontainer" class="f_hcontainer dmFooter p_hfcontainer"> <div dm:templateorder="250" class="dmFooterResp generalFooter" id="1943048428"> <div class="u_1166980996 dmRespRow dmFooterContent" id="1166980996"> <div class="dmRespColsWrapper" id="1151403125"> <div class="u_1919869491 dmRespCol dmFooterCol small-12 large-3 medium-3" id="1919869491"> <span id="1493645639"></span> 
+ <div class="u_1909580233 imageWidget align-center hide-for-small" data-widget-type="image" id="1909580233" data-element-type="image" data-binding="W3siYmluZGluZ05hbWUiOiJpbWFnZSIsInZhbHVlIjoic2l0ZV9pbWFnZXMubG9nbyJ9XQ=="> <a href="/" id="1061534890"><img data-inject="home-At11logo" src="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/logo-2Bskilifte-724686d3-1920w.jpg?Expires=1770243494&Signature=BiTEKG3eWzY8QwdZxTNNEl6r08axEdlE8YaIBZHs7y0im4SpTVfIi9mvhp9IRqINzriVE9d9KSk0xZQqGOPFP5iWO9UFmd9Dq46mfKXJ1hFwP6Zc40tzLnLfU1b7Cx~Rg45EXmKiVvMS~MLNNJW4jdvbeL5FFlUIUSW-9XZSZFLqG5BCHT6PHiMPE7WhkRFdDMkY1keDY45T4mVtUFQKcB6tVkxsRagFMDaPlfNL6iq5XkA4JLLy28UbK~FHRll~6MUXQ6D6wfW4ZhWm8uy6VrymX8OTwG3GmBt1ItXtcj8M83obO8rvfeCtnThGnwhFmwQNO9cVS4OQiT4YThN2gQ__&Key-Pair-Id=K2NXBXLF010TJW" id="1634714446" class="" data-dm-image-path="https://cdn.website-editor.net/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/logo-2Bskilifte-724686d3.jpg" data-diy-image="" alt="" onerror="handleImageLoadError(this)"/></a> 
+</div> 
+ <div class="u_1075160262 dmNewParagraph hide-for-small" data-element-type="paragraph" data-version="5" id="1075160262" style="transition: opacity 1s ease-in-out 0s;"><p class="m-size-11 size-16"><span class="font-size-16 m-font-size-11" style="display: initial; color: rgb(81, 78, 78);">Wir sind Partner des Liftverbund Feldberg</span></p><p class="size-16 m-size-11"><span class="font-size-16 m-font-size-11" style="display: initial; color: rgb(81, 78, 78);">(jetzt feldbergbahnen)</span></p></div> 
+ <div class="u_1173254918 imageWidget align-center hide-for-large hide-for-medium" data-element-type="image" data-widget-type="image" id="1173254918"> <a id="1775315384"><img src="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/Feldberg_Logo_schwarz_rz_jpg-1920w.jpg?Expires=1770243494&Signature=JFWMBervgP8rcaifKQuRfqtLHFBv39MthmM3ezlDGAuJ-DMHXtfAWQWfEQNIA5mD3zbUcWlGizi-RUs6kdtWjbx6RX5oVuL0N7VA2KuNeX8ak5LqKvKqIfDzTNq9ru7SxouWJpTENxDohGufJp-OZHCaPRTiAWf73RuzDsARLd1W1u2rGEnOzmKocwMX07DW90N0iG~3DXs~gN8c~u3tSj2NbPlEXPY1-jDoul7-gvAl1LmuGa52gGSP8NxTIF0KiPlxlkLmWTskZGJiL47z4qbizffA-SKg6rWMfnHoG7xZT7~wWjs8Dbu5ul8enSQgjdjVhMPDR8grLOtCKJmmUA__&Key-Pair-Id=K2NXBXLF010TJW" alt="" id="1593024129" class="" data-dm-image-path="https://cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/Feldberg_Logo_schwarz_rz_jpg.jpg" width="359" height="285" onerror="handleImageLoadError(this)"/></a> 
+</div> 
+ <div class="u_1685364768 imageWidget align-center hide-for-small" data-element-type="image" data-widget-type="image" id="1685364768"> <a id="1949704653"><img src="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/Feldberg_Logo_schwarz_rz_jpg-1920w.jpg?Expires=1770243494&Signature=JFWMBervgP8rcaifKQuRfqtLHFBv39MthmM3ezlDGAuJ-DMHXtfAWQWfEQNIA5mD3zbUcWlGizi-RUs6kdtWjbx6RX5oVuL0N7VA2KuNeX8ak5LqKvKqIfDzTNq9ru7SxouWJpTENxDohGufJp-OZHCaPRTiAWf73RuzDsARLd1W1u2rGEnOzmKocwMX07DW90N0iG~3DXs~gN8c~u3tSj2NbPlEXPY1-jDoul7-gvAl1LmuGa52gGSP8NxTIF0KiPlxlkLmWTskZGJiL47z4qbizffA-SKg6rWMfnHoG7xZT7~wWjs8Dbu5ul8enSQgjdjVhMPDR8grLOtCKJmmUA__&Key-Pair-Id=K2NXBXLF010TJW" alt="" id="1594711173" class="" data-dm-image-path="https://cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/Feldberg_Logo_schwarz_rz_jpg.jpg" width="359" height="285" onerror="handleImageLoadError(this)"/></a> 
+</div> 
+</div> 
+ <div class="u_1703607159 dmRespCol small-12 large-4 medium-4" id="1703607159"> <span id="1927112318"></span> 
+ <div class="u_1256927594 dmNewParagraph hide-for-small" id="1256927594" style="display:block;transition:none 0s ease 0s;line-height:initial;" data-gramm_id="fcb677f3-71e5-ba1f-6c3c-e41e22d54b7b" data-gramm="true" spellcheck="false" data-gramm_editor="true" data-version="5"><p class="text-align-left size-16"><span class="font-size-16" style="background-color:rgba(0, 0, 0, 0);color:rgb(81, 78, 78);display:initial;font-family:'Open Sans', 'Open Sans Fallback';">Adresse Verwaltung</span></p><p class="text-align-left size-16"><span class="font-size-16" style="background-color:rgba(0, 0, 0, 0);color:rgb(81, 78, 78);display:initial;font-family:'Open Sans', 'Open Sans Fallback';">St&uuml;benwasenlift GmbH &amp; Co. KG</span><span class="font-size-16" style="display: initial; color: rgb(81, 78, 78);"><br/></span></p><p class="text-align-left size-16"><span class="font-size-16" style="background-color:rgba(0, 0, 0, 0);color:rgb(81, 78, 78);display:initial;font-family:'Open Sans', 'Open Sans Fallback';">R&uuml;ttesstr. 16&nbsp;</span></p><p class="text-align-left size-16"><span class="font-size-16" style="background-color:rgba(0, 0, 0, 0);color:rgb(81, 78, 78);display:initial;font-family:'Open Sans', 'Open Sans Fallback';">79674 Todtnauberg</span></p><p class="text-align-left"><span class="font-size-16" style="background-color:rgba(0, 0, 0, 0);color:rgb(81, 78, 78);display:initial;font-family:'Open Sans', 'Open Sans Fallback';"><br/></span></p><p class="text-align-left size-16"><span class="font-size-16" style="background-color:rgba(0, 0, 0, 0);color:rgb(81, 78, 78);display:initial;font-family:'Open Sans', 'Open Sans Fallback';">E-Mail-Kontakt</span></p><p class="text-align-left size-16"><span class="font-size-16" style="background-color:rgba(0, 0, 0, 0);color:rgb(81, 78, 78);display:initial;font-family:'Open Sans', 'Open Sans Fallback';">info@skilifte-todtnauberg.de</span></p><p class="text-align-left"><span class="font-size-16" style="background-color:rgba(0, 0, 0, 0);color:rgb(81, 78, 78);display:initial;font-family:'Open Sans', 'Open Sans Fallback';"><br/></span></p><p class="text-align-left size-16"><span class="font-size-16" style="background-color:rgba(0, 0, 0, 0);color:rgb(81, 78, 78);display:initial;font-family:'Open Sans', 'Open Sans Fallback';">Telefon</span></p><p class="text-align-left size-16"><span class="font-size-16" style="background-color:rgba(0, 0, 0, 0);color:rgb(81, 78, 78);display:initial;font-family:'Open Sans', 'Open Sans Fallback';">0152 3730 4031</span></p></div> <div class="dmNewParagraph" data-element-type="paragraph" data-version="5" id="1235378112" style="transition: opacity 1s ease-in-out;"><p><span style="display: initial;">Navigation:</span></p><p><span style="display: initial;">Bucklift/F&ouml;rderband: Allee 8</span></p><p><span style="display: initial;">Kapellenlift: R&uuml;ttestrasse 14</span></p><p><span style="display: initial;">Scheuermattlift: Schwimmbadweg</span></p><p><span style="display: initial;">St&uuml;benwasenlift: Martin-Heidegger-Weg</span></p></div> 
+ <div class="u_1070043010 imageWidget align-center hide-for-large" data-widget-type="image" id="1070043010" data-element-type="image" data-binding="W3siYmluZGluZ05hbWUiOiJpbWFnZSIsInZhbHVlIjoic2l0ZV9pbWFnZXMubG9nbyJ9XQ=="> <a href="/" id="1724373582"><img data-inject="home-At11logo" src="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/logo-2Bskilifte-724686d3-1920w.jpg?Expires=1770243494&Signature=BiTEKG3eWzY8QwdZxTNNEl6r08axEdlE8YaIBZHs7y0im4SpTVfIi9mvhp9IRqINzriVE9d9KSk0xZQqGOPFP5iWO9UFmd9Dq46mfKXJ1hFwP6Zc40tzLnLfU1b7Cx~Rg45EXmKiVvMS~MLNNJW4jdvbeL5FFlUIUSW-9XZSZFLqG5BCHT6PHiMPE7WhkRFdDMkY1keDY45T4mVtUFQKcB6tVkxsRagFMDaPlfNL6iq5XkA4JLLy28UbK~FHRll~6MUXQ6D6wfW4ZhWm8uy6VrymX8OTwG3GmBt1ItXtcj8M83obO8rvfeCtnThGnwhFmwQNO9cVS4OQiT4YThN2gQ__&Key-Pair-Id=K2NXBXLF010TJW" id="1488161669" class="" data-dm-image-path="https://cdn.website-editor.net/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/logo-2Bskilifte-724686d3.jpg" data-diy-image="" alt="" onerror="handleImageLoadError(this)"/></a> 
+</div> 
+ <div class="u_1689653701 dmNewParagraph hide-for-medium hide-for-large" id="1689653701" style="display: block; transition: none 0s ease 0s;" data-gramm_id="fcb677f3-71e5-ba1f-6c3c-e41e22d54b7b" data-gramm="true" spellcheck="false" data-gramm_editor="true"><div style="text-align: center;"><font style="" class="font-size-16 lh-1"><span style="background-color:rgba(0, 0, 0, 0);font-family:inherit;"><span data-inject="semantic-FullAddress" style=""><font style="color: rgb(81, 78, 78);">Postadresse</font></span></span></font></div><div style="text-align: center;"><font style="color: rgb(81, 78, 78);" class="font-size-16 lh-1"><span style="background-color:rgba(0, 0, 0, 0);font-family:inherit;"><span data-inject="semantic-FullAddress" style=""><font style="">St&uuml;ben</font></span></span><span style="background-color:rgba(0, 0, 0, 0);font-family:inherit;">wasenlift GmbH &amp; Co. KG</span><br/></font></div><div style="text-align: center;"><span style="background-color:rgba(0, 0, 0, 0);font-family:inherit;"><span data-inject="semantic-FullAddress" style="" class="lh-1 font-size-16"><font style="color: rgb(81, 78, 78);">R&uuml;ttesstr. 16&nbsp;</font></span></span></div><div style="text-align: center;"><span style="background-color:rgba(0, 0, 0, 0);font-family:inherit;"><span data-inject="semantic-FullAddress" style="" class="lh-1 font-size-12"><font style="color: rgb(81, 78, 78);"><span style="" class="font-size-16 lh-1">79674 Todtnauberg</span></font></span></span></div><div style="text-align: center;"><span style="background-color:rgba(0, 0, 0, 0);font-family:inherit;"><span data-inject="semantic-FullAddress" style="" class="lh-1 font-size-12"><font style="color: rgb(81, 78, 78);"><span style="" class="font-size-16 lh-1"><br/></span></font></span></span></div><div style="text-align: center;"><span style="background-color:rgba(0, 0, 0, 0);font-family:inherit;"><span data-inject="semantic-FullAddress" style="" class="lh-1 font-size-12"><font style="color: rgb(81, 78, 78);"><span style="" class="font-size-16 lh-1">E-Mail-Kontakt</span></font></span></span></div><div style="text-align: center;"><span style="background-color:rgba(0, 0, 0, 0);font-family:inherit;"><span data-inject="semantic-FullAddress" style="" class="lh-1 font-size-12"><font style="color: rgb(81, 78, 78);"><span style="" class="font-size-16 lh-1"><span class="lh-1">info@skilifte-todtnauberg.de</span></span></font></span></span></div><div style="text-align: center;"><span style="background-color:rgba(0, 0, 0, 0);font-family:inherit;"><span data-inject="semantic-FullAddress" style="" class="lh-1 font-size-12"><font style="color: rgb(81, 78, 78);"><span style="" class="font-size-16 lh-1"><span class="lh-1"><br/></span></span></font></span></span></div><div style="text-align: center;"><span style="background-color:rgba(0, 0, 0, 0);font-family:inherit;"><span data-inject="semantic-FullAddress" style="" class="lh-1 font-size-12"><font style="color: rgb(81, 78, 78);"><span style="" class="font-size-16 lh-1"><span class="lh-1">Telefon</span></span></font></span></span></div><div style="text-align: center;"><span style="background-color:rgba(0, 0, 0, 0);font-family:inherit;"><span data-inject="semantic-FullAddress" style="" class="lh-1 font-size-12"><font style="color: rgb(81, 78, 78);"><span style="" class="font-size-16 lh-1"><span class="lh-1">0152 3730 4031&nbsp;</span></span></font></span></span></div></div> <div class="u_1504766336 dmNewParagraph hide-for-large hide-for-medium" data-element-type="paragraph" data-version="5" id="1504766336"><p class="text-align-right m-text-align-center"><a href="/anfahrt" runtime_url="/anfahrt" type="page" style="display: initial; text-decoration: none; color: rgb(81, 78, 78);">Anfahrt</a></p><p class="text-align-right m-text-align-center"><a href="mailto:info@skilifte-todtnauberg.de" target="_blank" type="email" style="display: initial; color: rgb(81, 78, 78); text-decoration: none;">Kontakt</a></p><p class="text-align-right m-text-align-center"><a href="/impressum" runtime_url="/impressum" type="page" style="display: initial; text-decoration: none; color: rgb(81, 78, 78);">Impressum</a></p><p class="text-align-right m-text-align-center"><a href="/impressum#Datenschutz" runtime_url="/impressum#Datenschutz" type="anchor" style="display: initial; text-decoration: none; color: rgb(81, 78, 78);">Datenschutz</a></p><p class="text-align-right m-text-align-center"><a href="/impressum#AGB" runtime_url="/impressum#AGB" type="anchor" style="display: initial; color: rgb(70, 67, 67); text-decoration: none;">AGB</a></p><p class="text-align-right m-text-align-center"><a href="/faq" runtime_url="/faq" type="page" style="display: initial; text-decoration: none; color: rgb(81, 78, 78);">H&auml;ufige Fragen</a></p><p class="text-align-right m-text-align-center"><a href="/impressum#Logo" runtime_url="/impressum#Logo" type="anchor" style="display: initial;">Logo</a></p></div> 
+</div> 
+ <div class="u_1263811852 dmRespCol small-12 large-3 medium-3" id="1263811852"> <div class="u_1758290489 imageWidget align-center hide-for-small" data-element-type="image" data-widget-type="image" id="1758290489"> <a id="1531597730"><img src="https://le-cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/opt/02_DSV-AK-11_Pisten-Guete-Siegel_2026-1920w.jpg?Expires=1770243494&Signature=nimsyJjBxw4aXoEzL4qQTL2Z1KyskF83c2RRwBYhVNUE2LGqbopYjeJZg19M8UbnCOlZ7-KXadxaj-msLT2d8dokWD9TxpFOq~eVwwcw0qeyLU8T9He8BVu~TB7eVo9qCf3n9bL6bbiF4WmnIJJERi2WujaYHGBzROA~xh4-9VBrfIeYdQo6ZQgWKN~SAE~LKTk5at5gTcx~8r7UQlDPrCD2gVgZQ21fpVElKHvsgc9jPKbefOP5fz8nsUG2fj0FZo77mTx4F~-PoriSs8FeFvZAq~8cZlcQ7fO7KgBuJVmnC4zk~-ZB1jnbWjg3BNgBJVaSwu8tsir3Bm5-mad1XQ__&Key-Pair-Id=K2NXBXLF010TJW" alt="" id="1278631876" class="" data-dm-image-path="https://cdn.website-editor.net/s/9ad631e198234aa29eaabd7ece9297a9/dms3rep/multi/02_DSV-AK-11_Pisten-Guete-Siegel_2026.jpg" data-hover-effect="none" width="968" height="826" onerror="handleImageLoadError(this)"/></a> 
+</div> 
+</div> 
+ <div class="u_1945751005 dmRespCol small-12 large-2 medium-2" id="1945751005"> <div class="u_1937715302 dmNewParagraph hide-for-small" data-element-type="paragraph" data-version="5" id="1937715302"><p class="text-align-right"><a href="/anfahrt" runtime_url="/anfahrt" type="page" style="color: rgb(81, 78, 78); text-decoration: none; display: initial;">Anfahrt</a></p><p class="text-align-right"><a href="mailto:info@skilifte-todtnauberg.de" target="_blank" type="email" style="text-decoration: none; color: rgb(81, 78, 78); display: initial;">Kontakt</a></p><p class="text-align-right"><a href="/impressum" runtime_url="/impressum" type="page" style="color: rgb(81, 78, 78); text-decoration: none; display: initial;">Impressum</a></p><p class="text-align-right"><a href="/impressum#Datenschutz" runtime_url="/impressum#Datenschutz" type="anchor" style="color: rgb(81, 78, 78); text-decoration: none; display: initial;">Datenschutz</a></p><p class="text-align-right"><a href="/impressum#AGB" runtime_url="/impressum#AGB" type="anchor" style="text-decoration: none; color: rgb(70, 67, 67); display: initial;">AGB</a></p><p class="text-align-right"><a href="/faq" runtime_url="/faq" type="page" style="color: rgb(81, 78, 78); text-decoration: none; display: initial;">H&auml;ufige Fragen</a></p><p class="text-align-right"><a href="/impressum#Logo" runtime_url="/impressum#Logo" type="anchor" style="display: initial;">Logo</a></p></div> 
+ <div class="u_1673294525 dmDividerWrapper clearfix hide-for-medium hide-for-large" data-element-type="dDividerId" data-layout="divider-style-1" data-widget-version="2" id="1673294525"><hr class="dmDivider" style="border-width:2px; border-top-style:solid; color:grey;" id="1794674890"/></div> 
+ <div class="u_1875291973 align-center text-align-center dmSocialHub gapSpacing" id="1875291973" dmle_extension="social_hub" data-element-type="social_hub" wr="true" networks="" icon="true" surround="true" adwords=""> <div class="socialHubWrapper"> <div class="socialHubInnerDiv "> <a href="https://de-de.facebook.com/pages/category/Ski-Resort/Skilifte-Todtnauberg-301221169907340/" target="_blank" dm_dont_rewrite_url="true" aria-label="facebook" onclick="dm_gaq_push_event &amp;&amp; dm_gaq_push_event(&apos;socialLink&apos;, &apos;click&apos;, &apos;Facebook&apos;)"> <span class="dmSocialFacebook dm-social-icons-facebook oneIcon socialHubIcon style5" aria-hidden="true" data-hover-effect=""></span> 
+</a> 
+ <a href="https://www.instagram.com/skilifte.todtnauberg/" target="_blank" dm_dont_rewrite_url="true" aria-label="instagram" onclick="dm_gaq_push_event &amp;&amp; dm_gaq_push_event(&apos;socialLink&apos;, &apos;click&apos;, &apos;Instagram&apos;)"> <span class="dmSocialInstagram dm-social-icons-instagram oneIcon socialHubIcon style5" aria-hidden="true" data-hover-effect=""></span> 
+</a> 
+ <a href="mailto:Info@skilifte-todtnauberg.de" dm_dont_rewrite_url="true" aria-label="email" onclick="dm_gaq_push_event &amp;&amp; dm_gaq_push_event(&apos;socialLink&apos;, &apos;click&apos;, &apos;Email&apos;)"> <span class="dmSocialEmail dm-social-icons-email oneIcon socialHubIcon style5" aria-hidden="true" data-hover-effect=""></span> 
+</a> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+ <div class="u_1002931080 dmRespRow" id="1002931080"> <div class="dmRespColsWrapper" id="1593942287"> <div class="dmRespCol large-12 medium-12 small-12" id="1174964034"> <div class="u_1806510110 widget-1f5975 dmCustomWidget" data-lazy-load="" data-title="" id="1806510110" dmle_extension="custom_extension" data-element-type="custom_extension" icon="false" surround="false" data-widget-id="1f5975986930429f819d4cd2154b5c4a" data-widget-version="25" data-widget-config="eyJyZXZlcnNlRmxhZyI6ZmFsc2UsImNvcHlyaWdodFRleHQiOiI8cCBjbGFzcz1cInJ0ZUJsb2NrXCI+U3TDvGJlbndhc2VubGlmdCBHbWJIICZhbXA7IENvIEtHPC9wPiJ9"> <div class="copyright"> <div>&copy; 2026&nbsp;</div> 
+ <div><p class="rteBlock">St&uuml;benwasenlift GmbH &amp; Co KG</p></div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+ <div id="1236746004" dmle_extension="powered_by" data-element-type="powered_by" icon="true" surround="false"></div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+</div> 
+
+    </div>
+</div>
+<!--  Add full CSS and Javascript before the close tag of the body if needed -->
+<!-- ========= JS Section ========= -->
+<script>
+    var isWLR = true;
+
+    window.customWidgetsFunctions = {};
+    window.customWidgetsStrings = {};
+    window.collections = {};
+    window.currentLanguage = "GERMAN"
+    window.isSitePreview = false;
+</script>
+<script>
+    window.customWidgetsFunctions["1f5975986930429f819d4cd2154b5c4a~25"] = function (element, data, api) {
+        null
+    };
+</script>
+<script type="text/javascript">
+
+    var d_version = "production_6070";
+    var build = "2026-01-05T13_50_17";
+    window['v' + 'ersion'] = d_version;
+
+    function buildEditorParent() {
+        window.isMultiScreen = true;
+        window.editorParent = {};
+        window.previewParent = {};
+        window.assetsCacheQueryParam = "?version=2026-01-05T13_50_17";
+        try {
+            var _p = window.parent;
+            if (_p && _p.document && _p.$ && _p.$.dmfw) {
+                window.editorParent = _p;
+            } else if (_p.isSitePreview) {
+                window.previewParent = _p;
+            }
+        } catch (e) {
+
+        }
+    }
+
+    buildEditorParent();
+</script>
+
+<!-- Load jQuery -->
+<script type="text/javascript" id='d-js-jquery'
+        src="https://static-cdn.website-editor.net/libs/jquery/2.2.4/jquery.min.js"></script>
+<!-- End Load jQuery -->
+<!-- Injecting site-wide before scripts -->
+<!-- End Injecting site-wide to the head -->
+
+
+<script>
+    var _jquery = window.$;
+
+    var jqueryAliases = ['$', 'jquery', 'jQuery'];
+
+    jqueryAliases.forEach((alias) => {
+        Object.defineProperty(window, alias, {
+            get() {
+                return _jquery;
+            },
+            set() {
+                console.warn("Trying to over-write the global jquery object!");
+            }
+        });
+    });
+    window.jQuery.migrateMute = true;
+</script>
+<script>
+    window.cookiesNotificationMarkupPreview = 'null';
+</script>
+
+<!-- HEAD RT JS Include -->
+<script id='d-js-params'>
+    window.INSITE = window.INSITE || {};
+    window.INSITE.device = "desktop";
+
+    window.rtCommonProps = {};
+    rtCommonProps["rt.ajax.ajaxScriptsFix"] =true;
+    rtCommonProps["rt.pushnotifs.sslframe.encoded"] = 'aHR0cHM6Ly97c3ViZG9tYWlufS5wdXNoLW5vdGlmcy5jb20=';
+    rtCommonProps["runtimecollector.url"] = 'https://rtc.website-editor.net';
+    rtCommonProps["performance.tabletPreview.removeScroll"] = 'false';
+    rtCommonProps["inlineEditGrid.snap"] =true;
+    rtCommonProps["popup.insite.cookie.ttl"] = '0.5';
+    rtCommonProps["rt.pushnotifs.force.button"] =true;
+    rtCommonProps["common.mapbox.token"] = 'pk.eyJ1IjoiZGFubnliMTIzIiwiYSI6ImNqMGljZ256dzAwMDAycXBkdWxwbDgzeXYifQ.Ck5P-0NKPVKAZ6SH98gxxw';
+    rtCommonProps["common.mapbox.js.override"] =false;
+    rtCommonProps["common.here.appId"] = 'iYvDjIQ2quyEu0rg0hLo';
+    rtCommonProps["common.here.appCode"] = '1hcIxLJcbybmtBYTD9Z1UA';
+    rtCommonProps["isCoverage.test"] =false;
+    rtCommonProps["ecommerce.ecwid.script"] = 'https://app.multiscreenstore.com/script.js';
+    rtCommonProps["common.resources.dist.cdn"] =true;
+    rtCommonProps["common.build.dist.folder"] = 'production/6070';
+    rtCommonProps["common.resources.cdn.host"] = 'https://static-cdn.website-editor.net';
+    rtCommonProps["common.resources.folder"] = 'https://static-cdn.website-editor.net/mnlt/production/6070';
+    rtCommonProps["feature.flag.runtime.backgroundSlider.preload.slowly"] =true;
+    rtCommonProps["feature.flag.runtime.newAnimation.enabled"] =true;
+    rtCommonProps["feature.flag.runtime.newAnimation.jitAnimation.enabled"] =true;
+    rtCommonProps["feature.flag.sites.google.analytics.gtag"] =true;
+    rtCommonProps["feature.flag.runOnReadyNewTask"] =true;
+    rtCommonProps["isAutomation.test"] =false;
+    rtCommonProps["booking.cal.api.domain"] = 'api.cal.com';
+
+    
+    rtCommonProps['common.mapsProvider'] = 'mapbox';
+    
+    rtCommonProps['common.mapsProvider.version'] = '0.52.0';
+    rtCommonProps['common.geocodeProvider'] = 'mapbox';
+    rtCommonProps['server.for.resources'] = '';
+    rtCommonProps['feature.flag.lazy.widgets'] = true;
+    rtCommonProps['feature.flag.single.wow'] = false;
+    rtCommonProps['feature.flag.disallowPopupsInEditor'] = true;
+    rtCommonProps['feature.flag.mark.anchors'] = true;
+    rtCommonProps['captcha.public.key'] = '6LffcBsUAAAAAMU-MYacU-6QHY4iDtUEYv_Ppwlz';
+    rtCommonProps['captcha.invisible.public.key'] = '6LeiWB8UAAAAAHYnVJM7_-7ap6bXCUNGiv7bBPME';
+    rtCommonProps["images.sizes.small"] =160;
+    rtCommonProps["images.sizes.mobile"] =640;
+    rtCommonProps["images.sizes.tablet"] =1280;
+    rtCommonProps["images.sizes.desktop"] =1920;
+    rtCommonProps["modules.resources.cdn"] =true;
+    rtCommonProps["import.images.storage.imageCDN"] = 'https://le-cdn.website-editor.net/';
+    rtCommonProps["feature.flag.runtime.inp.threshold"] =150;
+    rtCommonProps["feature.flag.performance.logs"] =true;
+    rtCommonProps["site.widget.form.captcha.type"] = 'g_recaptcha';
+    rtCommonProps["friendly.captcha.site.key"] = 'FCMGSQG9GVNMFS8K';
+    rtCommonProps["cookiebot.mapbox.consent.category"] = 'marketing';
+    // feature flags that's used out of runtime module (in  legacy files)
+    rtCommonProps["platform.monolith.personalization.dateTimeCondition.popupMsgAction.moveToclient.enabled"] =true;
+
+    window.rtFlags = {};
+    rtFlags["unsuspendEcwidStoreOnRuntime.enabled"] =false;
+    rtFlags["scripts.widgetCount.enabled"] =true;
+    rtFlags["fnb.animations.tracking.enabled"] =true;
+    rtFlags["ecom.ecwidNewUrlStructure.enabled"] = false;
+    rtFlags["ecom.ecwid.accountPage.emptyBaseUrl.enabled"] = true;
+    rtFlags["ecom.ecwid.pages.links.disable.listeners"] = true;
+    rtFlags["ecom.ecwid.storefrontV3.enabled"] = false;
+    rtFlags["ecom.ecwid.old.store.fix.facebook.share"] = true;
+    rtFlags["feature.flag.photo.gallery.exact.size"] =true;
+    rtFlags["geocode.search.localize"] =false;
+    rtFlags["feature.flag.runtime.newAnimation.asyncInit.setTimeout.enabled"] =false;
+    rtFlags["twitter.heightLimit.enabled"] = true;
+    rtFlags["runtime.lottieOverflow"] =false;
+    rtFlags["runtime.monitoring.sentry.ignoreErrors"] = "";
+    rtFlags["streamline.monolith.personalization.supportMultipleConditions.enabled"] =false;
+    rtFlags["flex.animation.design.panel.layout"] =false;
+    rtFlags["runtime.cwv.report.cls.enabled"] =false;
+    rtFlags["runtime.cwv.report.lcp.enabled"] =false;
+    rtFlags["flex.runtime.popup.with.show"] =true;
+    rtFlags["contact.form.useActiveForm"] =true;
+    rtFlags["contact.form.custom.errors.enabled"] =false;
+    rtFlags["runtime.ssr.productStore.internal.observer"] =true;
+    rtFlags["runtime.ssr.productCustomizations"] =true;
+    rtFlags["runtime.ssr.runtime.filter-sort.newFilterSortWidgetWithOptions.enabled"] =false;
+</script>
+<script src="https://static-cdn.website-editor.net/mnlt/production/6070/_dm/s/rt/dist/scripts/d-js-one-runtime-unified-desktop.min.js"  id="d-js-core"></script>
+<!-- End of HEAD RT JS Include -->
+<script>
+    
+    $(window).bind("orientationchange", function (e) {
+        $.layoutManager.initLayout();
+        
+    });
+    $(document).resize(function () {
+        
+    });
+</script>
+<script type="text/javascript" id="d_track_campaign">
+(function() {
+    if (!window.location.search) {
+        return;
+    }
+	const cleanParams = window.location.search.substring(1); // Strip ?
+	const queryParams = cleanParams.split('&');
+
+	const expires = 'expires=' + new Date().getTime() + 24 * 60 * 60 * 1000;
+	const domain = 'domain=' + window.location.hostname;
+	const path = "path=/";
+
+	queryParams.forEach((param) => {
+		const [key, value = ''] = param.split('=');
+		if (key.startsWith('utm_')) {
+			const cookieName = "_dm_rt_" + key.substring(4);
+			const cookie = cookieName + "=" + value;
+			const joined = [cookie, expires, domain, path].join(";");
+			document.cookie = joined;
+		}
+	});
+}());
+</script>
+<script type="text/javascript" >
+  var _dm_gaq = {};
+  var _gaq = _gaq || [];
+  var _dm_insite = [];
+</script>
+
+<script type="text/javascript" id="d_track_sp">
+;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[];
+p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments)
+};p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1;
+n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","//d1dxoqu0t5mb7j.cloudfront.net/sp-2.0.0-dm-0.1.min.js","snowplow"));
+window.dmsnowplow  = window.snowplow;
+
+dmsnowplow('newTracker', 'cf', 'd1dxoqu0t5mb7j.cloudfront.net', { // Initialise a tracker
+  appId: '9ad631e198234aa29eaabd7ece9297a9'
+});
+
+// snowplow queries element styles so we wait until CSS calculations are done.
+requestAnimationFrame(() => {
+	dmsnowplow('trackPageView');
+	_dm_insite.forEach((rule) => {
+		// Specifically in popup only the client knows if it is shown or not so we don't always want to track its impression here
+		// the tracking is in popup.js
+		if (rule.actionName !== "popup") {
+			dmsnowplow('trackStructEvent', 'insite', 'impression', rule.ruleType, rule.ruleId);
+		}
+		window?.waitForDeferred?.('dmAjax', () => {
+			$.DM.events.trigger('event-ruleTriggered', {value: rule});
+		});
+	});
+});
+</script>
+   <div style="display:none;" id="P6iryBW0Wu"></div>
+
+<!-- photoswipe markup -->
+
+
+
+
+
+
+
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Schließen (ESC)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Teilen"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Vollbild ein-/ausschalten"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Vergrößern/verkleinern"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Zurück (Pfeil nach links)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Weiter (Pfeil nach rechts)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div id="fb-root"
+        data-locale="de_DE"></div>
+<!-- Alias: 9ad631e198234aa29eaabd7ece9297a9 -->
+<div class="dmPopupMask" id="dmPopupMask"></div>
+<div id="dmPopup" class="dmPopup">
+	<div class="dmPopupCloseWrapper"> <div class="dmPopupClose dm-common-icons-close oneIcon" onclick="dmHidePopup(event);"></div> </div>
+ 	<div class="dmPopupTitle"> <span></span> Share by:</div> 
+	<div class="data"></div>
+</div><script id="d_track_personalization">
+	window?.waitForDeferred?.('dmAjax', () => {
+		// Collects client data and updates cookies used by smart sites
+		window.expireDays = 365;
+		window.visitLength = 30 * 60000;
+		$.setCookie("dm_timezone_offset", (new Date()).getTimezoneOffset(), window.expireDays);
+			setSmartSiteCookiesInternal("dm_this_page_view","dm_last_page_view","dm_total_visits","dm_last_visit");
+	});
+</script>
+<script type="text/javascript">
+    
+    Parameters.NavigationAreaParams.MoreButtonText = '......';
+    
+    Parameters.NavigationAreaParams.LessButtonText = '......';
+    Parameters.HomeLinkText = 'Home';
+    </script>
+<!--  End Script tags -->
+<!--  Site Wide Html Markup -->
+<!--  Site Wide Html Markup -->
+<!--  Begin Product Custom HTML Markup -->
+<script>
+function call1and1Tracking() {
+	var externalId = dmAPI.getSiteExternalId();
+	var siteName = dmAPI.getSiteName();
+	var src = 'https://integration.mywebsite-editor.com/dakota-snippet-service/snippet/integration/snippet.js?sitename='+siteName+'&external_uid='+externalId+'&mode=visit'
+	var tracking = document.createElement('script');
+     tracking.setAttribute('src',src);
+   	document.head.appendChild(tracking);
+}
+call1and1Tracking();
+</script><!--  End Product Custom HTML Markup -->
+</body>
+</html>

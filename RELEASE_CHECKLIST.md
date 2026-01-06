@@ -81,6 +81,18 @@ This document defines the standardized check-up process for releasing new versio
     - Click "🏆 Top 3".
     - Table shows exactly 3 rows.
 
+### 3. Traffic & Navigation
+- [ ] **Standard-Fahrzeit**: Werte werden geladen (z.B. "60 min") - *überprüfen: keine "-"*
+- [ ] **Distanz**: Werte in km angezeigt (z.B. "74 km")
+- [ ] **Standort-Wechsel**:
+  - [ ] Suche nach "Stuttgart" (oder anderer Ort) ausführen
+  - [ ] **Check**: Alle 3 Traffic-Spalten zeigen sofort Lade-Kringel (⏳)
+  - [ ] **Check**: Werte aktualisieren sich nach 2-5 Sekunden
+  - [ ] **Check**: Distanz > 150km (für Stuttgart)
+  - [ ] **Check**: Fahrzeit (ohne Verkehr) bleibt statisch (verändert sich NICHT)
+  - [ ] **Check**: Fahrzeit (mit Verkehr) ist plausibel (> als ohne Verkehr)
+- [ ] **Navigation**: Klick auf "Fahrzeit" öffnet Google Maps Route
+
 ### 🗺️ Map Visualization
 - [ ] **Map Load**: Map container visible.
 - [ ] **Markers**: Pins exist for resorts.
