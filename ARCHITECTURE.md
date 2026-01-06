@@ -55,6 +55,9 @@
 *   **`index.html`**: Pure HTML structure.
 *   **`app.js`**: Fetches data from the backend APIs and manages application state.
 *   **`render.js`**: Pure functions that take data and generate HTML table rows, handling formatting and visual indicators (traffic lights, emojis).
+    *   **`formatDuration()`**: Helper function to convert minutes to HH:mm format (e.g., 75 → "01:15 h")
+    *   **Enhanced Sorting**: Supports sorting by distance_km, traffic_duration, and handles snow objects (mountain/valley values)
+    *   **Price Display**: Dynamic seasonal pricing based on current date
 
 ## Data Flow
 1.  **Client** requests `index.html`.
