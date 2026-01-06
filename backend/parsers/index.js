@@ -22,7 +22,6 @@ import { hahnenkamm } from "./hahnenkamm.js";
 import { oberaudorf } from "./oberaudorf.js";
 import { kampenwand } from "./kampenwand.js";
 import { balderschwang } from "./balderschwang.js";
-import { brauneck } from "./brauneck.js";
 import { oberstdorf } from "./oberstdorf.js";
 import { oberjoch } from "./oberjoch.js";
 
@@ -50,7 +49,6 @@ export const PARSERS = {
     oberaudorf,
     kampenwand,
     balderschwang,
-    brauneck,
     oberstdorf,
     oberjoch,
 };
