@@ -1,4 +1,4 @@
-# 🏔️ Skigebiet-Finder v1.1
+# 🏔️ Skigebiet-Finder v1.3
 
 ![CI/CD](https://github.com/YOUR_USERNAME/skigebiete-muenchen/workflows/CI%2FCD%20Pipeline/badge.svg)
 
@@ -7,9 +7,9 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detai
 ## ✨ Features
 
 ### Live-Daten & Tracking
-- ✅ **Live-Daten**: Aktuelle Lift-Status und Schneehöhen für 13+ Skigebiete
-- 🚡 **Detailliertes Lift-Tracking**: 295 Lifte mit Status, Typ, Länge und Höhe
-- ⛷️ **Pisten-Details**: 478 Pisten mit Schwierigkeitsgrad und Metadata
+- ✅ **Live-Daten**: Aktuelle Lift-Status und Schneehöhen für 16+ Skigebiete
+- 🚡 **Detailliertes Lift-Tracking**: 350+ Lifte mit Status, Typ, Länge und Höhe
+- ⛷️ **Pisten-Details**: 600+ Pisten mit Schwierigkeitsgrad und Metadata
 - 📋 **Details-Modal**: Vollständige Übersicht aller Lifte und Pisten pro Skigebiet
 - 📊 **Historische Trends**: 7-Tage Verlauf der Lift-Verfügbarkeit
 
@@ -19,13 +19,14 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detai
 - 🧭 **Direkte Navigation**: One-Click Google Maps Routing zu Talstationen
 
 ### Wetter & Bedingungen
-- 🌤️ **3-Tage Wettervorhersage**: Detaillierte Wettericons mit Temperaturen
-- ❄️ **Schneehöhe**: Berg und Tal mit letztem Schneefall
+- 🌤️ **Wetter & Schnee Kombi**: 3-Tage Vorhersage und detaillierte Schneehöhen (Berg/Tal)
+- ❄️ **Daten-Fallback**: Automatische Wetter-API Daten wenn Skigebiet-Infos fehlen
 - 📷 **Webcams**: Direktlinks zu Live-Webcams
 
 ### Preise & Klassifizierung
 - 💶 **Preis-Details**: Detaillierte Preise für Erwachsene, Jugendliche und Kinder (Tooltip)
 - ℹ️ **Schwierigkeitsgrad-Legende**: Interaktiver Tooltip erklärt die Klassifizierungen (Familie, Genuss, Sportlich, etc.)
+- 📋 **Kategorien**: Gruppierte Tabellen-Header für bessere Übersicht
 
 ### Visualisierung
 - 🗺️ **Interaktive Karte**: Leaflet-basierte Visualisierung aller Skigebiete
@@ -35,13 +36,14 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detai
 - 🔒 **Rate Limiting**: Schutz vor API-Missbrauch
 - 📱 **Mobile Responsive**: Optimiert für alle Geräte
 - 🎯 **Smart Scoring**: Intelligentes Ranking basierend auf Distanz, Pisten, Liften und Preis
+- 📡 **Status Logging**: Detailliertes Update-Log im Frontend
 
 ## 📊 Daten-Abdeckung
 
-- **13 Skigebiete** mit detailliertem Tracking
-- **295 Lifte** mit Status und Metadata
-- **478 Pisten** mit Schwierigkeitsgrad
-- **5 Skigebiete** mit vollständigen Metadata (Länge, Höhe, Betriebszeiten)
+- **16 Skigebiete** mit detailliertem Tracking
+- **350+ Lifte** mit Status und Metadata
+- **600+ Pisten** mit Schwierigkeitsgrad
+- **8 Skigebiete** mit vollständigen Metadata (Länge, Höhe, Betriebszeiten)
 
 ## Tech Stack
 

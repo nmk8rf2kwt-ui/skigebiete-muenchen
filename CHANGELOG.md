@@ -6,8 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ### 🚀 Features
 - **New Resorts**: Added Oberstdorf/Kleinwalsertal, Oberjoch, and Balderschwang.
-- **UI Overhaul**: Redesigned toolbar layout (Search and Actions in separate rows), improved table headers (Categories).
-- **Weather Display**: Enhanced weather and snow depth presentation (combined column).
+- **UI Overhaul**: 
+    - Redesigned toolbar layout (Search and Actions in separate rows).
+    - Added grouped table headers ("Anreise", "Daten", "Bedingungen").
+    - Added timestamp to status query indicator.
+- **Weather & Snow**: 
+    - Consolidated "Weather & Snow" column with 3-day forecast icons and dates.
+    - Added generic **Snow Fallback Service** using Open-Meteo API when resort data is missing.
+    - Implemented **Detailed Snow Reports** (Mountain/Valley depth split).
+- **Traffic**: 
+    - Added **Traffic Data Reset**: Columns clear and show loading state on location change.
+    - Improved distance calculation stability.
+- **System**: 
+    - **Status Logging**: Added detailed per-resort update logs in the system console.
+    - **Data Source cleanup**: Removed legacy Bergfex references.
 
 ## [1.2.0] - 2026-01-06
 
