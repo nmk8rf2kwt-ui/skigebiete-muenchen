@@ -2,6 +2,7 @@ import { renderTable, calculateScore } from "./render.js";
 import { initMap, updateMap, showUserLocation } from "./map.js";
 import { API_BASE_URL } from "./config.js";
 import { store } from "./store.js";
+import { escapeHtml } from "./utils.js";
 
 // Global Error Handler
 // Global Error Handler
@@ -927,12 +928,13 @@ function displayWeather(forecast) {
 
 function displayResortDetails(resort) {
   const container = document.getElementById("detailsContent");
+  const safeResortName = escapeHtml(resort.name);
 
   // Show loading state
   container.innerHTML = `
     <div class="loading-container">
       <div class="loading-spinner"></div>
-      <p>Lade Details für ${resort.name}...</p>
+      <p>Lade Details für ${safeResortName}...</p>
     </div>
   `;
 
@@ -964,18 +966,20 @@ function displayResortDetails(resort) {
         const statusIcon = lift.status === "open" ? "🟢" :
           lift.status === "closed" ? "🔴" : "⚪";
 
+        const safeLiftName = escapeHtml(lift.name);
+
         html += `<div class="facility-item">
         <div class="facility-header">
           <span class="facility-status ${statusClass}">${statusIcon}</span>
-          <span class="facility-name">${lift.name}</span>
+          <span class="facility-name">${safeLiftName}</span>
         </div>`;
 
         // Metadata
         const metadata = [];
-        if (lift.type) metadata.push(`Typ: ${lift.type}`);
-        if (lift.length) metadata.push(`Länge: ${lift.length}m`);
-        if (lift.altitudeStart) metadata.push(`Höhe: ${lift.altitudeStart}m`);
-        if (lift.operatingHours) metadata.push(`⏰ ${lift.operatingHours}`);
+        if (lift.type) metadata.push(`Typ: ${escapeHtml(lift.type)}`);
+        if (lift.length) metadata.push(`Länge: ${lift.length}m`); // Number, safe
+        if (lift.altitudeStart) metadata.push(`Höhe: ${lift.altitudeStart}m`); // Number, safe
+        if (lift.operatingHours) metadata.push(`⏰ ${escapeHtml(lift.operatingHours)}`);
 
         if (metadata.length > 0) {
           html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
@@ -1005,19 +1009,21 @@ function displayResortDetails(resort) {
             slope.difficulty === "black" ? "⚫" :
               slope.difficulty === "freeride" ? "🟠" : "";
 
+        const safeSlopeName = escapeHtml(slope.name);
+
         html += `<div class="facility-item">
         <div class="facility-header">
           <span class="facility-status ${statusClass}">${statusIcon}</span>
           ${difficultyIcon ? `<span class="difficulty-badge">${difficultyIcon}</span>` : ''}
-          <span class="facility-name">${slope.name}</span>
+          <span class="facility-name">${safeSlopeName}</span>
         </div>`;
 
         // Metadata
         const metadata = [];
-        if (slope.difficulty) metadata.push(`Schwierigkeit: ${slope.difficulty}`);
+        if (slope.difficulty) metadata.push(`Schwierigkeit: ${escapeHtml(slope.difficulty)}`);
         if (slope.length) metadata.push(`Länge: ${slope.length}m`);
         if (slope.altitudeStart) metadata.push(`Höhe: ${slope.altitudeStart}m`);
-        if (slope.operatingHours) metadata.push(`⏰ ${slope.operatingHours}`);
+        if (slope.operatingHours) metadata.push(`⏰ ${escapeHtml(slope.operatingHours)}`);
 
         if (metadata.length > 0) {
           html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;

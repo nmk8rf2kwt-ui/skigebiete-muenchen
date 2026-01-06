@@ -1,74 +1,39 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { supabase } from './db.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// history.js is in backend/, resorts.json is in backend/, data is in backend/data
-const DATA_DIR = path.join(__dirname, 'data/history');
-const TRAFFIC_DIR = path.join(__dirname, 'data/traffic');
-const RESORTS_FILE = path.join(__dirname, 'resorts.json');
-const RETENTION_DAYS = 30;
-
-// Load allowed resorts once
-let ALLOWED_RESORTS = new Set();
-try {
-    const data = fs.readFileSync(RESORTS_FILE, 'utf8');
-    const resorts = JSON.parse(data);
-    resorts.forEach(r => ALLOWED_RESORTS.add(r.id));
-} catch (err) {
-    console.error("Warning: history.js could not load resorts.json for validation:", err.message);
-}
-
-// Validation Helper
-function isValidResort(resortId) {
-    if (!resortId || typeof resortId !== 'string') return false;
-    // Fail closed: If list failed to load, deny all to be safe
-    if (ALLOWED_RESORTS.size === 0) return false;
-    return ALLOWED_RESORTS.has(resortId);
-}
-
-// Ensure data directory exists
-function ensureDataDir(resortId) {
-    if (!isValidResort(resortId)) {
-        throw new Error(`Invalid resort ID: ${resortId}`);
-    }
-    const dir = path.join(DATA_DIR, resortId);
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
-    return dir;
-}
+// --- DATABASE OPERATIONS ---
 
 // Save daily snapshot
-export function saveSnapshot(resortId, data) {
-    try {
-        const dir = ensureDataDir(resortId);
-        const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-        const filename = path.join(dir, `${date}.json`);
+export async function saveSnapshot(resortId, data) {
+    if (!supabase) return false;
 
-        const snapshot = {
-            resortId,
-            date,
-            timestamp: new Date().toISOString(),
-            data: {
-                liftsOpen: data.liftsOpen || null,
-                liftsTotal: data.liftsTotal || null,
-                snow: data.snow || null,
-                weather: data.weather || null,
-                // Historical weather data from Open-Meteo
-                historicalWeather: data.historicalWeather || null,
-                // NEW: Store detailed lift/slope data if available
-                lifts: data.lifts || null,
-                slopes: data.slopes || null,
-                // NEW: Store pricing history
-                price: data.price || null,
-                priceDetail: data.priceDetail || null
-            }
+    try {
+        const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+        // Prepare data object, ensure it matches JSON structure we want
+        const snapshotData = {
+            liftsOpen: data.liftsOpen || null,
+            liftsTotal: data.liftsTotal || null,
+            snow: data.snow || null,
+            weather: data.weather || null,
+            historicalWeather: data.historicalWeather || null,
+            lifts: data.lifts || null,
+            slopes: data.slopes || null,
+            price: data.price || null,
+            priceDetail: data.priceDetail || null
         };
 
-        fs.writeFileSync(filename, JSON.stringify(snapshot, null, 2));
+        const { error } = await supabase
+            .from('resort_snapshots')
+            .upsert({
+                resort_id: resortId,
+                date: date,
+                data: snapshotData
+            }, { onConflict: 'resort_id, date' });
+
+        if (error) {
+            console.error(`Supabase error saving snapshot for ${resortId}:`, error.message);
+            return false;
+        }
         return true;
     } catch (error) {
         console.error(`Error saving snapshot for ${resortId}:`, error);
@@ -76,58 +41,41 @@ export function saveSnapshot(resortId, data) {
     }
 }
 
-// Ensure traffic directory exists
-function ensureTrafficDir() {
-    if (!fs.existsSync(TRAFFIC_DIR)) {
-        fs.mkdirSync(TRAFFIC_DIR, { recursive: true });
-    }
+// Save traffic log (Standard, from simple generic function)
+export async function saveTrafficLog(resortId, standardTime, currentTime) {
+    // This function signature is a bit weird for the new schema which expects city_id.
+    // We'll assume this is "standard" Munich traffic if not specified? 
+    // Or we map it to a default 'muenchen' entry?
+    // Let's reuse saveMatrixTrafficLog which is more generic
+    // assuming standardTime is duration and currentTime is actual? 
+    // Wait, the previous implementation calculated delay = currentTime - standardTime.
+    if (!supabase) return false;
+
+    // Legacy support: assume Munich
+    const delay = Math.max(0, currentTime - standardTime);
+    return saveMatrixTrafficLog('muenchen', 'München', resortId, currentTime, delay);
 }
 
-// Save traffic log
-export function saveTrafficLog(resortId, standardTime, currentTime) {
+// Save matrix traffic log
+export async function saveMatrixTrafficLog(cityId, cityName, resortId, duration, delay) {
+    if (!supabase) return false;
+
     try {
-        ensureTrafficDir();
-        const date = new Date();
-        const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
-        const timeStr = date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+        const { error } = await supabase
+            .from('traffic_logs')
+            .insert({
+                city_id: cityId,
+                city_name: cityName,
+                resort_id: resortId,
+                duration: duration,
+                delay: delay,
+                timestamp: new Date().toISOString()
+            });
 
-        const filename = path.join(TRAFFIC_DIR, `${dateStr}_traffic.csv`);
-
-        // CSV Header if file doesn't exist
-        if (!fs.existsSync(filename)) {
-            fs.writeFileSync(filename, "Timestamp,ResortId,StandardTime,CurrentTime,Delay\n");
+        if (error) {
+            console.error(`Supabase error saving traffic log for ${cityId} -> ${resortId}:`, error.message);
+            return false;
         }
-
-        const delay = Math.max(0, currentTime - standardTime);
-        const line = `${timeStr},${resortId},${standardTime},${currentTime},${delay}\n`;
-
-        fs.appendFileSync(filename, line);
-        return true;
-    } catch (error) {
-        console.error(`Error saving traffic log for ${resortId}:`, error.message);
-        return false;
-    }
-}
-
-// Save matrix traffic log (for a specific city -> resort)
-export function saveMatrixTrafficLog(cityId, cityName, resortId, duration, delay) {
-    try {
-        ensureTrafficDir();
-
-        // Sanitize cityId for filename
-        const safeCityId = cityId.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        const filename = path.join(TRAFFIC_DIR, `traffic_${safeCityId}.csv`);
-
-        const date = new Date();
-        // CSV Header if file doesn't exist
-        if (!fs.existsSync(filename)) {
-            fs.writeFileSync(filename, "Timestamp,ResortId,DurationMin,DelayMin\n");
-        }
-
-        const isoTime = date.toISOString(); // Use ISO for sorting
-        const line = `${isoTime},${resortId},${duration},${delay}\n`;
-
-        fs.appendFileSync(filename, line);
         return true;
     } catch (error) {
         console.error(`Error saving matrix log for ${cityId} -> ${resortId}:`, error.message);
@@ -135,38 +83,29 @@ export function saveMatrixTrafficLog(cityId, cityName, resortId, duration, delay
     }
 }
 
-// Deprecated: Old single-file city log
-export function saveCityTrafficLog(trafficData) {
-    // ... (kept for backward compatibility if needed, or simply replaced)
-    // I will overwrite it effectively or just place the new one above/below.
-    // I'll leave the old code but just add the new function export.
-    // Actually, the previous implementation of saveCityTrafficLog is at lines 111-149.
-    // I will replace that block with the new generic function AND the deprecated one if I want, 
-    // but since I'm rewriting the scheduler, I'll just use the new one.
-    // I will ADD the new function at the end of the file or after saveTrafficLog.
-    return false;
-}
-
 // Get history for last N days
-export function getHistory(resortId, days = 7) {
+export async function getHistory(resortId, days = 7) {
+    if (!supabase) return [];
+
     try {
-        const dir = path.join(DATA_DIR, resortId);
-        if (!fs.existsSync(dir)) {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - days);
+
+        const { data, error } = await supabase
+            .from('resort_snapshots')
+            .select('*')
+            .eq('resort_id', resortId)
+            .gte('date', startDate.toISOString().split('T')[0])
+            .lte('date', endDate.toISOString().split('T')[0])
+            .order('date', { ascending: false });
+
+        if (error) {
+            console.error(`Supabase error getting history for ${resortId}:`, error.message);
             return [];
         }
 
-        const files = fs.readdirSync(dir)
-            .filter(f => f.endsWith('.json'))
-            .sort()
-            .reverse()
-            .slice(0, days);
-
-        const history = files.map(file => {
-            const content = fs.readFileSync(path.join(dir, file), 'utf8');
-            return JSON.parse(content);
-        }).reverse(); // Oldest first
-
-        return history;
+        return data || [];
     } catch (error) {
         console.error(`Error reading history for ${resortId}:`, error);
         return [];
@@ -174,8 +113,9 @@ export function getHistory(resortId, days = 7) {
 }
 
 // Calculate trends
-export function getTrends(resortId) {
-    const history = getHistory(resortId, 7);
+// Note: This must now be async because getHistory is async
+export async function getTrends(resortId) {
+    const history = await getHistory(resortId, 7);
 
     if (history.length < 2) {
         return {
@@ -188,6 +128,7 @@ export function getTrends(resortId) {
     }
 
     // Snow trend
+    // Note: data is now in the `data` column directly as JSONB
     const snowValues = history
         .map(h => parseInt(h.data.snow))
         .filter(v => !isNaN(v));
@@ -196,9 +137,11 @@ export function getTrends(resortId) {
     let snowChange = null;
 
     if (snowValues.length >= 2) {
-        const first = snowValues[0];
-        const last = snowValues[snowValues.length - 1];
-        const change = last - first;
+        // history is typically ordered DESC (newest first) from getHistory
+        // so snowValues[0] is newest, snowValues[len-1] is oldest
+        const current = snowValues[0];
+        const oldest = snowValues[snowValues.length - 1];
+        const change = current - oldest;
 
         snowChange = `${change > 0 ? '+' : ''}${change}cm (${snowValues.length} days)`;
 
@@ -218,8 +161,9 @@ export function getTrends(resortId) {
 
     // Best days (most lifts open)
     const bestDays = history
+        .slice() // copy
         .filter(h => h.data.liftsOpen !== null)
-        .sort((a, b) => b.data.liftsOpen - a.data.liftsOpen)
+        .sort((a, b) => (b.data.liftsOpen || 0) - (a.data.liftsOpen || 0))
         .slice(0, 3)
         .map(h => h.date);
 
@@ -233,44 +177,29 @@ export function getTrends(resortId) {
 }
 
 // Cleanup old data
-export function cleanup() {
-    try {
-        if (!fs.existsSync(DATA_DIR)) return;
-
-        const resortDirs = fs.readdirSync(DATA_DIR);
-        const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - RETENTION_DAYS);
-
-        let deletedCount = 0;
-
-        resortDirs.forEach(resortId => {
-            const dir = path.join(DATA_DIR, resortId);
-            const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
-
-            files.forEach(file => {
-                const fileDate = new Date(file.replace('.json', ''));
-                if (fileDate < cutoffDate) {
-                    fs.unlinkSync(path.join(dir, file));
-                    deletedCount++;
-                }
-            });
-        });
-
-        console.log(`Cleaned up ${deletedCount} old history files`);
-        return deletedCount;
-    } catch (error) {
-        console.error('Error during cleanup:', error);
-        return 0;
-    }
+// No op for DB, or could implement a DELETE query
+export async function cleanup() {
+    // Database can handle retention policies or we can add a delete query here.
+    // For now, let's keep data.
+    return 0;
 }
 
-// Get all resorts with history
-export function getResortsWithHistory() {
+// Get all resorts with history (Distinct query)
+export async function getResortsWithHistory() {
+    if (!supabase) return [];
     try {
-        if (!fs.existsSync(DATA_DIR)) return [];
-        return fs.readdirSync(DATA_DIR).filter(name => {
-            return fs.statSync(path.join(DATA_DIR, name)).isDirectory();
-        });
+        const { data, error } = await supabase
+            .from('resort_snapshots')
+            .select('resort_id')
+            .order('resort_id'); // Distinct isn't directly supported in simple select without raw SQL mostly, but let's see. 
+        // Actually use .select('resort_id', { head: false, count: null }).range(0,1000) ???
+        // Better to use rpc or raw query if distinct needed, OR simply fetch all unique IDs using JS if dataset small.
+        // Or strictly: .select('resort_id').limit(1000) and unique in JS.
+
+        if (error) throw error;
+
+        const unique = [...new Set(data.map(item => item.resort_id))];
+        return unique;
     } catch (error) {
         console.error('Error getting resorts with history:', error);
         return [];
@@ -278,35 +207,31 @@ export function getResortsWithHistory() {
 }
 
 // Update historical weather for a specific date (used for backfill)
-export function updateHistoricalWeather(resortId, date, weatherData) {
+export async function updateHistoricalWeather(resortId, date, weatherData) {
+    if (!supabase) return false;
+
     try {
-        const dir = ensureDataDir(resortId);
-        const filename = path.join(dir, `${date}.json`);
+        // Need to fetch existing first to merge? Or just upsert?
+        // Upsert requires full row.
+        const { data: existing } = await supabase
+            .from('resort_snapshots')
+            .select('data')
+            .eq('resort_id', resortId)
+            .eq('date', date)
+            .single();
 
-        let snapshot;
+        let newData = existing ? existing.data : {};
+        newData.historicalWeather = weatherData;
 
-        if (fs.existsSync(filename)) {
-            // Load existing
-            const content = fs.readFileSync(filename, 'utf8');
-            snapshot = JSON.parse(content);
-        } else {
-            // Create new minimal snapshot
-            snapshot = {
-                resortId,
-                date,
-                timestamp: new Date().toISOString(), // Use current timestamp for "created/modified"
-                data: {}
-            };
-        }
+        const { error } = await supabase
+            .from('resort_snapshots')
+            .upsert({
+                resort_id: resortId,
+                date: date,
+                data: newData
+            }, { onConflict: 'resort_id, date' });
 
-        // Ensure data object exists
-        if (!snapshot.data) snapshot.data = {};
-
-        // Update weather data
-        snapshot.data.historicalWeather = weatherData;
-
-        // Save
-        fs.writeFileSync(filename, JSON.stringify(snapshot, null, 2));
+        if (error) throw error;
         return true;
     } catch (error) {
         console.error(`Error updating historical weather for ${resortId} on ${date}:`, error.message);
@@ -315,86 +240,56 @@ export function updateHistoricalWeather(resortId, date, weatherData) {
 }
 
 // Get weather history for a resort
-export function getWeatherHistory(resortId, days = 30) {
-    try {
-        const history = getHistory(resortId, days);
+export async function getWeatherHistory(resortId, days = 30) {
+    const history = await getHistory(resortId, days);
 
-        // Extract weather data from snapshots
-        const weatherHistory = history.map(snapshot => {
-            const weather = snapshot.data.historicalWeather;
-            return {
-                date: snapshot.date,
-                tempMax: weather?.tempMax ?? null,
-                tempMin: weather?.tempMin ?? null,
-                precipitation: weather?.precipitation ?? null,
-                snowfall: weather?.snowfall ?? null,
-                snowDepth: weather?.snowDepth ?? null
-            };
-        }).filter(day => day.tempMax !== null || day.tempMin !== null); // Filter out days without data
-
-        return weatherHistory;
-    } catch (error) {
-        console.error(`Error getting weather history for ${resortId}:`, error);
-        return [];
-    }
-}
-
-// Internal Helper to read Traffic CSV
-function readTrafficCsv(cityId) {
-    const safeCityId = cityId.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    const filename = path.join(TRAFFIC_DIR, `traffic_${safeCityId}.csv`);
-
-    if (!fs.existsSync(filename)) return [];
-
-    try {
-        const content = fs.readFileSync(filename, 'utf-8');
-        const lines = content.trim().split('\n');
-
-        // Skip header
-        return lines.slice(1).map(line => {
-            const [timestamp, resortId, duration, delay] = line.split(',');
-            // Simple validation to ensure line has content
-            if (!timestamp || !resortId) return null;
-
-            return {
-                timestamp,
-                resortId,
-                duration: parseFloat(duration),
-                delay: parseFloat(delay)
-            };
-        }).filter(entry => entry !== null);
-    } catch (error) {
-        console.error(`Error reading traffic CSV for ${cityId}:`, error);
-        return [];
-    }
+    // Extract weather data from snapshots
+    return history.map(snapshot => {
+        const weather = snapshot.data.historicalWeather;
+        return {
+            date: snapshot.date,
+            tempMax: weather?.tempMax ?? null,
+            tempMin: weather?.tempMin ?? null,
+            precipitation: weather?.precipitation ?? null,
+            snowfall: weather?.snowfall ?? null,
+            snowDepth: weather?.snowDepth ?? null
+        };
+    }).filter(day => day.tempMax !== null || day.tempMin !== null);
 }
 
 // Get full traffic history for a city
-export function getCityTrafficHistory(cityId) {
-    return readTrafficCsv(cityId);
+export async function getCityTrafficHistory(cityId) {
+    if (!supabase) return [];
+    try {
+        const { data, error } = await supabase
+            .from('traffic_logs')
+            .select('*')
+            .eq('city_id', cityId)
+            .order('timestamp', { ascending: true }); // Ascending for charts
+
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error(`Error getting city traffic history for ${cityId}:`, error);
+        return [];
+    }
 }
 
 // Get traffic history for a specific resort from a city
-export function getResortTrafficHistory(cityId, resortId) {
-    const allData = readTrafficCsv(cityId);
-    return allData.filter(entry => entry.resortId === resortId);
-}
+export async function getResortTrafficHistory(cityId, resortId) {
+    if (!supabase) return [];
+    try {
+        const { data, error } = await supabase
+            .from('traffic_logs')
+            .select('*')
+            .eq('city_id', cityId)
+            .eq('resort_id', resortId)
+            .order('timestamp', { ascending: true });
 
-// Check if backfill has been completed
-export function isBackfillCompleted() {
-    const flagPath = path.join(__dirname, 'data/.weather_backfill_completed');
-    return fs.existsSync(flagPath);
-}
-
-// Mark backfill as completed
-export function markBackfillCompleted() {
-    const flagPath = path.join(__dirname, 'data/.weather_backfill_completed');
-    const dataDir = path.dirname(flagPath);
-
-    if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error(`Error getting resort traffic history for ${resortId}:`, error);
+        return [];
     }
-
-    fs.writeFileSync(flagPath, new Date().toISOString());
-    console.log('✓ Weather backfill marked as completed');
 }

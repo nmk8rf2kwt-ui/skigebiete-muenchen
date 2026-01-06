@@ -71,7 +71,8 @@ export async function saveDailySnapshots() {
                     historicalWeather
                 };
 
-                saveSnapshot(resort.id, data);
+                // UPDATED: Await async save
+                await saveSnapshot(resort.id, data);
                 console.log(`  ✓ Saved snapshot for ${resort.id}`);
             } catch (error) {
                 console.error(`  ✗ Failed to save snapshot for ${resort.id}:`, error.message);
@@ -132,7 +133,8 @@ export async function updateTrafficMatrix() {
                     const resort = resorts.find(r => r.id === resortId);
                     if (resort) {
                         const standard = resort.distance || 0;
-                        saveTrafficLog(resortId, standard, data.duration);
+                        // UPDATED: Await async save
+                        await saveTrafficLog(resortId, standard, data.duration);
                     }
                 }
             }
@@ -149,7 +151,8 @@ export async function updateTrafficMatrix() {
                 for (const resort of resorts) {
                     const data = cityData[resort.id];
                     if (data) {
-                        saveMatrixTrafficLog(
+                        // UPDATED: Await async save
+                        await saveMatrixTrafficLog(
                             city.id,
                             city.name,
                             resort.id,
@@ -210,6 +213,7 @@ export function initScheduler() {
     setInterval(cleanupHistory, 24 * 60 * 60 * 1000);
 
     // F. One-time Weather Backfill (First Start Only)
+    // Note: This logic is tricky with async, but timeouts are fine firing async promises
     if (!isBackfillCompleted()) {
         console.log("🌤️ Starting one-time weather history backfill...");
         setTimeout(async () => {
@@ -224,7 +228,8 @@ export function initScheduler() {
                     const weatherData = await backfillWeatherHistory(resort, 30);
                     // Save each day
                     for (const [date, data] of Object.entries(weatherData)) {
-                        updateHistoricalWeather(resort.id, date, data);
+                        // UPDATED: Await async save
+                        await updateHistoricalWeather(resort.id, date, data);
                     }
                     successCount++;
                     // Small delay to avoid rate limiting

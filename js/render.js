@@ -1,5 +1,6 @@
 // Score calculation constants
 import { sortResorts } from './sorting.js';
+import { escapeHtml } from './utils.js';
 
 const SCORE_WEIGHTS = {
   PISTE_KM: 2,
@@ -125,6 +126,11 @@ export function renderRow(row, data) {
   // Determine if data is missing or just zero
   const hasLive = data.status === "live";
 
+  // Escape Common Inputs
+  const safeName = escapeHtml(data.name);
+  const safeWebsite = escapeHtml(data.website);
+  const safeWebcam = escapeHtml(data.webcam);
+
   // Format price
   let price = "-";
 
@@ -138,9 +144,10 @@ export function renderRow(row, data) {
     const pAdult = fmt(pd.adult);
     const pYouth = fmt(pd.youth);
     const pChild = fmt(pd.child);
+    const safeInfo = escapeHtml(pd.info || 'Zur Preisübersicht');
 
     price = `
-      <a href="${data.website}" target="_blank" style="text-decoration: none; color: inherit; display: block; font-size: 0.8em; line-height: 1.3; text-align: left;" title="${pd.info || 'Zur Preisübersicht'}">
+      <a href="${safeWebsite}" target="_blank" style="text-decoration: none; color: inherit; display: block; font-size: 0.8em; line-height: 1.3; text-align: left;" title="${safeInfo}">
         ${pAdult ? `<div style="white-space: nowrap;">Erw.: ${pAdult}</div>` : ''}
         ${pYouth ? `<div style="white-space: nowrap;">Jugendl.: ${pYouth}</div>` : ''}
         ${pChild ? `<div style="white-space: nowrap;">Kind: ${pChild}</div>` : ''}
@@ -176,6 +183,7 @@ export function renderRow(row, data) {
     if (data.latitude && data.longitude) {
       const destQuery = data.address ? encodeURIComponent(data.address) : `${data.latitude},${data.longitude}`;
       const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destQuery}&travelmode=driving`;
+      // Maps URL is constructed from encoded components, safe.
       standardDisplay = `<a href="${mapsUrl}" target="_blank" title="Route planen (Google Maps - ${standardTime} min)" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${timeText}</a>`;
     } else {
       standardDisplay = timeText;
@@ -210,7 +218,7 @@ export function renderRow(row, data) {
 
     const delayText = delay > 0 ? ` (+${delay} min)` : '';
     const formattedLive = formatDuration(liveTime);
-    trafficDisplay = `<span style="${style}" title="Aktuell: ${liveTime} min${delayText}">${formattedLive}</span>`;
+    trafficDisplay = `<span style="${style}" title="Aktuell: ${liveTime} min${escapeHtml(delayText)}">${formattedLive}</span>`;
   } else if (data.status === "live") {
     // If live but no traffic data (API error or key missing), show Standard? Or "n.a."
     trafficDisplay = `<span title="Keine Verkehrsdaten" style="color: #bdc3c7;">n.a.</span>`;
@@ -246,13 +254,14 @@ export function renderRow(row, data) {
       : 'Offizielle Daten vom Skigebiet';
 
     const timestamp = s.timestamp ? new Date(s.timestamp).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '';
-    const tooltip = `${sourceTitle}${timestamp ? ` (Stand: ${timestamp})` : ''}${s.state ? `\nZustand: ${s.state}` : ''}`;
+    const safeState = escapeHtml(s.state || ''); // Ensure s.state is treated as string for escapeHtml
+    const tooltip = `${sourceTitle}${timestamp ? ` (Stand: ${timestamp})` : ''}${safeState ? `\nZustand: ${safeState}` : ''}`;
 
-    snowDisplay = `<span title="${tooltip}" style="border-bottom: 2px solid ${sourceColor}; cursor: help;">${text}</span>`;
+    snowDisplay = `<span title="${escapeHtml(tooltip)}" style="border-bottom: 2px solid ${sourceColor}; cursor: help;">${text}</span>`;
 
   } else if (data.snow) {
     // Fallback to old format (string)
-    snowDisplay = data.snow;
+    snowDisplay = escapeHtml(data.snow);
   } else if (data.status === "error") {
     snowDisplay = "n.a.";
   }
@@ -306,13 +315,14 @@ export function renderRow(row, data) {
       const dateObj = new Date(f.date);
       const dateStr = dateObj.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
       const tempStr = `${f.tempMax}°C / ${f.tempMin}°C`;
-      const tooltip = `${dateStr}: ${desc ? desc + ', ' : ''}${tempStr}`;
+      const safeDesc = escapeHtml(desc);
+      const tooltip = `${dateStr}: ${safeDesc ? safeDesc + ', ' : ''}${tempStr}`;
 
       // Short Date: "26.1."
       const shortDate = dateObj.toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' }) + ".";
 
       return `
-        <div style="display: flex; flex-direction: column; align-items: center; margin-right: 8px;" title="${tooltip}">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-right: 8px;" title="${escapeHtml(tooltip)}">
           <span style="font-size: 1.2em; cursor: help;">${icon}</span>
           <span style="font-size: 0.7em; color: #666; margin-top: -2px;">${shortDate}</span>
         </div>
@@ -324,8 +334,9 @@ export function renderRow(row, data) {
     weatherDisplay = "n.a.";
   } else if (data.weather) {
     // Fallback to single icon
-    const tooltip = `Aktuell: ${data.weather}`;
-    weatherDisplay = `<span title="${tooltip}" style="cursor: help; font-size: 1.2em;">${weatherIcon}</span>`;
+    const safeWeather = escapeHtml(data.weather);
+    const tooltip = `Aktuell: ${safeWeather}`;
+    weatherDisplay = `<span title="${escapeHtml(tooltip)}" style="cursor: help; font-size: 1.2em;">${weatherIcon}</span>`;
   } else if (data.status === "static_only") {
     weatherDisplay = "⏳";
   }
@@ -335,12 +346,12 @@ export function renderRow(row, data) {
   // Details button (for resorts with lift/slope data)
   const hasDetails = (data.lifts && data.lifts.length > 0) || (data.slopes && data.slopes.length > 0);
   const detailsDisplay = hasDetails
-    ? `<button class="details-btn" data-resort-id="${data.id}" data-resort-name="${data.name}" title="Lifte & Pisten Details anzeigen">📋</button>`
+    ? `<button class="details-btn" data-resort-id="${data.id}" data-resort-name="${safeName}" title="Lifte & Pisten Details anzeigen">📋</button>`
     : '<span title="Keine Details verfügbar">-</span>';
 
   // History button (Dedicated Column)
   const historyDisplay = (data.latitude && data.longitude)
-    ? `<button class="history-btn" data-resort-id="${data.id}" data-resort-name="${data.name}" title="7-Tage Verlauf anzeigen">📊</button>`
+    ? `<button class="history-btn" data-resort-id="${data.id}" data-resort-name="${safeName}" title="7-Tage Verlauf anzeigen">📊</button>`
     : '<span title="Keine Verlaufsdaten verfügbar">-</span>';
 
   // Score
@@ -411,8 +422,8 @@ export function renderRow(row, data) {
   // I will REMOVE ${weatherBtn} and ${historyBtn} from Name column.
 
   // Webcam display
-  const webcamDisplay = data.webcam
-    ? `<a href="${data.webcam}" target="_blank" title="Webcam öffnen" style="text-decoration: none;">📷</a>`
+  const webcamDisplay = safeWebcam
+    ? `<a href="${safeWebcam}" target="_blank" title="Webcam öffnen" style="text-decoration: none;">📷</a>`
     : '<span title="Keine Webcam verfügbar">-</span>';
 
   // Distance (in km) - separate from travel time
@@ -440,7 +451,7 @@ export function renderRow(row, data) {
 
   row.innerHTML = `
     <td style="text-align: center;">${statusIndicator}</td>
-    <td><a href="${data.website}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${data.name}</a></td>
+    <td><a href="${safeWebsite}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${safeName}</a></td>
     <td>${distanceDisplay}</td>
     <td>${standardDisplay}</td>
     <td>${trafficDisplay}</td>
