@@ -742,8 +742,9 @@ function displayResortDetails(resort) {
 
   container.innerHTML = html;
 
-  // Fetch and render historical data
-  fetchDetailsHistory(resort.id);
+    // Fetch and render historical data
+    fetchDetailsHistory(resort.id);
+  }, 100);
 }
 
 let detailsHistoryChart = null;
