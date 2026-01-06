@@ -1,29 +1,56 @@
-# 🏔️ Skigebiet-Finder v1.0
+# 🏔️ Skigebiet-Finder v2.0
 
 ![CI/CD](https://github.com/YOUR_USERNAME/skigebiete-muenchen/workflows/CI%2FCD%20Pipeline/badge.svg)
 
-Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten.
+Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detailliertem Tracking.
 
-## Features
+## ✨ Features
 
-- ✅ **Live-Daten**: Aktuelle Lift-Status und Schneehöhen
+### Live-Daten & Tracking
+- ✅ **Live-Daten**: Aktuelle Lift-Status und Schneehöhen für 13+ Skigebiete
+- 🚡 **Detailliertes Lift-Tracking**: 295 Lifte mit Status, Typ, Länge und Höhe
+- ⛷️ **Pisten-Details**: 478 Pisten mit Schwierigkeitsgrad und Metadata
+- 📋 **Details-Modal**: Vollständige Übersicht aller Lifte und Pisten pro Skigebiet
+- 📊 **Historische Trends**: 7-Tage Verlauf der Lift-Verfügbarkeit
+
+### Navigation & Verkehr
 - 🚦 **Verkehrs-Check**: Split zwischen Standard-Fahrzeit und aktueller Verkehrslage (Live Traffic)
-- 💶 **Preis-Details**: Detaillierte Preise für Erwachsene, Jugendliche und Kinder (Tooltip)
 - 🚗 **Personalisierte Fahrzeiten**: Berechnung von Ihrem Standort
 - 🧭 **Direkte Navigation**: One-Click Google Maps Routing zu Talstationen
+
+### Wetter & Bedingungen
+- 🌤️ **3-Tage Wettervorhersage**: Detaillierte Wettericons mit Temperaturen
+- ❄️ **Schneehöhe**: Berg und Tal mit letztem Schneefall
+- 📷 **Webcams**: Direktlinks zu Live-Webcams
+
+### Preise & Klassifizierung
+- 💶 **Preis-Details**: Detaillierte Preise für Erwachsene, Jugendliche und Kinder (Tooltip)
 - ℹ️ **Schwierigkeitsgrad-Legende**: Interaktiver Tooltip erklärt die Klassifizierungen (Familie, Genuss, Sportlich, etc.)
-- 🗺️ **Interaktive Karte**: Leaflet-basierte Visualisierung
-- 🌤️ **3-Tage Wettervorhersage**: Detaillierte Wettericons
-- 📊 **Historische Trends**: 7-Tage Verlauf
+
+### Visualisierung
+- 🗺️ **Interaktive Karte**: Leaflet-basierte Visualisierung aller Skigebiete
+- 📈 **Trend-Charts**: Chart.js Visualisierung der historischen Daten
+
+### Technisch
 - 🔒 **Rate Limiting**: Schutz vor API-Missbrauch
+- 📱 **Mobile Responsive**: Optimiert für alle Geräte
+- 🎯 **Smart Scoring**: Intelligentes Ranking basierend auf Distanz, Pisten, Liften und Preis
+
+## 📊 Daten-Abdeckung
+
+- **13 Skigebiete** mit detailliertem Tracking
+- **295 Lifte** mit Status und Metadata
+- **478 Pisten** mit Schwierigkeitsgrad
+- **5 Skigebiete** mit vollständigen Metadata (Länge, Höhe, Betriebszeiten)
 
 ## Tech Stack
 
 - **Frontend**: Vanilla JS, Leaflet.js, Chart.js
 - **Backend**: Node.js, Express
-- **APIs**: OpenRouteService, Open-Meteo
+- **APIs**: OpenRouteService, Open-Meteo, Micado, Intermaps
 - **Deployment**: GitHub Pages + Render.com
 - **CI/CD**: GitHub Actions
+- **Testing**: Jest (34 Tests)
 
 ## Development
 
@@ -59,7 +86,7 @@ Geplante Features und Verbesserungen sind im [BACKLOG.md](./BACKLOG.md) dokument
 ## CI/CD Pipeline
 
 Jeder Push auf `main` triggert:
-1. ✅ Unit Tests
+1. ✅ Unit Tests (34/34 passing)
 2. ✅ Linting
 3. ✅ Server Startup Test
 4. 🚀 Auto-Deploy (Render + GitHub Pages)
