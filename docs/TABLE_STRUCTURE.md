@@ -14,9 +14,9 @@ Dieses Dokument beschreibt die vollständige Struktur der Skigebiete-Tabelle, ei
 |-----|--------|----------|-------------|-------------|--------|
 | 1 | Abfragestatus | Enum | Icon (🟢/🟡/🔴) | Live (Parser Status) | ✅ |
 | 2 | Skigebiet | String | Text + Link | Statisch (`resorts.json` → `name`, `website`) | ✅ |
-| 3 | Fahrzeit (Standard) | Integer | Zahl + "min" + Link | Live (OpenRouteService API → `distance`) | ✅ |
-| 4 | Fahrzeit (Aktuell) | Integer | Zahl + "min" (farbig) | Live (OpenRouteService API → `traffic.duration`) | ✅ |
-| 5 | Distanz in km | Float | Zahl + "km" | Live (OpenRouteService API → `traffic.distance`) | ✅ |
+| 3 | Distanz | Float | Zahl + "km" | Live (OpenRouteService API → `traffic.distanceKm`) | ✅ |
+| 4 | Fahrzeit (ohne Verkehrslage) | Integer | Zahl + "min" + Link | Statisch (`resorts.json` → `distance`) | ✅ |
+| 5 | Fahrzeit (mit Verkehrslage) | Integer | Zahl + "min" (farbig) | Live (OpenRouteService API → `traffic.duration`) | ✅ |
 | 6 | Größe des Skigebiets | Integer | Zahl + "km" | Statisch (`resorts.json` → `piste_km`) | ✅ |
 | 7 | Geöffnete Lifte | Fraction | "X/Y" (farbig) | Live (Parser → `liftsOpen`/`liftsTotal`) | ✅ |
 | 8 | Preis | Float | "€XX.XX" + Info-Icon | Statisch (`resorts.json` → `price`, `priceDetail`) | ✅ |
@@ -49,7 +49,16 @@ Dieses Dokument beschreibt die vollständige Struktur der Skigebiete-Tabelle, ei
   - `website`: Offizielle Website-URL
 - **Implementierung**: `render.js` - Zeile 345
 
-### 3. Fahrzeit (ohne Verkehrslage)
+### 3. Distanz
+- **Datentyp**: Float (Kilometer)
+- **Darstellung**: Zahl + "km"
+  - Format: `XX km` oder `XX.X km`
+- **Datenquelle**: OpenRouteService Matrix API
+  - Feld: `traffic.distanceKm` oder `distanceKm`
+- **Fallback**: "-" wenn keine Daten
+- **Implementierung**: `render.js` - Zeilen 396-398
+
+### 4. Fahrzeit (ohne Verkehrslage)
 - **Datentyp**: Integer (Minuten)
 - **Darstellung**: Zahl + "min" als klickbarer Link
   - Format: `<a href="https://google.com/maps/dir/...">XX min</a>`
@@ -60,7 +69,7 @@ Dieses Dokument beschreibt die vollständige Struktur der Skigebiete-Tabelle, ei
 - **Fallback**: "-" wenn keine Daten verfügbar
 - **Implementierung**: `render.js` - Zeilen 156-169
 
-### 4. Fahrzeit (Aktuell)
+### 5. Fahrzeit (mit Verkehrslage)
 - **Datentyp**: Integer (Minuten)
 - **Darstellung**: Zahl + "min" mit farblicher Kennzeichnung
   - 🟢 Grün: Keine Verzögerung (delay = 0)
@@ -73,15 +82,6 @@ Dieses Dokument beschreibt die vollständige Struktur der Skigebiete-Tabelle, ei
 - **Berechnung**: `delay = traffic.duration - distance`
 - **Fallback**: "n.a." (grau) wenn keine Traffic-Daten
 - **Implementierung**: `render.js` - Zeilen 172-195
-
-### 5. Distanz in km (ab Standort)
-- **Datentyp**: Float (Kilometer)
-- **Darstellung**: Zahl + "km"
-  - Format: `XX km` oder `XX.X km`
-- **Datenquelle**: OpenRouteService Matrix API
-  - Feld: `traffic.distance` oder `distanceKm`
-- **Fallback**: "-" wenn keine Daten
-- **Implementierung**: `render.js` - Zeilen 340-341
 
 ### 6. Größe des Skigebiets (in km)
 - **Datentyp**: Integer (Pistenkilometer)
@@ -362,7 +362,8 @@ Die Sortierlogik ist in `render.js` implementiert und ermöglicht es, die Tabell
 
 | Spalte | Sort-Key | Sortierlogik | Bemerkung |
 |--------|----------|--------------|-----------|
-| Fahrzeit (Standard) | `distance` | Numerisch | ✅ Sortierbar |
+| Distanz | `distanceKm` | Numerisch | ⚠️ Aktuell nicht sortierbar |
+| Fahrzeit (ohne Verkehrslage) | `distance` | Numerisch | ✅ Sortierbar |
 | Größe des Skigebiets | `piste_km` | Numerisch | ✅ Sortierbar |
 | Preis | `price` | Numerisch | ✅ Sortierbar |
 | Schneehöhe | `snow` | Numerisch (extrahiert aus Text) | ✅ Sortierbar |
@@ -373,8 +374,8 @@ Die Sortierlogik ist in `render.js` implementiert und ermöglicht es, die Tabell
 Die folgenden Spalten sind **nicht sortierbar**, da sie entweder Status-Indikatoren, Links oder komplexe Daten enthalten:
 - Abfragestatus
 - Skigebiet (Name)
-- Fahrzeit (Aktuell)
-- Distanz in km
+- Distanz (aktuell nicht sortierbar)
+- Fahrzeit (mit Verkehrslage)
 - Geöffnete Lifte
 - Schwierigkeitsgrad
 - Letzter Schneefall

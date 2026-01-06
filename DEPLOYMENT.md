@@ -1,4 +1,4 @@
-# Deployment Guide - Skigebiet-Finder v1.0
+# Deployment Guide - Skigebiete-Finder v1.3
 
 ## Architecture
 
