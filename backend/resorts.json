@@ -60,8 +60,9 @@
         "price": 68.00,
         "classification": "Glacier",
         "website": "https://zugspitze.de",
-        "latitude": 47.4211,
-        "longitude": 10.9853,
+        "latitude": 47.4566,
+        "longitude": 10.9922,
+        "address": "Am Eibsee 6, 82491 Grainau",
         "webcam": "https://www.foto-webcam.eu/webcam/zugspitze/"
     },
     {
@@ -146,8 +147,9 @@
         "price": 63.50,
         "classification": "Scenic",
         "website": "https://www.zugspitze.at",
-        "latitude": 47.4264,
-        "longitude": 10.9859
+        "latitude": 47.4266,
+        "longitude": 10.9419,
+        "address": "Obermoos 1, 6632 Ehrwald, Österreich"
     },
     {
         "id": "st_johann",

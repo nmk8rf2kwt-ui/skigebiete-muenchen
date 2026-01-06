@@ -143,7 +143,17 @@ export function renderRow(row, data) {
   }
 
   // Format travel time
-  const travel = data.distance ? `${data.distance} min` : "-";
+  const travelTime = data.distance ? `${data.distance} min` : "-";
+  let travelDisplay = travelTime;
+
+  if (travelTime !== "-" && (data.latitude && data.longitude)) {
+    // Prefer address if available for cleaner navigation, otherwise validation coordinates
+    const destQuery = data.address ? encodeURIComponent(data.address) : `${data.latitude},${data.longitude}`;
+    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destQuery}&travelmode=driving`;
+    const tooltip = data.address ? `Ziel: ${data.address}` : "Navigation starten";
+
+    travelDisplay = `<a href="${mapsUrl}" target="_blank" title="${tooltip}" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${travelTime}</a>`;
+  }
 
   // Snow Display - use forecast data if available
   let snowDisplay = "-";
@@ -277,7 +287,7 @@ export function renderRow(row, data) {
   row.innerHTML = `
     <td style="text-align: center;">${statusIndicator}</td>
     <td><a href="${data.website}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${data.name}</a></td>
-    <td>${travel}</td>
+    <td>${travelDisplay}</td>
     <td>${distanceDisplay}</td>
     <td>${data.piste_km ?? "-"} km</td>
     <td>${liftStatus}</td>

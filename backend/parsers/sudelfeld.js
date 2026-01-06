@@ -1,61 +1,50 @@
-import { fetchWithHeaders } from "../utils/fetcher.js";
-import * as cheerio from "cheerio";
+import { fetchHtml, createResult, STATUS } from "../utils/parserUtils.js";
 
 export const details = {
   id: "sudelfeld",
   name: "Sudelfeld",
   url: "https://www.sudelfeld.de/schneebericht/",
+  iframeUrl: "https://sdds4.intermaps.com/alpenplus/detail_sudelfeld.aspx",
   district: "Miesbach",
 };
 
-export async function parse() {
-  const URL = details.url;
-  const res = await fetchWithHeaders(URL);
-  if (!res.ok) throw new Error("Failed to fetch Sudelfeld");
+export async function parse(options = {}) {
+  // Use the iframe directly as it contains the data server-side rendered
+  const $ = await fetchHtml(details.iframeUrl, options);
 
-  const html = await res.text();
-  const $ = cheerio.load(html);
+  let liftsTotal = 0;
+  let liftsOpen = 0;
 
-  const lifts = {};
+  // Intermaps structure for Sudelfeld (AlpenPlus)
+  const rows = $(".row.infra");
 
-  // Sudelfeld / AlpenPlus Schneebericht structure
-  // Look for the table under "Anlagen Sudelfeld"
-  // Usually rows with name and status icon
+  if (rows.length === 0) {
+    throw new Error("No lift rows found in Intermaps iframe");
+  }
 
-  $("tr").each((i, row) => {
-    const cells = $(row).find("td");
-    if (cells.length >= 2) {
-      const name = $(cells[0]).text().trim();
-      const statusHtml = $(cells[1]).html() || "";
+  rows.each((i, row) => {
+    const text = $(row).text().trim();
+    const img = $(row).find("img").attr("src") || "";
 
-      // Status detection based on icons/images
-      const isOpen = statusHtml.includes("l_gr.png") || statusHtml.includes("ampel_gruen") || statusHtml.includes("open");
-      const isClosed = statusHtml.includes("l_rt.png") || statusHtml.includes("ampel_rot") || statusHtml.includes("closed");
+    // 169.png = Open (Green check)
+    // 94.png = Closed (Red X)
+    // There might be others like 'scheduled'
+    const isOpen = img.includes("169.png");
+    const isClosed = img.includes("94.png");
 
-      if (name && (isOpen || isClosed)) {
-        // Filter to ensure it's a lift and not just a text row
-        // Most lifts have "bahn", "lift", "sessel" in name, but not always.
-        // Length check helps avoid empty rows
-        if (name.length > 2) {
-          lifts[name] = isOpen ? "open" : "closed";
-        }
-      }
+    // Only count if status is clear or text implies lift (to avoid headers)
+    // Usually .row.infra IS a facility.
+    if (isOpen) {
+      liftsOpen++;
+      liftsTotal++;
+    } else if (isClosed) {
+      liftsTotal++;
     }
   });
-
-  const liftsTotal = Object.keys(lifts).length;
-  const liftsOpen = Object.values(lifts).filter((s) => s === "open").length;
 
   if (liftsTotal === 0) {
     throw new Error("Sudelfeld parsing returned zero lifts");
   }
 
-  return {
-    lifts: {
-      total: liftsTotal,
-      open: liftsOpen,
-      status: liftsOpen === 0 ? "closed" : liftsOpen === liftsTotal ? "open" : "scheduled",
-    },
-    lastUpdated: new Date().toISOString(),
-  };
+  return createResult(details.id, { liftsOpen, liftsTotal }, "sudelfeld.de (Intermaps)");
 }

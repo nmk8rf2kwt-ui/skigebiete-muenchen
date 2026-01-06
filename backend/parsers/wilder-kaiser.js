@@ -1,56 +1,40 @@
+import { createResult, STATUS } from "../utils/parserUtils.js";
 import { fetchWithHeaders } from "../utils/fetcher.js";
-import * as cheerio from "cheerio";
 
 export const details = {
     id: "wilder-kaiser",
     name: "Wilder Kaiser",
     url: "https://www.skiwelt.at/de/liftstatus.html",
+    apiUrl: "https://www.skiwelt.at/webapi/micadoweb?api=Micado.Ski.Web/Micado.Ski.Web.IO.Api.FacilityApi/List.api&client=https%3A%2F%2Fsgm.skiwelt.at&lang=de&region=skiwelt&season=winter&typeIDs=1",
     district: "Wilder Kaiser",
 };
 
-export async function parse() {
-    const URL = details.url;
-    const res = await fetchWithHeaders(URL);
-    if (!res.ok) throw new Error("Failed to fetch SkiWelt");
+export async function parse(options = {}) {
+    const res = await fetchWithHeaders(details.apiUrl, options);
+    if (!res.ok) throw new Error("Failed to fetch SkiWelt API");
 
-    const html = await res.text();
-    const $ = cheerio.load(html);
+    const data = await res.json();
 
-    const lifts = {};
+    // API returns object with 'items' array
+    const items = data.items || [];
 
-    // SkiWelt generic table parser
-    // Look for tables with lift logic
-    $("table tr").each((i, row) => {
-        const name = $(row).find("td").first().text().trim();
-        const statusHtml = $(row).html() || "";
+    let liftsTotal = 0;
+    let liftsOpen = 0;
 
-        // Status logic for SkiWelt
-        // Often "status-1" implies open, "status-2" closed, etc.
-        // Or check for "Geöffnet" / "Geschlossen"
-        const isOpen = statusHtml.includes("status-1") || statusHtml.includes("open") || statusHtml.includes("check");
-        const isClosed = statusHtml.includes("status-2") || statusHtml.includes("closed") || statusHtml.includes("times");
-
-        if (name && (isOpen || isClosed)) {
-            lifts[name] = isOpen ? "open" : "closed";
+    items.forEach(item => {
+        liftsTotal++;
+        // state: "opened", "closed"
+        if (item.state === "opened") {
+            liftsOpen++;
         }
     });
 
-    // Verify finding specific lifts if possible to ensure we parsed the right table
-    // but generic should work if the page is standard.
-
-    const liftsTotal = Object.keys(lifts).length;
-    const liftsOpen = Object.values(lifts).filter((s) => s === "open").length;
-
     if (liftsTotal === 0) {
-        throw new Error("SkiWelt parsing returned zero lifts (Needs further DOM analysis)");
+        throw new Error("SkiWelt parsing returned zero lifts from API");
     }
 
-    return {
-        lifts: {
-            total: liftsTotal,
-            open: liftsOpen,
-            status: liftsOpen === 0 ? "closed" : liftsOpen === liftsTotal ? "open" : "scheduled",
-        },
-        lastUpdated: new Date().toISOString(),
-    };
+    // Snow data: The API might have regions with snow info?
+    // Often separate API. For now focus on lifts.
+
+    return createResult(details.id, { liftsOpen, liftsTotal }, "skiwelt.at (API)");
 }
