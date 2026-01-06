@@ -444,6 +444,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Details Modal Handlers
+  const detailsModal = document.getElementById("detailsModal");
+  const closeDetailsBtn = document.querySelector(".close-details");
+
+  closeDetailsBtn.addEventListener("click", () => {
+    detailsModal.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target === detailsModal) {
+      detailsModal.style.display = "none";
+    }
+  });
+
+  // Handle details button clicks
+  document.addEventListener("click", (event) => {
+    if (event.target.classList.contains("details-btn")) {
+      const resortId = event.target.dataset.resortId;
+      const resortName = event.target.dataset.resortName;
+
+      // Find resort data
+      const resort = store.get().resorts.find(r => r.id === resortId);
+
+      if (!resort) {
+        alert("Resort data not found");
+        return;
+      }
+
+      // Show modal
+      detailsModal.style.display = "block";
+      document.getElementById("detailsResortName").textContent = `${resortName} - Details`;
+
+      // Render details
+      displayResortDetails(resort);
+    }
+  });
+
   // History Modal Handlers
   const historyModal = document.getElementById("historyModal");
   const closeHistoryBtn = document.querySelector(".close-history");
@@ -595,6 +632,96 @@ function displayWeather(forecast) {
       </div>
     `;
   }).join('');
+
+  container.innerHTML = html;
+}
+
+function displayResortDetails(resort) {
+  const container = document.getElementById("detailsContent");
+
+  if (!resort.lifts && !resort.slopes) {
+    container.innerHTML = "<p>Keine detaillierten Daten verfügbar</p>";
+    return;
+  }
+
+  let html = "";
+
+  // Lifts Section
+  if (resort.lifts && resort.lifts.length > 0) {
+    html += `<div class="details-section">
+      <h3>🚡 Lifte (${resort.liftsOpen || 0}/${resort.liftsTotal || resort.lifts.length})</h3>
+      <div class="facilities-list">`;
+
+    resort.lifts.forEach(lift => {
+      const statusClass = lift.status === "open" ? "status-open" :
+        lift.status === "closed" ? "status-closed" : "status-unknown";
+      const statusIcon = lift.status === "open" ? "🟢" :
+        lift.status === "closed" ? "🔴" : "⚪";
+
+      html += `<div class="facility-item">
+        <div class="facility-header">
+          <span class="facility-status ${statusClass}">${statusIcon}</span>
+          <span class="facility-name">${lift.name}</span>
+        </div>`;
+
+      // Metadata
+      const metadata = [];
+      if (lift.type) metadata.push(`Typ: ${lift.type}`);
+      if (lift.length) metadata.push(`Länge: ${lift.length}m`);
+      if (lift.altitudeStart) metadata.push(`Höhe: ${lift.altitudeStart}m`);
+      if (lift.operatingHours) metadata.push(`⏰ ${lift.operatingHours}`);
+
+      if (metadata.length > 0) {
+        html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
+      }
+
+      html += `</div>`;
+    });
+
+    html += `</div></div>`;
+  }
+
+  // Slopes Section
+  if (resort.slopes && resort.slopes.length > 0) {
+    const slopesOpen = resort.slopes.filter(s => s.status === "open").length;
+    html += `<div class="details-section">
+      <h3>⛷️ Pisten (${slopesOpen}/${resort.slopes.length})</h3>
+      <div class="facilities-list">`;
+
+    resort.slopes.forEach(slope => {
+      const statusClass = slope.status === "open" ? "status-open" :
+        slope.status === "closed" ? "status-closed" : "status-unknown";
+      const statusIcon = slope.status === "open" ? "🟢" :
+        slope.status === "closed" ? "🔴" : "⚪";
+
+      const difficultyIcon = slope.difficulty === "blue" ? "🔵" :
+        slope.difficulty === "red" ? "🔴" :
+          slope.difficulty === "black" ? "⚫" :
+            slope.difficulty === "freeride" ? "🟠" : "";
+
+      html += `<div class="facility-item">
+        <div class="facility-header">
+          <span class="facility-status ${statusClass}">${statusIcon}</span>
+          ${difficultyIcon ? `<span class="difficulty-badge">${difficultyIcon}</span>` : ''}
+          <span class="facility-name">${slope.name}</span>
+        </div>`;
+
+      // Metadata
+      const metadata = [];
+      if (slope.difficulty) metadata.push(`Schwierigkeit: ${slope.difficulty}`);
+      if (slope.length) metadata.push(`Länge: ${slope.length}m`);
+      if (slope.altitudeStart) metadata.push(`Höhe: ${slope.altitudeStart}m`);
+      if (slope.operatingHours) metadata.push(`⏰ ${slope.operatingHours}`);
+
+      if (metadata.length > 0) {
+        html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
+      }
+
+      html += `</div>`;
+    });
+
+    html += `</div></div>`;
+  }
 
   container.innerHTML = html;
 }

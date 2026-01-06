@@ -141,10 +141,58 @@ Dieses Dokument beschreibt die vollständige Struktur der Skigebiete-Tabelle, ei
 
 ## Sortierung
 
-Alle Spalten sind sortierbar. Die Sortierlogik ist in `render.js` implementiert:
-- Klick auf Spaltenüberschrift: Sortierung umschalten
-- Visuelle Indikatoren: ▲ (aufsteigend), ▼ (absteigend)
-- Standard-Sortierung: Nach Skigebiet-Name
+Die Sortierlogik ist in `render.js` implementiert und ermöglicht es, die Tabelle nach verschiedenen Kriterien zu ordnen.
+
+### Sortierbare Spalten
+
+| Spalte | Sort-Key | Sortierlogik | Bemerkung |
+|--------|----------|--------------|-----------|
+| Fahrzeit (Standard) | `distance` | Numerisch | ✅ Sortierbar |
+| Größe des Skigebiets | `piste_km` | Numerisch | ✅ Sortierbar |
+| Preis | `price` | Numerisch | ✅ Sortierbar |
+| Schneehöhe | `snow` | Numerisch (extrahiert aus Text) | ✅ Sortierbar |
+| Score | `score` | Numerisch | ✅ Sortierbar (Standard) |
+
+### Nicht-sortierbare Spalten
+
+Die folgenden Spalten sind **nicht sortierbar**, da sie entweder Status-Indikatoren, Links oder komplexe Daten enthalten:
+- Abfragestatus
+- Skigebiet (Name)
+- Fahrzeit (Aktuell)
+- Distanz in km
+- Geöffnete Lifte
+- Schwierigkeitsgrad
+- Letzter Schneefall
+- Aktuelles Wetter
+- Webcam
+- Details
+- Historie
+
+### Sortierverhalten
+
+- **Klick auf Spaltenüberschrift**: Sortierung umschalten zwischen aufsteigend (↑) und absteigend (↓)
+- **Visuelle Indikatoren**: 
+  - ↕️ = Spalte ist sortierbar, aber nicht aktiv
+  - ↑ = Aufsteigende Sortierung aktiv
+  - ↓ = Absteigende Sortierung aktiv
+- **Standard-Sortierung**: Nach Score (absteigend)
+- **Null-Werte**: Werden als 0 behandelt
+- **Text-zu-Zahl-Konvertierung**: Bei Spalten wie "Schneehöhe" werden Zahlen aus Text extrahiert (z.B. "> 10 cm" → 10)
+
+### Mobile Sortierung
+
+Auf mobilen Geräten gibt es zusätzliche Quick-Sort-Buttons:
+- 🏆 Score
+- ❄️ Schnee
+- 📍 Nähe (Distanz)
+- 🎿 Pisten (Pistenkilometer)
+
+### Implementierung
+
+Die Sortierlogik befindet sich in `render.js`:
+- Funktion: `renderTable(data, sortKey, filter, sortDirection)`
+- Event-Handler: Attached an alle `th[data-sort]` Elemente
+- Sortieralgorithmus: Unterstützt numerische und String-Sortierung mit Richtungsumkehr
 
 ## Responsive Design
 

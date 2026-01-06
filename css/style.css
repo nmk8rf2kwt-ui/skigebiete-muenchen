@@ -543,9 +543,51 @@ tr.unavailable small {
   text-align: left;
   font-size: 0.9em;
   line-height: 1.4;
-  color: #333;
+  transition: transform 0.2s;
 }
 
-.tooltip-container:hover .tooltip-content {
-  display: block;
+.details-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Mobile responsiveness for details */
+@media (max-width: 768px) {
+  .modal-content {
+    margin: 5% auto;
+    width: 95%;
+    max-width: none;
+  }
+
+  .details-content {
+    max-height: 80vh;
+  }
+
+  .facility-meta {
+    padding-left: 0;
+    margin-top: 8px;
+  }
+
+  td:nth-child(14)::before {
+    content: "📋 Details";
+    color: #777;
+  }
+
+  td:nth-child(15)::before {
+    content: "📅 History";
+    color: #777;
+  }
+
+  td:nth-child(16)::before {
+    content: "🏆 Score";
+    color: #777;
+    font-weight: bold;
+  }
+
+  td:nth-child(16) {
+    background: #fdfdfd;
+    font-weight: bold;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #eee;
+  }
 }
