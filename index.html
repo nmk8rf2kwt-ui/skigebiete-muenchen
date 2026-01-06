@@ -19,115 +19,124 @@
   <div class="meta">
     Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten · <span style="color: #999;">v1.1</span>
   </div>
+  <div id="loadingBanner" class="loading-banner" style="display: none;">
+    <span class="loading-spinner-small"></span>
+    <span id="loadingText">Lade Live-Daten...</span>
+  </div>
 
   <div class="search-container">
-    <input type="text" id="addressInput" placeholder="München, Marienplatz"
-      title="Geben Sie einen Ort oder eine Adresse ein (mind. 3 Zeichen)" />
-    <button id="searchBtn" title="Fahrzeiten von dieser Adresse berechnen">🔍 Suchen</button>
-    <button id="locateBtn" title="Meinen aktuellen Standort verwenden">📍 Mein Standort</button>
-  </div>
 
-  <!-- Error message display -->
-  <!-- Error message display -->
-  <div id="searchError" class="error-container">
-    <div class="error-header"
-      onclick="this.parentElement.querySelector('.error-content').style.display = this.parentElement.querySelector('.error-content').style.display === 'none' ? 'block' : 'none'">
-      <span>⚠️ Fehler & Warnungen</span>
-      <span class="error-toggle">▼</span>
+    <div class="search-container">
+      <input type="text" id="addressInput" placeholder="München, Marienplatz"
+        title="Geben Sie einen Ort oder eine Adresse ein (mind. 3 Zeichen)" />
+      <button id="searchBtn" title="Fahrzeiten von dieser Adresse berechnen">🔍 Suchen</button>
+      <button id="locateBtn" title="Meinen aktuellen Standort verwenden">📍 Mein Standort</button>
     </div>
-    <div class="error-content" id="errorContent">
-      <!-- Error messages will be injected here -->
-    </div>
-  </div>
 
-  <div class="controls">
-    <button id="viewToggle" title="Zwischen Listen- und Kartenansicht wechseln">🗺️ Karte anzeigen</button>
-    <button id="exportCsv" title="Daten als CSV-Datei exportieren">📤 CSV Export</button>
-    <button id="top3" title="Nur die Top 3 Skigebiete von heute anzeigen">🏆 Nur Top-3 heute</button>
-  </div>
-
-  <!-- Mobile Sort Buttons -->
-  <div class="sort-mobile">
-    <button data-sort="score">🏆 Score</button>
-    <button data-sort="snow">❄️ Schnee</button>
-    <button data-sort="km">📍 Nähe</button>
-    <button data-sort="pistes">🎿 Pisten</button>
-  </div>
-
-  <div id="map-view" style="display: none; height: 600px; width: 100%; margin: 20px 0; border-radius: 8px; z-index: 1;">
-  </div>
-
-  <table id="skiTable">
-    <thead>
-      <tr>
-        <th title="Status der Live-Datenabfrage">Abfragestatus</th>
-        <th>Skigebiet</th>
-        <th data-sort="distance" title="Fahrzeit ohne Verkehr - Klicken zum Sortieren" style="cursor: pointer;">
-          Fahrzeit (Standard) ↕️</th>
-        <th title="Fahrzeit mit aktuellem Verkehr">Fahrzeit (Aktuell)</th>
-        <th title="Entfernung in Kilometern">Distanz in km (ab Standort)</th>
-        <th data-sort="piste_km" title="Gesamte Pistenkilometer - Klicken zum Sortieren" style="cursor: pointer;">
-          Größe des Skigebiets (in km) ↕️</th>
-        <th title="Anzahl geöffneter Lifte heute">Geöffnete Lifte (Stand: heute)</th>
-        <th data-sort="price" title="Tagesskipass-Preis - Klicken zum Sortieren" style="cursor: pointer;">Preis ↕️</th>
-        <th class="tooltip-container">
-          Schwierigkeitsgrad <span style="font-size: 0.8em; cursor: help;">ℹ️</span>
-          <div class="tooltip-content">
-            <strong>Legende:</strong><br>
-            🟢 Familie (Anfänger/Familien)<br>
-            🟡 Genuss (Landschaft/Entspannt)<br>
-            🔴 Sportlich (Fortgeschrittene)<br>
-            🔴 Großraum (Viele Pistenkm)<br>
-            ⚫ Gletscher (Hochalpin/Profi)
-          </div>
-        </th>
-        <th data-sort="snow" title="Schneehöhe am Berg und im Tal - Klicken zum Sortieren" style="cursor: pointer;">
-          Schneehöhe (Berg/Tal) ↕️</th>
-        <th title="Datum des letzten Schneefalls">Letzter Schneefall</th>
-        <th title="3-Tage Wettervorhersage">Wetter heute, morgen, übermorgen</th>
-        <th title="Webcam-Link">Cam</th>
-        <th title="Lifte & Pisten Details">Details</th>
-        <th title="7-Tage Verlauf">History</th>
-        <th data-sort="score" title="Gesamtbewertung - Klicken zum Sortieren" style="cursor: pointer;">Score ↕️</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <!-- Weather Modal -->
-  <div id="weatherModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2 id="weatherResortName">Weather Forecast</h2>
-      <div id="weatherForecast" class="weather-forecast">
-        <p>Loading...</p>
+    <!-- Error message display -->
+    <!-- Error message display -->
+    <div id="searchError" class="error-container">
+      <div class="error-header"
+        onclick="this.parentElement.querySelector('.error-content').style.display = this.parentElement.querySelector('.error-content').style.display === 'none' ? 'block' : 'none'">
+        <span>⚠️ Fehler & Warnungen</span>
+        <span class="error-toggle">▼</span>
+      </div>
+      <div class="error-content" id="errorContent">
+        <!-- Error messages will be injected here -->
       </div>
     </div>
-  </div>
 
-  <!-- Details Modal (Lifts & Slopes) -->
-  <div id="detailsModal" class="modal">
-    <div class="modal-content">
-      <span class="close-details">&times;</span>
-      <h2 id="detailsResortName">Resort Details</h2>
-      <div id="detailsContent" class="details-content">
-        <p>Loading...</p>
+    <div class="controls">
+      <button id="viewToggle" title="Zwischen Listen- und Kartenansicht wechseln">🗺️ Karte anzeigen</button>
+      <button id="exportCsv" title="Daten als CSV-Datei exportieren">📤 CSV Export</button>
+      <button id="top3" title="Nur die Top 3 Skigebiete von heute anzeigen">🏆 Nur Top-3 heute</button>
+    </div>
+
+    <!-- Mobile Sort Buttons -->
+    <div class="sort-mobile">
+      <button data-sort="score">🏆 Score</button>
+      <button data-sort="snow">❄️ Schnee</button>
+      <button data-sort="km">📍 Nähe</button>
+      <button data-sort="open_lifts">🚠 Offen</button>
+      <button data-sort="pistes">🎿 Pisten</button>
+    </div>
+
+    <div id="map-view"
+      style="display: none; height: 600px; width: 100%; margin: 20px 0; border-radius: 8px; z-index: 1;">
+    </div>
+
+    <table id="skiTable">
+      <thead>
+        <tr>
+          <th title="Status der Live-Datenabfrage">Abfragestatus</th>
+          <th>Skigebiet</th>
+          <th data-sort="distance" title="Fahrzeit ohne Verkehr - Klicken zum Sortieren" style="cursor: pointer;">
+            Fahrzeit (Standard) ↕️</th>
+          <th title="Fahrzeit mit aktuellem Verkehr">Fahrzeit (Aktuell)</th>
+          <th title="Entfernung in Kilometern">Distanz in km (ab Standort)</th>
+          <th data-sort="piste_km" title="Gesamte Pistenkilometer - Klicken zum Sortieren" style="cursor: pointer;">
+            Größe des Skigebiets (in km) ↕️</th>
+          <th title="Anzahl geöffneter Lifte heute">Geöffnete Lifte (Stand: heute)</th>
+          <th data-sort="price" title="Tagesskipass-Preis - Klicken zum Sortieren" style="cursor: pointer;">Preis ↕️
+          </th>
+          <th class="tooltip-container">
+            Schwierigkeitsgrad <span style="font-size: 0.8em; cursor: help;">ℹ️</span>
+            <div class="tooltip-content">
+              <strong>Legende:</strong><br>
+              🟢 Familie (Anfänger/Familien)<br>
+              🟡 Genuss (Landschaft/Entspannt)<br>
+              🔴 Sportlich (Fortgeschrittene)<br>
+              🔴 Großraum (Viele Pistenkm)<br>
+              ⚫ Gletscher (Hochalpin/Profi)
+            </div>
+          </th>
+          <th data-sort="snow" title="Schneehöhe am Berg und im Tal - Klicken zum Sortieren" style="cursor: pointer;">
+            Schneehöhe (Berg/Tal) ↕️</th>
+          <th title="Datum des letzten Schneefalls">Letzter Schneefall</th>
+          <th title="3-Tage Wettervorhersage">Wetter heute, morgen, übermorgen</th>
+          <th title="Webcam-Link">Cam</th>
+          <th title="Lifte & Pisten Details">Details</th>
+          <th title="7-Tage Verlauf">History</th>
+          <th data-sort="score" title="Gesamtbewertung - Klicken zum Sortieren" style="cursor: pointer;">Score ↕️</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <!-- Weather Modal -->
+    <div id="weatherModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="weatherResortName">Weather Forecast</h2>
+        <div id="weatherForecast" class="weather-forecast">
+          <p>Loading...</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- History Modal -->
-  <div id="historyModal" class="modal">
-    <div class="modal-content">
-      <span class="close-history">&times;</span>
-      <h2 id="historyResortName">7-Day History</h2>
-      <button id="exportCsvBtn" class="export-btn">📥 Export CSV</button>
-      <canvas id="historyChart"></canvas>
+    <!-- Details Modal (Lifts & Slopes) -->
+    <div id="detailsModal" class="modal">
+      <div class="modal-content">
+        <span class="close-details">&times;</span>
+        <h2 id="detailsResortName">Resort Details</h2>
+        <div id="detailsContent" class="details-content">
+          <p>Loading...</p>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script type="module" src="js/app.js"></script>
+    <!-- History Modal -->
+    <div id="historyModal" class="modal">
+      <div class="modal-content">
+        <span class="close-history">&times;</span>
+        <h2 id="historyResortName">7-Day History</h2>
+        <button id="exportCsvBtn" class="export-btn">📥 Export CSV</button>
+        <canvas id="historyChart"></canvas>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 
 </html>

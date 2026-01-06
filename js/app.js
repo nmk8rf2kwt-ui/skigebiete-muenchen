@@ -61,33 +61,56 @@ function hideError() {
   // Disable auto-hide for debugging
 }
 
+// Show Loading Banner
+function showLoading(msg = "Lade Live-Daten...") {
+  const banner = document.getElementById("loadingBanner");
+  const text = document.getElementById("loadingText");
+  if (banner && text) {
+    text.textContent = msg;
+    banner.style.display = "flex";
+  }
+}
+
+// Hide Loading Banner
+function hideLoading() {
+  const banner = document.getElementById("loadingBanner");
+  if (banner) banner.style.display = "none";
+}
+
 // Load Data
 async function load() {
-  logToUI("🚀 Starting load()...");
+  showLoading("🚀 Starte App...");
 
   // 1. Fetch Static Data Fast
   try {
-    logToUI(`Fetching static from: ${API_BASE_URL}/resorts/static`);
+    showLoading("Lade Basis-Daten...");
     const staticRes = await fetch(`${API_BASE_URL}/resorts/static`);
 
     if (!staticRes.ok) throw new Error(`HTTP ${staticRes.status}`);
     const staticData = await staticRes.json();
-    logToUI(`✅ Loaded ${staticData.length} static resorts`);
 
-    store.setState({ resorts: staticData }, render);
+    // Check if we already have resorts in store to avoid flicker
+    if (store.get().resorts.length === 0) {
+      store.setState({ resorts: staticData }, render);
+    }
   } catch (err) {
     console.error("Failed to load static data:", err);
-    showError(`❌ Static Load Error: ${err.message}`);
+    showError(`❌ Basis-Daten Fehler: ${err.message}`);
   }
 
   // 2. Fetch Live Data
   try {
-    logToUI("Fetching live data...");
+    showLoading("Lade Live-Status...");
     const liveRes = await fetch(`${API_BASE_URL}/resorts`);
-    if (!liveRes.ok) throw new Error(`HTTP ${liveRes.status}`);
-    const liveData = await liveRes.json();
-    logToUI(`✅ Loaded ${liveData.length} live resorts`);
 
+    if (!liveRes.ok) {
+      // Detailed Error Mapping
+      if (liveRes.status === 503) throw new Error("Backend wird gestartet (ca. 30s)...");
+      if (liveRes.status === 504) throw new Error("Zeitüberschreitung beim Laden");
+      throw new Error(`Server Status ${liveRes.status}`);
+    }
+
+    const liveData = await liveRes.json();
     store.setState({ resorts: liveData, lastUpdated: new Date() }, render);
 
     // Update timestamp
@@ -95,11 +118,16 @@ async function load() {
     if (ts) ts.innerText = new Date().toLocaleTimeString();
 
     // 3. Calculate initial traffic/distance from Munich
+    showLoading("Berechne Verkehr...");
     await fetchTrafficForLocation(MUNICH_DEFAULT.latitude, MUNICH_DEFAULT.longitude, MUNICH_DEFAULT.name);
+
+    hideLoading();
 
   } catch (err) {
     console.error("Failed to load live data:", err);
-    showError(`❌ Live Load Error: ${err.message}`);
+    showError(`❌ Live-Daten Fehler: ${err.message}`);
+    // Keep banner visible but red? Or hide? Let's hide and use persistent error
+    hideLoading();
   }
 }
 
@@ -663,84 +691,84 @@ function displayResortDetails(resort) {
       <p id="detailsHistoryStatus" style="text-align: center; color: #666; font-size: 0.9em;">Lade Verlaufsdaten...</p>
     </div>`;
 
-  // Lifts Section
-  if (resort.lifts && resort.lifts.length > 0) {
-    html += `<div class="details-section">
+    // Lifts Section
+    if (resort.lifts && resort.lifts.length > 0) {
+      html += `<div class="details-section">
       <h3>🚡 Lifte (${resort.liftsOpen || 0}/${resort.liftsTotal || resort.lifts.length})</h3>
       <div class="facilities-list">`;
 
-    resort.lifts.forEach(lift => {
-      const statusClass = lift.status === "open" ? "status-open" :
-        lift.status === "closed" ? "status-closed" : "status-unknown";
-      const statusIcon = lift.status === "open" ? "🟢" :
-        lift.status === "closed" ? "🔴" : "⚪";
+      resort.lifts.forEach(lift => {
+        const statusClass = lift.status === "open" ? "status-open" :
+          lift.status === "closed" ? "status-closed" : "status-unknown";
+        const statusIcon = lift.status === "open" ? "🟢" :
+          lift.status === "closed" ? "🔴" : "⚪";
 
-      html += `<div class="facility-item">
+        html += `<div class="facility-item">
         <div class="facility-header">
           <span class="facility-status ${statusClass}">${statusIcon}</span>
           <span class="facility-name">${lift.name}</span>
         </div>`;
 
-      // Metadata
-      const metadata = [];
-      if (lift.type) metadata.push(`Typ: ${lift.type}`);
-      if (lift.length) metadata.push(`Länge: ${lift.length}m`);
-      if (lift.altitudeStart) metadata.push(`Höhe: ${lift.altitudeStart}m`);
-      if (lift.operatingHours) metadata.push(`⏰ ${lift.operatingHours}`);
+        // Metadata
+        const metadata = [];
+        if (lift.type) metadata.push(`Typ: ${lift.type}`);
+        if (lift.length) metadata.push(`Länge: ${lift.length}m`);
+        if (lift.altitudeStart) metadata.push(`Höhe: ${lift.altitudeStart}m`);
+        if (lift.operatingHours) metadata.push(`⏰ ${lift.operatingHours}`);
 
-      if (metadata.length > 0) {
-        html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
-      }
+        if (metadata.length > 0) {
+          html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
+        }
 
-      html += `</div>`;
-    });
+        html += `</div>`;
+      });
 
-    html += `</div></div>`;
-  }
+      html += `</div></div>`;
+    }
 
-  // Slopes Section
-  if (resort.slopes && resort.slopes.length > 0) {
-    const slopesOpen = resort.slopes.filter(s => s.status === "open").length;
-    html += `<div class="details-section">
+    // Slopes Section
+    if (resort.slopes && resort.slopes.length > 0) {
+      const slopesOpen = resort.slopes.filter(s => s.status === "open").length;
+      html += `<div class="details-section">
       <h3>⛷️ Pisten (${slopesOpen}/${resort.slopes.length})</h3>
       <div class="facilities-list">`;
 
-    resort.slopes.forEach(slope => {
-      const statusClass = slope.status === "open" ? "status-open" :
-        slope.status === "closed" ? "status-closed" : "status-unknown";
-      const statusIcon = slope.status === "open" ? "🟢" :
-        slope.status === "closed" ? "🔴" : "⚪";
+      resort.slopes.forEach(slope => {
+        const statusClass = slope.status === "open" ? "status-open" :
+          slope.status === "closed" ? "status-closed" : "status-unknown";
+        const statusIcon = slope.status === "open" ? "🟢" :
+          slope.status === "closed" ? "🔴" : "⚪";
 
-      const difficultyIcon = slope.difficulty === "blue" ? "🔵" :
-        slope.difficulty === "red" ? "🔴" :
-          slope.difficulty === "black" ? "⚫" :
-            slope.difficulty === "freeride" ? "🟠" : "";
+        const difficultyIcon = slope.difficulty === "blue" ? "🔵" :
+          slope.difficulty === "red" ? "🔴" :
+            slope.difficulty === "black" ? "⚫" :
+              slope.difficulty === "freeride" ? "🟠" : "";
 
-      html += `<div class="facility-item">
+        html += `<div class="facility-item">
         <div class="facility-header">
           <span class="facility-status ${statusClass}">${statusIcon}</span>
           ${difficultyIcon ? `<span class="difficulty-badge">${difficultyIcon}</span>` : ''}
           <span class="facility-name">${slope.name}</span>
         </div>`;
 
-      // Metadata
-      const metadata = [];
-      if (slope.difficulty) metadata.push(`Schwierigkeit: ${slope.difficulty}`);
-      if (slope.length) metadata.push(`Länge: ${slope.length}m`);
-      if (slope.altitudeStart) metadata.push(`Höhe: ${slope.altitudeStart}m`);
-      if (slope.operatingHours) metadata.push(`⏰ ${slope.operatingHours}`);
+        // Metadata
+        const metadata = [];
+        if (slope.difficulty) metadata.push(`Schwierigkeit: ${slope.difficulty}`);
+        if (slope.length) metadata.push(`Länge: ${slope.length}m`);
+        if (slope.altitudeStart) metadata.push(`Höhe: ${slope.altitudeStart}m`);
+        if (slope.operatingHours) metadata.push(`⏰ ${slope.operatingHours}`);
 
-      if (metadata.length > 0) {
-        html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
-      }
+        if (metadata.length > 0) {
+          html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
+        }
 
-      html += `</div>`;
-    });
+        html += `</div>`;
+      });
 
-    html += `</div></div>`;
-  }
+      html += `</div></div>`;
+    }
 
-  container.innerHTML = html;
+    container.innerHTML = html;
 
     // Fetch and render historical data
     fetchDetailsHistory(resort.id);
