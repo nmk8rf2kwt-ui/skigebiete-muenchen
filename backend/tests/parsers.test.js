@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PARSERS_DIR = path.join(__dirname, '../parsers');
-const parserFiles = fs.readdirSync(PARSERS_DIR).filter(f => f.endsWith('.js'));
+const parserFiles = fs.readdirSync(PARSERS_DIR).filter(f => f.endsWith('.js') && f !== 'index.js');
 
 describe('Parsers Interface Check', () => {
 
