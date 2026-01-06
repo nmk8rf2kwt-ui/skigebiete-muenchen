@@ -108,7 +108,9 @@
         "lifts": 14,
         "price": 63.00,
         "classification": "Intermediate",
-        "website": "https://www.steinplatte.tirol"
+        "website": "https://www.steinplatte.tirol",
+        "latitude": 47.6316,
+        "longitude": 12.5621
     },
     {
         "id": "ehrwald",
@@ -118,7 +120,9 @@
         "lifts": 7,
         "price": 63.50,
         "classification": "Family",
-        "website": "https://www.almbahn.at"
+        "website": "https://www.almbahn.at",
+        "latitude": 47.4300,
+        "longitude": 10.9400
     },
     {
         "id": "lermoos",
@@ -128,7 +132,9 @@
         "lifts": 8,
         "price": 63.50,
         "classification": "Intermediate",
-        "website": "https://www.bergbahnen-langes.at"
+        "website": "https://www.bergbahnen-langes.at",
+        "latitude": 47.4000,
+        "longitude": 10.8833
     },
     {
         "id": "tiroler-zugspitzbahn",
@@ -138,7 +144,9 @@
         "lifts": 9,
         "price": 63.50,
         "classification": "Scenic",
-        "website": "https://www.zugspitze.at"
+        "website": "https://www.zugspitze.at",
+        "latitude": 47.4264,
+        "longitude": 10.9859
     },
     {
         "id": "st_johann",
@@ -148,7 +156,9 @@
         "lifts": 16,
         "price": 62.00,
         "classification": "Family",
-        "website": "https://www.kitzbueheler-alpen.com/de/stjo/aktuelles/geoeffnete-lifte.html"
+        "website": "https://www.kitzbueheler-alpen.com/de/stjo/aktuelles/geoeffnete-lifte.html",
+        "latitude": 47.5233,
+        "longitude": 12.4232
     },
     {
         "id": "ski_juwel",
@@ -158,7 +168,9 @@
         "lifts": 45,
         "price": 68.50,
         "classification": "Huge",
-        "website": "https://www.skijuwel.com/de/winter/lifte-und-pisten"
+        "website": "https://www.skijuwel.com/de/winter/lifte-und-pisten",
+        "latitude": 47.3815,
+        "longitude": 11.9789
     },
     {
         "id": "kitzbuehel",
@@ -168,7 +180,9 @@
         "lifts": 58,
         "price": 72.00,
         "classification": "Premium",
-        "website": "https://www.kitzski.at"
+        "website": "https://www.kitzski.at",
+        "latitude": 47.4464,
+        "longitude": 12.3922
     },
     {
         "id": "berwang",
@@ -178,7 +192,9 @@
         "lifts": 12,
         "price": 63.50,
         "classification": "High Alpine",
-        "website": "https://www.berwang.tirol"
+        "website": "https://www.berwang.tirol",
+        "latitude": 47.4077,
+        "longitude": 10.7475
     },
     {
         "id": "seefeld",
@@ -188,7 +204,9 @@
         "lifts": 10,
         "price": 61.50,
         "classification": "Family",
-        "website": "https://www.seefeld.com"
+        "website": "https://www.seefeld.com",
+        "latitude": 47.3300,
+        "longitude": 11.1877
     },
     {
         "id": "hahnenkamm",
@@ -198,7 +216,9 @@
         "lifts": 5,
         "price": 52.00,
         "classification": "View",
-        "website": "https://www.bergwelt-hahnenkamm.at"
+        "website": "https://www.bergwelt-hahnenkamm.at",
+        "latitude": 47.4241,
+        "longitude": 12.3652
     },
     {
         "id": "lofer",
@@ -208,7 +228,9 @@
         "lifts": 10,
         "price": 62.00,
         "classification": "Family",
-        "website": "https://www.skialm-lofer.com"
+        "website": "https://www.skialm-lofer.com",
+        "latitude": 47.5800,
+        "longitude": 12.6800
     },
     {
         "id": "ofterschwang",
@@ -218,7 +240,9 @@
         "lifts": 7,
         "price": 54.50,
         "classification": "World Cup",
-        "website": "https://www.go-ofterschwang.de"
+        "website": "https://www.go-ofterschwang.de",
+        "latitude": 47.5000,
+        "longitude": 10.2333
     },
     {
         "id": "bolsterlang",
@@ -228,6 +252,8 @@
         "lifts": 5,
         "price": 54.50,
         "classification": "Scenic",
-        "website": "https://www.hoernerbahn.de"
+        "website": "https://www.hoernerbahn.de",
+        "latitude": 47.4666,
+        "longitude": 10.2333
     }
 ]
