@@ -59,9 +59,23 @@ function render() {
   } else {
     document.getElementById("skiTable").style.display = "none";
     document.getElementById("map-view").style.display = "block";
+
+    // Get filtered resorts (same logic as renderTable)
+    let filteredResorts = allResorts.map(r => ({
+      ...r,
+      score: r.score !== undefined ? r.score : calculateScore(r)
+    }));
+
+    if (currentFilter === 'top3') {
+      filteredResorts.sort((a, b) => b.score - a.score);
+      filteredResorts = filteredResorts.slice(0, 3);
+    } else if (currentFilter === 'open') {
+      filteredResorts = filteredResorts.filter(r => r.liftsOpen > 0);
+    }
+
     // Initialize map if needed, or just update
-    initMap(allResorts);
-    updateMap(allResorts);
+    initMap(filteredResorts);
+    updateMap(filteredResorts);
 
     // Leaflet needs a resize trigger when becoming visible
     setTimeout(() => {
