@@ -325,14 +325,28 @@ ${pd.info || ""}
   const score = data.score ?? "-";
 
   // Traffic light status indicator with tooltips
-  let statusIndicator = '<span title="Status unbekannt">⚪</span>'; // Default/unknown
+  let statusIcon = '<span title="Status unbekannt">⚪</span>';
   if (data.status === "live") {
-    statusIndicator = '<span title="Live-Daten verfügbar - Aktuelle Informationen vom Skigebiet">🟢</span>'; // Green - successful parse
+    statusIcon = '<span title="Live-Daten verfügbar - Aktuelle Informationen vom Skigebiet">🟢</span>';
   } else if (data.status === "static_only") {
-    statusIndicator = '<span title="Nur Basisdaten - Live-Daten werden geladen">🟡</span>'; // Yellow - no parser or waiting
+    statusIcon = '<span title="Nur Basisdaten - Live-Daten werden geladen">🟡</span>';
   } else if (data.status === "error") {
-    statusIndicator = '<span title="Fehler beim Laden - Daten möglicherweise veraltet">🔴</span>'; // Red - parser failed
+    statusIcon = '<span title="Fehler beim Laden - Daten möglicherweise veraltet">🔴</span>';
   }
+
+  // Format timestamp (e.g. "14:30")
+  let timeStr = "-";
+  if (data.lastUpdated) {
+    const d = new Date(data.lastUpdated);
+    timeStr = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  const statusIndicator = `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+      <div style="font-size: 1.2em;">${statusIcon}</div>
+      <div style="font-size: 0.75em; color: #888; margin-top: 2px;">${timeStr}</div>
+    </div>
+  `;
 
   // Classification styling
   // Standardized German Classifications
