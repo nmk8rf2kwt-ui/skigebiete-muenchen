@@ -1,19 +1,26 @@
-// Helper to calculate a score for ranking
+// Score calculation constants
+const SCORE_WEIGHTS = {
+  PISTE_KM: 2,
+  DISTANCE: -0.5,
+  PRICE: -0.5,
+  OPEN_LIFTS: 3,
+  DEFAULT_DISTANCE: 100,
+  DEFAULT_PRICE: 50
+};
+
 // Helper to calculate a score for ranking
 export function calculateScore(resort) {
-  // Simple algorithm:
-  // + Piste KM
-  // - Distance (penalize far resorts)
-  // - Price (penalize expensive)
-  // + Open Lifts (bonus for availability)
-
   const piste = resort.piste_km || 0;
-  const dist = resort.distance || 100; // default large if missing
-  const price = resort.price || 50;
+  const dist = resort.distance || SCORE_WEIGHTS.DEFAULT_DISTANCE;
+  const price = resort.price || SCORE_WEIGHTS.DEFAULT_PRICE;
   const openLifts = resort.liftsOpen || 0;
 
-  // Weights
-  const score = (piste * 2) - (dist * 0.5) - (price * 0.5) + (openLifts * 3);
+  const score =
+    (piste * SCORE_WEIGHTS.PISTE_KM) +
+    (dist * SCORE_WEIGHTS.DISTANCE) +
+    (price * SCORE_WEIGHTS.PRICE) +
+    (openLifts * SCORE_WEIGHTS.OPEN_LIFTS);
+
   return Math.round(score);
 }
 
@@ -30,11 +37,11 @@ function getWeatherIcon(weatherText) {
 }
 
 
-export function renderTable(data, sortKey = 'score', filter = 'all') {
+export function renderTable(data, sortKey = 'score', filter = 'all', sortDirection = 'desc') {
   const tbody = document.querySelector("#skiTable tbody");
   tbody.innerHTML = "";
 
-  // 1. Enlighten data with Score if not present
+  // 1. Enrich data with Score if not present
   let enrichedData = data.map(r => ({
     ...r,
     score: r.score !== undefined ? r.score : calculateScore(r)

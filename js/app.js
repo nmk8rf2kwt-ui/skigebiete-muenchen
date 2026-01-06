@@ -24,16 +24,12 @@ async function load() {
     if (!staticRes.ok) throw new Error(`HTTP ${staticRes.status}`);
     const staticData = await staticRes.json();
 
-    // Enrich with Score immediately
-    allResorts = staticData.map(r => ({
-      ...r,
-      score: calculateScore(r)
-    }));
-
+    // Store data (score will be calculated in renderTable if needed)
+    allResorts = staticData;
     render();
   } catch (err) {
     console.error("Failed to load static data:", err);
-    alert("❌ Fehler beim Laden der Daten. Bitte Backend überprüfen.");
+    showError("❌ Fehler beim Laden der Daten. Bitte Backend überprüfen.");
   }
 
   // 2. Fetch Live Data
@@ -42,12 +38,8 @@ async function load() {
     if (!liveRes.ok) throw new Error(`HTTP ${liveRes.status}`);
     const liveData = await liveRes.json();
 
-    // Enrich
-    allResorts = liveData.map(r => ({
-      ...r,
-      score: calculateScore(r)
-    }));
-
+    // Store data (score will be calculated in renderTable if needed)
+    allResorts = liveData;
     render();
 
     // Update timestamp
@@ -73,19 +65,21 @@ function render() {
     document.getElementById("map-view").style.display = "block";
 
     // Get filtered resorts (same logic as renderTable)
-    let filteredResorts = allResorts.map(r => ({
-      ...r,
-      score: r.score !== undefined ? r.score : calculateScore(r)
-    }));
+    let filteredResorts = [...allResorts];
 
     if (currentFilter === 'top3') {
+      // Calculate scores for sorting
+      filteredResorts = filteredResorts.map(r => ({
+        ...r,
+        score: r.score !== undefined ? r.score : calculateScore(r)
+      }));
       filteredResorts.sort((a, b) => b.score - a.score);
       filteredResorts = filteredResorts.slice(0, 3);
     } else if (currentFilter === 'open') {
       filteredResorts = filteredResorts.filter(r => r.liftsOpen > 0);
     }
 
-    // Initialize map if needed, or just update
+    // Initialize map on first view, then just update
     initMap(filteredResorts);
     updateMap(filteredResorts);
 
