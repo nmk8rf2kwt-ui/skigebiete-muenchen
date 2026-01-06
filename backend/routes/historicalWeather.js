@@ -9,7 +9,7 @@ const router = express.Router();
  * Query params: days (default: 30, max: 365)
  * Returns historical weather data for a specific resort
  */
-router.get('/:resortId', (req, res) => {
+router.get('/:resortId', async (req, res) => {
     const { resortId } = req.params;
     const days = Math.min(parseInt(req.query.days) || 30, 365);
 
@@ -25,7 +25,7 @@ router.get('/:resortId', (req, res) => {
     }
 
     try {
-        const weatherHistory = getWeatherHistory(resortId, days);
+        const weatherHistory = await getWeatherHistory(resortId, days);
 
         res.json({
             resortId,

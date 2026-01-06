@@ -213,37 +213,43 @@ export function initScheduler() {
     setInterval(cleanupHistory, 24 * 60 * 60 * 1000);
 
     // F. One-time Weather Backfill (First Start Only)
-    // Note: This logic is tricky with async, but timeouts are fine firing async promises
-    if (!isBackfillCompleted()) {
-        console.log("🌤️ Starting one-time weather history backfill...");
-        setTimeout(async () => {
-            const resorts = getStaticResorts().filter(r => r.latitude && r.longitude);
-            console.log(`📥 Backfilling weather for ${resorts.length} resorts (30 days each)...`);
+    // Wrapped in IIFE to handle async check
+    (async () => {
+        try {
+            const completed = await isBackfillCompleted();
+            if (!completed) {
+                console.log("🌤️ Starting one-time weather history backfill...");
+                setTimeout(async () => {
+                    const resorts = getStaticResorts().filter(r => r.latitude && r.longitude);
+                    console.log(`📥 Backfilling weather for ${resorts.length} resorts (30 days each)...`);
 
-            let successCount = 0;
-            let failCount = 0;
+                    let successCount = 0;
+                    let failCount = 0;
 
-            for (const resort of resorts) {
-                try {
-                    const weatherData = await backfillWeatherHistory(resort, 30);
-                    // Save each day
-                    for (const [date, data] of Object.entries(weatherData)) {
-                        // UPDATED: Await async save
-                        await updateHistoricalWeather(resort.id, date, data);
+                    for (const resort of resorts) {
+                        try {
+                            const weatherData = await backfillWeatherHistory(resort, 30);
+                            // Save each day
+                            for (const [date, data] of Object.entries(weatherData)) {
+                                await updateHistoricalWeather(resort.id, date, data);
+                            }
+                            successCount++;
+                            // Small delay to avoid rate limiting
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                        } catch (error) {
+                            console.error(`Failed backfill for ${resort.id}:`, error.message);
+                            failCount++;
+                        }
                     }
-                    successCount++;
-                    // Small delay to avoid rate limiting
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                } catch (error) {
-                    console.error(`Failed backfill for ${resort.id}:`, error.message);
-                    failCount++;
-                }
-            }
 
-            console.log(`✅ Weather backfill complete: ${successCount} succeeded, ${failCount} failed`);
-            markBackfillCompleted();
-        }, 10000); // Start after 10 seconds
-    } else {
-        console.log("✓ Weather backfill already completed (skipping)");
-    }
+                    console.log(`✅ Weather backfill complete: ${successCount} succeeded, ${failCount} failed`);
+                    await markBackfillCompleted();
+                }, 10000); // Start after 10 seconds
+            } else {
+                console.log("✓ Weather backfill already completed (skipping)");
+            }
+        } catch (err) {
+            console.error("Error checking backfill status:", err);
+        }
+    })();
 }

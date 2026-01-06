@@ -293,3 +293,36 @@ export async function getResortTrafficHistory(cityId, resortId) {
         return [];
     }
 }
+// Helper to check/set backfill status
+// We'll store this in a special snapshot or just check for existing data?
+// Simplest way: check if we have weather history for a sentinel resort or keep a state file?
+// Problem: If filesystem is ephemeral, a state file 'backfill.completed' is lost.
+// Solution: Store a "setting" in the DB. We can use the resort_snapshots table with a fake resort_id like 'SYSTEM_SETTINGS'.
+
+const SETTINGS_RESORT_ID = 'SYSTEM_SETTINGS';
+const BACKFILL_DATE = '2000-01-01'; // Constant date for settings
+
+export async function isBackfillCompleted() {
+    if (!supabase) return true; // If no DB, assume done to avoid loops
+
+    const { data } = await supabase
+        .from('resort_snapshots')
+        .select('data')
+        .eq('resort_id', SETTINGS_RESORT_ID)
+        .eq('date', BACKFILL_DATE)
+        .single();
+
+    return !!(data && data.data && data.data.weatherBackfill === true);
+}
+
+export async function markBackfillCompleted() {
+    if (!supabase) return;
+
+    await supabase
+        .from('resort_snapshots')
+        .upsert({
+            resort_id: SETTINGS_RESORT_ID,
+            date: BACKFILL_DATE,
+            data: { weatherBackfill: true }
+        }, { onConflict: 'resort_id, date' });
+}
