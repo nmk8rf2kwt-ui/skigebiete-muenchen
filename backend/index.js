@@ -31,7 +31,18 @@ const app = express();
 
 // Security Middleware
 app.use(helmet({
-  contentSecurityPolicy: false, // Disable CSP for now to allow external images/scripts if needed
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "unpkg.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "unpkg.com", "fonts.googleapis.com"],
+      imgSrc: ["'self'", "data:", "https:", "w7.weather.com.cn", "foto-webcam.eu"],
+      connectSrc: ["'self'", "https://api.open-meteo.com"], // Allow weather API
+      fontSrc: ["'self'", "fonts.gstatic.com"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
 }));
 
 // Rate Limiting

@@ -1,20 +1,14 @@
 import { renderTable, calculateScore } from "./render.js";
 import { initMap, updateMap } from "./map.js";
 import { API_BASE_URL } from "./config.js";
-
-// State
-let allResorts = [];
-let currentSort = "score";
-let currentFilter = "all";
-let viewMode = "list"; // 'list' or 'map'
-let sortDirection = "desc"; // 'asc' or 'desc'
+import { store } from "./store.js";
 
 // Global Error Handler
 window.onerror = function (msg, url, lineNo, columnNo, error) {
   const errorDiv = document.getElementById("searchError");
   if (errorDiv) {
     errorDiv.style.display = "block";
-    errorDiv.innerHTML = `❌ Global Error:<br>${msg}<br>Line: ${lineNo}<br>File: ${url}`;
+    errorDiv.textContent = `❌ Global Error: ${msg} (Line: ${lineNo})`;
   }
   return false;
 };
@@ -31,23 +25,28 @@ function showError(message) {
   const errorDiv = document.getElementById("searchError");
   if (!errorDiv) return;
   errorDiv.style.display = "block";
-  // Append instead of replace to see history
-  errorDiv.innerHTML += `<div>${message}</div>`;
+
+  const msgDiv = document.createElement("div");
+  msgDiv.textContent = message;
+  errorDiv.appendChild(msgDiv);
 }
 
 function logToUI(msg) {
   const errorDiv = document.getElementById("searchError");
   if (!errorDiv) return;
   errorDiv.style.display = "block";
-  errorDiv.style.color = "#333"; // Use dark text for logs
-  errorDiv.innerHTML += `<div style="border-bottom: 1px solid #ddd; padding: 2px;">${new Date().toLocaleTimeString()}: ${msg}</div>`;
+  errorDiv.style.color = "#333";
+
+  const line = document.createElement("div");
+  line.style.borderBottom = "1px solid #ddd";
+  line.style.padding = "2px";
+  line.textContent = `${new Date().toLocaleTimeString()}: ${msg}`;
+  errorDiv.appendChild(line);
 }
 
 // Hide error message
 function hideError() {
   // Disable auto-hide for debugging
-  // const errorDiv = document.getElementById("searchError");
-  // errorDiv.style.display = "none";
 }
 
 // Load Data
@@ -63,9 +62,7 @@ async function load() {
     const staticData = await staticRes.json();
     logToUI(`✅ Loaded ${staticData.length} static resorts`);
 
-    // Store data (score will be calculated in renderTable if needed)
-    allResorts = staticData;
-    render();
+    store.setState({ resorts: staticData }, render);
   } catch (err) {
     console.error("Failed to load static data:", err);
     showError(`❌ Static Load Error: ${err.message}`);
@@ -79,9 +76,7 @@ async function load() {
     const liveData = await liveRes.json();
     logToUI(`✅ Loaded ${liveData.length} live resorts`);
 
-    // Store data (score will be calculated in renderTable if needed)
-    allResorts = liveData;
-    render();
+    store.setState({ resorts: liveData, lastUpdated: new Date() }, render);
 
     // Update timestamp
     const ts = document.getElementById("timestamp");
@@ -98,6 +93,7 @@ async function load() {
 
 // Export CSV
 function exportToCsv() {
+  const allResorts = store.get().resorts;
   if (!allResorts.length) return;
 
   const headers = ["Name", "Reisezeit (min)", "Pisten (km)", "Lifte (Offen/Total)", "Preis (€)", "Typ", "Schnee", "Wetter", "Score"];
@@ -138,8 +134,9 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
     const trafficData = await res.json();
     logToUI(`✅ Loaded traffic data for ${locationName}`);
 
-    // Update allResorts with distance and duration
-    allResorts = allResorts.map(resort => {
+    // Update resorts with distance and duration
+    const currentResorts = store.get().resorts;
+    const updatedResorts = currentResorts.map(resort => {
       const trafficInfo = trafficData.find(t => t.resortId === resort.id);
       if (trafficInfo) {
         return {
@@ -152,13 +149,13 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
       return resort;
     });
 
-    // Recalculate scores and re-render
-    allResorts = allResorts.map(resort => ({
+    // Recalculate scores
+    const scoredResorts = updatedResorts.map(resort => ({
       ...resort,
       score: calculateScore(resort)
     }));
 
-    render();
+    store.setState({ resorts: scoredResorts }, render);
   } catch (err) {
     console.error("Failed to load traffic data:", err);
     showError(`❌ Traffic Load Error for ${locationName}: ${err.message}`);
@@ -166,53 +163,47 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
 }
 
 function render() {
-  hideError(); // Hide any previous errors before rendering
+  hideError();
+  const state = store.get();
+  const { viewMode, sortKey, filter, sortDirection } = state;
 
-  // 1. Filter resorts (Logic shared for Map and Table)
-  let resortsToRender = [...allResorts];
+  // 1. Get processed data (filtered)
+  // We still need to handle the specific "top3" logic if getProcessedResorts doesn't do it fully,
+  // but let's rely on the store helper we created.
+  let resortsToRender = store.getProcessedResorts();
 
-  // Calculate scores if needed (renderTable does this too, but we need it for top3 filter here)
+  // Ensure scores are calculated if not present (handled in load/traffic, but safeguard)
   resortsToRender = resortsToRender.map(r => ({
     ...r,
     score: r.score !== undefined ? r.score : calculateScore(r)
   }));
 
-  if (currentFilter === "top3") {
-    resortsToRender.sort((a, b) => (b.score || 0) - (a.score || 0));
-    resortsToRender = resortsToRender.slice(0, 3);
-  } else if (currentFilter === "open") {
-    // Future feature: Filter by open lifts if needed
-    resortsToRender = resortsToRender.filter(r => r.liftsOpen > 0);
-  }
 
-  // 2. Update Map (Needs filtered data, but order doesn't matter)
+  // 2. Update Map
   if (viewMode === "map") {
     document.getElementById("skiTable").style.display = "none";
     document.getElementById("map-view").style.display = "block";
-    // Leaflet needs to be visible to size correctly
     document.getElementById("map-view").style.visibility = "visible";
 
     initMap(resortsToRender);
     updateMap(resortsToRender);
 
-    // Trigger resize to fix any grey tiles
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 200);
 
   } else {
-    // 3. Render Table (Needs filtered data + Sort options)
-    // We pass 'all' as filter because we already filtered resortsToRender above
+    // 3. Render Table
     document.getElementById("skiTable").style.display = "";
     document.getElementById("map-view").style.display = "none";
 
-    renderTable(resortsToRender, currentSort, 'all', sortDirection);
+    renderTable(resortsToRender, sortKey, filter, sortDirection);
   }
 
   // Update sort indicators
   document.querySelectorAll("th[data-sort]").forEach(th => {
     th.classList.remove("sort-asc", "sort-desc");
-    if (th.dataset.sort === currentSort) {
+    if (th.dataset.sort === sortKey) {
       th.classList.add(`sort-${sortDirection}`);
     }
   });
@@ -326,15 +317,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Buttons
   document.getElementById("viewToggle").addEventListener("click", () => {
-    viewMode = viewMode === "list" ? "map" : "list";
-    document.getElementById("viewToggle").textContent = viewMode === "list" ? "🗺️ Karte anzeigen" : "📋 Liste anzeigen";
-    render();
+    const nextMode = store.get().viewMode === "list" ? "map" : "list";
+    document.getElementById("viewToggle").textContent = nextMode === "list" ? "🗺️ Karte anzeigen" : "📋 Liste anzeigen";
+    store.setState({ viewMode: nextMode }, render);
   });
 
   document.getElementById("top3").addEventListener("click", () => {
-    currentFilter = currentFilter === "top3" ? "all" : "top3";
-    document.getElementById("top3").textContent = currentFilter === "top3" ? "❌ Alle anzeigen" : "🏆 Nur Top-3 heute";
-    render();
+    const nextFilter = store.get().filter === "top3" ? "all" : "top3";
+    document.getElementById("top3").textContent = nextFilter === "top3" ? "❌ Alle anzeigen" : "🏆 Nur Top-3 heute";
+    store.setState({ filter: nextFilter }, render);
   });
 
   document.getElementById("exportCsv").addEventListener("click", exportToCsv);
@@ -344,27 +335,27 @@ document.addEventListener("DOMContentLoaded", () => {
     th.style.cursor = "pointer";
     th.addEventListener("click", () => {
       const newSort = th.dataset.sort;
+      const currentSort = store.get().sortKey;
+      let sortDirection = store.get().sortDirection;
 
       // If clicking the same column, toggle direction
       if (currentSort === newSort) {
         sortDirection = sortDirection === "desc" ? "asc" : "desc";
       } else {
         // New column - set default direction based on column type
-        currentSort = newSort;
         // Distance and price should default to ascending (lower is better)
         // Score, pistes, snow should default to descending (higher is better)
         sortDirection = ['distance', 'price'].includes(newSort) ? "asc" : "desc";
       }
 
-      render();
+      store.setState({ sortKey: newSort, sortDirection }, render);
     });
   });
 
   // Mobile Sort Buttons
   document.querySelectorAll(".sort-mobile button").forEach(btn => {
     btn.addEventListener("click", () => {
-      currentSort = btn.dataset.sort;
-      render();
+      store.setState({ sortKey: btn.dataset.sort }, render);
     });
   });
 

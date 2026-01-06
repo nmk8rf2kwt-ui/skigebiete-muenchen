@@ -36,22 +36,35 @@ loadResorts();
 
 // -- HELPERS --
 
-// Helper: Fetch with Timeout
-function fetchWithTimeout(promise, timeoutMs) {
-    let timer;
-    const timeoutPromise = new Promise((_, reject) => {
-        timer = setTimeout(() => {
-            reject(new Error(`Operation timed out after ${timeoutMs}ms`));
-        }, timeoutMs);
-    });
+// Helper: Fetch with Timeout using AbortController
+async function fetchWithTimeout(promiseFactory, timeoutMs) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
-    return Promise.race([
-        promise.then((result) => {
-            clearTimeout(timer);
-            return result;
-        }),
-        timeoutPromise,
-    ]);
+    try {
+        // Pass signal to the factory function if it accepts options, 
+        // OR we assume the factory returns a promise that listens to it?
+        // Actually, our parsers don't accept signals yet without refactoring ALL of them.
+        // BUT, for the ones using fetchWithHeaders (which we just updated), we CAN pass the signal.
+        // However, the current signature `parser()` takes no args.
+        // We need to modify how parsers are called to pass options.
+
+        // For now, since we haven't refactored all parsers to accept options, 
+        // we keep the Promise.race logic BUT we add the controller logic for future proofs
+        // and for the ones we ARE refactoring.
+        // Wait, to truly fix the leak, parsers MUST accept a signal.
+
+        // Let's change the pattern: pass signal to parser(options)
+        const result = await Promise.race([
+            promiseFactory({ signal: controller.signal }),
+            new Promise((_, reject) => {
+                setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs);
+            })
+        ]);
+        return result;
+    } finally {
+        clearTimeout(timeout);
+    }
 }
 
 // -- EXPORTS --
@@ -95,7 +108,7 @@ export async function getAllResortsLive() {
                     } else {
                         // Fetch fresh
                         try {
-                            const rawData = await fetchWithTimeout(parser(), 8000); // 8s timeout
+                            const rawData = await fetchWithTimeout((opts) => parser(opts), 8000); // 8s timeout
 
                             // VALIDATION
                             // Parse (strict) or safeParse (soft)
@@ -187,7 +200,7 @@ export async function getSingleResortLive(resortId) {
             // But the legacy code `api/lifts/:resort` seemed to trigger a fresh fetch?
             // The code said: `const data = parser ? await fetchWithTimeout(parser(), 8000) : {};`
             // So it was always fresh. Let's keep that behavior for this specific function.
-            const data = await fetchWithTimeout(parser(), 8000);
+            const data = await fetchWithTimeout((opts) => parser(opts), 8000);
             return {
                 ...(resort || {}),
                 ...data,

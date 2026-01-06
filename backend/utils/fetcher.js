@@ -17,6 +17,7 @@ export async function fetchWithHeaders(url, options = {}) {
 
     return fetch(url, {
         ...options,
-        headers
+        headers,
+        signal: options.signal // Explicitly pass signal if provided
     });
 }
