@@ -8,6 +8,7 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten.
 
 - ✅ **Live-Daten**: Aktuelle Lift-Status und Schneehöhen
 - 🚗 **Personalisierte Fahrzeiten**: Berechnung von Ihrem Standort
+- 🧭 **Direkte Navigation**: One-Click Google Maps Routing zu Talstationen
 - 🗺️ **Interaktive Karte**: Leaflet-basierte Visualisierung
 - 🌤️ **3-Tage Wettervorhersage**: Detaillierte Wettericons
 - 📊 **Historische Trends**: 7-Tage Verlauf
