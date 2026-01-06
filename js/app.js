@@ -474,7 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // New column - set default direction based on column type
         // Distance and price should default to ascending (lower is better)
         // Score, pistes, snow should default to descending (higher is better)
-        sortDirection = ['distance', 'price'].includes(newSort) ? "asc" : "desc";
+        sortDirection = ['distance', 'distance_km', 'traffic_duration', 'price'].includes(newSort) ? "asc" : "desc";
       }
 
       store.setState({ sortKey: newSort, sortDirection }, render);
@@ -487,11 +487,6 @@ document.addEventListener("DOMContentLoaded", () => {
       store.setState({ sortKey: btn.dataset.sort }, render);
     });
   });
-
-  // Initial Load
-  load();
-  // Auto-refresh
-  setInterval(load, 30 * 60 * 1000);
 
   // Weather Modal Handlers
   const modal = document.getElementById("weatherModal");
@@ -693,11 +688,6 @@ function displayHistoryChart(history) {
           },
         },
       }
-    }
-  });
-}
-
-// ... (previous history chart code)
     }
   });
 }
