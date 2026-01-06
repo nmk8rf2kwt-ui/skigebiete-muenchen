@@ -25,14 +25,18 @@ export function calculateScore(resort) {
 }
 
 // Helper for weather icons
+// Helper for weather icons
 function getWeatherIcon(weatherText) {
   if (!weatherText) return "☁️";
   const w = weatherText.toLowerCase();
-  if (w.includes("sonne") || w.includes("klar")) return "☀️";
-  if (w.includes("schnee")) return "❄️";
-  if (w.includes("regen")) return "🌧️";
-  if (w.includes("bewölkt") || w.includes("wolken")) return "☁️";
-  if (w.includes("nebel")) return "🌫️";
+
+  if (w.includes("sonne") || w.includes("klar") || w.includes("sun") || w.includes("clear")) return "☀️";
+  if (w.includes("schnee") || w.includes("snow")) return "❄️";
+  if (w.includes("regen") || w.includes("rain") || w.includes("drizzle")) return "🌧️";
+  if (w.includes("bewölkt") || w.includes("wolken") || w.includes("cloud") || w.includes("overcast")) return "☁️";
+  if (w.includes("nebel") || w.includes("fog") || w.includes("mist")) return "🌫️";
+  if (w.includes("thunder") || w.includes("gewitter")) return "⛈️";
+
   return "🌤️";
 }
 
@@ -65,19 +69,16 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
     if (valA == null) valA = 0; // treat missing as 0 or infinity depending on context? 
     if (valB == null) valB = 0;
 
+    const multiplier = sortDirection === "asc" ? 1 : -1;
+
     // Numerical sort
     if (typeof valA === 'number' && typeof valB === 'number') {
-      // Ascending for distance/price? Descending for score/pistes?
-      // Heuristic:
-      if (['distance', 'price'].includes(sortKey)) {
-        return valA - valB; // Low is good
-      }
-      return valB - valA; // High is good (score, snow, pistes)
+      return (valA - valB) * multiplier;
     }
 
     // String sort (e.g. name)
     if (typeof valA === 'string') {
-      return valA.localeCompare(valB);
+      return valA.localeCompare(valB) * multiplier;
     }
     return 0;
   });
@@ -87,6 +88,14 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
     const tr = document.createElement("tr");
     renderRow(tr, { ...resort, rank: index + 1 });
     tbody.appendChild(tr);
+  });
+
+  // Visual: Update Arrows
+  document.querySelectorAll("th[data-sort]").forEach(th => {
+    th.innerHTML = th.innerHTML.replace('↑', '↕️').replace('↓', '↕️');
+    if (th.dataset.sort === sortKey) {
+      th.innerHTML = th.innerHTML.replace('↕️', sortDirection === 'asc' ? '↑' : '↓');
+    }
   });
 }
 
@@ -156,7 +165,12 @@ export function renderRow(row, data) {
   if (data.forecast && Array.isArray(data.forecast) && data.forecast.length >= 3) {
     // Create three icons
     const icons = data.forecast.slice(0, 3).map(f => {
-      const icon = f.weatherEmoji || getWeatherIcon(f.weather);
+      // Ensure we have a symbol. If backend sends text (e.g. "Overcast"), derive icon from it.
+      // Emojis are usually short (1-4 chars). Text is longer.
+      let icon = f.weatherEmoji;
+      if (!icon || icon.length > 4) {
+        icon = getWeatherIcon(f.weather || f.weatherDesc || icon || "");
+      }
       // Tooltip: "Mon: 5°C"
       const date = new Date(f.date).toLocaleDateString('de-DE', { weekday: 'short' });
       return `<span title="${date}: ${f.tempMax}°C / ${f.tempMin}°C" style="cursor: help; margin-right: 4px;">${icon}</span>`;

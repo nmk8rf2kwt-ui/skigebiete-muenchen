@@ -59,7 +59,7 @@ function render() {
   if (viewMode === 'list') {
     document.getElementById("skiTable").style.display = "";
     document.getElementById("map-view").style.display = "none";
-    renderTable(allResorts, currentSort, currentFilter);
+    renderTable(allResorts, currentSort, currentFilter, sortDirection);
   } else {
     document.getElementById("skiTable").style.display = "none";
     document.getElementById("map-view").style.display = "block";
@@ -335,7 +335,19 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("th[data-sort]").forEach(th => {
     th.style.cursor = "pointer";
     th.addEventListener("click", () => {
-      currentSort = th.dataset.sort;
+      const newSort = th.dataset.sort;
+
+      // If clicking the same column, toggle direction
+      if (currentSort === newSort) {
+        sortDirection = sortDirection === "desc" ? "asc" : "desc";
+      } else {
+        // New column - set default direction based on column type
+        currentSort = newSort;
+        // Distance and price should default to ascending (lower is better)
+        // Score, pistes, snow should default to descending (higher is better)
+        sortDirection = ['distance', 'price'].includes(newSort) ? "asc" : "desc";
+      }
+
       render();
     });
   });
