@@ -86,7 +86,7 @@ export async function fetchTravelTimes(destinations) {
             if (resortId) {
                 results[resortId] = {
                     duration: Math.round(durationSeconds / 60), // minutes
-                    distance: (distanceMeters / 1000).toFixed(1) // km
+                    distanceKm: (distanceMeters / 1000).toFixed(1) // km (renamed to avoid overwriting static distance)
                 };
             }
         });
@@ -147,7 +147,7 @@ export async function fetchDynamicTravelTimes(originLat, originLon, destinations
         if (resortId && durationSeconds !== null) {
             results[resortId] = {
                 duration: Math.round(durationSeconds / 60), // minutes
-                distance: (distanceMeters / 1000).toFixed(1) // km
+                distanceKm: (distanceMeters / 1000).toFixed(1) // km (renamed to avoid overwriting static distance)
             };
         }
     });

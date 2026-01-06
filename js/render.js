@@ -394,7 +394,7 @@ ${pd.info || ""}
     : '<span title="Keine Webcam verfügbar">-</span>';
 
   // Distance (in km) - separate from travel time
-  const distanceKm = data.traffic?.distance || data.distanceKm || null;
+  const distanceKm = data.traffic?.distanceKm || data.distanceKm || null;
   const distanceDisplay = distanceKm !== null ? `${distanceKm} km` : (data.distance === null ? '<span class="loading-spinner-small"></span>' : "-");
 
   // Combined Weather & Snow Display
@@ -413,9 +413,9 @@ ${pd.info || ""}
   row.innerHTML = `
     <td style="text-align: center;">${statusIndicator}</td>
     <td><a href="${data.website}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${data.name}</a></td>
+    <td>${distanceDisplay}</td>
     <td>${standardDisplay}</td>
     <td>${trafficDisplay}</td>
-    <td>${distanceDisplay}</td>
     <td>${data.piste_km ?? "-"} km</td>
     <td>${liftStatus}</td>
     <td>${price}</td>

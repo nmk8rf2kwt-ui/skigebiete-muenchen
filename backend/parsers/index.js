@@ -24,6 +24,7 @@ import { kampenwand } from "./kampenwand.js";
 import { balderschwang } from "./balderschwang.js";
 import { oberstdorf } from "./oberstdorf.js";
 import { oberjoch } from "./oberjoch.js";
+import { wendelstein } from "./wendelstein.js";
 
 export const PARSERS = {
     spitzingsee,
@@ -51,4 +52,5 @@ export const PARSERS = {
     balderschwang,
     oberstdorf,
     oberjoch,
+    wendelstein,
 };
