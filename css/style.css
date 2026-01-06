@@ -560,7 +560,6 @@ tr.unavailable small {
 /* ================= Tooltip ================= */
 
 .tooltip-container {
-  position: relative;
   cursor: help;
   white-space: nowrap;
 }
