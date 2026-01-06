@@ -1,0 +1,11 @@
+{
+  "resortId": "brauneck",
+  "date": "2026-01-05",
+  "timestamp": "2026-01-05T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 14,
+    "liftsTotal": 15,
+    "snow": "78 cm",
+    "weather": "Schnee"
+  }
+}

@@ -1,11 +1,38 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const DATA_DIR = './data/history';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// history.js is in backend/, resorts.json is in backend/, data is in backend/data
+const DATA_DIR = path.join(__dirname, 'data/history');
+const RESORTS_FILE = path.join(__dirname, 'resorts.json');
 const RETENTION_DAYS = 30;
+
+// Load allowed resorts once
+let ALLOWED_RESORTS = new Set();
+try {
+    const data = fs.readFileSync(RESORTS_FILE, 'utf8');
+    const resorts = JSON.parse(data);
+    resorts.forEach(r => ALLOWED_RESORTS.add(r.id));
+} catch (err) {
+    console.error("Warning: history.js could not load resorts.json for validation:", err.message);
+}
+
+// Validation Helper
+function isValidResort(resortId) {
+    if (!resortId || typeof resortId !== 'string') return false;
+    // Fail closed: If list failed to load, deny all to be safe
+    if (ALLOWED_RESORTS.size === 0) return false;
+    return ALLOWED_RESORTS.has(resortId);
+}
 
 // Ensure data directory exists
 function ensureDataDir(resortId) {
+    if (!isValidResort(resortId)) {
+        throw new Error(`Invalid resort ID: ${resortId}`);
+    }
     const dir = path.join(DATA_DIR, resortId);
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });

@@ -1,0 +1,11 @@
+{
+  "resortId": "wilder-kaiser",
+  "date": "2026-01-02",
+  "timestamp": "2026-01-02T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 42,
+    "liftsTotal": 80,
+    "snow": "56 cm",
+    "weather": "Schnee"
+  }
+}

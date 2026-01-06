@@ -1,0 +1,11 @@
+{
+  "resortId": "lofer",
+  "date": "2025-12-31",
+  "timestamp": "2025-12-31T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 1,
+    "liftsTotal": 10,
+    "snow": "116 cm",
+    "weather": "Sonne"
+  }
+}

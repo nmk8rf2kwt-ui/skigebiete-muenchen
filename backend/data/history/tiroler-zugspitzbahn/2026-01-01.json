@@ -1,0 +1,11 @@
+{
+  "resortId": "tiroler-zugspitzbahn",
+  "date": "2026-01-01",
+  "timestamp": "2026-01-01T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 3,
+    "liftsTotal": 9,
+    "snow": "87 cm",
+    "weather": "Schnee"
+  }
+}

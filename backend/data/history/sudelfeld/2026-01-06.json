@@ -1,0 +1,11 @@
+{
+  "resortId": "sudelfeld",
+  "date": "2026-01-06",
+  "timestamp": "2026-01-06T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 3,
+    "liftsTotal": 13,
+    "snow": "33 cm",
+    "weather": "Wolken"
+  }
+}

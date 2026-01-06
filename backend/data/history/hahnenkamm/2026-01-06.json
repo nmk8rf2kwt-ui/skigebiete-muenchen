@@ -1,0 +1,11 @@
+{
+  "resortId": "hahnenkamm",
+  "date": "2026-01-06",
+  "timestamp": "2026-01-06T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 3,
+    "liftsTotal": 5,
+    "snow": "89 cm",
+    "weather": "Schnee"
+  }
+}

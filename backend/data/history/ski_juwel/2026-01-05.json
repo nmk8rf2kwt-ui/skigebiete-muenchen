@@ -1,0 +1,11 @@
+{
+  "resortId": "ski_juwel",
+  "date": "2026-01-05",
+  "timestamp": "2026-01-05T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 9,
+    "liftsTotal": 45,
+    "snow": "100 cm",
+    "weather": "Sonne"
+  }
+}

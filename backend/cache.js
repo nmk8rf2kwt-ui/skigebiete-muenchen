@@ -71,9 +71,11 @@ class Cache {
 // Create cache instances
 export const parserCache = new Cache(5 * 60 * 1000); // 5 minutes for parser data
 export const weatherCache = new Cache(30 * 60 * 1000); // 30 minutes for weather data
+export const trafficCache = new Cache(30 * 60 * 1000); // 30 minutes for traffic data
 
 // Cleanup expired entries every minute
 setInterval(() => {
     parserCache.cleanup();
     weatherCache.cleanup();
+    trafficCache.cleanup();
 }, 60 * 1000);

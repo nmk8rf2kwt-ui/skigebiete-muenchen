@@ -1,0 +1,11 @@
+{
+  "resortId": "kitzbuehel",
+  "date": "2026-01-02",
+  "timestamp": "2026-01-02T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 36,
+    "liftsTotal": 58,
+    "snow": "67 cm",
+    "weather": "Wolken"
+  }
+}

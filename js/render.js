@@ -114,9 +114,20 @@ export function renderRow(row, data) {
   const weatherIcon = getWeatherIcon(data.weather);
   let weatherDisplay = "-";
 
-  if (data.status === "error") {
+  // Forecast (3 Days) - check data.forecast array
+  if (data.forecast && Array.isArray(data.forecast) && data.forecast.length >= 3) {
+    // Create three icons
+    const icons = data.forecast.slice(0, 3).map(f => {
+      const icon = getWeatherIcon(f.weather);
+      // Tooltip: "Mon: 5°C"
+      const date = new Date(f.date).toLocaleDateString('de-DE', { weekday: 'short' });
+      return `<span title="${date}: ${f.tempMax}°C / ${f.tempMin}°C" style="cursor: help; margin-right: 4px;">${icon}</span>`;
+    }).join("");
+    weatherDisplay = icons;
+  } else if (data.status === "error") {
     weatherDisplay = "n.a.";
   } else if (data.weather) {
+    // Fallback to single icon
     weatherDisplay = `${weatherIcon} ${data.weather}`;
   } else if (data.status === "static_only") {
     weatherDisplay = "⏳";
@@ -145,10 +156,10 @@ export function renderRow(row, data) {
     snowDisplay = "⏳";
   }
 
-  // History button (if coordinates available, we assume history exists)
-  const historyBtn = (data.latitude && data.longitude)
+  // History button (Dedicated Column)
+  const historyDisplay = (data.latitude && data.longitude)
     ? `<button class="history-btn" data-resort-id="${data.id}" data-resort-name="${data.name}" title="View 7-day history">📊</button>`
-    : '';
+    : '-';
 
   // Score
   const score = data.score ?? "-";
@@ -164,18 +175,42 @@ export function renderRow(row, data) {
   }
 
   // Classification styling
-  const typeMap = {
-    "Beginner": "🟢",
-    "Intermediate": "🔵",
-    "Advanced": "⚫️",
-    "Allrounder": "🔷"
-  };
-  const typeDisplay = data.classification ? `${typeMap[data.classification] || ''} ${data.classification}` : "-";
+  // Classification styling
+  // User requested 4 graded values: Beginner/Family (Green), Intermediate (Yellow), Advanced (Red).
+  // We'll map existing values to these.
+  let typeLabel = data.classification || "Intermediate";
+  let typeIcon = "🟡"; // Default intermediate
+  let typeDesc = "Geeignet für Fortgeschrittene";
 
-  // Weather button (only if coordinates available)
-  const weatherBtn = (data.latitude && data.longitude)
-    ? `<button class="weather-btn" data-resort-id="${data.id}" data-resort-name="${data.name}" title="3-day forecast">🌤️</button>`
-    : '';
+  // Normalization
+  const cls = (data.classification || "").toLowerCase();
+
+  if (cls.includes("beginner") || cls.includes("family") || cls.includes("einfach")) {
+    typeLabel = "Family";
+    typeIcon = "🟢"; // Green
+    typeDesc = "Ideal für Anfänger und Familien - breite, flache Pisten.";
+  } else if (cls.includes("intermediate") || cls.includes("allrounder") || cls.includes("scenic") || cls.includes("view")) {
+    typeLabel = "Intermediate";
+    typeIcon = "🟡"; // Yellow
+    typeDesc = "Ausgewogener Mix aus blauen und roten Pisten.";
+  } else if (cls.includes("advanced") || cls.includes("premium") || cls.includes("huge")) {
+    typeLabel = "Advanced";
+    typeIcon = "🔴"; // Red
+    typeDesc = "Anspruchsvolles Gelände, viele Pistenkilometer.";
+  } else if (cls.includes("glacier") || cls.includes("high") || cls.includes("world")) {
+    typeLabel = "Pro";
+    typeIcon = "⚫"; // Black
+    typeDesc = "Für Profis: Gletscher, steile Abfahrten, hochalpin.";
+  }
+
+  // Use title attribute for mouseover
+  const typeDisplay = `<span title="${typeDesc}" style="cursor: help;">${typeIcon} ${typeLabel}</span>`;
+
+  // Weather button (Removed in favor of 3-day forecast)
+  // But maybe kept for modal details if needed? The user confusingly asked to "place weather symbol from first column to weather column". 
+  // Wait, there was a "weather button" (🌤️) next to the name?
+  // Old code: `<td>${statusIndicator} ... ${weatherBtn} ${historyBtn}</td>`
+  // I will REMOVE ${weatherBtn} and ${historyBtn} from Name column.
 
   // Webcam display
   const webcamDisplay = data.webcam
@@ -184,7 +219,7 @@ export function renderRow(row, data) {
 
   row.innerHTML = `
     <td>${data.rank}</td>
-    <td>${statusIndicator} <a href="${data.website}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${data.name}</a> ${weatherBtn} ${historyBtn}</td>
+    <td>${statusIndicator} <a href="${data.website}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${data.name}</a></td>
     <td>${travel}</td>
     <td>${data.piste_km ?? "-"} km</td>
     <td>${liftStatus}</td>
@@ -193,6 +228,7 @@ export function renderRow(row, data) {
     <td>${snowDisplay}</td>
     <td>${weatherDisplay}</td>
     <td>${webcamDisplay}</td>
+    <td>${historyDisplay}</td>
     <td><strong>${score}</strong></td>
   `;
 }

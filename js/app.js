@@ -1,11 +1,13 @@
-// import { fetchResorts } from "./data.js";
+import { fetchResorts } from "./data.js";
 import { renderTable, calculateScore } from "./render.js";
+import { initMap, updateMap } from "./map.js";
 import { API_BASE_URL } from "./config.js";
 
 // State
 let allResorts = [];
 let currentSort = "score";
 let currentFilter = "all";
+let viewMode = "list"; // 'list' or 'map'
 
 // Load Data
 async function load() {
@@ -48,7 +50,22 @@ async function load() {
 
 // Render Wrapper
 function render() {
-  renderTable(allResorts, currentSort, currentFilter);
+  if (viewMode === 'list') {
+    document.getElementById("skiTable").style.display = "";
+    document.getElementById("map-view").style.display = "none";
+    renderTable(allResorts, currentSort, currentFilter);
+  } else {
+    document.getElementById("skiTable").style.display = "none";
+    document.getElementById("map-view").style.display = "block";
+    // Initialize map if needed, or just update
+    initMap(allResorts);
+    updateMap(allResorts);
+
+    // Leaflet needs a resize trigger when becoming visible
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
+  }
 }
 
 // Export CSV
@@ -88,9 +105,101 @@ function exportToCsv() {
   document.body.removeChild(link);
 }
 
+async function fetchTrafficForLocation(lat, lon) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/traffic/calculate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ latitude: lat, longitude: lon })
+    });
+
+    if (!res.ok) throw new Error("Traffic fetch failed");
+
+    const trafficData = await res.json();
+
+    // Merge into allResorts
+    allResorts = allResorts.map(resort => {
+      const t = trafficData[resort.id];
+      if (t) {
+        return {
+          ...resort,
+          distance: t.duration, // Update main distance for sorting
+          traffic: t // Keep detailed object
+        };
+      }
+      return resort;
+    });
+
+    // Re-render
+    render();
+    alert("✅ Traffic updated based on your location!");
+
+  } catch (err) {
+    console.error(err);
+    alert("❌ Failed to update traffic data.");
+  }
+}
+
+async function handleAddressSearch() {
+  const query = document.getElementById("addressInput").value;
+  if (!query) return;
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/traffic/geocode?q=${encodeURIComponent(query)}`);
+    if (!res.ok) throw new Error("Address not found");
+
+    const location = await res.json();
+    // Update map view center if map is active
+    // But mainly fetch traffic
+    await fetchTrafficForLocation(location.latitude, location.longitude);
+
+  } catch (err) {
+    alert("❌ Address not found.");
+  }
+}
+
+async function handleGeolocation() {
+  if (!navigator.geolocation) {
+    alert("❌ Geolocation is not supported by your browser.");
+    return;
+  }
+
+  document.getElementById("locateBtn").textContent = "⌛ Locating...";
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      document.getElementById("locateBtn").textContent = "📍 Mein Standort";
+      const { latitude, longitude } = position.coords;
+      await fetchTrafficForLocation(latitude, longitude);
+    },
+    (error) => {
+      document.getElementById("locateBtn").textContent = "📍 Mein Standort";
+      alert("❌ User denied geolocation.");
+    }
+  );
+}
+
 // Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
+  // Initial Load
+  load();
+  // Auto-refresh
+  setInterval(load, 30 * 60 * 1000);
+
+  // Search
+  document.getElementById("searchBtn").addEventListener("click", handleAddressSearch);
+  document.getElementById("locateBtn").addEventListener("click", handleGeolocation);
+  document.getElementById("addressInput").addEventListener("keypress", (e) => {
+    if (e.key === 'Enter') handleAddressSearch();
+  });
+
   // Buttons
+  document.getElementById("viewToggle").addEventListener("click", () => {
+    viewMode = viewMode === "list" ? "map" : "list";
+    document.getElementById("viewToggle").textContent = viewMode === "list" ? "🗺️ Karte anzeigen" : "📋 Liste anzeigen";
+    render();
+  });
+
   document.getElementById("top3").addEventListener("click", () => {
     currentFilter = currentFilter === "top3" ? "all" : "top3";
     document.getElementById("top3").textContent = currentFilter === "top3" ? "❌ Alle anzeigen" : "🏆 Nur Top-3 heute";

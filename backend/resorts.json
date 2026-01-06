@@ -19,7 +19,7 @@
         "piste_km": 34,
         "lifts": 15,
         "price": 49.50,
-        "classification": "Intermediate",
+        "classification": "Scenic",
         "website": "https://www.brauneck-bergbahn.de",
         "latitude": 47.6500,
         "longitude": 11.5667,
@@ -32,7 +32,7 @@
         "piste_km": 40,
         "lifts": 18,
         "price": 64.00,
-        "classification": "Advanced",
+        "classification": "Sport",
         "website": "https://zugspitze.de",
         "latitude": 47.4814,
         "longitude": 11.0953,
@@ -71,10 +71,11 @@
         "piste_km": 270,
         "lifts": 80,
         "price": 69.00,
-        "classification": "Allrounder",
+        "classification": "Large",
         "website": "https://www.skiwelt.at",
         "latitude": 47.4500,
-        "longitude": 12.1833
+        "longitude": 12.1833,
+        "webcam": "https://www.foto-webcam.eu/webcam/ellmau/"
     },
     {
         "id": "hochkoessen",
@@ -107,7 +108,7 @@
         "piste_km": 42,
         "lifts": 14,
         "price": 63.00,
-        "classification": "Intermediate",
+        "classification": "Sport",
         "website": "https://www.steinplatte.tirol",
         "latitude": 47.6316,
         "longitude": 12.5621
@@ -131,7 +132,7 @@
         "piste_km": 27,
         "lifts": 8,
         "price": 63.50,
-        "classification": "Intermediate",
+        "classification": "Scenic",
         "website": "https://www.bergbahnen-langes.at",
         "latitude": 47.4000,
         "longitude": 10.8833
@@ -167,10 +168,11 @@
         "piste_km": 113,
         "lifts": 45,
         "price": 68.50,
-        "classification": "Huge",
+        "classification": "Large",
         "website": "https://www.skijuwel.com/de/winter/lifte-und-pisten",
         "latitude": 47.3815,
-        "longitude": 11.9789
+        "longitude": 11.9789,
+        "webcam": "https://www.skijuwel.com/de/winter/webcams"
     },
     {
         "id": "kitzbuehel",
@@ -179,7 +181,7 @@
         "piste_km": 233,
         "lifts": 58,
         "price": 72.00,
-        "classification": "Premium",
+        "classification": "Sport",
         "website": "https://www.kitzski.at",
         "latitude": 47.4464,
         "longitude": 12.3922
@@ -191,7 +193,7 @@
         "piste_km": 36,
         "lifts": 12,
         "price": 63.50,
-        "classification": "High Alpine",
+        "classification": "Scenic",
         "website": "https://www.berwang.tirol",
         "latitude": 47.4077,
         "longitude": 10.7475
@@ -215,7 +217,7 @@
         "piste_km": 16,
         "lifts": 5,
         "price": 52.00,
-        "classification": "View",
+        "classification": "Scenic",
         "website": "https://www.bergwelt-hahnenkamm.at",
         "latitude": 47.4241,
         "longitude": 12.3652
@@ -239,7 +241,7 @@
         "piste_km": 16,
         "lifts": 7,
         "price": 54.50,
-        "classification": "World Cup",
+        "classification": "Sport",
         "website": "https://www.go-ofterschwang.de",
         "latitude": 47.5000,
         "longitude": 10.2333

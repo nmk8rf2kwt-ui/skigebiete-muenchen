@@ -1,0 +1,11 @@
+{
+  "resortId": "steinplatte",
+  "date": "2026-01-06",
+  "timestamp": "2026-01-06T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 10,
+    "liftsTotal": 14,
+    "snow": "72 cm",
+    "weather": "Schnee"
+  }
+}

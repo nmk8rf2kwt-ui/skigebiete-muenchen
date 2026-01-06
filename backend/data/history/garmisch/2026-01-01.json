@@ -1,0 +1,11 @@
+{
+  "resortId": "garmisch",
+  "date": "2026-01-01",
+  "timestamp": "2026-01-01T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 16,
+    "liftsTotal": 18,
+    "snow": "22 cm",
+    "weather": "Sonne"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "resortId": "lermoos",
+  "date": "2026-01-03",
+  "timestamp": "2026-01-03T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 5,
+    "liftsTotal": 8,
+    "snow": "83 cm",
+    "weather": "Schnee"
+  }
+}

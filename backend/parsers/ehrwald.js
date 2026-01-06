@@ -1,78 +1,54 @@
-import * as cheerio from "cheerio";
 import { fetchWithHeaders } from "../utils/fetcher.js";
+import * as cheerio from "cheerio";
 
-export async function ehrwalderAlmbahn() {
-    const res = await fetchWithHeaders("https://www.almbahn.at/de/service/aktuelles/ehrwalder-alm-heute/");
+export const details = {
+    id: "ehrwald",
+    name: "Ehrwalder Almbahn",
+    url: "https://www.almbahn.at/de/winter/skigebiet/anlagen-pisten/",
+    district: "Tiroler Zugspitz Arena",
+};
+
+export async function parse() {
+    const URL = details.url;
+    const res = await fetchWithHeaders(URL);
     if (!res.ok) throw new Error("Failed to fetch Ehrwald");
+
     const html = await res.text();
+    const $ = cheerio.load(html);
 
-    // Check for Next.js hydration first
-    if (html.includes("self.__next_f.push")) {
-        const regex = /self\.__next_f\.push\(\[1,"(.*?)"\]\)/g;
-        let matches;
-        let liftsTotal = 0;
-        let liftsOpen = 0;
-        let foundData = false;
+    const lifts = {};
 
-        while ((matches = regex.exec(html)) !== null) {
-            const content = matches[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-            const liftRegex = /"id":\d+,"identifier":"[A-Z0-9]+".*?"status":(\d+).*?"typename":"[^"]+"/g;
+    // Ehrwald "Anlagen & Pisten" page
+    // Table structure
+    $("table tbody tr").each((i, row) => {
+        const cells = $(row).find("td");
+        if (cells.length >= 2) {
+            const name = $(cells[0]).text().trim();
+            const statusHtml = $(cells[1]).html() || "";
 
-            let liftMatch;
-            while ((liftMatch = liftRegex.exec(content)) !== null) {
-                foundData = true;
-                const status = parseInt(liftMatch[1], 10);
-                liftsTotal++;
-                if (status === 1) liftsOpen++;
+            // Look for status icons
+            const isOpen = statusHtml.includes("icon-check") || statusHtml.includes("grün") || statusHtml.includes("open");
+            const isClosed = statusHtml.includes("icon-close") || statusHtml.includes("rot") || statusHtml.includes("closed");
+
+            if (name && (isOpen || isClosed)) {
+                lifts[name] = isOpen ? "open" : "closed";
             }
         }
-
-        if (foundData) {
-            return {
-                resort: "Ehrwald",
-                liftsOpen,
-                liftsTotal,
-                status: "ok",
-                lastUpdated: new Date().toISOString()
-            };
-        }
-    }
-
-    // Fallback to Cheerio
-    const $ = cheerio.load(html);
-    const lifts = $(".swiper-slide.js-facility[data-facility-type='lift']");
-
-    let liftsTotal = 0;
-    let liftsOpen = 0;
-
-    lifts.each((_, el) => {
-        const $el = $(el);
-        const state = $el.attr("data-state");
-        liftsTotal++;
-        if (state === "1") {
-            liftsOpen++;
-        }
     });
+
+    const liftsTotal = Object.keys(lifts).length;
+    const liftsOpen = Object.values(lifts).filter((s) => s === "open").length;
 
     if (liftsTotal === 0) {
         throw new Error("Ehrwald parsing returned zero lifts");
     }
 
-    // Try to extract snow data
-    let snow = null;
-    const snowRegex = /"snow[^"]*":\s*"?(\d+)/i;
-    const snowMatch = html.match(snowRegex);
-    if (snowMatch) {
-        snow = `${snowMatch[1]}cm`;
-    }
-
     return {
-        resort: "Ehrwald",
-        liftsOpen,
-        liftsTotal,
-        snow,
-        status: "ok",
-        source: "almbahn.at",
-        lastUpdated: new Date().toISOString()
+        lifts: {
+            total: liftsTotal,
+            open: liftsOpen,
+            status: liftsOpen === 0 ? "closed" : liftsOpen === liftsTotal ? "open" : "scheduled",
+        },
+        lastUpdated: new Date().toISOString(),
     };
 }

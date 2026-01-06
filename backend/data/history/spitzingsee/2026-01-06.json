@@ -1,0 +1,11 @@
+{
+  "resortId": "spitzingsee",
+  "date": "2026-01-06",
+  "timestamp": "2026-01-06T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 7,
+    "liftsTotal": 10,
+    "snow": "45 cm",
+    "weather": "Schnee"
+  }
+}

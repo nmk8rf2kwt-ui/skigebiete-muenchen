@@ -1,0 +1,11 @@
+{
+  "resortId": "seefeld",
+  "date": "2026-01-05",
+  "timestamp": "2026-01-05T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 6,
+    "liftsTotal": 10,
+    "snow": "119 cm",
+    "weather": "Schnee"
+  }
+}

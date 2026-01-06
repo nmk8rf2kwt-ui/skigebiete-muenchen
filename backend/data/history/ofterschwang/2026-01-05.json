@@ -1,0 +1,11 @@
+{
+  "resortId": "ofterschwang",
+  "date": "2026-01-05",
+  "timestamp": "2026-01-05T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 3,
+    "liftsTotal": 7,
+    "snow": "66 cm",
+    "weather": "Wolken"
+  }
+}

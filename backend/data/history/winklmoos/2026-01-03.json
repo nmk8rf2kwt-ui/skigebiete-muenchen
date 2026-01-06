@@ -1,0 +1,11 @@
+{
+  "resortId": "winklmoos",
+  "date": "2026-01-03",
+  "timestamp": "2026-01-03T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 9,
+    "liftsTotal": 12,
+    "snow": "56 cm",
+    "weather": "Sonne"
+  }
+}

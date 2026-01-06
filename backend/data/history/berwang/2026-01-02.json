@@ -1,0 +1,11 @@
+{
+  "resortId": "berwang",
+  "date": "2026-01-02",
+  "timestamp": "2026-01-02T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 1,
+    "liftsTotal": 12,
+    "snow": "112 cm",
+    "weather": "Wolken"
+  }
+}

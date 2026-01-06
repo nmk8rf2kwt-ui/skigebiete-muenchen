@@ -1,0 +1,11 @@
+{
+  "resortId": "bolsterlang",
+  "date": "2026-01-04",
+  "timestamp": "2026-01-04T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 2,
+    "liftsTotal": 5,
+    "snow": "44 cm",
+    "weather": "Sonne"
+  }
+}

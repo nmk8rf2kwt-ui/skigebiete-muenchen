@@ -1,0 +1,11 @@
+{
+  "resortId": "st_johann",
+  "date": "2025-12-31",
+  "timestamp": "2025-12-31T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 10,
+    "liftsTotal": 16,
+    "snow": "26 cm",
+    "weather": "Sonne"
+  }
+}

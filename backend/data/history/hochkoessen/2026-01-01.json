@@ -1,0 +1,11 @@
+{
+  "resortId": "hochkoessen",
+  "date": "2026-01-01",
+  "timestamp": "2026-01-01T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 4,
+    "liftsTotal": 11,
+    "snow": "71 cm",
+    "weather": "Sonne"
+  }
+}

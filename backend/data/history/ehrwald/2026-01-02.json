@@ -1,0 +1,11 @@
+{
+  "resortId": "ehrwald",
+  "date": "2026-01-02",
+  "timestamp": "2026-01-02T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 6,
+    "liftsTotal": 7,
+    "snow": "39 cm",
+    "weather": "Wolken"
+  }
+}

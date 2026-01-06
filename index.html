@@ -4,19 +4,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Skigebiete ab München – Live Ranking</title>
+  <title>Skigebiet-Finder – Live Ranking</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 
 <body>
 
-  <h1>🏔️ Skigebiete ab München – Live-Ranking</h1>
+  <h1>🏔️ Skigebiet-Finder – Live-Ranking</h1>
 
   <div class="meta">
-    Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten
+    Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten · <span style="color: #999;">v1.0</span>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="addressInput" placeholder="📍 Dein Startort (Adresse oder Stadt)..." />
+    <button id="searchBtn">🔍 Suchen</button>
+    <button id="locateBtn">📍 Mein Standort</button>
   </div>
 
   <div class="controls">
+    <button id="viewToggle">🗺️ Karte anzeigen</button>
     <button id="exportCsv">📤 CSV Export</button>
     <button id="top3">🏆 Nur Top-3 heute</button>
   </div>
@@ -27,6 +38,9 @@
     <button data-sort="snow">❄️ Schnee</button>
     <button data-sort="km">📍 Nähe</button>
     <button data-sort="pistes">🎿 Pisten</button>
+  </div>
+
+  <div id="map-view" style="display: none; height: 600px; width: 100%; margin: 20px 0; border-radius: 8px; z-index: 1;">
   </div>
 
   <table id="skiTable">
@@ -40,8 +54,9 @@
         <th data-sort="price">Preis</th>
         <th>Typ</th>
         <th data-sort="snow">Schnee</th>
-        <th>Wetter</th>
+        <th>Wetter (3 Tage)</th>
         <th>Cam</th>
+        <th>History</th>
         <th data-sort="score">Score</th>
       </tr>
     </thead>

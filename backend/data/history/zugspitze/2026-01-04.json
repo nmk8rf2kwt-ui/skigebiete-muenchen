@@ -1,0 +1,11 @@
+{
+  "resortId": "zugspitze",
+  "date": "2026-01-04",
+  "timestamp": "2026-01-04T03:11:24.964Z",
+  "data": {
+    "liftsOpen": 6,
+    "liftsTotal": 10,
+    "snow": "65 cm",
+    "weather": "Sonne"
+  }
+}
