@@ -196,9 +196,11 @@ ${pd.info || ""}
 
   // Snow Display - use forecast data if available
   let snowDisplay = "-";
-  if (data.forecast && data.forecast.length > 0) {
+  const forecastData = data.forecast?.forecast || data.forecast;
+
+  if (forecastData && Array.isArray(forecastData) && forecastData.length > 0) {
     // Use today's snow depth from forecast
-    const todaySnow = data.forecast[0].snowDepth || 0;
+    const todaySnow = forecastData[0].snowDepth || 0;
     snowDisplay = todaySnow > 0 ? `${todaySnow} cm` : "-";
   } else if (data.snow) {
     // Fallback to old format
@@ -207,10 +209,12 @@ ${pd.info || ""}
     snowDisplay = "n.a.";
   }
 
-  // Last Snowfall Display
+  // Last Snowfall Display - check nested structure
   let lastSnowfallDisplay = "-";
-  if (data.lastSnowfall) {
-    const snowDate = new Date(data.lastSnowfall);
+  const lastSnowfallDate = data.forecast?.lastSnowfall || data.lastSnowfall;
+
+  if (lastSnowfallDate) {
+    const snowDate = new Date(lastSnowfallDate);
     const today = new Date();
     const diffDays = Math.floor((today - snowDate) / (1000 * 60 * 60 * 24));
 
@@ -230,9 +234,12 @@ ${pd.info || ""}
   let weatherDisplay = "-";
 
   // Forecast (3 Days) - check data.forecast array
-  if (data.forecast && Array.isArray(data.forecast) && data.forecast.length >= 3) {
+  // Backend sends forecast as: { forecast: [...], lastSnowfall: "..." }
+  const forecastArray = data.forecast?.forecast || data.forecast;
+
+  if (forecastArray && Array.isArray(forecastArray) && forecastArray.length >= 3) {
     // Create three icons
-    const icons = data.forecast.slice(0, 3).map(f => {
+    const icons = forecastArray.slice(0, 3).map(f => {
       // Ensure we have a symbol. If backend sends text (e.g. "Overcast" or "Fog"), derive icon from it.
       // Emojis are usually non-Latin characters. Use regex to check for letters.
       let icon = f.weatherEmoji;
