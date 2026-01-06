@@ -1,0 +1,38 @@
+name: Traffic Tracker
+
+on:
+  schedule:
+    # Run every 30 minutes between 6:00 and 22:00 CET (UTC 5:00 - 21:00)
+    - cron: '*/30 5-21 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  track-traffic:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Install Dependencies
+      run: |
+        cd backend
+        npm install
+        
+    - name: Run Traffic Tracker
+      env:
+        TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
+      run: |
+        node scripts/traffic_tracker.mjs
+        
+    - name: Commit and Push Changes
+      run: |
+        git config --global user.name 'Traffic Bot'
+        git config --global user.email 'bot@skigebiete-muenchen.de'
+        git add backend/data/traffic/*.csv
+        # Only commit if there are changes
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Data: Update traffic history [skip ci]" && git push)
