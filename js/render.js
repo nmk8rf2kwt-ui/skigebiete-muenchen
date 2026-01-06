@@ -214,13 +214,18 @@ export function renderRow(row, data) {
 
   // Webcam display
   const webcamDisplay = data.webcam
-    ? `<a href="${data.webcam}" target="_blank" class="webcam-link" title="View webcam">📷</a>`
-    : "-";
+    ? `<a href="${data.webcam}" target="_blank" title="Webcam öffnen" style="text-decoration: none;">📷</a>`
+    : '<span title="Keine Webcam verfügbar">-</span>';
+
+  // Distance (in km) - separate from travel time
+  const distanceKm = data.traffic?.distance || data.distanceKm || "-";
+  const distanceDisplay = distanceKm !== "-" ? `${distanceKm} km` : "-";
 
   row.innerHTML = `
     <td>${data.rank}</td>
     <td>${statusIndicator} <a href="${data.website}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${data.name}</a></td>
     <td>${travel}</td>
+    <td>${distanceDisplay}</td>
     <td>${data.piste_km ?? "-"} km</td>
     <td>${liftStatus}</td>
     <td>${price}</td>
