@@ -11,7 +11,7 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detai
 - 🚡 **Detailliertes Lift-Tracking**: 350+ Lifte mit Status, Typ, Länge und Höhe
 - ⛷️ **Pisten-Details**: 600+ Pisten mit Schwierigkeitsgrad und Metadata
 - 📋 **Details-Modal**: Vollständige Übersicht aller Lifte und Pisten pro Skigebiet
-- 📊 **Historische Trends**: 30-Tage Verlauf von Wetter, Schnee, Liften und Verkehr
+- 📊 **Historische Trends**: Persistente 30-Tage Historie (Supabase DB) von Wetter, Schnee, Liften und Verkehr
 
 ### Navigation & Verkehr
 - ⏰ **HH:mm Zeitformat**: Fahrzeiten übersichtlich als Stunden:Minuten (z.B. "01:15 h")
@@ -51,7 +51,7 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detai
 ## Tech Stack
 
 - **Frontend**: Vanilla JS, Leaflet.js, Chart.js
-- **Backend**: Node.js, Express
+- **Backend**: Node.js, Express, Supabase (PostgreSQL)
 - **APIs**: OpenRouteService, Open-Meteo, Micado, Intermaps
 - **Deployment**: GitHub Pages + Render.com
 - **CI/CD**: GitHub Actions

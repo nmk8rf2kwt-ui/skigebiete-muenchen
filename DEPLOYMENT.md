@@ -13,7 +13,20 @@
 
 ---
 
-## Step 1: Deploy Backend to Render
+## Step 1: Setup Database (Supabase)
+
+1.  **Create Project**: Go to [Supabase](https://supabase.com), start a new project.
+2.  **Get Credentials**: Go to `Settings` -> `API`. specific copy:
+    *   Project URL
+    *   `anon` public key
+3.  **Initialize Schema**:
+    *   Copy content from `backend/schema.sql`.
+    *   Go to Supabase `SQL Editor`.
+    *   Paste and Run to create tables.
+
+---
+
+## Step 2: Deploy Backend to Render
 
 ### 1.1 Create Render Account
 - Go to [render.com](https://render.com)
@@ -36,6 +49,8 @@
 In Render dashboard, add:
 - `NODE_ENV` = `production`
 - `ORS_API_KEY` = `your_actual_key_here`
+- `SUPABASE_URL` = `https://your-project.supabase.co`
+- `SUPABASE_KEY` = `your-anon-key`
 
 ### 1.4 Deploy
 Click "Create Web Service". Render will:

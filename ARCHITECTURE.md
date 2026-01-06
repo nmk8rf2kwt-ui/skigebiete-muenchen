@@ -45,9 +45,12 @@
     *   API endpoints (`/api/resorts`, `/api/history`).
     *   Caching layer (in-memory).
     *   Scheduler for fetching weather and snow data.
-    *   Saving daily history snapshots.
+    *   Scheduler for fetching weather and snow data.
+    *   **Database**: Persists history and traffic logs via Supabase (`db.js`).
     *   **Traffic Calculation**: Handles `POST /api/traffic/calculate` to fetch matrix data from OpenRouteService.
 *   **`parsers/`**: Contains the logic to extract data for each resort. Each file exports a function that returns standardization data (`liftsOpen`, `snow`, `weather`).
+*   **`db.js`**: Initializes the Supabase client.
+*   **`schema.sql`**: Defines the PostgreSQL database schema (`resort_snapshots`, `traffic_logs`).
 *   **`resorts.json`**: The "Source of Truth" for static data (Names, IDs, coordinates, URLs, Base Prices).
     *   **New**: Supports `priceDetail` object for Adult/Youth/Child breakdown.
 
