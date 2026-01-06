@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.3] - 2026-01-06
+
+### 🚀 Features
+- **Time Format**: Travel times now displayed in HH:mm format (e.g., "01:15 h" instead of "75 min")
+- **Enhanced Sorting**: All three traffic/travel columns are now sortable:
+    - Distance (km)
+    - Travel Time (without traffic)
+    - Travel Time (with traffic)
+- **Mobile View**: Fixed mobile card layout labels to correctly match column data
+
+### 🐛 Fixes
+- **CSS**: Removed duplicate mobile CSS rules that caused incorrect labels
+- **Sorting**: Added support for `liftsOpen`, `distance_km`, and `traffic_duration` sort keys
+- **Snow Sorting**: Improved sorting for snow data when stored as objects (mountain/valley)
+
 ## [1.3.2] - 2026-01-06
 
 ### 🚀 Features

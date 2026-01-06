@@ -17,7 +17,7 @@
   <h1>🏔️ Skigebiet-Finder – Live-Ranking</h1>
 
   <div class="meta">
-    Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten · <span style="color: #999;">v1.3.2</span>
+    Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten · <span style="color: #999;">v1.3.3</span>
   </div>
   <div id="loadingBanner" class="loading-banner" style="display: none;">
     <span class="loading-spinner-small"></span>
@@ -71,9 +71,9 @@
   <div class="sort-mobile">
     <button data-sort="score">🏆 Score</button>
     <button data-sort="snow">❄️ Schnee</button>
-    <button data-sort="km">📍 Nähe</button>
-    <button data-sort="open_lifts">🚠 Offen</button>
-    <button data-sort="pistes">🎿 Pisten</button>
+    <button data-sort="distance_km">📍 Nähe</button>
+    <button data-sort="liftsOpen">🚠 Offen</button>
+    <button data-sort="piste_km">🎿 Pisten</button>
   </div>
 
   <div id="map-view" style="display: none; height: 600px; width: 100%; margin: 20px 0; border-radius: 8px; z-index: 1;">
@@ -91,10 +91,12 @@
       <tr class="header-col-row">
         <th title="Status der Live-Datenabfrage">Abfragestatus</th>
         <th>Name</th>
-        <th title="Entfernung in Kilometern">Distanz</th>
+        <th data-sort="distance_km" title="Entfernung in Kilometern - Klicken zum Sortieren" style="cursor: pointer;">
+          Distanz ↕️</th>
         <th data-sort="distance" title="Fahrzeit ohne Verkehr - Klicken zum Sortieren" style="cursor: pointer;">
           Fahrzeit (ohne Verkehrslage) ↕️</th>
-        <th title="Fahrzeit mit aktuellem Verkehr">Fahrzeit (mit Verkehrslage)</th>
+        <th data-sort="traffic_duration" title="Fahrzeit mit aktuellem Verkehr - Klicken zum Sortieren"
+          style="cursor: pointer;">Fahrzeit (mit Verkehrslage) ↕️</th>
         <th data-sort="piste_km" title="Gesamte Pistenkilometer - Klicken zum Sortieren" style="cursor: pointer;">
           Größe (km) ↕️</th>
         <th title="Anzahl geöffneter Lifte heute">Lifte (Offen)</th>

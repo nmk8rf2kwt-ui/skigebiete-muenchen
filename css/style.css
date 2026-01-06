@@ -111,31 +111,53 @@ th {
 /* Sticky Headers */
 /* Row 1: Groups */
 .header-group-row th {
-    position: sticky;
-    top: 130px; /* Adjust based on H1 + Controls */
-    z-index: 801; /* Higher than col headers */
-    text-align: center;
-    border-bottom: 2px solid #ccc;
-    font-size: 0.95em;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  position: sticky;
+  top: 130px;
+  /* Adjust based on H1 + Controls */
+  z-index: 801;
+  /* Higher than col headers */
+  text-align: center;
+  border-bottom: 2px solid #ccc;
+  font-size: 0.95em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* Row 2: Columns */
 .header-col-row th {
-    position: sticky;
-    top: 165px; /* Top row height ca 35px + 130px */
-    z-index: 800;
-    font-size: 0.9em;
-    border-bottom: 1px solid #ccc;
-    background: #f4f6f9;
+  position: sticky;
+  top: 165px;
+  /* Top row height ca 35px + 130px */
+  z-index: 800;
+  font-size: 0.9em;
+  border-bottom: 1px solid #ccc;
+  background: #f4f6f9;
 }
 
 /* Group Colors */
-.group-journey { background: #e3f2fd; color: #1565c0; border-left: 2px solid #fff; }
-.group-resort { background: #e8f5e9; color: #2e7d32; border-left: 2px solid #fff; }
-.group-conditions { background: #fff3e0; color: #ef6c00; border-left: 2px solid #fff; }
-.group-extras { background: #f3e5f5; color: #7b1fa2; border-left: 2px solid #fff; }
+.group-journey {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-left: 2px solid #fff;
+}
+
+.group-resort {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-left: 2px solid #fff;
+}
+
+.group-conditions {
+  background: #fff3e0;
+  color: #ef6c00;
+  border-left: 2px solid #fff;
+}
+
+.group-extras {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border-left: 2px solid #fff;
+}
 
 /* Zebra rows */
 tr:nth-child(even):not(.good):not(.ok):not(.bad):not(.rank1):not(.unavailable) {
@@ -291,17 +313,17 @@ tr.unavailable small {
   }
 
   td:nth-child(3)::before {
-    content: "🚗 Standard";
+    content: "📍 Distanz";
     color: #777;
   }
 
   td:nth-child(4)::before {
-    content: "🚦 Aktuell";
+    content: "🚗 Fahrzeit (Regulär)";
     color: #777;
   }
 
   td:nth-child(5)::before {
-    content: "📍 Distanz";
+    content: "🚦 Fahrzeit (Verkehr)";
     color: #777;
   }
 
@@ -321,42 +343,37 @@ tr.unavailable small {
   }
 
   td:nth-child(9)::before {
-    content: "👶 Typ";
+    content: "🏔️ Typ";
     color: #777;
   }
 
   td:nth-child(10)::before {
-    content: "❄️ Schnee";
+    content: "❄️ Wetter & Schnee";
     color: #777;
   }
 
   td:nth-child(11)::before {
-    content: "🌨️ Letzter Fall";
+    content: "📷 Webcam";
     color: #777;
   }
 
   td:nth-child(12)::before {
-    content: "🌤️ Wetter";
+    content: "📋 Details";
     color: #777;
   }
 
   td:nth-child(13)::before {
-    content: "📷 Cam";
+    content: "📊 History";
     color: #777;
   }
 
   td:nth-child(14)::before {
-    content: "📅 History";
-    color: #777;
-  }
-
-  td:nth-child(15)::before {
     content: "🏆 Score";
     color: #777;
     font-weight: bold;
   }
 
-  td:nth-child(15) {
+  td:nth-child(14) {
     background: #fdfdfd;
     font-weight: bold;
     margin-top: 8px;
@@ -629,31 +646,9 @@ tr.unavailable small {
     padding-left: 0;
     margin-top: 8px;
   }
+}
 
-  td:nth-child(14)::before {
-    content: "📋 Details";
-    color: #777;
-  }
-
-  td:nth-child(15)::before {
-    content: "📅 History";
-    color: #777;
-  }
-
-  td:nth-child(16)::before {
-    content: "🏆 Score";
-    color: #777;
-    font-weight: bold;
-  }
-
-  td:nth-child(16) {
-    background: #fdfdfd;
-    font-weight: bold;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px dashed #eee;
-  }
-}/* ================= Status Console ================= */
+/* ================= Status Console ================= */
 .status-console {
   display: none;
   background: #f8faff;
@@ -682,7 +677,8 @@ tr.unavailable small {
 .status-content {
   padding: 10px;
   color: #333;
-  max-height: 150px; /* Smaller than error */
+  max-height: 150px;
+  /* Smaller than error */
   overflow-y: auto;
   font-family: monospace;
   font-size: 0.85em;
@@ -694,42 +690,43 @@ tr.unavailable small {
   border-bottom: 1px solid #f0f0f0;
   padding-bottom: 2px;
 }
+
 /* ================= Toolbar Layout ================= */
 
 .toolbar-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    justify-content: space-between;
-    /* Space out left and right groups */
-    align-items: center;
-    background: #f4f6f9;
-    padding-bottom: 12px;
-    position: sticky;
-    top: 68px;
-    /* Stick below Meta */
-    z-index: 900;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  /* Space out left and right groups */
+  align-items: center;
+  background: #f4f6f9;
+  padding-bottom: 12px;
+  position: sticky;
+  top: 68px;
+  /* Stick below Meta */
+  z-index: 900;
 }
 
 .search-group {
-    display: flex;
-    gap: 8px;
-    flex: 1;
-    /* Take available space */
-    min-width: 300px;
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  /* Take available space */
+  min-width: 300px;
 }
 
 .search-group input {
-    flex: 1;
-    min-width: 150px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+  flex: 1;
+  min-width: 150px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .actions-group {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 /* Remove old search-container and controls styles if conflicting */
@@ -737,38 +734,38 @@ tr.unavailable small {
 
 .search-group button,
 .actions-group button {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: #fff;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.2s;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
 }
 
 .search-group button:hover,
 .actions-group button:hover {
-    background: #f0f0f0;
+  background: #f0f0f0;
 }
 
 /* Override old sticky positioning for table header maybe? */
 /* Layout change might affect sticky header calculation */
 
 @media (max-width: 768px) {
-    .toolbar-container {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-    }
+  .toolbar-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
 
-    .search-group,
-    .actions-group {
-        width: 100%;
-    }
+  .search-group,
+  .actions-group {
+    width: 100%;
+  }
 
-    /* Stack status console on mobile nicely */
-    .status-console,
-    .error-container {
-        margin: 8px 0;
-    }
+  /* Stack status console on mobile nicely */
+  .status-console,
+  .error-container {
+    margin: 8px 0;
+  }
 }

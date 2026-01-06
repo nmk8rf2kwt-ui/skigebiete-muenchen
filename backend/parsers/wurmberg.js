@@ -1,59 +1,70 @@
-import * as cheerio from "cheerio";
+import { load } from "cheerio";
+import { createResult } from "../utils/parserUtils.js";
 import { fetchWithHeaders } from "../utils/fetcher.js";
 
-export async function wurmberg() {
-    const url = "https://www.wurmberg-seilbahn.de/";
-    try {
-        const res = await fetchWithHeaders(url);
-        if (!res.ok) throw new Error("Status " + res.status);
+export const details = {
+    id: "wurmberg",
+    name: "Wurmberg - Braunlage",
+    url: "https://www.wurmberg-seilbahn.de/winter/skigebiet/aktuelles/",
+    district: "Harz",
+};
 
-        const html = await res.text();
-        const $ = cheerio.load(html);
+export async function parse(options = {}) {
+    const url = details.url;
+    const res = await fetchWithHeaders(url, options);
 
-        let liftsOpen = 0;
-        let liftsTotal = 0;
-        let foundTable = false;
+    if (!res.ok) {
+        throw new Error(`Failed to fetch Wurmberg: ${res.status}`);
+    }
 
-        // Find the table with "Lifte" row
-        $(".simple-table tr").each((i, el) => {
-            const $cols = $(el).find("td");
-            if ($cols.length >= 3) {
-                const label = $cols.eq(0).text().trim();
-                if (label === "Lifte") {
-                    liftsTotal = parseInt($cols.eq(1).text().trim(), 10) || 0;
-                    liftsOpen = parseInt($cols.eq(2).text().trim(), 10) || 0;
-                    foundTable = true;
-                }
-            }
-        });
+    const html = await res.text();
+    const $ = load(html);
+    const lifts = [];
 
-        if (!foundTable) {
-            return {
-                liftsOpen: 0,
-                liftsTotal: 0,
-                status: "parse_error"
-            };
+    // Find the "Übersicht Lifte" heading and get the table following it
+    // The HTML structure is h3 -> div.ce_table -> table
+    // We can look for the H3 containing "Übersicht Lifte"
+    const liftTable = $("h3:contains('Übersicht Lifte')").next(".ce_table").find("table.simple-table");
+
+    if (liftTable.length === 0) {
+        console.warn("Wurmberg: Lift table not found");
+        // Fallback or just return empty?
+        // Let's inspect if there is another structure if this fails, but based on source it should work.
+    }
+
+    liftTable.find("tr").each((i, row) => {
+        // Skip header row
+        if (i === 0) return;
+
+        const cols = $(row).find("td");
+        if (cols.length < 3) return;
+
+        const name = $(cols[0]).text().trim();
+        const typeRaw = $(cols[1]).text().trim();
+        const statusRaw = $(cols[2]).text().trim().toLowerCase();
+
+        let status = "unknown";
+        if (statusRaw.includes("offen")) {
+            status = "open";
+        } else if (statusRaw.includes("geschlossen") || statusRaw.includes("gesperrt")) {
+            status = "closed";
         }
 
-        // Create a generic lift object since individual status isn't listed
-        const lifts = [{
-            name: "Gesamtstatus (siehe Webseite für Details)",
-            status: liftsOpen > 0 ? "open" : "closed"
-        }];
+        // Map type if possible, or just use raw for now (parserUtils doesn't enforce strict types yet)
+        let type = "lift";
+        if (typeRaw.includes("Sessel")) type = "chairlift";
+        if (typeRaw.includes("Gondel") || typeRaw.includes("EUB")) type = "gondola";
+        if (typeRaw.includes("Schlepp")) type = "platter";
 
-        return {
-            liftsOpen,
-            liftsTotal,
-            status: liftsOpen > 0 ? "open" : "closed",
-            lifts: lifts
-        };
+        lifts.push({
+            name,
+            status,
+            type
+        });
+    });
 
-    } catch (e) {
-        console.error("Wurmberg parser error:", e);
-        return {
-            liftsOpen: 0,
-            liftsTotal: 0,
-            status: "error"
-        };
-    }
+    const liftsOpen = lifts.filter((l) => l.status === "open").length;
+    const liftsTotal = lifts.length;
+
+    return createResult(details.id, { liftsOpen, liftsTotal, lifts }, "www.wurmberg-seilbahn.de");
 }

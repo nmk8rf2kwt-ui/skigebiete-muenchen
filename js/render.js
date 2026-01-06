@@ -41,6 +41,14 @@ function getWeatherIcon(weatherText) {
 }
 
 
+// Helper to format duration in HH:mm
+function formatDuration(minutes) {
+  if (!minutes && minutes !== 0) return "-";
+  const h = Math.floor(minutes / 60);
+  const m = Math.floor(minutes % 60);
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} h`;
+}
+
 export function renderTable(data, sortKey = 'score', filter = 'all', sortDirection = 'desc') {
   const tbody = document.querySelector("#skiTable tbody");
   tbody.innerHTML = "";
@@ -62,15 +70,36 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
 
   // 3. Sort
   enrichedData.sort((a, b) => {
-    let valA = a[sortKey];
-    let valB = b[sortKey];
+    let valA, valB;
+
+    // Resolve Sort Keys
+    if (sortKey === 'distance_km') {
+      valA = a.traffic?.distanceKm ?? a.distanceKm;
+      valB = b.traffic?.distanceKm ?? b.distanceKm;
+    } else if (sortKey === 'traffic_duration') {
+      valA = a.traffic?.duration ?? a.distance;
+      valB = b.traffic?.duration ?? b.distance;
+    } else if (sortKey === 'distance') { // Standard Time
+      valA = a.distance;
+      valB = b.distance;
+    } else if (sortKey === 'snow') {
+      // Handle Snow Object or String
+      const getSnowDepth = (s) => {
+        if (!s) return 0;
+        if (typeof s === 'object') return s.mountain ?? s.valley ?? 0;
+        return s; // string or number
+      };
+      valA = getSnowDepth(a.snow);
+      valB = getSnowDepth(b.snow);
+    } else {
+      valA = a[sortKey];
+      valB = b[sortKey];
+    }
 
     // Helper to extract number
     const getNum = (v) => {
       if (typeof v === 'number') return v;
       if (typeof v === 'string') {
-        // Remove non-numeric chars except dot/comma (for partial numbers if needed, but parseInt handles it)
-        // Match first sequence of digits
         const match = v.match(/(\d+)/);
         return match ? parseInt(match[0], 10) : 0;
       }
@@ -84,8 +113,7 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
     const multiplier = sortDirection === "asc" ? 1 : -1;
 
     // Start with special keys that REQUIRE numeric parsing from potential strings
-    // (Snow is often "> 10 cm", Distance might be string in some contexts though usually number)
-    if (['snow', 'distance', 'piste_km', 'price', 'score'].includes(sortKey)) {
+    if (['snow', 'distance', 'piste_km', 'price', 'score', 'distance_km', 'traffic_duration', 'liftsOpen'].includes(sortKey)) {
       return (getNum(valA) - getNum(valB)) * multiplier;
     }
 
@@ -201,11 +229,11 @@ export function renderRow(row, data) {
 
   // 1. Standard Time with Link
   if (standardTime) {
-    const timeText = `${standardTime} min`;
+    const timeText = formatDuration(standardTime);
     if (data.latitude && data.longitude) {
       const destQuery = data.address ? encodeURIComponent(data.address) : `${data.latitude},${data.longitude}`;
       const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destQuery}&travelmode=driving`;
-      standardDisplay = `<a href="${mapsUrl}" target="_blank" title="Route planen (Google Maps)" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${timeText}</a>`;
+      standardDisplay = `<a href="${mapsUrl}" target="_blank" title="Route planen (Google Maps - ${standardTime} min)" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${timeText}</a>`;
     } else {
       standardDisplay = timeText;
     }
@@ -237,8 +265,9 @@ export function renderRow(row, data) {
       style = "color: #2ecc71;"; // Green (Good/Faster)
     }
 
-    const delayText = delay > 0 ? ` (+${delay})` : '';
-    trafficDisplay = `<span style="${style}" title="Aktuell: ${liveTime} min${delayText}">${liveTime} min</span>`;
+    const delayText = delay > 0 ? ` (+${delay} min)` : '';
+    const formattedLive = formatDuration(liveTime);
+    trafficDisplay = `<span style="${style}" title="Aktuell: ${liveTime} min${delayText}">${formattedLive}</span>`;
   } else if (data.status === "live") {
     // If live but no traffic data (API error or key missing), show Standard? Or "n.a."
     trafficDisplay = `<span title="Keine Verkehrsdaten" style="color: #bdc3c7;">n.a.</span>`;

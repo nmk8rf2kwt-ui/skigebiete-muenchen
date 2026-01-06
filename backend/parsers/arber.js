@@ -2,26 +2,26 @@ import { createResult } from "../utils/parserUtils.js";
 import { fetchWithHeaders } from "../utils/fetcher.js";
 
 export const details = {
-    id: "fichtelberg",
-    name: "Fichtelberg - Oberwiesenthal",
-    url: "https://fichtelberg-ski.de/",
-    district: "Erzgebirge",
+    id: "arber",
+    name: "Großer Arber",
+    url: "https://www.arber.de/winter.html",
+    district: "Bayerischer Wald",
 };
 
 export async function parse(options = {}) {
     // Use Intermaps JSON API
-    const apiUrl = "https://winter.intermaps.com/fichtelberg/data?lang=de";
+    const apiUrl = "https://winter.intermaps.com/arber/data?lang=de";
 
     const res = await fetchWithHeaders(apiUrl, options);
     if (!res.ok) {
-        throw new Error(`Failed to fetch Fichtelberg API: ${res.status}`);
+        throw new Error(`Failed to fetch Arber API: ${res.status}`);
     }
 
     const data = await res.json();
 
     // Validation
     if (!data || !Array.isArray(data.lifts)) {
-        throw new Error("Invalid Fichtelberg API response: 'lifts' array missing");
+        throw new Error("Invalid Arber API response: 'lifts' array missing");
     }
 
     const lifts = [];
@@ -62,5 +62,5 @@ export async function parse(options = {}) {
     const liftsOpen = lifts.filter(l => l.status === "open").length;
     const liftsTotal = lifts.length;
 
-    return createResult(details.id, { liftsOpen, liftsTotal, lifts, slopes }, "Intermaps (fichtelberg-ski.de)");
+    return createResult(details.id, { liftsOpen, liftsTotal, lifts, slopes }, "Intermaps (arber.de)");
 }

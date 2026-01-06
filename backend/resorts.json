@@ -822,5 +822,96 @@
             "currency": "€",
             "info": "Tageskarte Hauptsaison"
         }
+    },
+    {
+        "id": "wendelstein",
+        "name": "Wendelstein",
+        "distance": 65,
+        "piste_km": 8,
+        "lifts": 4,
+        "price": 38.00,
+        "classification": "Familie",
+        "website": "https://www.wendelsteinbahn.de",
+        "latitude": 47.7044,
+        "longitude": 12.0103,
+        "priceDetail": {
+            "adult": 38.00,
+            "currency": "€",
+            "info": "Tageskarte 2025/26"
+        }
+    },
+    {
+        "id": "willingen",
+        "name": "Willingen (Sauerland)",
+        "distance": 420,
+        "piste_km": 18,
+        "lifts": 16,
+        "price": 44.00,
+        "classification": "Familie",
+        "website": "https://www.skigebiet-willingen.de",
+        "latitude": 51.2944,
+        "longitude": 8.6128,
+        "priceDetail": {
+            "adult": 44.00,
+            "currency": "€",
+            "info": "Tageskarte Hauptsaison"
+        }
+    },
+    {
+        "id": "zillertal_arena",
+        "name": "Zillertal Arena",
+        "distance": 125,
+        "piste_km": 150,
+        "lifts": 52,
+        "price": 72.00,
+        "classification": "Großraum",
+        "website": "https://www.zillertalarena.com",
+        "latitude": 47.2333,
+        "longitude": 11.8667,
+        "priceDetail": {
+            "adult": 72.00,
+            "youth": 54.00,
+            "child": 36.00,
+            "currency": "€",
+            "info": "Tageskarte Hauptsaison 2025/26"
+        }
+    },
+    {
+        "id": "mayrhofen",
+        "name": "Mayrhofen (Penkenbahn)",
+        "distance": 130,
+        "piste_km": 42,
+        "lifts": 21,
+        "price": 68.50,
+        "classification": "Sportlich",
+        "website": "https://www.mayrhofen.at",
+        "latitude": 47.1667,
+        "longitude": 11.8667,
+        "priceDetail": {
+            "adult": 68.50,
+            "youth": 51.50,
+            "child": 34.50,
+            "currency": "€",
+            "info": "Tageskarte 2025/26"
+        }
+    },
+    {
+        "id": "hintertux",
+        "name": "Hintertuxer Gletscher",
+        "distance": 140,
+        "piste_km": 60,
+        "lifts": 21,
+        "price": 72.00,
+        "classification": "Gletscher",
+        "website": "https://www.hintertuxergletscher.at",
+        "latitude": 47.0833,
+        "longitude": 11.6667,
+        "priceDetail": {
+            "adult": 72.00,
+            "youth": 54.00,
+            "child": 36.00,
+            "currency": "€",
+            "info": "Tageskarte Ganzjährig"
+        }
     }
 ]
