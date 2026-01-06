@@ -127,6 +127,27 @@ async function load() {
 
     const liveData = await liveRes.json();
     logToUI(`✅ Live-Daten für ${liveData.length} Gebiete empfangen.`);
+
+    // Log individual updates
+    let updateCount = 0;
+    liveData.forEach(r => {
+      // Log if Fresh (not cached) AND Live
+      if (r.status === "live" && r.cached === false) {
+        updateCount++;
+        logToUI(`🔄 ${r.name}: Daten erfolgreich aktualisiert.`);
+      }
+      // Log errors (fresh only to avoid spamming on every poll? Or always? Let's do fresh)
+      else if (r.status === "error" && r.cached === false) {
+        logToUI(`⚠️ ${r.name}: Fehler beim Aktualisieren.`, "error");
+      }
+    });
+
+    if (updateCount > 0) {
+      logToUI(`📊 ${updateCount} Skigebiete wurden in diesem Durchlauf aktualisiert.`);
+    } else {
+      logToUI("ℹ️ Keine Änderungen (Daten aus Cache).");
+    }
+
     logToUI("Wetterinfos und Schneehöhen aktualisiert.");
 
     store.setState({ resorts: liveData, lastUpdated: new Date() }, render);
@@ -321,6 +342,11 @@ async function handleAddressSearch() {
   btn.textContent = "⌛ Suche...";
   btn.disabled = true;
 
+  // Visual Reset: Clear current traffic data to show "Loading..."
+  const currentResorts = store.get().resorts;
+  const resetResorts = currentResorts.map(r => ({ ...r, distance: null, duration: null }));
+  store.setState({ resorts: resetResorts }, render);
+
   try {
     const res = await fetch(`${API_BASE_URL}/traffic/geocode?q=${encodeURIComponent(query)}`);
 
@@ -368,6 +394,11 @@ async function handleGeolocation() {
   const originalText = btn.textContent;
   btn.textContent = "⌛ Ortung läuft...";
   btn.disabled = true;
+
+  // Visual Reset
+  const currentResorts = store.get().resorts;
+  const resetResorts = currentResorts.map(r => ({ ...r, distance: null, duration: null }));
+  store.setState({ resorts: resetResorts }, render);
 
   navigator.geolocation.getCurrentPosition(
     async (position) => {

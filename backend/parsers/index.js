@@ -21,6 +21,8 @@ import { seefeld } from "./seefeld.js";
 import { hahnenkamm } from "./hahnenkamm.js";
 import { oberaudorf } from "./oberaudorf.js";
 import { kampenwand } from "./kampenwand.js";
+import { oberstdorf } from "./oberstdorf.js";
+import { oberjoch } from "./oberjoch.js";
 
 export const PARSERS = {
     spitzingsee,
@@ -45,4 +47,6 @@ export const PARSERS = {
     hahnenkamm,
     oberaudorf,
     kampenwand,
+    oberstdorf,
+    oberjoch,
 };

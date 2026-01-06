@@ -286,9 +286,18 @@ ${pd.info || ""}
       const tempStr = `${f.tempMax}°C / ${f.tempMin}°C`;
       const tooltip = `${dateStr}: ${desc ? desc + ', ' : ''}${tempStr}`;
 
-      return `<span title="${tooltip}" style="cursor: help; margin-right: 6px; font-size: 1.2em;">${icon}</span>`;
+      // Short Date: "26.1."
+      const shortDate = dateObj.toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' }) + ".";
+
+      return `
+        <div style="display: flex; flex-direction: column; align-items: center; margin-right: 8px;" title="${tooltip}">
+          <span style="font-size: 1.2em; cursor: help;">${icon}</span>
+          <span style="font-size: 0.7em; color: #666; margin-top: -2px;">${shortDate}</span>
+        </div>
+      `;
     }).join("");
-    weatherDisplay = icons;
+    // Flex container for the days
+    weatherDisplay = `<div style="display: flex;">${icons}</div>`;
   } else if (data.status === "error") {
     weatherDisplay = "n.a.";
   } else if (data.weather) {
@@ -371,8 +380,21 @@ ${pd.info || ""}
     : '<span title="Keine Webcam verfügbar">-</span>';
 
   // Distance (in km) - separate from travel time
-  const distanceKm = data.traffic?.distance || data.distanceKm || "-";
-  const distanceDisplay = distanceKm !== "-" ? `${distanceKm} km` : "-";
+  const distanceKm = data.traffic?.distance || data.distanceKm || null;
+  const distanceDisplay = distanceKm !== null ? `${distanceKm} km` : (data.distance === null ? '<span class="loading-spinner-small"></span>' : "-");
+
+  // Combined Weather & Snow Display
+  const combinedWeatherSnow = `
+    <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.9em; min-width: 180px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 2px;">
+        <span style="font-size: 1.2em;">${weatherDisplay}</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 500;">${snowDisplay}</span>
+        <span style="color: #7f8c8d; font-size: 0.85em;">${lastSnowfallDisplay !== '-' ? '❄️ ' + lastSnowfallDisplay : ''}</span>
+      </div>
+    </div>
+  `;
 
   row.innerHTML = `
     <td style="text-align: center;">${statusIndicator}</td>
@@ -384,9 +406,8 @@ ${pd.info || ""}
     <td>${liftStatus}</td>
     <td>${price}</td>
     <td>${typeDisplay}</td>
-    <td>${snowDisplay}</td>
-    <td>${lastSnowfallDisplay}</td>
-    <td>${weatherDisplay}</td>
+    <!-- Combined Block -->
+    <td style="background-color: #f8f9fa; border-left: 2px solid #ecf0f1; border-right: 2px solid #ecf0f1;">${combinedWeatherSnow}</td>
     <td>${webcamDisplay}</td>
     <td>${detailsDisplay}</td>
     <td>${historyDisplay}</td>

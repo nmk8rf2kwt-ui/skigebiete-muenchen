@@ -108,15 +108,34 @@ th {
   cursor: pointer;
 }
 
-thead th {
-  position: sticky;
-  top: 130px;
-  /* Adjusted for H1 + Controls height */
-  background: #e9eef3;
-  z-index: 800;
-  box-shadow: 0 1px 0 #ccc;
-  /* Fix for border-collapse rendering issues */
+/* Sticky Headers */
+/* Row 1: Groups */
+.header-group-row th {
+    position: sticky;
+    top: 130px; /* Adjust based on H1 + Controls */
+    z-index: 801; /* Higher than col headers */
+    text-align: center;
+    border-bottom: 2px solid #ccc;
+    font-size: 0.95em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
+
+/* Row 2: Columns */
+.header-col-row th {
+    position: sticky;
+    top: 165px; /* Top row height ca 35px + 130px */
+    z-index: 800;
+    font-size: 0.9em;
+    border-bottom: 1px solid #ccc;
+    background: #f4f6f9;
+}
+
+/* Group Colors */
+.group-journey { background: #e3f2fd; color: #1565c0; border-left: 2px solid #fff; }
+.group-resort { background: #e8f5e9; color: #2e7d32; border-left: 2px solid #fff; }
+.group-conditions { background: #fff3e0; color: #ef6c00; border-left: 2px solid #fff; }
+.group-extras { background: #f3e5f5; color: #7b1fa2; border-left: 2px solid #fff; }
 
 /* Zebra rows */
 tr:nth-child(even):not(.good):not(.ok):not(.bad):not(.rank1):not(.unavailable) {

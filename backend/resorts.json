@@ -311,5 +311,31 @@
         "website": "https://www.kampenwand.de",
         "latitude": 47.7644,
         "longitude": 12.3551
+    },
+    {
+        "id": "oberstdorf",
+        "name": "Oberstdorf / Kleinwalsertal",
+        "distance": 160,
+        "piste_km": 130,
+        "lifts": 48,
+        "price": 62.50,
+        "classification": "Großraum",
+        "website": "https://www.ok-bergbahnen.com",
+        "latitude": 47.4072,
+        "longitude": 10.2783,
+        "webcam": "https://www.foto-webcam.eu/webcam/nebelhorn/"
+    },
+    {
+        "id": "oberjoch",
+        "name": "Oberjoch (Bad Hindelang)",
+        "distance": 125,
+        "piste_km": 30,
+        "lifts": 6,
+        "price": 49.50,
+        "classification": "Familie",
+        "website": "https://www.bergbahnen-hindelang-oberjoch.de",
+        "latitude": 47.5136,
+        "longitude": 10.4042,
+        "webcam": "https://www.foto-webcam.eu/webcam/iseler/"
     }
 ]

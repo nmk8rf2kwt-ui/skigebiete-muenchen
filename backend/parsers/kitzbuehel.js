@@ -20,14 +20,26 @@ function mapDifficulty(type) {
   return undefined;
 }
 
+import * as cheerio from "cheerio";
 export async function parse(options = {}) {
   // Unfiltered URL to fetch all facilities
-  const apiUrl = "https://www.kitzski.at/webapi/micadoweb?api=SkigebieteManager/Micado.SkigebieteManager.Plugin.FacilityApi/ListFacilities.api&extensions=o&client=https%3A%2F%2Fsgm.kitzski.at&lang=de&location=&omitClosed=0&region=kitzski&season=winter";
+  const liftApiUrl = "https://www.kitzski.at/webapi/micadoweb?api=SkigebieteManager/Micado.SkigebieteManager.Plugin.FacilityApi/ListFacilities.api&extensions=o&client=https%3A%2F%2Fsgm.kitzski.at&lang=de&location=&omitClosed=0&region=kitzski&season=winter";
 
-  const res = await fetchWithHeaders(apiUrl, options);
-  if (!res.ok) throw new Error("Failed to fetch KitzSki API");
+  // Snow Report Page (Corrected)
+  const snowUrl = "https://www.kitzski.at/de/winter/skigebiet-kitzbuehel/schneebericht-kitzski.html";
 
-  const data = await res.json();
+  // Parallel fetch: API for lifts (JSON) and Website for Snow (HTML)
+  // We use Promise.allSettled to ensure lift data success even if snow fails
+  const [liftRes, snowRes] = await Promise.allSettled([
+    fetchWithHeaders(liftApiUrl, options),
+    fetchWithHeaders(snowUrl, options)
+  ]);
+
+  if (liftRes.status === "rejected" || !liftRes.value.ok) {
+    throw new Error("Failed to fetch KitzSki API");
+  }
+
+  const data = await liftRes.value.json();
   const facilities = data.facilities || (Array.isArray(data) ? data : []);
 
   if (facilities.length === 0) {
@@ -79,7 +91,6 @@ export async function parse(options = {}) {
       if (item.height) lift.altitudeStart = item.height;
       lifts.push(lift);
     }
-    // Ignore huts, parking, webcams
   });
 
   const liftsOpen = lifts.filter(l => l.status === "open").length;
@@ -89,6 +100,50 @@ export async function parse(options = {}) {
     throw new Error("KitzSki parsing returned zero lifts");
   }
 
-  return createResult(details.id, { liftsOpen, liftsTotal, lifts, slopes }, "kitzski.at (API)");
+  // --- Parse Snow Data ---
+  let snowData = null;
+  if (snowRes.status === "fulfilled" && snowRes.value.ok) {
+    try {
+      const html = await snowRes.value.text();
+      const $ = cheerio.load(html);
+      const bodyText = $('body').text().replace(/\s+/g, ' ');
+
+      // Regex extraction based on search results:
+      // "Pisten-Schneehöhe Berg: 62 cm"
+      // "Pisten-Schneehöhe Tal: 42 cm"
+      // "Letzter Schneefall: 03.11.2024" (assumption of label) or just date near text
+
+      const mountainMatch = bodyText.match(/Schneehöhe Berg[^\d]*(\d+)\s*cm/i);
+      const valleyMatch = bodyText.match(/Schneehöhe Tal[^\d]*(\d+)\s*cm/i);
+
+      // Date match: Look for "Letzter Schneefall"
+      const dateMatch = bodyText.match(/Letzter Schneefall\s*(\d{2}\.\d{2}\.\d{4})/i) || bodyText.match(/(\d{2}\.\d{2}\.\d{4})\s*Letzter Schneefall/i);
+
+      let lastSnowISO = null;
+      if (dateMatch) {
+        const parts = dateMatch[1].split('.');
+        lastSnowISO = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+      }
+
+      const mountain = mountainMatch ? parseInt(mountainMatch[1], 10) : null;
+      const valley = valleyMatch ? parseInt(valleyMatch[1], 10) : null;
+
+      if (mountain !== null || valley !== null) {
+        snowData = {
+          valley: valley,
+          mountain: mountain,
+          state: null, // Could parse "Pistenzustand"
+          lastSnowfall: lastSnowISO,
+          source: "resort",
+          timestamp: new Date().toISOString()
+        };
+      }
+
+    } catch (e) {
+      console.error("KitzSki Snow Parse Error:", e);
+    }
+  }
+
+  return createResult(details.id, { liftsOpen, liftsTotal, lifts, slopes, snow: snowData }, "kitzski.at (API+Web)");
 }
 
