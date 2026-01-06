@@ -154,21 +154,58 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
 
 async function handleAddressSearch() {
   const query = document.getElementById("addressInput").value.trim();
+
+  // Validation
   if (!query) {
-    alert("⚠️ Bitte geben Sie eine Adresse ein.");
+    alert("⚠️ Bitte geben Sie einen Ort ein.\n\nBeispiele:\n• Augsburg\n• Rosenheim\n• Marienplatz 1, München");
     return;
   }
 
+  if (query.length < 3) {
+    alert("⚠️ Die Eingabe ist zu kurz. Bitte geben Sie mindestens 3 Zeichen ein.");
+    return;
+  }
+
+  // Show loading state
+  const btn = document.getElementById("searchBtn");
+  const originalText = btn.textContent;
+  btn.textContent = "⌛ Suche...";
+  btn.disabled = true;
+
   try {
     const res = await fetch(`${API_BASE_URL}/traffic/geocode?q=${encodeURIComponent(query)}`);
-    if (!res.ok) throw new Error("Address not found");
+
+    if (!res.ok) {
+      if (res.status === 404 || res.status === 400) {
+        throw new Error("NOT_FOUND");
+      }
+      throw new Error(`HTTP ${res.status}`);
+    }
 
     const location = await res.json();
+
+    if (!location || !location.latitude || !location.longitude) {
+      throw new Error("INVALID_RESPONSE");
+    }
+
     await fetchTrafficForLocation(location.latitude, location.longitude, location.name);
 
+    // Clear input on success
+    document.getElementById("addressInput").value = "";
+
   } catch (err) {
-    console.error(err);
-    alert("❌ Adresse nicht gefunden. Bitte versuchen Sie es erneut.");
+    console.error("Geocoding error:", err);
+
+    if (err.message === "NOT_FOUND") {
+      alert("❌ Adresse nicht gefunden.\n\nTipps:\n• Versuchen Sie nur den Ortsnamen (z.B. \"Augsburg\")\n• Prüfen Sie die Schreibweise\n• Verwenden Sie bekannte Städte in Bayern\n\nBeispiele:\n• Rosenheim\n• Garmisch-Partenkirchen\n• Marienplatz, München");
+    } else if (err.message === "INVALID_RESPONSE") {
+      alert("❌ Ungültige Antwort vom Server. Bitte versuchen Sie es später erneut.");
+    } else {
+      alert("❌ Fehler bei der Ortssuche.\n\nMögliche Ursachen:\n• Backend nicht erreichbar\n• Netzwerkproblem\n• API-Limit erreicht\n\nBitte versuchen Sie es später erneut.");
+    }
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
   }
 }
 
