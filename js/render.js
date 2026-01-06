@@ -277,32 +277,34 @@ ${pd.info || ""}
   }
 
   // Classification styling
-  // Classification styling
-  // User requested 4 graded values: Beginner/Family (Green), Intermediate (Yellow), Advanced (Red).
-  // We'll map existing values to these.
-  let typeLabel = data.classification || "Intermediate";
-  let typeIcon = "🟡"; // Default intermediate
-  let typeDesc = "Geeignet für Fortgeschrittene";
+  // Standardized German Classifications
+  let typeLabel = data.classification || "Sportlich";
+  let typeIcon = "🟡"; // Default
+  let typeDesc = "Ausgewogenes Skigebiet";
 
-  // Normalization
   const cls = (data.classification || "").toLowerCase();
 
-  if (cls.includes("beginner") || cls.includes("family") || cls.includes("einfach")) {
-    typeLabel = "Family";
-    typeIcon = "🟢"; // Green
+  // Mapping based on new German values in resorts.json
+  if (cls === "familie" || cls.includes("family")) {
+    typeLabel = "Familie";
+    typeIcon = "🟢";
     typeDesc = "Ideal für Anfänger und Familien - breite, flache Pisten.";
-  } else if (cls.includes("intermediate") || cls.includes("allrounder") || cls.includes("scenic") || cls.includes("view")) {
-    typeLabel = "Intermediate";
-    typeIcon = "🟡"; // Yellow
-    typeDesc = "Ausgewogener Mix aus blauen und roten Pisten.";
-  } else if (cls.includes("advanced") || cls.includes("premium") || cls.includes("huge")) {
-    typeLabel = "Advanced";
-    typeIcon = "🔴"; // Red
-    typeDesc = "Anspruchsvolles Gelände, viele Pistenkilometer.";
-  } else if (cls.includes("glacier") || cls.includes("high") || cls.includes("world")) {
-    typeLabel = "Pro";
-    typeIcon = "⚫"; // Black
-    typeDesc = "Für Profis: Gletscher, steile Abfahrten, hochalpin.";
+  } else if (cls === "genuss" || cls.includes("scenic")) {
+    typeLabel = "Genuss";
+    typeIcon = "🟡";
+    typeDesc = "Landschaftlich reizvoll, entspanntes Skifahren.";
+  } else if (cls === "sportlich" || cls.includes("sport")) {
+    typeLabel = "Sportlich";
+    typeIcon = "🔴";
+    typeDesc = "Anspruchsvollere Pisten für Fortgeschrittene und Könner.";
+  } else if (cls === "großraum" || cls.includes("large")) {
+    typeLabel = "Großraum";
+    typeIcon = "🔴";
+    typeDesc = "Sehr großes Skigebiet mit vielen Pistenkilometern.";
+  } else if (cls === "gletscher" || cls.includes("glacier")) {
+    typeLabel = "Gletscher";
+    typeIcon = "⚫";
+    typeDesc = "Hochalpines Gletscherskigebiet, absolut schneesicher.";
   }
 
   // Use title attribute for mouseover

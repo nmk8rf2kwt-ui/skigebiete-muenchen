@@ -1,4 +1,3 @@
-import { brauneck } from '../parsers/brauneck.js';
 import { fetchWithHeaders } from '../utils/fetcher.js';
 
 const URL = "https://www.brauneck-bergbahn.de/de/lift-pistenstatus.html";
@@ -9,35 +8,53 @@ async function verify() {
         const res = await fetchWithHeaders(URL);
         const html = await res.text();
 
-        // Debug the regex matches
         const regex = /self\.__next_f\.push\(\[1,"(.*?)"\]\)/g;
         let matches;
-        let found = false;
 
-        console.log("Searching for lift data in hydration blobs...");
+        const items = [];
 
         while ((matches = regex.exec(html)) !== null) {
             const content = matches[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
 
-            // Look for a sample lift to see structure
-            if (content.includes("Flori-Hang")) { // Known lift/slope? Or just look for "typename"
-                console.log("Found blob with likely lift data!");
-                console.log(content.substring(content.indexOf("Flori-Hang") - 100, content.indexOf("Flori-Hang") + 200));
-                found = true;
-            }
+            // Regex to find objects with title and status
+            // We look for the pattern: "status":X ... "title":"Y" (or vice versa)
+            // But we can't guarantee order.
+            // Split by "},{" to get objects roughly? 
+            // The string is likely `[{obj},{obj},...]` somewhere.
 
-            // Or just search for the pattern used in parser
-            const liftRegex = /"id":\d+,"identifier":"([A-Z0-9 .-]+)".*?"status":(\d+).*?"typename":"([^"]+)"/g;
+            // Heuristic: Split by `{"` which usually starts a new object/property.
+            // Better: regex for the specific block.
+            // based on snippet: `,"status":1,"title":"D Ahorn-4er-Sesselbahn","type":"chairlift4","typename":"4er Sesselbahn"}`
+
+            // Let's try to match the whole block containing status and title.
+            // Since they are comma separated properties.
+            const itemRegex = /"status":(\d+)[^}]*?"title":"([^"]+)"[^}]*?"typename":"([^"]+)"/g;
+
             let m;
-            let count = 0;
-            while ((m = liftRegex.exec(content)) !== null) {
-                if (count < 3) {
-                    console.log(`Match: Name='${m[1]}', Status=${m[2]}, Type='${m[3]}'`);
-                }
-                count++;
+            while ((m = itemRegex.exec(content)) !== null) {
+                items.push({
+                    status: parseInt(m[1]),
+                    name: m[2],
+                    type: m[3]
+                });
             }
-            if (count > 0) console.log(`Total matches in this blob: ${count}`);
+            // Try reverse order of properties just in case
+            const itemRegex2 = /"title":"([^"]+)"[^}]*?"status":(\d+)[^}]*?"typename":"([^"]+)"/g;
+            while ((m = itemRegex2.exec(content)) !== null) {
+                // Check if not already added? 
+                // Simple verification script, duplicates are fine for analysis.
+                items.push({ status: parseInt(m[2]), name: m[1], type: m[3], source: "regex2" });
+            }
         }
+
+        console.log(`Found ${items.length} items.`);
+        console.log("Sample items:");
+        items.slice(0, 5).forEach(i => console.log(i));
+
+        // Check for slopes (Abfahrt)
+        const slopes = items.filter(i => i.name.includes("abfahrt") || i.type.includes("Abfahrt") || i.type.includes("piste"));
+        console.log(`Potential slopes: ${slopes.length}`);
+        if (slopes.length > 0) console.log(slopes[0]);
 
     } catch (error) {
         console.error(error);
