@@ -135,7 +135,20 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
       body: JSON.stringify({ latitude: lat, longitude: lon })
     });
 
-    if (!res.ok) throw new Error("Traffic fetch failed");
+    if (!res.ok) {
+      // Try to parse error message from response
+      let errorMsg = `HTTP ${res.status}`;
+      try {
+        const errorData = await res.json();
+        if (errorData.error) {
+          errorMsg = errorData.error;
+        }
+      } catch (e) {
+        // If JSON parsing fails, use status text
+        errorMsg = res.statusText || errorMsg;
+      }
+      throw new Error(errorMsg);
+    }
 
     const trafficData = await res.json();
 
@@ -160,8 +173,22 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
     }
 
   } catch (err) {
-    console.error(err);
-    alert("❌ Fehler beim Berechnen der Fahrzeiten.");
+    console.error("Traffic calculation error:", err);
+
+    // Show specific error message based on error type
+    let errorMessage = "❌ Fehler beim Berechnen der Fahrzeiten.";
+
+    if (err.message.includes("HTTP 429") || err.message.includes("Too many")) {
+      errorMessage += "\n\n⚠️ Zu viele Anfragen. Bitte versuchen Sie es in 15 Minuten erneut.";
+    } else if (err.message.includes("HTTP 500")) {
+      errorMessage += "\n\n⚠️ Server-Fehler. Bitte versuchen Sie es später erneut.";
+    } else if (err.message.includes("Failed to fetch") || err.message.includes("NetworkError")) {
+      errorMessage += "\n\n⚠️ Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.";
+    } else {
+      errorMessage += "\n\n⚠️ Bitte versuchen Sie es später erneut.";
+    }
+
+    showError(errorMessage);
   }
 }
 

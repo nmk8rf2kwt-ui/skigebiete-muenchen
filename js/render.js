@@ -248,6 +248,7 @@ export function renderRow(row, data) {
     <td>${price}</td>
     <td>${typeDisplay}</td>
     <td>${snowDisplay}</td>
+    <td>${lastSnowfallDisplay}</td>
     <td>${weatherDisplay}</td>
     <td>${webcamDisplay}</td>
     <td>${historyDisplay}</td>
