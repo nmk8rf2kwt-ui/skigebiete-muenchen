@@ -1,9 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Imports removed (fs, path, url) as they are no longer needed
 
 /**
  * Fetch historical weather data from Open-Meteo Archive API
@@ -136,26 +131,4 @@ export async function getYesterdayWeather(latitude, longitude) {
     }
 }
 
-/**
- * Check if backfill has been completed
- * @returns {boolean} True if backfill flag file exists
- */
-export function isBackfillCompleted() {
-    const flagPath = path.join(__dirname, '../data/.weather_backfill_completed');
-    return fs.existsSync(flagPath);
-}
-
-/**
- * Mark backfill as completed
- */
-export function markBackfillCompleted() {
-    const flagPath = path.join(__dirname, '../data/.weather_backfill_completed');
-    const dataDir = path.dirname(flagPath);
-
-    if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
-    }
-
-    fs.writeFileSync(flagPath, new Date().toISOString());
-    console.log('✓ Weather backfill marked as completed');
-}
+// Backfill status functions moved to history.js

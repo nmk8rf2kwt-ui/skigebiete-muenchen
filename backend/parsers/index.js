@@ -56,6 +56,9 @@ import { parse as silvretta_montafon } from "./silvretta_montafon.js";
 import { parse as damuels_mellau } from "./damuels_mellau.js";
 import { parse as turracher_hoehe } from "./turracher_hoehe.js";
 import { parse as bad_kleinkirchheim } from "./bad_kleinkirchheim.js";
+import { parse as kronplatz } from "./kronplatz.js";
+import { parse as dolomiti_superski } from "./dolomiti_superski.js";
+import { parse as sella_ronda } from "./sella_ronda.js";
 
 export const PARSERS = {
     spitzingsee,
@@ -114,4 +117,7 @@ export const PARSERS = {
     damuels_mellau,
     turracher_hoehe,
     bad_kleinkirchheim,
+    kronplatz,
+    dolomiti_superski,
+    sella_ronda,
 };

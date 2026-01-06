@@ -379,3 +379,22 @@ export function getResortTrafficHistory(cityId, resortId) {
     const allData = readTrafficCsv(cityId);
     return allData.filter(entry => entry.resortId === resortId);
 }
+
+// Check if backfill has been completed
+export function isBackfillCompleted() {
+    const flagPath = path.join(__dirname, 'data/.weather_backfill_completed');
+    return fs.existsSync(flagPath);
+}
+
+// Mark backfill as completed
+export function markBackfillCompleted() {
+    const flagPath = path.join(__dirname, 'data/.weather_backfill_completed');
+    const dataDir = path.dirname(flagPath);
+
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    fs.writeFileSync(flagPath, new Date().toISOString());
+    console.log('✓ Weather backfill marked as completed');
+}

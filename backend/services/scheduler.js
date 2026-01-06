@@ -1,15 +1,15 @@
 import { getStaticResorts } from "./resortManager.js";
-import { getWeatherForecast, getCurrentConditions } from "../weather.js";
-import { weatherCache, parserCache, trafficCache } from "../cache.js";
+import { getWeatherForecast, getCurrentConditions } from "./weather.js";
+import { weatherCache, parserCache, trafficCache } from "./cache.js";
 import { PARSERS } from "../parsers/index.js";
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog, updateHistoricalWeather } from "../history.js";
+import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog, updateHistoricalWeather, isBackfillCompleted, markBackfillCompleted } from "../history.js";
 import { fetchTrafficMatrix } from "./tomtom.js";
-import { getYesterdayWeather, backfillWeatherHistory, isBackfillCompleted, markBackfillCompleted } from "./historicalWeather.js";
+import { getYesterdayWeather, backfillWeatherHistory } from "./historicalWeather.js";
 
 // -- JOBS --
 

@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import pLimit from "p-limit";
 import { PARSERS } from "../parsers/index.js";
-import { parserCache, weatherCache, trafficCache } from "../cache.js";
+import { parserCache, weatherCache, trafficCache } from "./cache.js";
 import { logFetch } from "../logger.js";
 import { ResortDataSchema } from "../schema.js";
 

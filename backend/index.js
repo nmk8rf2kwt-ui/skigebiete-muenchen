@@ -5,7 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import { parserCache } from "./cache.js";
+import { parserCache } from "./services/cache.js";
 import { getStaticResorts } from "./services/resortManager.js";
 import { initScheduler } from "./services/scheduler.js";
 

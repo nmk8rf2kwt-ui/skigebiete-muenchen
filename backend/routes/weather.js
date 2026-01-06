@@ -1,7 +1,7 @@
 import express from "express";
 import { getStaticResorts } from "../services/resortManager.js";
-import { weatherCache } from "../cache.js";
-import { getWeatherForecast } from "../weather.js";
+import { weatherCache } from "../services/cache.js";
+import { getWeatherForecast } from "../services/weather.js";
 
 const router = express.Router();
 
