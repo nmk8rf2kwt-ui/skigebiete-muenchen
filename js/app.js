@@ -1,3 +1,4 @@
+import { renderTable, calculateScore } from "./render.js";
 import { initMap, updateMap, showUserLocation } from "./map.js";
 import { API_BASE_URL } from "./config.js";
 import { store } from "./store.js";
