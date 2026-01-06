@@ -26,27 +26,58 @@ const MUNICH_DEFAULT = {
   name: "München Innenstadt"
 };
 
+// Show message in UI (persistent for debugging)
+function showError(message) {
+  const errorDiv = document.getElementById("searchError");
+  if (!errorDiv) return;
+  errorDiv.style.display = "block";
+  // Append instead of replace to see history
+  errorDiv.innerHTML += `<div>${message}</div>`;
+}
+
+function logToUI(msg) {
+  const errorDiv = document.getElementById("searchError");
+  if (!errorDiv) return;
+  errorDiv.style.display = "block";
+  errorDiv.style.color = "#333"; // Use dark text for logs
+  errorDiv.innerHTML += `<div style="border-bottom: 1px solid #ddd; padding: 2px;">${new Date().toLocaleTimeString()}: ${msg}</div>`;
+}
+
+// Hide error message
+function hideError() {
+  // Disable auto-hide for debugging
+  // const errorDiv = document.getElementById("searchError");
+  // errorDiv.style.display = "none";
+}
+
 // Load Data
 async function load() {
+  logToUI("🚀 Starting load()...");
+
   // 1. Fetch Static Data Fast
   try {
+    logToUI(`Fetching static from: ${API_BASE_URL}/resorts/static`);
     const staticRes = await fetch(`${API_BASE_URL}/resorts/static`);
+
     if (!staticRes.ok) throw new Error(`HTTP ${staticRes.status}`);
     const staticData = await staticRes.json();
+    logToUI(`✅ Loaded ${staticData.length} static resorts`);
 
     // Store data (score will be calculated in renderTable if needed)
     allResorts = staticData;
     render();
   } catch (err) {
     console.error("Failed to load static data:", err);
-    showError("❌ Fehler beim Laden der Daten. Bitte Backend überprüfen.");
+    showError(`❌ Static Load Error: ${err.message}`);
   }
 
   // 2. Fetch Live Data
   try {
+    logToUI("Fetching live data...");
     const liveRes = await fetch(`${API_BASE_URL}/resorts`);
     if (!liveRes.ok) throw new Error(`HTTP ${liveRes.status}`);
     const liveData = await liveRes.json();
+    logToUI(`✅ Loaded ${liveData.length} live resorts`);
 
     // Store data (score will be calculated in renderTable if needed)
     allResorts = liveData;
@@ -61,163 +92,8 @@ async function load() {
 
   } catch (err) {
     console.error("Failed to load live data:", err);
+    showError(`❌ Live Load Error: ${err.message}`);
   }
-}
-
-// Render Wrapper
-function render() {
-  if (viewMode === 'list') {
-    document.getElementById("skiTable").style.display = "";
-    document.getElementById("map-view").style.display = "none";
-    renderTable(allResorts, currentSort, currentFilter, sortDirection);
-  } else {
-    document.getElementById("skiTable").style.display = "none";
-    document.getElementById("map-view").style.display = "block";
-
-    // Get filtered resorts (same logic as renderTable)
-    let filteredResorts = [...allResorts];
-
-    if (currentFilter === 'top3') {
-      // Calculate scores for sorting
-      filteredResorts = filteredResorts.map(r => ({
-        ...r,
-        score: r.score !== undefined ? r.score : calculateScore(r)
-      }));
-      filteredResorts.sort((a, b) => b.score - a.score);
-      filteredResorts = filteredResorts.slice(0, 3);
-    } else if (currentFilter === 'open') {
-      filteredResorts = filteredResorts.filter(r => r.liftsOpen > 0);
-    }
-
-    // Initialize map on first view, then just update
-    initMap(filteredResorts);
-    updateMap(filteredResorts);
-
-    // Leaflet needs a resize trigger when becoming visible
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 100);
-  }
-}
-
-// Export CSV
-function exportToCsv() {
-  if (!allResorts.length) return;
-
-  const headers = ["Name", "Reisezeit (min)", "Pisten (km)", "Lifte (Offen/Total)", "Preis (€)", "Typ", "Schnee", "Wetter", "Score"];
-  const rows = allResorts.map(r => {
-    // Re-calculate or use raw data. Note: renderTable calculates score but doesn't persist it to allResorts unless we mutate.
-    // Ideally renderTable should return the enriched data or we enrich first.
-    // For simplicity, let's just grab raw props.
-
-    const liftStatus = r.liftsTotal ? `${r.liftsOpen || 0}/${r.liftsTotal}` : "-";
-    return [
-      `"${r.name}"`,
-      r.distance || 0,
-      r.piste_km || 0,
-      `"${liftStatus}"`,
-      r.price || 0,
-      `"${r.classification || ''}"`,
-      `"${r.snow || ''}"`,
-      `"${r.weather || ''}"`,
-      r.score || 0 // This might be missing if we calculate it only in renderTable
-    ].join(",");
-  });
-
-  const csvContent = "data:text/csv;charset=utf-8,"
-    + headers.join(",") + "\n"
-    + rows.join("\n");
-
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `skigebiete_ranking_${new Date().toISOString().slice(0, 10)}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
-  try {
-    const res = await fetch(`${API_BASE_URL}/traffic/calculate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ latitude: lat, longitude: lon })
-    });
-
-    if (!res.ok) {
-      // Try to parse error message from response
-      let errorMsg = `HTTP ${res.status}`;
-      try {
-        const errorData = await res.json();
-        if (errorData.error) {
-          errorMsg = errorData.error;
-        }
-      } catch (e) {
-        // If JSON parsing fails, use status text
-        errorMsg = res.statusText || errorMsg;
-      }
-      throw new Error(errorMsg);
-    }
-
-    const trafficData = await res.json();
-
-    // Merge into allResorts
-    allResorts = allResorts.map(resort => {
-      const t = trafficData[resort.id];
-      if (t) {
-        return {
-          ...resort,
-          distance: t.duration,
-          traffic: t
-        };
-      }
-      return resort;
-    });
-
-    render();
-
-    // Only show alert if not default Munich
-    if (locationName !== MUNICH_DEFAULT.name) {
-      alert(`✅ Fahrzeiten aktualisiert von: ${locationName}`);
-    }
-
-  } catch (err) {
-    console.error("Traffic calculation error:", err);
-
-    // Show specific error message based on error type
-    let errorMessage = "❌ Fehler beim Berechnen der Fahrzeiten.";
-
-    if (err.message.includes("HTTP 429") || err.message.includes("Too many")) {
-      errorMessage += "\n\n⚠️ Zu viele Anfragen. Bitte versuchen Sie es in 15 Minuten erneut.";
-    } else if (err.message.includes("HTTP 500")) {
-      errorMessage += "\n\n⚠️ Server-Fehler. Bitte versuchen Sie es später erneut.";
-    } else if (err.message.includes("Failed to fetch") || err.message.includes("NetworkError")) {
-      errorMessage += "\n\n⚠️ Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.";
-    } else {
-      errorMessage += "\n\n⚠️ Bitte versuchen Sie es später erneut.";
-    }
-
-    showError(errorMessage);
-  }
-}
-
-// Show error message in UI instead of alert
-function showError(message) {
-  const errorDiv = document.getElementById("searchError");
-  errorDiv.innerHTML = message.replace(/\n/g, '<br>');
-  errorDiv.style.display = "block";
-
-  // Auto-hide after 8 seconds
-  setTimeout(() => {
-    errorDiv.style.display = "none";
-  }, 8000);
-}
-
-// Hide error message
-function hideError() {
-  const errorDiv = document.getElementById("searchError");
-  errorDiv.style.display = "none";
 }
 
 async function handleAddressSearch() {
