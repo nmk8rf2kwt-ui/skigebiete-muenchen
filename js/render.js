@@ -65,21 +65,40 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
     let valA = a[sortKey];
     let valB = b[sortKey];
 
-    // Handle nulls/undefined
-    if (valA == null) valA = 0; // treat missing as 0 or infinity depending on context? 
+    // Helper to extract number
+    const getNum = (v) => {
+      if (typeof v === 'number') return v;
+      if (typeof v === 'string') {
+        // Remove non-numeric chars except dot/comma (for partial numbers if needed, but parseInt handles it)
+        // Match first sequence of digits
+        const match = v.match(/(\d+)/);
+        return match ? parseInt(match[0], 10) : 0;
+      }
+      return 0;
+    };
+
+    // Handle nulls/undefined first
+    if (valA == null) valA = 0;
     if (valB == null) valB = 0;
 
     const multiplier = sortDirection === "asc" ? 1 : -1;
 
-    // Numerical sort
+    // Start with special keys that REQUIRE numeric parsing from potential strings
+    // (Snow is often "> 10 cm", Distance might be string in some contexts though usually number)
+    if (['snow', 'distance', 'piste_km', 'price', 'score'].includes(sortKey)) {
+      return (getNum(valA) - getNum(valB)) * multiplier;
+    }
+
+    // Default numeric sort
     if (typeof valA === 'number' && typeof valB === 'number') {
       return (valA - valB) * multiplier;
     }
 
-    // String sort (e.g. name)
+    // Default string sort
     if (typeof valA === 'string') {
-      return valA.localeCompare(valB) * multiplier;
+      return valA.localeCompare(valB.toString()) * multiplier;
     }
+
     return 0;
   });
 
@@ -165,12 +184,15 @@ export function renderRow(row, data) {
   if (data.forecast && Array.isArray(data.forecast) && data.forecast.length >= 3) {
     // Create three icons
     const icons = data.forecast.slice(0, 3).map(f => {
-      // Ensure we have a symbol. If backend sends text (e.g. "Overcast"), derive icon from it.
-      // Emojis are usually short (1-4 chars). Text is longer.
+      // Ensure we have a symbol. If backend sends text (e.g. "Overcast" or "Fog"), derive icon from it.
+      // Emojis are usually non-Latin characters. Use regex to check for letters.
       let icon = f.weatherEmoji;
-      if (!icon || icon.length > 4) {
+
+      // If icon is missing OR contains Latin letters (meaning it's a text description like "Rain", "Fog"), derive it.
+      if (!icon || /[a-zA-Z]/.test(icon)) {
         icon = getWeatherIcon(f.weather || f.weatherDesc || icon || "");
       }
+
       // Tooltip: "Mon: 5°C"
       const date = new Date(f.date).toLocaleDateString('de-DE', { weekday: 'short' });
       return `<span title="${date}: ${f.tempMax}°C / ${f.tempMin}°C" style="cursor: help; margin-right: 4px;">${icon}</span>`;
