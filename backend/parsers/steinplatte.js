@@ -36,54 +36,55 @@ export async function steinplatte() {
             const snowHtml = await snowRes.text();
             const $snow = cheerio.load(snowHtml);
 
-            // Text-based finding because classes are unknown
-            // "Schneehöhe Berg" -> next element or nearby text
+            // Normalize whitespace for Regex
+            const snowBody = $snow('body').text().replace(/\s+/g, ' ');
 
-            // Helper to find value after label
-            const findValue = (label) => {
-                const el = $snow(`*:contains('${label}')`).last(); // Use last in case of duplicates
-                if (el.length) {
-                    // Try next sibling or next text node
-                    // Data seems to be in simple divs/spans
-                    let val = el.next().text().trim();
-                    if (!val) val = el.parent().next().text().trim(); // if label is wrapped
-                    if (!val) val = el.find('.value').text().trim(); // if structure is complex
+            // --- Regex Strategy ---
+            let depth = null;
+            // Matches:
+            // 1. "Schneehöhe Berg 50 cm"
+            // 2. "50 cm Schneehöhe Berg"
+            let depthMatch = snowBody.match(/Schneehöhe Berg\s*(\d+)\s*cm/i) || snowBody.match(/(\d+)\s*cm\s*Schneehöhe Berg/i);
 
-                    // Specific fallback for Steinplatte based on MD structure: Looks like Label [newline] Value
-                    // If they are siblings strings in standard HTML flow
-                    if (!val) {
-                        // Traverse forward until text
-                        let next = el.next();
-                        while (next.length && !next.text().trim()) {
-                            next = next.next();
-                        }
-                        val = next.text().trim();
-                    }
-                    return val;
+            if (depthMatch) {
+                // Determine which group has the digit. Could be index 1 in both cases regexes above.
+                depth = parseInt(depthMatch[1], 10);
+            }
+
+            // Last Snowfall
+            let lastSnowISO = null;
+            // Matches:
+            // 1. "Letzter Schneefall 03.01.2026"
+            // 2. "03.01.2026 Letzter Schneefall"
+            let dateMatch = snowBody.match(/Letzter Schneefall\s*(\d{2}\.\d{2}\.\d{4})/i) || snowBody.match(/(\d{2}\.\d{2}\.\d{4})\s*Letzter Schneefall/i);
+
+            if (dateMatch) {
+                const parts = dateMatch[1].split('.');
+                lastSnowISO = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+            }
+
+            // Snow Type
+            // Keep the DOM traversal as backup or just regex
+            let snowType = null;
+            // "Schneetyp" - usually Value follows Label or precedes it.
+            // "griffig Schneetyp" or "Schneetyp griffig"
+            // Let's assume the word next to "Schneetyp" that is NOT "Live" or empty
+            const typeMatch = snowBody.match(/([a-zA-ZäöüÄÖÜ]+)\s*Schneetyp/i) || snowBody.match(/Schneetyp\s*([a-zA-ZäöüÄÖÜ]+)/i);
+            if (typeMatch) {
+                const candidate = typeMatch[1];
+                // Filter out common UI words if needed
+                if (candidate !== "Live" && candidate.length > 2) {
+                    snowType = candidate;
                 }
-                return null;
-            };
+            }
 
-            const snowDepthStr = findValue("Schneehöhe Berg"); // "50 cm"
-            const lastSnowfallDate = findValue("Letzter Schneefall"); // "03.01.2026"
-            const snowType = findValue("Schneetyp"); // "griffig"
+            // If regex failed, maybe try the old findValue technique?
+            // Re-implement simplified findValue if needed, but regex is usually stronger for "Text Soup"
 
-            if (snowDepthStr) {
-                const depth = parseInt(snowDepthStr, 10);
-
-                // Parse Date DD.MM.YYYY
-                let lastSnowISO = null;
-                if (lastSnowfallDate) {
-                    const parts = lastSnowfallDate.split('.');
-                    if (parts.length === 3) {
-                        // YYYY-MM-DD
-                        lastSnowISO = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-                    }
-                }
-
+            if (depth !== null) {
                 snowData = {
-                    valley: null, // Not listed
-                    mountain: !isNaN(depth) ? depth : null,
+                    valley: null,
+                    mountain: depth,
                     state: snowType || null,
                     lastSnowfall: lastSnowISO,
                     source: "resort",
