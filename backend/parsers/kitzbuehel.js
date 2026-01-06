@@ -1,10 +1,9 @@
 import * as cheerio from "cheerio";
+import { fetchWithHeaders } from "../utils/fetcher.js";
 
 export async function kitzbuehel() {
     // Updated URL - the old path returned 404
-    const res = await fetch("https://www.kitzski.at/de/service/offene-anlagen-pisten", {
-        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" }
-    });
+    const res = await fetchWithHeaders("https://www.kitzski.at/de/service/offene-anlagen-pisten");
     if (!res.ok) throw new Error("Failed to fetch KitzSki");
     const html = await res.text();
 

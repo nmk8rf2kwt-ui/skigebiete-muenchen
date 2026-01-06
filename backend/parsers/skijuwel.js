@@ -1,10 +1,11 @@
 import * as cheerio from "cheerio";
+import { fetchWithHeaders } from "../utils/fetcher.js";
 
 export default async function parseSkiJuwel() {
     const url = "https://www.skijuwel.com/de/winter/lifte-und-pisten";
 
     try {
-        const response = await fetch(url);
+        const response = await fetchWithHeaders(url);
         if (!response.ok) {
             throw new Error(`Failed to fetch Ski Juwel status: ${response.status}`);
         }

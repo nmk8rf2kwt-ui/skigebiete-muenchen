@@ -1,11 +1,10 @@
 import * as cheerio from "cheerio";
+import { fetchWithHeaders } from "../utils/fetcher.js";
 
 const URL = "https://www.brauneck-bergbahn.de/de/lift-pistenstatus.html";
 
 export async function brauneck() {
-  const res = await fetch(URL, {
-    headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" }
-  });
+  const res = await fetchWithHeaders(URL);
   if (!res.ok) throw new Error("Failed to fetch Brauneck");
 
   const html = await res.text();

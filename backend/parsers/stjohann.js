@@ -1,11 +1,12 @@
 import * as cheerio from "cheerio";
+import { fetchWithHeaders } from "../utils/fetcher.js";
 
 export default async function parseStJohann() {
     // Use the internal API endpoint found during inspection
     const url = "https://www.kitzbueheler-alpen.com/layout/locally/ski-snow-over-winter.element?lang=de&client=http%3A%2F%2Fsgm.bergbahnen-stjohann.at%2F&region=stjohann";
 
     try {
-        const response = await fetch(url);
+        const response = await fetchWithHeaders(url);
         if (!response.ok) {
             // Fallback or retry logic could be added here
             throw new Error(`Failed to fetch St. Johann status: ${response.status}`);

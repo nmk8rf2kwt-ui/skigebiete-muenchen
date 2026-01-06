@@ -1,7 +1,0 @@
-# macOS
-.DS_Store
-**/.DS_Store
-
-# Optional (falls später Build-Ordner entstehen)
-dist/
-build/
