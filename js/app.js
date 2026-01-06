@@ -9,6 +9,16 @@ let currentFilter = "all";
 let viewMode = "list"; // 'list' or 'map'
 let sortDirection = "desc"; // 'asc' or 'desc'
 
+// Global Error Handler
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+  const errorDiv = document.getElementById("searchError");
+  if (errorDiv) {
+    errorDiv.style.display = "block";
+    errorDiv.innerHTML = `❌ Global Error:<br>${msg}<br>Line: ${lineNo}<br>File: ${url}`;
+  }
+  return false;
+};
+
 // Munich Marienplatz coordinates (default)
 const MUNICH_DEFAULT = {
   latitude: 48.1351,
