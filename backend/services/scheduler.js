@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog } from "../history.js";
 import { fetchTrafficMatrix } from "./tomtom.js";
+import { getYesterdayWeather, backfillWeatherHistory, isBackfillCompleted, markBackfillCompleted } from "./historicalWeather.js";
 
 // -- JOBS --
 
@@ -49,11 +50,25 @@ export async function saveDailySnapshots() {
                     data = await parser();
                 }
 
-                // Inject static price data for history tracking
+                // Fetch yesterday's weather data
+                let historicalWeather = null;
+                if (resort.latitude && resort.longitude) {
+                    try {
+                        historicalWeather = await getYesterdayWeather(resort.latitude, resort.longitude);
+                        if (historicalWeather) {
+                            console.log(`  ✓ Fetched weather data for ${resort.id}`);
+                        }
+                    } catch (weatherError) {
+                        console.error(`  ⚠️ Failed to fetch weather for ${resort.id}:`, weatherError.message);
+                    }
+                }
+
+                // Inject static price data and weather for history tracking
                 data = {
                     ...data,
                     price: resort.price,
-                    priceDetail: resort.priceDetail
+                    priceDetail: resort.priceDetail,
+                    historicalWeather
                 };
 
                 saveSnapshot(resort.id, data);
@@ -193,4 +208,33 @@ export function initScheduler() {
 
     // E. History Cleanup (Daily)
     setInterval(cleanupHistory, 24 * 60 * 60 * 1000);
+
+    // F. One-time Weather Backfill (First Start Only)
+    if (!isBackfillCompleted()) {
+        console.log("🌤️ Starting one-time weather history backfill...");
+        setTimeout(async () => {
+            const resorts = getStaticResorts().filter(r => r.latitude && r.longitude);
+            console.log(`📥 Backfilling weather for ${resorts.length} resorts (30 days each)...`);
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (const resort of resorts) {
+                try {
+                    await backfillWeatherHistory(resort, 30);
+                    successCount++;
+                    // Small delay to avoid rate limiting
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                } catch (error) {
+                    console.error(`Failed backfill for ${resort.id}:`, error.message);
+                    failCount++;
+                }
+            }
+
+            console.log(`✅ Weather backfill complete: ${successCount} succeeded, ${failCount} failed`);
+            markBackfillCompleted();
+        }, 10000); // Start after 10 seconds
+    } else {
+        console.log("✓ Weather backfill already completed (skipping)");
+    }
 }

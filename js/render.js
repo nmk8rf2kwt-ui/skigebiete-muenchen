@@ -1,4 +1,6 @@
 // Score calculation constants
+import { sortResorts } from './sorting.js';
+
 const SCORE_WEIGHTS = {
   PISTE_KM: 2,
   DISTANCE: -0.5,
@@ -68,67 +70,8 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
     enrichedData = enrichedData.filter(r => r.liftsOpen > 0);
   }
 
-  // 3. Sort
-  enrichedData.sort((a, b) => {
-    let valA, valB;
-
-    // Resolve Sort Keys
-    if (sortKey === 'distance_km') {
-      valA = a.traffic?.distanceKm ?? a.distanceKm;
-      valB = b.traffic?.distanceKm ?? b.distanceKm;
-    } else if (sortKey === 'traffic_duration') {
-      valA = a.traffic?.duration ?? a.distance;
-      valB = b.traffic?.duration ?? b.distance;
-    } else if (sortKey === 'distance') { // Standard Time
-      valA = a.distance;
-      valB = b.distance;
-    } else if (sortKey === 'snow') {
-      // Handle Snow Object or String
-      const getSnowDepth = (s) => {
-        if (!s) return 0;
-        if (typeof s === 'object') return s.mountain ?? s.valley ?? 0;
-        return s; // string or number
-      };
-      valA = getSnowDepth(a.snow);
-      valB = getSnowDepth(b.snow);
-    } else {
-      valA = a[sortKey];
-      valB = b[sortKey];
-    }
-
-    // Helper to extract number
-    const getNum = (v) => {
-      if (typeof v === 'number') return v;
-      if (typeof v === 'string') {
-        const match = v.match(/(\d+)/);
-        return match ? parseInt(match[0], 10) : 0;
-      }
-      return 0;
-    };
-
-    // Handle nulls/undefined first
-    if (valA == null) valA = 0;
-    if (valB == null) valB = 0;
-
-    const multiplier = sortDirection === "asc" ? 1 : -1;
-
-    // Start with special keys that REQUIRE numeric parsing from potential strings
-    if (['snow', 'distance', 'piste_km', 'price', 'score', 'distance_km', 'traffic_duration', 'liftsOpen'].includes(sortKey)) {
-      return (getNum(valA) - getNum(valB)) * multiplier;
-    }
-
-    // Default numeric sort
-    if (typeof valA === 'number' && typeof valB === 'number') {
-      return (valA - valB) * multiplier;
-    }
-
-    // Default string sort
-    if (typeof valA === 'string') {
-      return valA.localeCompare(valB.toString()) * multiplier;
-    }
-
-    return 0;
-  });
+  // 3. Sort using imported sorting module
+  enrichedData = sortResorts(enrichedData, sortKey, sortDirection);
 
   // 4. Render
   enrichedData.forEach((resort, index) => {

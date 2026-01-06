@@ -45,4 +45,40 @@ router.get("/traffic/:cityId", (req, res) => {
     }
 });
 
+// GET /api/history/traffic/:cityId/:resortId
+router.get("/traffic/:cityId/:resortId", (req, res) => {
+    const { cityId, resortId } = req.params;
+    const safeCityId = cityId.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const filename = path.join(TRAFFIC_DIR, `traffic_${safeCityId}.csv`);
+
+    console.log(`Searching for resort-specific history: ${filename} (resort: ${resortId})`);
+
+    if (!fs.existsSync(filename)) {
+        return res.json({ cityId: safeCityId, resortId, data: [] });
+    }
+
+    try {
+        const content = fs.readFileSync(filename, 'utf-8');
+        const lines = content.trim().split('\n');
+
+        // Filter by resortId
+        const data = lines.slice(1)
+            .map(line => {
+                const [timestamp, rid, duration, delay] = line.split(',');
+                return {
+                    timestamp,
+                    resortId: rid,
+                    duration: parseFloat(duration),
+                    delay: parseFloat(delay)
+                };
+            })
+            .filter(entry => entry.resortId === resortId);
+
+        res.json({ cityId: safeCityId, resortId, data });
+    } catch (error) {
+        console.error("Error reading history csv:", error);
+        res.status(500).json({ error: "Failed to read history data" });
+    }
+});
+
 export default router;

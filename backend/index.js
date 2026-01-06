@@ -14,6 +14,7 @@ import resortsRouter, { liftsRouter } from "./routes/resorts.js";
 import weatherRouter from "./routes/weather.js";
 import historyRouter from "./routes/history.js";
 import trafficRouter from "./routes/traffic.js";
+import historicalWeatherRouter from "./routes/historicalWeather.js";
 
 // -- PATH SAFETY & STATIC CONFIG --
 const __filename = fileURLToPath(import.meta.url);
@@ -102,6 +103,7 @@ app.use("/api/lifts", liftsRouter);
 app.use("/api/weather", weatherRouter);
 app.use("/api", historyRouter); // mounts /history, /trends, /export
 app.use("/api/traffic", trafficRouter);
+app.use("/api/historical-weather", historicalWeatherRouter);
 
 // Initialize Scheduler (Weather & History)
 initScheduler();

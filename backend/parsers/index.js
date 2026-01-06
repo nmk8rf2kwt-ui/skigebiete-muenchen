@@ -5,6 +5,10 @@ import { parse as feldberg } from "./feldberg.js";
 import { parse as arber } from "./arber.js";
 import { parse as fichtelberg } from "./fichtelberg.js";
 import { parse as wurmberg } from "./wurmberg.js";
+import { parse as zillertal_arena } from "./zillertal_arena.js";
+import { parse as mayrhofen } from "./mayrhofen.js";
+import { parse as hintertux } from "./hintertux.js";
+import { parse as willingen } from "./willingen.js";
 
 export const PARSERS = {
     spitzingsee,
@@ -39,4 +43,8 @@ export const PARSERS = {
     arber,
     fichtelberg,
     wurmberg,
+    zillertal_arena,
+    mayrhofen,
+    hintertux,
+    willingen,
 };

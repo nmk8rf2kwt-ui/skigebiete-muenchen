@@ -433,7 +433,6 @@ async function handleGeolocation() {
 document.addEventListener("DOMContentLoaded", () => {
   // Initial Load
   load();
-  initTrafficChart();
   // Auto-refresh
   setInterval(load, 30 * 60 * 1000);
 
@@ -579,6 +578,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // History Modal Tab Switching
+  document.querySelectorAll('.history-tabs .tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const tab = e.target.dataset.tab;
+      switchHistoryTab(tab);
+    });
+  });
+
   // Handle history button clicks
   let currentResortId = null;
 
@@ -588,8 +595,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const resortName = event.target.dataset.resortName;
       currentResortId = resortId;
 
+      // Update Traffic History State
+      currentResortIdForTraffic = resortId;
+      currentTrafficChartLoaded = false;
+
+      // Reset to Lifts tab
+      switchHistoryTab('lifts');
+
       historyModal.style.display = "block";
-      document.getElementById("historyResortName").textContent = `${resortName} - 7-Day History`;
+      document.getElementById("historyResortName").textContent = `${resortName} - History`;
 
       try {
         const res = await fetch(`${API_BASE_URL}/api/history/${resortId}?days=7`);
@@ -609,6 +623,35 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentResortId) {
       const days = 30; // Export 30 days by default
       window.location.href = `${API_BASE_URL}/api/export/${currentResortId}?days=${days}`;
+    }
+  });
+
+  // Tab switching logic for history modal
+  document.addEventListener("click", async (event) => {
+    if (event.target.classList.contains("tab-btn")) {
+      const tabName = event.target.dataset.tab;
+
+      // Update active tab button
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.remove("active");
+      });
+      event.target.classList.add("active");
+
+      // Show corresponding tab content
+      document.querySelectorAll(".tab-content").forEach(content => {
+        content.style.display = "none";
+      });
+
+      const targetTab = document.getElementById(`${tabName}Tab`);
+      if (targetTab) {
+        targetTab.style.display = "block";
+
+        // Load weather charts if weather tab is opened
+        if (tabName === "weather" && currentResortId) {
+          const { createCombinedWeatherChart } = await import('./weatherChart.js');
+          createCombinedWeatherChart("weatherChartsContainer", currentResortId, 30);
+        }
+      }
     }
   });
 });
@@ -693,94 +736,101 @@ function displayHistoryChart(history) {
 }
 
 // -- TRAFFIC HISTORY CHART --
-let trafficChartInstance = null;
+let currentResortIdForTraffic = null;
+let currentTrafficChartLoaded = false;
 
-async function initTrafficChart() {
-  const ctx = document.getElementById("trafficHistoryChart");
-  const citySelect = document.getElementById("citySelect");
+function switchHistoryTab(tab) {
+  // Toggle active classes
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
 
-  if (!ctx || !citySelect) return;
+  // Toggle content visibility
+  document.getElementById('liftsTab').style.display = tab === 'lifts' ? 'block' : 'none';
+  document.getElementById('trafficTab').style.display = tab === 'traffic' ? 'block' : 'none';
 
-  // Load initial (Munich)
-  await loadTrafficHistory(citySelect.value);
-
-  // Listener
-  citySelect.addEventListener("change", (e) => {
-    loadTrafficHistory(e.target.value);
-  });
-}
-
-async function loadTrafficHistory(cityId) {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/history/traffic/${cityId}`);
-    if (!res.ok) throw new Error("Failed to fetch traffic history");
-
-    const response = await res.json();
-    const data = response.data; // [{ timestamp, resortId, duration, delay }, ...]
-
-    renderTrafficChart(data, cityId);
-
-  } catch (error) {
-    console.error("Traffic history error:", error);
-    // Optionally show error state in chart container
+  // Load traffic data if needed
+  if (tab === 'traffic' && !currentTrafficChartLoaded && currentResortIdForTraffic) {
+    loadResortTrafficHistory(currentResortIdForTraffic);
   }
 }
 
-function renderTrafficChart(data, cityId) {
-  const ctx = document.getElementById("trafficHistoryChart");
+// Find nearest city based on user location
+function findNearestCity(lat, lon) {
+  const cities = [
+    { id: 'munich', lat: 48.1351, lon: 11.5820 },
+    { id: 'augsburg', lat: 48.3705, lon: 10.8978 },
+    { id: 'salzburg', lat: 47.8095, lon: 13.0550 }
+  ];
 
-  if (trafficChartInstance) {
-    trafficChartInstance.destroy();
+  let nearest = cities[0];
+  let minDist = Infinity;
+
+  cities.forEach(city => {
+    const dist = Math.sqrt(
+      Math.pow(lat - city.lat, 2) + Math.pow(lon - city.lon, 2)
+    );
+    if (dist < minDist) {
+      minDist = dist;
+      nearest = city;
+    }
+  });
+
+  return nearest.id;
+}
+
+// Load resort-specific traffic history
+async function loadResortTrafficHistory(resortId) {
+  // Determine nearest city based on user location
+  const userLat = window.userLocation?.latitude || 48.1351; // Munich default
+  const userLon = window.userLocation?.longitude || 11.5820;
+
+  const nearestCity = findNearestCity(userLat, userLon);
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/history/traffic/${nearestCity}/${resortId}`);
+    if (!res.ok) throw new Error('Failed to fetch traffic history');
+
+    const response = await res.json();
+    renderResortTrafficChart(response.data, resortId, nearestCity);
+    currentTrafficChartLoaded = true;
+  } catch (error) {
+    console.error('Traffic history error:', error);
+    const ctx = document.getElementById('trafficHistoryChart');
+    if (ctx) {
+      ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
+      // Show error message
+    }
+  }
+}
+
+// Render resort-specific traffic chart (weekly bar chart)
+let resortTrafficChartInstance = null;
+
+function renderResortTrafficChart(data, resortId, cityId) {
+  const ctx = document.getElementById('trafficHistoryChart');
+
+  if (resortTrafficChartInstance) {
+    resortTrafficChartInstance.destroy();
   }
 
   if (!data || data.length === 0) {
-    // Show empty state?
+    console.log('No traffic data available for', resortId);
     return;
   }
 
-  // 1. Group by Timestamp (to average delay across all resorts for that time)
-  // Map: Timestamp iso string -> { totalDelay, count }
-  const timeMap = new Map();
+  // Aggregate data by day-of-week and hour
+  const weeklyData = aggregateWeeklyTraffic(data);
+  const labels = generateWeekLabels();
 
-  data.forEach(entry => {
-    // Normalize time to Hour? Entry timestamp is ISO.
-    // Let's keep distinct timestamps for now as they are generated per run (same second).
-    const ts = entry.timestamp; // e.g. "2026-01-06T12:00:00.000Z"
-    if (!timeMap.has(ts)) {
-      timeMap.set(ts, { totalDelay: 0, count: 0 });
-    }
-    const bucket = timeMap.get(ts);
-    bucket.totalDelay += entry.delay;
-    bucket.count++;
-  });
-
-  // 2. Prepare Chart Data
-  const labels = [];
-  const avgDelays = [];
-
-  // Sort timestamps
-  const sortedTimestamps = Array.from(timeMap.keys()).sort();
-
-  sortedTimestamps.forEach(ts => {
-    const bucket = timeMap.get(ts);
-    const date = new Date(ts);
-    const day = date.toLocaleDateString('de-DE', { weekday: 'short' });
-    const time = date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-
-    labels.push(`${day} ${time}`);
-    avgDelays.push((bucket.totalDelay / bucket.count).toFixed(1));
-  });
-
-  trafficChartInstance = new Chart(ctx, {
+  resortTrafficChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
       datasets: [{
         label: `Ø Verzögerung ab ${getCityName(cityId)} (min)`,
-        data: avgDelays,
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1
+        data: weeklyData,
+        backgroundColor: weeklyData.map(delay => getTrafficColor(delay)),
+        borderWidth: 0
       }]
     },
     options: {
@@ -789,9 +839,15 @@ function renderTrafficChart(data, cityId) {
       scales: {
         y: {
           beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Verzögerung (Minuten)'
+          title: { display: true, text: 'Verzögerung (Minuten)' }
+        },
+        x: {
+          title: { display: true, text: 'Wochentag / Uhrzeit' },
+          ticks: {
+            maxRotation: 90,
+            minRotation: 45,
+            autoSkip: true,
+            maxTicksLimit: 20
           }
         }
       }
@@ -799,11 +855,61 @@ function renderTrafficChart(data, cityId) {
   });
 }
 
-function getCityName(id) {
-  const map = {
-    'muenchen': 'München',
-    'stuttgart': 'Stuttgart',
-    'nuernberg': 'Nürnberg',
+// Aggregate traffic data by day-of-week and hour
+function aggregateWeeklyTraffic(data) {
+  // Group by day-of-week (0-6) and hour (0-23)
+  const grid = Array(7).fill(null).map(() => Array(24).fill(null).map(() => []));
+
+  data.forEach(entry => {
+    const date = new Date(entry.timestamp);
+    const day = date.getDay(); // 0 = Sunday, 1 = Monday, ...
+    const hour = date.getHours();
+    const adjustedDay = day === 0 ? 6 : day - 1; // Convert to Mo=0, So=6
+
+    grid[adjustedDay][hour].push(entry.delay);
+  });
+
+  // Calculate averages and flatten to 168 values
+  const weeklyData = [];
+  for (let day = 0; day < 7; day++) {
+    for (let hour = 0; hour < 24; hour++) {
+      const delays = grid[day][hour];
+      const avg = delays.length > 0
+        ? delays.reduce((sum, d) => sum + d, 0) / delays.length
+        : 0;
+      weeklyData.push(Math.round(avg));
+    }
+  }
+
+  return weeklyData;
+}
+
+// Generate week labels (Mo 00:00 - So 23:00)
+function generateWeekLabels() {
+  const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+  const labels = [];
+
+  for (let day = 0; day < 7; day++) {
+    for (let hour = 0; hour < 24; hour++) {
+      labels.push(`${days[day]} ${hour.toString().padStart(2, '0')}:00`);
+    }
+  }
+
+  return labels;
+}
+
+// Get traffic color based on delay
+function getTrafficColor(delay) {
+  if (delay > 20) return 'rgba(231, 76, 60, 0.8)'; // Red
+  if (delay > 10) return 'rgba(243, 156, 18, 0.8)'; // Orange
+  if (delay > 5) return 'rgba(241, 196, 15, 0.8)'; // Yellow
+  return 'rgba(46, 204, 113, 0.8)'; // Green
+}
+
+// Helper to get city name
+function getCityName(cityId) {
+  const cityNames = {
+    'munich': 'München',
     'augsburg': 'Augsburg',
     'salzburg': 'Salzburg'
   };

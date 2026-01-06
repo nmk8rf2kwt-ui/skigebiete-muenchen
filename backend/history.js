@@ -57,6 +57,8 @@ export function saveSnapshot(resortId, data) {
                 liftsTotal: data.liftsTotal || null,
                 snow: data.snow || null,
                 weather: data.weather || null,
+                // Historical weather data from Open-Meteo
+                historicalWeather: data.historicalWeather || null,
                 // NEW: Store detailed lift/slope data if available
                 lifts: data.lifts || null,
                 slopes: data.slopes || null,
@@ -271,6 +273,31 @@ export function getResortsWithHistory() {
         });
     } catch (error) {
         console.error('Error getting resorts with history:', error);
+        return [];
+    }
+}
+
+// Get weather history for a resort
+export function getWeatherHistory(resortId, days = 30) {
+    try {
+        const history = getHistory(resortId, days);
+
+        // Extract weather data from snapshots
+        const weatherHistory = history.map(snapshot => {
+            const weather = snapshot.data.historicalWeather;
+            return {
+                date: snapshot.date,
+                tempMax: weather?.tempMax ?? null,
+                tempMin: weather?.tempMin ?? null,
+                precipitation: weather?.precipitation ?? null,
+                snowfall: weather?.snowfall ?? null,
+                snowDepth: weather?.snowDepth ?? null
+            };
+        }).filter(day => day.tempMax !== null || day.tempMin !== null); // Filter out days without data
+
+        return weatherHistory;
+    } catch (error) {
+        console.error(`Error getting weather history for ${resortId}:`, error);
         return [];
     }
 }
