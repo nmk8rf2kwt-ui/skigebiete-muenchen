@@ -96,6 +96,150 @@ async function load() {
   }
 }
 
+// Export CSV
+function exportToCsv() {
+  if (!allResorts.length) return;
+
+  const headers = ["Name", "Reisezeit (min)", "Pisten (km)", "Lifte (Offen/Total)", "Preis (€)", "Typ", "Schnee", "Wetter", "Score"];
+  const rows = allResorts.map(r => {
+    // Re-calculate or use raw data. Note: renderTable calculates score but doesn't persist it to allResorts unless we mutate.
+    const liftStatus = r.liftsTotal ? `${r.liftsOpen || 0}/${r.liftsTotal}` : "-";
+    return [
+      `"${r.name}"`,
+      r.distance || 0,
+      r.piste_km || 0,
+      `"${liftStatus}"`,
+      r.price || 0,
+      `"${r.classification || ''}"`,
+      `"${r.snow || ''}"`,
+      `"${r.weather || ''}"`,
+      r.score || 0
+    ].join(",");
+  });
+
+  const csvContent = "data:text/csv;charset=utf-8,"
+    + headers.join(",") + "\n"
+    + rows.join("\n");
+
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `skigebiete_ranking_${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
+  logToUI(`Fetching traffic for ${locationName} (${lat}, ${lon})...`);
+  try {
+    const res = await fetch(`${API_BASE_URL}/traffic?lat=${lat}&lon=${lon}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const trafficData = await res.json();
+    logToUI(`✅ Loaded traffic data for ${locationName}`);
+
+    // Update allResorts with distance and duration
+    allResorts = allResorts.map(resort => {
+      const trafficInfo = trafficData.find(t => t.resortId === resort.id);
+      if (trafficInfo) {
+        return {
+          ...resort,
+          distance: Math.round(trafficInfo.distance / 1000), // km
+          duration: Math.round(trafficInfo.duration / 60), // minutes
+          trafficAlert: trafficInfo.trafficAlert || null
+        };
+      }
+      return resort;
+    });
+
+    // Recalculate scores and re-render
+    allResorts = allResorts.map(resort => ({
+      ...resort,
+      score: calculateScore(resort)
+    }));
+
+    render();
+  } catch (err) {
+    console.error("Failed to load traffic data:", err);
+    showError(`❌ Traffic Load Error for ${locationName}: ${err.message}`);
+  }
+}
+
+function render() {
+  hideError(); // Hide any previous errors before rendering
+
+  // Filter resorts
+  let resortsToRender = [...allResorts];
+  if (currentFilter === "top3") {
+    resortsToRender = resortsToRender
+      .filter(r => r.score !== undefined && r.score !== null) // Only resorts with a score
+      .sort((a, b) => b.score - a.score) // Sort by score descending
+      .slice(0, 3); // Take top 3
+  }
+
+  // Sort resorts
+  resortsToRender.sort((a, b) => {
+    let valA, valB;
+
+    switch (currentSort) {
+      case "name":
+        valA = a.name.toLowerCase();
+        valB = b.name.toLowerCase();
+        return sortDirection === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
+      case "distance":
+        valA = a.duration || Infinity; // Treat undefined/null as very far
+        valB = b.duration || Infinity;
+        break;
+      case "pistes":
+        valA = a.piste_km || 0;
+        valB = b.piste_km || 0;
+        break;
+      case "lifts":
+        valA = a.liftsOpen || 0;
+        valB = b.liftsOpen || 0;
+        break;
+      case "price":
+        valA = a.price || Infinity;
+        valB = b.price || Infinity;
+        break;
+      case "snow":
+        // Sort by snow depth (assuming snow is a string like "100-150cm")
+        valA = parseInt((a.snow || "0").split('-')[0]) || 0;
+        valB = parseInt((b.snow || "0").split('-')[0]) || 0;
+        break;
+      case "score":
+      default:
+        valA = a.score || -Infinity; // Treat undefined/null as very low score
+        valB = b.score || -Infinity;
+        break;
+    }
+
+    if (valA < valB) return sortDirection === "asc" ? -1 : 1;
+    if (valA > valB) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  // Update sort indicators
+  document.querySelectorAll("th[data-sort]").forEach(th => {
+    th.classList.remove("sort-asc", "sort-desc");
+    if (th.dataset.sort === currentSort) {
+      th.classList.add(`sort-${sortDirection}`);
+    }
+  });
+
+  // Render based on view mode
+  if (viewMode === "list") {
+    document.getElementById("resortTable").style.display = "table";
+    document.getElementById("mapContainer").style.display = "none";
+    renderTable(resortsToRender);
+  } else {
+    document.getElementById("resortTable").style.display = "none";
+    document.getElementById("mapContainer").style.display = "block";
+    initMap(); // Ensure map is initialized
+    updateMap(resortsToRender);
+  }
+}
+
 async function handleAddressSearch() {
   const query = document.getElementById("addressInput").value.trim();
 
