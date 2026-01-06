@@ -433,6 +433,7 @@ async function handleGeolocation() {
 document.addEventListener("DOMContentLoaded", () => {
   // Initial Load
   load();
+  initTrafficChart();
   // Auto-refresh
   setInterval(load, 30 * 60 * 1000);
 
