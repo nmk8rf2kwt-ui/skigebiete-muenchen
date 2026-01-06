@@ -475,3 +475,77 @@ tr.unavailable small {
 .export-btn:hover {
   background: #1565c0;
 }
+
+/* ================= Error Container ================= */
+.error-container {
+  display: none;
+  background: #fee;
+  border: 1px solid #fcc;
+  margin: 10px 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.error-header {
+  background: #fcc;
+  color: #a00;
+  padding: 8px 12px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+.error-header:hover {
+  background: #fa9999;
+}
+
+.error-content {
+  padding: 10px;
+  color: #c00;
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 0.9em;
+  background: #fffafa;
+}
+
+.error-content div {
+  margin-bottom: 4px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 2px;
+}
+
+```
+/* ================= Tooltip ================= */
+
+.tooltip-container {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  width: 200px;
+  z-index: 1000;
+  font-weight: normal;
+  text-align: left;
+  font-size: 0.9em;
+  line-height: 1.4;
+  color: #333;
+}
+
+.tooltip-container:hover .tooltip-content {
+  display: block;
+}

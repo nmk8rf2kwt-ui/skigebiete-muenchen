@@ -4,12 +4,9 @@ import { API_BASE_URL } from "./config.js";
 import { store } from "./store.js";
 
 // Global Error Handler
+// Global Error Handler
 window.onerror = function (msg, url, lineNo, columnNo, error) {
-  const errorDiv = document.getElementById("searchError");
-  if (errorDiv) {
-    errorDiv.style.display = "block";
-    errorDiv.textContent = `❌ Global Error: ${msg} (Line: ${lineNo})`;
-  }
+  showError(`Global Error: ${msg} (Line: ${lineNo})`);
   return false;
 };
 
@@ -21,27 +18,42 @@ const MUNICH_DEFAULT = {
 };
 
 // Show message in UI (persistent for debugging)
+// Show message in UI (persistent for debugging)
 function showError(message) {
-  const errorDiv = document.getElementById("searchError");
-  if (!errorDiv) return;
-  errorDiv.style.display = "block";
+  const container = document.getElementById("searchError");
+  const content = document.getElementById("errorContent");
+  if (!container || !content) return;
+
+  container.style.display = "block";
 
   const msgDiv = document.createElement("div");
-  msgDiv.textContent = message;
-  errorDiv.appendChild(msgDiv);
+  msgDiv.textContent = `❌ ${message}`;
+  msgDiv.style.color = "#d32f2f";
+  content.appendChild(msgDiv);
+
+  // Auto-scroll to bottom
+  content.scrollTop = content.scrollHeight;
 }
 
 function logToUI(msg) {
-  const errorDiv = document.getElementById("searchError");
-  if (!errorDiv) return;
-  errorDiv.style.display = "block";
-  errorDiv.style.color = "#333";
+  const container = document.getElementById("searchError");
+  const content = document.getElementById("errorContent");
+  if (!container || !content) return;
+
+  // Only show if it's already visible, or if we want logs to pop up (optional)
+  // For now, let's keep it visible if logs happen
+  container.style.display = "block";
 
   const line = document.createElement("div");
-  line.style.borderBottom = "1px solid #ddd";
-  line.style.padding = "2px";
+  line.style.borderBottom = "1px solid #eee";
+  line.style.padding = "2px 0";
+  line.style.fontSize = "0.85em";
+  line.style.color = "#555";
   line.textContent = `${new Date().toLocaleTimeString()}: ${msg}`;
-  errorDiv.appendChild(line);
+  content.appendChild(line);
+
+  // Auto-scroll to bottom
+  content.scrollTop = content.scrollHeight;
 }
 
 // Hide error message
@@ -129,9 +141,37 @@ function exportToCsv() {
 async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
   logToUI(`Fetching traffic for ${locationName} (${lat}, ${lon})...`);
   try {
-    const res = await fetch(`${API_BASE_URL}/traffic?lat=${lat}&lon=${lon}`);
+    const res = await fetch(`${API_BASE_URL}/traffic/calculate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        latitude: lat,
+        longitude: lon
+      })
+    });
+
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const trafficData = await res.json();
+    const trafficMap = await res.json();
+
+    // Convert object map back to array for frontend logic
+    // Old implementation expected array of objects { resortId, distance, duration, trafficAlert }
+    // New /calculate returns { resortId: { duration, distance } }
+
+    const trafficData = Object.entries(trafficMap).map(([id, data]) => ({
+      resortId: id,
+      duration: data.duration * 60, // backend returns minutes, frontend logic below expects seconds?
+      // Wait, backend traffic.js line 88 says: duration: Math.round(durationSeconds / 60) // minutes
+      // So backend returns minutes.
+      // Frontend line 145 says: duration: Math.round(trafficInfo.duration / 60)
+      // So frontend expects seconds.
+      // Let's ADJUST here to match frontend expectation or adjust frontend logic.
+      // Easiest is to provide what frontend expects (seconds) so line 145 works.
+      durationSeconds: data.duration * 60,
+      distance: data.distance * 1000 // backend km -> frontend meters
+    }));
+
     logToUI(`✅ Loaded traffic data for ${locationName}`);
 
     // Update resorts with distance and duration
@@ -141,9 +181,9 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
       if (trafficInfo) {
         return {
           ...resort,
-          distance: Math.round(trafficInfo.distance / 1000), // km
-          duration: Math.round(trafficInfo.duration / 60), // minutes
-          trafficAlert: trafficInfo.trafficAlert || null
+          distance: Math.round(trafficInfo.distance / 1000), // m -> km
+          duration: Math.round(trafficInfo.durationSeconds / 60), // s -> min
+          trafficAlert: null // trafficInfo.trafficAlert || null
         };
       }
       return resort;

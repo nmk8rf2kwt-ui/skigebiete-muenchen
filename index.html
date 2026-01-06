@@ -28,8 +28,16 @@
   </div>
 
   <!-- Error message display -->
-  <div id="searchError"
-    style="display: none; background: #fee; border: 1px solid #fcc; padding: 10px; margin: 10px 0; border-radius: 4px; color: #c00;">
+  <!-- Error message display -->
+  <div id="searchError" class="error-container">
+    <div class="error-header"
+      onclick="this.parentElement.querySelector('.error-content').style.display = this.parentElement.querySelector('.error-content').style.display === 'none' ? 'block' : 'none'">
+      <span>⚠️ Fehler & Warnungen</span>
+      <span class="error-toggle">▼</span>
+    </div>
+    <div class="error-content" id="errorContent">
+      <!-- Error messages will be injected here -->
+    </div>
   </div>
 
   <div class="controls">
@@ -62,7 +70,17 @@
           Größe des Skigebiets (in km) ↕️</th>
         <th title="Anzahl geöffneter Lifte heute">Geöffnete Lifte (Stand: heute)</th>
         <th data-sort="price" title="Tagesskipass-Preis - Klicken zum Sortieren" style="cursor: pointer;">Preis ↕️</th>
-        <th title="Schwierigkeitsgrad des Skigebiets">Schwierigkeitsgrad des Skigebiets</th>
+        <th class="tooltip-container">
+          Schwierigkeitsgrad <span style="font-size: 0.8em; cursor: help;">ℹ️</span>
+          <div class="tooltip-content">
+            <strong>Legende:</strong><br>
+            🟢 Familie (Anfänger/Familien)<br>
+            🟡 Genuss (Landschaft/Entspannt)<br>
+            🔴 Sportlich (Fortgeschrittene)<br>
+            🔴 Großraum (Viele Pistenkm)<br>
+            ⚫ Gletscher (Hochalpin/Profi)
+          </div>
+        </th>
         <th data-sort="snow" title="Schneehöhe am Berg und im Tal - Klicken zum Sortieren" style="cursor: pointer;">
           Schneehöhe (Berg/Tal) ↕️</th>
         <th title="Datum des letzten Schneefalls">Letzter Schneefall</th>
