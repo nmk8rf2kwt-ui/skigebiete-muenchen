@@ -168,56 +168,46 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
 function render() {
   hideError(); // Hide any previous errors before rendering
 
-  // Filter resorts
+  // 1. Filter resorts (Logic shared for Map and Table)
   let resortsToRender = [...allResorts];
+
+  // Calculate scores if needed (renderTable does this too, but we need it for top3 filter here)
+  resortsToRender = resortsToRender.map(r => ({
+    ...r,
+    score: r.score !== undefined ? r.score : calculateScore(r)
+  }));
+
   if (currentFilter === "top3") {
-    resortsToRender = resortsToRender
-      .filter(r => r.score !== undefined && r.score !== null) // Only resorts with a score
-      .sort((a, b) => b.score - a.score) // Sort by score descending
-      .slice(0, 3); // Take top 3
+    resortsToRender.sort((a, b) => (b.score || 0) - (a.score || 0));
+    resortsToRender = resortsToRender.slice(0, 3);
+  } else if (currentFilter === "open") {
+    // Future feature: Filter by open lifts if needed
+    resortsToRender = resortsToRender.filter(r => r.liftsOpen > 0);
   }
 
-  // Sort resorts
-  resortsToRender.sort((a, b) => {
-    let valA, valB;
+  // 2. Update Map (Needs filtered data, but order doesn't matter)
+  if (viewMode === "map") {
+    document.getElementById("skiTable").style.display = "none";
+    document.getElementById("map-view").style.display = "block";
+    // Leaflet needs to be visible to size correctly
+    document.getElementById("map-view").style.visibility = "visible";
 
-    switch (currentSort) {
-      case "name":
-        valA = a.name.toLowerCase();
-        valB = b.name.toLowerCase();
-        return sortDirection === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
-      case "distance":
-        valA = a.duration || Infinity; // Treat undefined/null as very far
-        valB = b.duration || Infinity;
-        break;
-      case "pistes":
-        valA = a.piste_km || 0;
-        valB = b.piste_km || 0;
-        break;
-      case "lifts":
-        valA = a.liftsOpen || 0;
-        valB = b.liftsOpen || 0;
-        break;
-      case "price":
-        valA = a.price || Infinity;
-        valB = b.price || Infinity;
-        break;
-      case "snow":
-        // Sort by snow depth (assuming snow is a string like "100-150cm")
-        valA = parseInt((a.snow || "0").split('-')[0]) || 0;
-        valB = parseInt((b.snow || "0").split('-')[0]) || 0;
-        break;
-      case "score":
-      default:
-        valA = a.score || -Infinity; // Treat undefined/null as very low score
-        valB = b.score || -Infinity;
-        break;
-    }
+    initMap(resortsToRender);
+    updateMap(resortsToRender);
 
-    if (valA < valB) return sortDirection === "asc" ? -1 : 1;
-    if (valA > valB) return sortDirection === "asc" ? 1 : -1;
-    return 0;
-  });
+    // Trigger resize to fix any grey tiles
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 200);
+
+  } else {
+    // 3. Render Table (Needs filtered data + Sort options)
+    // We pass 'all' as filter because we already filtered resortsToRender above
+    document.getElementById("skiTable").style.display = "";
+    document.getElementById("map-view").style.display = "none";
+
+    renderTable(resortsToRender, currentSort, 'all', sortDirection);
+  }
 
   // Update sort indicators
   document.querySelectorAll("th[data-sort]").forEach(th => {
@@ -226,18 +216,6 @@ function render() {
       th.classList.add(`sort-${sortDirection}`);
     }
   });
-
-  // Render based on view mode
-  if (viewMode === "list") {
-    document.getElementById("resortTable").style.display = "table";
-    document.getElementById("mapContainer").style.display = "none";
-    renderTable(resortsToRender);
-  } else {
-    document.getElementById("resortTable").style.display = "none";
-    document.getElementById("mapContainer").style.display = "block";
-    initMap(); // Ensure map is initialized
-    updateMap(resortsToRender);
-  }
 }
 
 async function handleAddressSearch() {
