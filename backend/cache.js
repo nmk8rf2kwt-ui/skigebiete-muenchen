@@ -74,8 +74,13 @@ export const weatherCache = new Cache(30 * 60 * 1000); // 30 minutes for weather
 export const trafficCache = new Cache(30 * 60 * 1000); // 30 minutes for traffic data
 
 // Cleanup expired entries every minute
-setInterval(() => {
+const cleanupInterval = setInterval(() => {
     parserCache.cleanup();
     weatherCache.cleanup();
     trafficCache.cleanup();
 }, 60 * 1000);
+
+// Allow Node to exit even if this interval is running
+if (cleanupInterval.unref) {
+    cleanupInterval.unref();
+}
