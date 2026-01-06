@@ -40,6 +40,9 @@ export async function getWeatherForecast(latitude, longitude) {
             const code = data.daily.weathercode[index];
             const weather = weatherCodeMap[code] || { desc: "Unknown", emoji: "🌤️" };
 
+            // Get snowfall amount for this day (in mm)
+            const snowfallMm = data.daily.snowfall_sum?.[index] || 0;
+
             // Approximate snow depth for the day (using noon value from hourly if available, or 0)
             // Open-Meteo hourly returns 24 values per day. We take index * 24 + 12 (noon)
             const hourlyIndex = index * 24 + 12;
@@ -65,11 +68,21 @@ export async function getWeatherForecast(latitude, longitude) {
                 weatherCode: code,
                 weatherDesc: weather.desc,
                 weatherEmoji: weather.emoji,
-                snowDepth: snowDepthCm // cm
+                snowDepth: snowDepthCm, // cm
+                snowfall: Math.round(snowfallMm / 10) // convert mm to cm
             };
         });
 
-        return forecast;
+        // Calculate last snowfall date (last day with snowfall > 0)
+        let lastSnowfall = null;
+        for (let i = forecast.length - 1; i >= 0; i--) {
+            if (forecast[i].snowfall > 0) {
+                lastSnowfall = forecast[i].date;
+                break;
+            }
+        }
+
+        return { forecast, lastSnowfall };
     } catch (error) {
         console.error("Weather fetch error:", error);
         return null;
@@ -77,9 +90,9 @@ export async function getWeatherForecast(latitude, longitude) {
 }
 
 // Helper to get simple current status from a forecast
-export function getCurrentConditions(forecast) {
-    if (!forecast || forecast.length === 0) return null;
-    const today = forecast[0];
+export function getCurrentConditions(forecastData) {
+    if (!forecastData || !forecastData.forecast || forecastData.forecast.length === 0) return null;
+    const today = forecastData.forecast[0];
     return {
         weather: today.weatherDesc,
         emoji: today.weatherEmoji,
