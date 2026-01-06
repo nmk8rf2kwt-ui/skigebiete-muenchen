@@ -164,28 +164,7 @@ export function renderRow(row, data) {
     weatherDisplay = "⏳";
   }
 
-  // Snow
-  let snowDisplay = "-";
-  let trendIndicator = "";
 
-  if (data.status === "error") {
-    snowDisplay = "n.a.";
-  } else if (data.snow) {
-    // Parse snow value to check for >20cm fresh snow
-    const snowValue = parseInt(data.snow);
-    const freshSnowIndicator = (snowValue > 20) ? " ⭐" : "";
-
-    // Add trend indicator if available
-    if (data.snowTrend) {
-      if (data.snowTrend === 'increasing') trendIndicator = " ↗️";
-      else if (data.snowTrend === 'decreasing') trendIndicator = " ↘️";
-      else trendIndicator = " →";
-    }
-
-    snowDisplay = `${data.snow}${freshSnowIndicator}${trendIndicator}`;
-  } else if (data.status === "static_only") {
-    snowDisplay = "⏳";
-  }
 
   // History button (Dedicated Column)
   const historyDisplay = (data.latitude && data.longitude)
