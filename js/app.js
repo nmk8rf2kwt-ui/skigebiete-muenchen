@@ -166,6 +166,24 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
   }
 }
 
+// Show error message in UI instead of alert
+function showError(message) {
+  const errorDiv = document.getElementById("searchError");
+  errorDiv.innerHTML = message.replace(/\n/g, '<br>');
+  errorDiv.style.display = "block";
+
+  // Auto-hide after 8 seconds
+  setTimeout(() => {
+    errorDiv.style.display = "none";
+  }, 8000);
+}
+
+// Hide error message
+function hideError() {
+  const errorDiv = document.getElementById("searchError");
+  errorDiv.style.display = "none";
+}
+
 async function handleAddressSearch() {
   const query = document.getElementById("addressInput").value.trim();
 
