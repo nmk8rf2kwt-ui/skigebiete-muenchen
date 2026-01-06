@@ -110,6 +110,37 @@ export function renderRow(row, data) {
   // Format travel time
   const travel = data.distance ? `${data.distance} min` : "-";
 
+  // Snow Display - use forecast data if available
+  let snowDisplay = "-";
+  if (data.forecast && data.forecast.length > 0) {
+    // Use today's snow depth from forecast
+    const todaySnow = data.forecast[0].snowDepth || 0;
+    snowDisplay = todaySnow > 0 ? `${todaySnow} cm` : "-";
+  } else if (data.snow) {
+    // Fallback to old format
+    snowDisplay = data.snow;
+  } else if (data.status === "error") {
+    snowDisplay = "n.a.";
+  }
+
+  // Last Snowfall Display
+  let lastSnowfallDisplay = "-";
+  if (data.lastSnowfall) {
+    const snowDate = new Date(data.lastSnowfall);
+    const today = new Date();
+    const diffDays = Math.floor((today - snowDate) / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) {
+      lastSnowfallDisplay = "heute";
+    } else if (diffDays === 1) {
+      lastSnowfallDisplay = "gestern";
+    } else if (diffDays <= 7) {
+      lastSnowfallDisplay = `vor ${diffDays} Tagen`;
+    } else {
+      lastSnowfallDisplay = snowDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+    }
+  }
+
   // Weather
   const weatherIcon = getWeatherIcon(data.weather);
   let weatherDisplay = "-";
