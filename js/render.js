@@ -196,14 +196,40 @@ ${pd.info || ""}
 
   // Snow Display - use forecast data if available
   let snowDisplay = "-";
-  const forecastData = data.forecast?.forecast || data.forecast;
+  // Check for new object structure first
+  if (data.snow && typeof data.snow === 'object') {
+    const s = data.snow;
+    const mountain = s.mountain !== null ? `${s.mountain} cm` : "-";
+    const valley = s.valley !== null ? `${s.valley} cm` : "-";
 
-  if (forecastData && Array.isArray(forecastData) && forecastData.length > 0) {
-    // Use today's snow depth from forecast
-    const todaySnow = forecastData[0].snowDepth || 0;
-    snowDisplay = todaySnow > 0 ? `${todaySnow} cm` : "-";
+    // Combined display: "Mountain / Valley" or just one if the other is missing?
+    // User asked for "schneehöhen für tal und berg".
+    // Let's ensure icons or labels: "🏔️ 50 / 🏠 20"
+
+    let text = "";
+    if (s.mountain !== null && s.valley !== null) {
+      text = `🏔️${s.mountain} / 🏠${s.valley} cm`;
+    } else if (s.mountain !== null) {
+      text = `🏔️${s.mountain} cm`;
+    } else if (s.valley !== null) {
+      text = `🏠${s.valley} cm`;
+    } else {
+      text = "-";
+    }
+
+    // Source Indication
+    const sourceColor = s.source === 'api' ? '#f1c40f' : '#2ecc71'; // Yellow vs Green
+    const sourceTitle = s.source === 'api'
+      ? 'Daten von Wetter-API (geschätzt/Fallback)'
+      : 'Offizielle Daten vom Skigebiet';
+
+    const timestamp = s.timestamp ? new Date(s.timestamp).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '';
+    const tooltip = `${sourceTitle}${timestamp ? ` (Stand: ${timestamp})` : ''}${s.state ? `\nZustand: ${s.state}` : ''}`;
+
+    snowDisplay = `<span title="${tooltip}" style="border-bottom: 2px solid ${sourceColor}; cursor: help;">${text}</span>`;
+
   } else if (data.snow) {
-    // Fallback to old format
+    // Fallback to old format (string)
     snowDisplay = data.snow;
   } else if (data.status === "error") {
     snowDisplay = "n.a.";
@@ -211,7 +237,8 @@ ${pd.info || ""}
 
   // Last Snowfall Display - check nested structure
   let lastSnowfallDisplay = "-";
-  const lastSnowfallDate = data.forecast?.lastSnowfall || data.lastSnowfall;
+  // Priority: data.snow.lastSnowfall (Resort) -> data.forecast.lastSnowfall (API) -> data.lastSnowfall (Legacy)
+  const lastSnowfallDate = data.snow?.lastSnowfall || data.forecast?.lastSnowfall || data.lastSnowfall;
 
   if (lastSnowfallDate) {
     const snowDate = new Date(lastSnowfallDate);

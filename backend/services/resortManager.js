@@ -150,12 +150,29 @@ export async function getAllResortsLive() {
                         liveData.weather =
                             weatherData.current.emoji + " " + weatherData.current.weather;
                     }
-                    if (!liveData.snow && weatherData.current) {
-                        liveData.snow = "> " + weatherData.current.snow;
+
+                    // Inject Fallback Snow Data if missing or error
+                    if (!liveData.snow || liveData.status === "error") {
+                        const { getFallbackSnow } = await import("./snowFallback.js");
+                        const fallbackSnow = getFallbackSnow(weatherData);
+                        if (fallbackSnow) {
+                            liveData.snow = fallbackSnow;
+                        } else if (!liveData.snow) {
+                            // Legacy string fallback if structured fails for some reason
+                            liveData.snow = "> " + weatherData.current.snow;
+                        }
+                    } else if (typeof liveData.snow === 'string') {
+                        // If parser returned a string (legacy parser), wrap it or leave it?
+                        // Ideally we upgrade all parsers, but for now, let's wrap it if possible or leave it.
+                        // Frontend needs to handle both strings (legacy) and objects (new).
                     }
+
                     // Inject full forecast for frontend display
                     if (weatherData.forecast) {
-                        liveData.forecast = weatherData.forecast;
+                        liveData.forecast = {
+                            forecast: weatherData.forecast.forecast,
+                            lastSnowfall: weatherData.forecast.lastSnowfall
+                        };
                     }
                 }
 
