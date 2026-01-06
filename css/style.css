@@ -11,8 +11,9 @@ h1 {
   position: sticky;
   top: 0;
   background: #f4f6f9;
-  padding: 8px 0;
-  z-index: 100;
+  margin: 0;
+  padding: 16px 0; /* Increased padding to maintain spacing without margin transparency */
+  z-index: 1000;
 }
 
 .meta {
@@ -23,11 +24,11 @@ h1 {
 
 .controls {
   position: sticky;
-  top: 56px;
+  top: 68px; /* Adjusted to sit below H1 */
   background: #f4f6f9;
-  padding: 8px 0;
-  z-index: 90;
-  margin-bottom: 12px;
+  margin: 0;
+  padding: 8px 0 16px 0; /* Padding bottom covers space to table header */
+  z-index: 900;
 }
 
 /* ================= Sort Mobile ================= */
@@ -68,9 +69,10 @@ th {
 
 thead th {
   position: sticky;
-  top: 104px;
+  top: 130px; /* Adjusted for H1 + Controls height */
   background: #e9eef3;
-  z-index: 80;
+  z-index: 800;
+  box-shadow: 0 1px 0 #ccc; /* Fix for border-collapse rendering issues */
 }
 
 /* Zebra rows */
