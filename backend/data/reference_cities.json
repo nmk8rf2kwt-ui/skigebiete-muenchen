@@ -1,0 +1,86 @@
+[
+    {
+        "id": "salzburg",
+        "name": "Salzburg (AT)",
+        "latitude": 47.8095,
+        "longitude": 13.0550
+    },
+    {
+        "id": "innsbruck",
+        "name": "Innsbruck (AT)",
+        "latitude": 47.2692,
+        "longitude": 11.4041
+    },
+    {
+        "id": "kufstein",
+        "name": "Kufstein (AT)",
+        "latitude": 47.5833,
+        "longitude": 12.1667
+    },
+    {
+        "id": "bregenz",
+        "name": "Bregenz (AT)",
+        "latitude": 47.5008,
+        "longitude": 9.7423
+    },
+    {
+        "id": "zuerich",
+        "name": "Zürich (CH)",
+        "latitude": 47.3769,
+        "longitude": 8.5417
+    },
+    {
+        "id": "st_gallen",
+        "name": "St. Gallen (CH)",
+        "latitude": 47.4245,
+        "longitude": 9.3767
+    },
+    {
+        "id": "rosenheim",
+        "name": "Rosenheim (DE)",
+        "latitude": 47.8564,
+        "longitude": 12.1225
+    },
+    {
+        "id": "lindau",
+        "name": "Lindau (DE)",
+        "latitude": 47.5476,
+        "longitude": 9.6878
+    },
+    {
+        "id": "nuernberg",
+        "name": "Nürnberg (DE)",
+        "latitude": 49.4521,
+        "longitude": 11.0768
+    },
+    {
+        "id": "stuttgart",
+        "name": "Stuttgart (DE)",
+        "latitude": 48.7758,
+        "longitude": 9.1829
+    },
+    {
+        "id": "memmingen",
+        "name": "Memmingen (DE)",
+        "latitude": 47.9837,
+        "longitude": 10.1853
+    },
+    {
+        "id": "konstanz",
+        "name": "Konstanz (DE)",
+        "latitude": 47.6603,
+        "longitude": 9.1758
+    },
+    {
+        "id": "augsburg",
+        "name": "Augsburg (DE)",
+        "latitude": 48.3705,
+        "longitude": 10.8978
+    },
+    {
+        "id": "ulm",
+        "name": "Ulm (DE)",
+        "latitude": 48.4011,
+        "longitude": 9.9876
+    }
+]

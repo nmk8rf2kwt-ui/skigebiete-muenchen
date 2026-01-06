@@ -1,6 +1,7 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
-import { fetchDynamicTravelTimes, geocodeAddress } from "../services/traffic.js";
+import { fetchTravelTimes as fetchTomTomTraffic } from "../services/tomtom.js";
+import { geocodeAddress } from "../services/ors.js";
 import { getStaticResorts } from "../services/resortManager.js";
 
 const router = express.Router();
@@ -31,7 +32,9 @@ router.post("/calculate", trafficCalculateLimiter, async (req, res) => {
         const resorts = getStaticResorts();
         const destinations = resorts.filter(r => r.latitude && r.longitude);
 
-        const trafficMap = await fetchDynamicTravelTimes(latitude, longitude, destinations);
+        // Usage: fetchTomTomTraffic(destinations, { lat, lon })
+        // I need to update tomtom.js to support this overload
+        const trafficMap = await fetchTomTomTraffic(destinations, { lat: latitude, lon: longitude });
         res.json(trafficMap);
     } catch (error) {
         console.error("Traffic calculation error:", error);

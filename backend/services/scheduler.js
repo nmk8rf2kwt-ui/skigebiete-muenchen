@@ -2,8 +2,13 @@ import { getStaticResorts } from "./resortManager.js";
 import { getWeatherForecast, getCurrentConditions } from "../weather.js";
 import { weatherCache, parserCache } from "../cache.js"; // Needed for snapshotting
 import { PARSERS } from "../parsers/index.js";
-import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog } from "../history.js";
-import { fetchTravelTimes } from "./traffic.js";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveCityTrafficLog } from "../history.js";
+import { fetchTravelTimes } from "./tomtom.js";
 import { trafficCache } from "../cache.js";
 
 // -- JOBS --
@@ -99,6 +104,50 @@ export async function refreshTraffic() {
     }
 }
 
+// 4. Track City Traffic (Every 30 mins)
+export async function trackCityTraffic() {
+    const now = new Date();
+    const hour = now.getHours();
+
+    // Run only between 06:00 and 22:00
+    if (hour < 6 || hour >= 22) return;
+
+    console.log("🏙️ Tracking city traffic...");
+
+    try {
+        const citiesPath = path.join(__dirname, '../data/reference_cities.json');
+        if (!fs.existsSync(citiesPath)) {
+            console.warn("City reference file not found.");
+            return;
+        }
+
+        const citiesData = JSON.parse(fs.readFileSync(citiesPath, 'utf-8'));
+
+        // Fetch traffic
+        const trafficData = await fetchTravelTimes(citiesData);
+
+        if (trafficData) {
+            let loggedCount = 0;
+            citiesData.forEach(city => {
+                const data = trafficData[city.id];
+                if (data) {
+                    saveCityTrafficLog({
+                        cityId: city.id,
+                        cityName: city.name,
+                        duration: data.duration,
+                        delay: data.delay || 0
+                    });
+                    loggedCount++;
+                }
+            });
+            console.log(`✅ Logged traffic for ${loggedCount} cities.`);
+        }
+
+    } catch (err) {
+        console.error("Failed to track city traffic:", err);
+    }
+}
+
 // -- SCHEDULER --
 
 let lastSnapshotDate = null;
@@ -109,7 +158,7 @@ export function initScheduler() {
     // A. Weather Loop (1 hour)
     setInterval(refreshWeather, 60 * 60 * 1000);
 
-    // B. Traffic Loop (1 hour) -- Staggered by 5 mins from weather to spread load
+    // B. Traffic Loop (1 hour) -- Resorst
     setTimeout(() => {
         // Periodic
         setInterval(refreshTraffic, 60 * 60 * 1000);
@@ -117,10 +166,18 @@ export function initScheduler() {
         refreshTraffic();
     }, 5000);
 
+    // C. City Traffic Loop (30 mins)
+    // Offset by 2 mins to avoid conflict with Resort Traffic
+    setTimeout(() => {
+        setInterval(trackCityTraffic, 30 * 60 * 1000);
+        trackCityTraffic(); // Validating immediate run
+    }, 2 * 60 * 1000);
+
+
     // Initial fetch for weather
     setTimeout(refreshWeather, 2000);
 
-    // C. Snapshot Loop (Check every hour)
+    // D. Snapshot Loop (Check every hour)
     setInterval(() => {
         const now = new Date();
         const currentDate = now.toISOString().split('T')[0];
@@ -139,6 +196,6 @@ export function initScheduler() {
         lastSnapshotDate = now.toISOString().split('T')[0];
     }
 
-    // D. History Cleanup (Daily)
+    // E. History Cleanup (Daily)
     setInterval(cleanupHistory, 24 * 60 * 60 * 1000);
 }

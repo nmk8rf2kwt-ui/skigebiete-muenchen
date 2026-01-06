@@ -170,12 +170,50 @@
         "longitude": 12.1833,
         "webcam": "https://www.foto-webcam.eu/webcam/ellmau/",
         "priceDetail": {
-            "adult": 69,
-            "youth": 52,
-            "child": 34.5,
+            "adult": 76.00,
+            "youth": 57.00,
+            "child": 38.00,
             "currency": "€",
-            "info": "Tageskarte Hauptsaison"
-        }
+            "info": "Tageskarte Premium-Saison"
+        },
+        "seasons": [
+            {
+                "name": "Premium-Saison",
+                "start": "2025-12-20",
+                "end": "2026-03-13",
+                "priceDetail": {
+                    "adult": 76.00,
+                    "youth": 57.00,
+                    "child": 38.00,
+                    "currency": "€",
+                    "info": "Premium-Saison"
+                }
+            },
+            {
+                "name": "Vorteils-Saison (Start)",
+                "start": "2025-11-29",
+                "end": "2025-12-19",
+                "priceDetail": {
+                    "adult": 68.50,
+                    "youth": 51.50,
+                    "child": 34.50,
+                    "currency": "€",
+                    "info": "Vorteils-Saison"
+                }
+            },
+            {
+                "name": "Vorteils-Saison (Ende)",
+                "start": "2026-03-14",
+                "end": "2026-04-06",
+                "priceDetail": {
+                    "adult": 68.50,
+                    "youth": 51.50,
+                    "child": 34.50,
+                    "currency": "€",
+                    "info": "Vorteils-Saison"
+                }
+            }
+        ]
     },
     {
         "id": "hochkoessen",
@@ -193,7 +231,7 @@
             "youth": 25,
             "child": 18,
             "currency": "€",
-            "info": "Tageskarte 2025/26"
+            "info": "Ab 36€ (Dynamisch)"
         }
     },
     {
@@ -329,7 +367,45 @@
             "child": 34.5,
             "currency": "€",
             "info": "Tageskarte Hauptsaison 2025/26"
-        }
+        },
+        "seasons": [
+            {
+                "name": "Hauptsaison",
+                "start": "2025-12-20",
+                "end": "2026-03-13",
+                "priceDetail": {
+                    "adult": 68.50,
+                    "youth": 55.00,
+                    "child": 34.50,
+                    "currency": "€",
+                    "info": "Hauptsaison"
+                }
+            },
+            {
+                "name": "Nebensaison (Start)",
+                "start": "2025-12-05",
+                "end": "2025-12-19",
+                "priceDetail": {
+                    "adult": 56.00,
+                    "youth": 45.00,
+                    "child": 28.00,
+                    "currency": "€",
+                    "info": "Nebensaison"
+                }
+            },
+            {
+                "name": "Nebensaison (Ende)",
+                "start": "2026-03-14",
+                "end": "2026-04-12",
+                "priceDetail": {
+                    "adult": 56.00,
+                    "youth": 45.00,
+                    "child": 28.00,
+                    "currency": "€",
+                    "info": "Nebensaison"
+                }
+            }
+        ]
     },
     {
         "id": "kitzbuehel",

@@ -107,6 +107,47 @@ export function saveTrafficLog(resortId, standardTime, currentTime) {
     }
 }
 
+// Save city traffic log
+export function saveCityTrafficLog(trafficData) {
+    // trafficData: { cityId, cityName, duration, delay }
+    try {
+        ensureTrafficDir();
+        const date = new Date();
+        // Single file for all history? Or daily?
+        // User wants to track drops/history. Single file or Monthly might be better?
+        // Let's stick to Daily for consistency with other logs, but "cities_traffic.csv" implies one file.
+        // User: "drops ... to our historic data".
+
+        // Let's use `cities_traffic_history.csv` (append only). 
+        // Or one file per day? `2026-01-06_cities.csv`
+        // Let's use daily files in `data/history/cities/`? 
+        // Or just `backend/data/history/cities_traffic.csv` (Monolithic).
+        // A monolithic file is easier for "drops" calculation unless we implement complex query logic.
+        // Given the scale (14 cities * 32 checks = 448 lines/day), a single file grows by ~150KB/year. Very small.
+        // Let's use `backend/data/history/cities_traffic.csv`.
+
+        const filename = path.join(DATA_DIR, 'cities_traffic.csv');
+
+        // Ensure parent dir exists (DATA_DIR is .../data/history)
+        if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+
+        // CSV Header
+        if (!fs.existsSync(filename)) {
+            fs.writeFileSync(filename, "Timestamp,CityId,CityName,DurationMin,DelayMin\n");
+        }
+
+        const isoTime = date.toISOString(); // Full timestamp for sorting
+        const line = `${isoTime},${trafficData.cityId},"${trafficData.cityName}",${trafficData.duration},${trafficData.delay}\n`;
+
+        fs.appendFileSync(filename, line);
+        return true;
+
+    } catch (error) {
+        console.error(`Error saving city traffic log:`, error.message);
+        return false;
+    }
+}
+
 // Get history for last N days
 export function getHistory(resortId, days = 7) {
     try {

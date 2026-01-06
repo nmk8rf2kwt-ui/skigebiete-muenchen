@@ -219,7 +219,12 @@ export function renderRow(row, data) {
     trafficDisplay = '<span class="loading-spinner-small"></span>';
   } else if (data.traffic && data.traffic.duration) {
     const liveTime = data.traffic.duration;
-    const delay = Math.max(0, liveTime - standardTime);
+
+    // Use explicit delay if provided (TomTom), otherwise fallback to (Live - Standard)
+    const delay = data.traffic.delay !== undefined
+      ? data.traffic.delay
+      : Math.max(0, liveTime - standardTime);
+
     let style = "";
 
     if (delay > 20) {

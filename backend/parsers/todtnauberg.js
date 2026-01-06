@@ -11,13 +11,22 @@ export const details = {
 
 export async function parse(options = {}) {
     const url = details.url;
-    const res = await fetchWithHeaders(url, options);
+    // Use native fetch to mimic curl and avoid 403 from standard headers
+    const response = await fetch(url, {
+        headers: {
+            "User-Agent": "curl/8.4.0",
+            "Accept": "*/*"
+        },
+        signal: options.signal
+    });
 
-    if (!res.ok) {
-        throw new Error(`Failed to fetch Todtnauberg: ${res.status}`);
+    if (!response.ok) {
+        // Fallback to fetchWithHeaders if direct fetch fails? No, direct fetch is the fix.
+        // Just check response.
+        throw new Error(`Failed to fetch Todtnauberg (Direct Fetch): ${response.status}`);
     }
 
-    const html = await res.text();
+    const html = await response.text();
     const $ = cheerio.load(html);
     const lifts = [];
 

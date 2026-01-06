@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { fetchTravelTimes } from '../backend/services/traffic.js';
+import { fetchTravelTimes } from '../backend/services/tomtom.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
