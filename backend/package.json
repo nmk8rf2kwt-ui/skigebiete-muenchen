@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "lint": "cd .. && ./backend/node_modules/.bin/eslint js backend",
     "test:parsers": "node scripts/debug_parsers.js check-all",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:ci": "node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --coverage"
@@ -20,7 +21,10 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@jest/globals": "^30.2.0",
+    "eslint": "^9.39.2",
+    "globals": "^17.0.0",
     "jest": "^30.2.0"
   }
 }

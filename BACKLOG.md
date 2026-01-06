@@ -18,28 +18,30 @@ Dieses Dokument enthält alle geplanten Features, Verbesserungen und Ideen für 
 
 ## 📋 Backlog Items
 
-### 🔴 P0 - Critical
+### 🟢 v1.2 (Planned)
 
-#### BACK-001: Letzter Schneefall für alle Resorts
-**Status:** 🟡 Teilweise implementiert  
-**Beschreibung:** Nicht alle Parser liefern aktuell `lastSnowfall` Daten. Dies sollte für alle Skigebiete verfügbar sein.
+#### FIX-001: Steinplatte Parser Fix
+**Status**: 🟡 In Progress
+**Priority**: P0
+**Problem**: Returns 0 lifts.
+**Goal**: Fix selectors or switch to mobile API.
 
-**Betroffene Resorts:**
-- Mehrere Parser fehlen noch
+#### FEAT-005: Add New Resorts (Oberaudorf, Kampenwand)
+**Status**: 🔴 Pending
+**Priority**: P1
+**Description**: Add parsers for Oberaudorf (Hocheck) and Kampenwand.
 
-**Technische Details:**
-- Parser müssen erweitert werden
-- Fallback auf Weather API wenn Website-Daten fehlen
-- Datenformat: ISO 8601 String
-
-**Aufwand:** 3-5 Tage  
-**Abhängigkeiten:** Parser-Updates
+#### IDEA-006: Rodeln-Tracker (Separate App Variant)
+**Status**: 🔴 Idea
+**Priority**: P3
+**Description**: Separate view/app for pure sledding resorts like Wallberg and Blomberg.
 
 ---
 
 ### 🟠 P1 - High Priority
 
 #### BACK-002: Erweiterte Filter-Optionen
+**Status**: 🟡 Teilweise implementiert (Sorting vorhanden)
 **Status:** 🔴 Nicht implementiert  
 **Beschreibung:** Benutzer sollen die Tabelle nach verschiedenen Kriterien filtern können.
 

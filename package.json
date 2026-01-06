@@ -1,0 +1,30 @@
+{
+  "name": "skigebiete-muenchen",
+  "version": "1.0.0",
+  "description": "![CI/CD](https://github.com/YOUR_USERNAME/skigebiete-muenchen/workflows/CI%2FCD%20Pipeline/badge.svg)",
+  "main": "eslint.config.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint js backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nmk8rf2kwt-ui/skigebiete-muenchen.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nmk8rf2kwt-ui/skigebiete-muenchen/issues"
+  },
+  "homepage": "https://github.com/nmk8rf2kwt-ui/skigebiete-muenchen#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "eslint": "^9.39.2",
+    "globals": "^17.0.0"
+  }
+}

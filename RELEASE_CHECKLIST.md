@@ -50,7 +50,8 @@ This document defines the standardized check-up process for releasing new versio
 - [ ] **DEPLOYMENT.md**: Accurate build/deploy steps.
 - [ ] **CHANGELOG**: Changes logged for the new version.
 
-## 7. Automated Tests
+## 7. Automated Tests & Static Analysis
+- [ ] **Linting**: `npm run lint` (checks for undefined variables/imports).
 - [ ] `npm test` (Backend Unit Tests) passing.
 - [ ] `npm run test:parsers` (Integration Tests) passing.
 

@@ -27,10 +27,11 @@ jobs:
         cd backend
         npm ci
     
+    - name: Install root dependencies
+      run: npm install
+
     - name: Run linter
-      run: |
-        cd backend
-        npm run lint || echo "No lint script found, skipping..."
+      run: npm run lint
     
     - name: Run unit tests
       run: |
