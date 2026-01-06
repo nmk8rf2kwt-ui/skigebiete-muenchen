@@ -25,23 +25,23 @@ export function updateMap(resorts) {
     resorts.forEach(resort => {
         if (!resort.latitude || !resort.longitude) return;
 
-        // Determine Color
-        let color = 'blue';
-        if (resort.status === 'live') {
-            if ((resort.liftsOpen || 0) > 0) color = 'green';
-            else if (resort.liftsOpen === 0) color = 'red'; // likely closed
-        } else if (resort.status === 'static_only' || !resort.status) {
-            color = 'gold';
+        // Determine Color based on status (matching table column 1)
+        let color = 'gray'; // Default
+        if (resort.status === 'live' || resort.status === 'ok') {
+            color = 'green'; // 🟢 Live data
+        } else if (resort.status === 'static_only') {
+            color = 'orange'; // 🟡 Static only
         } else if (resort.status === 'error') {
-            color = 'grey';
+            color = 'red'; // 🔴 Error
         }
 
-        // Custom Icon (Simple Circle Marker)
+        // Custom Icon (Circle Marker with white border)
         const marker = L.circleMarker([resort.latitude, resort.longitude], {
-            color: color,
+            color: 'white',
             fillColor: color,
-            fillOpacity: 0.8,
-            radius: 10
+            fillOpacity: 0.9,
+            radius: 8,
+            weight: 2
         }).addTo(map);
 
         // Popup Content
