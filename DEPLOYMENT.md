@@ -24,6 +24,12 @@
     *   Go to Supabase `SQL Editor`.
     *   Paste and Run to create tables.
 
+### 1.2 Enable Security (RLS)
+The included `schema.sql` also contains Security Policies.
+1.  **Row Level Security (RLS)** is enabled on all tables.
+2.  **Policies** are created to allow "Public Read" access for the frontend.
+3.  **Backend** writes using the `SUPABASE_ADMIN_KEY` (Service Role), bypassing RLS.
+
 ---
 
 ## Step 2: Deploy Backend to Render
@@ -50,7 +56,8 @@ In Render dashboard, add:
 - `NODE_ENV` = `production`
 - `ORS_API_KEY` = `your_actual_key_here`
 - `SUPABASE_URL` = `https://your-project.supabase.co`
-- `SUPABASE_KEY` = `your-anon-key`
+- `SUPABASE_KEY` = `your-anon-key` (Public/Anon)
+- `SUPABASE_ADMIN_KEY` = `your-service-role-key` (Secret - Required for Writing Data)
 
 ### 1.4 Deploy
 Click "Create Web Service". Render will:
