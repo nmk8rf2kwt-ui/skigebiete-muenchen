@@ -52,6 +52,10 @@ npm run test:parsers
 
 Siehe [DEPLOYMENT.md](./DEPLOYMENT.md) für detaillierte Anweisungen.
 
+## Roadmap
+
+Geplante Features und Verbesserungen sind im [BACKLOG.md](./BACKLOG.md) dokumentiert.
+
 ## CI/CD Pipeline
 
 Jeder Push auf `main` triggert:
