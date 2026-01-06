@@ -702,6 +702,295 @@ export default {
 
 ---
 
+#### BACK-022: Admin Data Quality Dashboard (Internes Monitoring)
+**Status:** 🔴 Nicht implementiert  
+**Priorität:** P1 (High)  
+**Beschreibung:** Interne Admin-Seite zur Überwachung aller geparsten Daten mit Timestamps und Qualitätsindikatoren. Später erweiterbar zu öffentlichen Skigebiets-Detailseiten.
+
+**Ziel:**
+Eine zentrale Übersicht aller gecrawlten Daten pro Skigebiet für das interne Team zur Qualitätssicherung.
+
+**Phase 1: Internes Admin-Dashboard**
+
+**UI-Design:**
+
+```
++----------------------------------------------------------+
+|  🔒 Admin Dashboard - Datenqualität                      |
++----------------------------------------------------------+
+| Skigebiet: [Dropdown: Alle Skigebiete ▼]               |
+| Letzter Crawl: 06.01.2026, 12:15 Uhr                     |
+| Status: 🟢 Live  |  Parser: spitzingsee.js  |  🔄 Refresh |
++----------------------------------------------------------+
+
++------------------------+------------------------+
+| 🎿 LIFTE & PISTEN      | ❄️ SCHNEE & WETTER      |
++------------------------+------------------------+
+| Lifte Gesamt:     10   | Schneehöhe Berg: 45cm  |
+| Lifte Geöffnet:   8    | Schneehöhe Tal:  30cm  |
+| Lifte Status:     80%  | Letzter Schneefall:    |
+|                        |   vor 2 Tagen          |
+| Pisten Gesamt:    15   |                        |
+| Pisten Geöffnet: 12   | Wetter: ☀️ Sonnig      |
+| Pisten Status:    80%  | Temp: 5°C / -2°C      |
+|                        | Wind: 15 km/h          |
+| 📊 Details anzeigen   | 📊 7-Tage Forecast   |
++------------------------+------------------------+
+
++------------------------+------------------------+
+| 💰 PREISE             | ⏰ BETRIEBSZEITEN       |
++------------------------+------------------------+
+| Tageskarte:            | Saison:                |
+|   Erwachsene: €49.50  |   01.12 - 31.03        |
+|   Jugend:     €39.50  |                        |
+|   Kinder:     €24.50  | Öffnungszeiten:        |
+|                        |   08:30 - 16:30        |
+| Mehrtages:             |                        |
+|   2 Tage: €95.00     | Letztes Update:        |
+|   3 Tage: €140.00    |   06.01.2026, 08:00    |
++------------------------+------------------------+
+
++----------------------------------------------------------+
+| 📊 DETAILLIERTE LIFT-LISTE                              |
++----------------------------------------------------------+
+| Nr | Name              | Typ        | Status | Kapazität |
+|----|-------------------|------------|--------|----------|
+| 1  | Taubensteinbahn   | Gondel     | 🟢 Offen | 2400/h   |
+| 2  | Rotwandlift       | Sessellift | 🟢 Offen | 1800/h   |
+| 3  | Übungslift        | Schlepper  | 🔴 Zu    | 800/h    |
+| ... (alle Lifte)                                         |
++----------------------------------------------------------+
+
++----------------------------------------------------------+
+| 🎿 DETAILLIERTE PISTEN-LISTE                            |
++----------------------------------------------------------+
+| Nr | Name         | Länge | Schwierigkeit | Status      |
+|----|--------------|-------|---------------|-------------|
+| 1  | Panorama     | 2.5km | 🟢 Blau       | 🟢 Geöffnet  |
+| 2  | Steilhang    | 1.8km | 🔴 Schwarz    | 🟢 Geöffnet  |
+| 3  | Familienabf. | 3.2km | 🟢 Blau       | 🔴 Geschlossen|
+| ... (alle Pisten)                                        |
++----------------------------------------------------------+
+
++----------------------------------------------------------+
+| 🚨 DATENQUALITÄT & WARNUNGEN                            |
++----------------------------------------------------------+
+| ✅ Alle Pflichtfelder vorhanden                           |
+| ⚠️ Webcam-URL nicht erreichbar (404)                      |
+| ✅ Parser-Success-Rate: 98% (letzte 7 Tage)              |
+| 🟡 Letzte Validierung: vor 3 Tagen (siehe BACK-020)    |
++----------------------------------------------------------+
+
++----------------------------------------------------------+
+| 📝 ROHDATEN (JSON)                                       |
++----------------------------------------------------------+
+| [Expandable JSON Viewer mit allen geparsten Daten]      |
++----------------------------------------------------------+
+```
+
+**Daten-Kategorien:**
+
+1. **Header-Informationen**
+   - Skigebiet-Name
+   - Letzter Crawl-Zeitpunkt
+   - Parser-Status (🟢/🟡/🔴)
+   - Parser-Dateiname
+   - Refresh-Button (manueller Re-Crawl)
+
+2. **Lifte & Pisten**
+   - Anzahl gesamt/geöffnet
+   - Prozentuale Auslastung
+   - Detaillierte Liste mit:
+     - Lift-Name, Typ, Status, Kapazität
+     - Pisten-Name, Länge, Schwierigkeit, Status
+
+3. **Schnee & Wetter**
+   - Schneehöhe Berg/Tal
+   - Letzter Schneefall (Datum)
+   - Aktuelles Wetter (Icon + Text)
+   - Temperatur (Max/Min)
+   - Wind
+   - 7-Tage-Forecast
+
+4. **Preise**
+   - Tageskarten (Erwachsene/Jugend/Kinder)
+   - Mehrtages-Karten
+   - Saisonkarten (optional)
+   - Letztes Update-Datum
+
+5. **Betriebszeiten**
+   - Saisonzeiten (Start/Ende)
+   - Tägliche Öffnungszeiten
+   - Besondere Öffnungszeiten (Feiertage, etc.)
+
+6. **Datenqualität**
+   - Vollständigkeits-Check
+   - Warnungen bei fehlenden Daten
+   - Parser-Success-Rate
+   - Letzte Validierung (BACK-020)
+
+7. **Rohdaten**
+   - Kompletter JSON-Dump
+   - Expandable/Collapsible
+   - Copy-to-Clipboard Button
+
+**Technische Implementierung:**
+
+```javascript
+// Backend: Admin API Endpoint
+app.get('/admin/resort/:resortId/details', async (req, res) => {
+  const { resortId } = req.params;
+  
+  // Statische Daten
+  const staticData = await getStaticResortData(resortId);
+  
+  // Live-Daten (letzter Crawl)
+  const liveData = await getLatestCrawlData(resortId);
+  
+  // Parser-Metriken
+  const parserMetrics = await getParserMetrics(resortId, 7); // 7 Tage
+  
+  // Validierungs-Historie
+  const validationHistory = await getValidationHistory(resortId, 1);
+  
+  res.json({
+    resort: {
+      ...staticData,
+      ...liveData
+    },
+    metadata: {
+      lastCrawl: liveData.crawledAt,
+      parserFile: `${resortId}.js`,
+      status: liveData.status,
+      parserMetrics,
+      lastValidation: validationHistory[0]
+    },
+    quality: {
+      completeness: calculateCompleteness(liveData),
+      warnings: detectWarnings(liveData),
+      successRate: parserMetrics.successRate
+    },
+    rawData: liveData // Kompletter JSON-Dump
+  });
+});
+
+// Vollständigkeits-Check
+function calculateCompleteness(data) {
+  const requiredFields = [
+    'liftsOpen', 'liftsTotal', 'snow', 'weather', 
+    'price', 'website', 'latitude', 'longitude'
+  ];
+  
+  const presentFields = requiredFields.filter(field => data[field] != null);
+  return {
+    percentage: (presentFields.length / requiredFields.length) * 100,
+    missing: requiredFields.filter(field => data[field] == null)
+  };
+}
+
+// Warnungen erkennen
+function detectWarnings(data) {
+  const warnings = [];
+  
+  if (!data.webcam) warnings.push('Webcam-URL fehlt');
+  if (!data.lifts || data.lifts.length === 0) warnings.push('Keine Lift-Details');
+  if (!data.slopes || data.slopes.length === 0) warnings.push('Keine Pisten-Details');
+  if (data.liftsOpen === 0) warnings.push('Alle Lifte geschlossen');
+  
+  return warnings;
+}
+```
+
+```html
+<!-- Frontend: Admin Dashboard -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <title>Admin Dashboard - Datenqualität</title>
+  <link rel="stylesheet" href="/admin/css/dashboard.css">
+</head>
+<body>
+  <div class="admin-container">
+    <header>
+      <h1>🔒 Admin Dashboard - Datenqualität</h1>
+      <select id="resortSelector" onchange="loadResort(this.value)">
+        <option value="">Alle Skigebiete</option>
+        <!-- Dynamisch gefüllt -->
+      </select>
+    </header>
+    
+    <div class="resort-details" id="resortDetails">
+      <!-- Dynamisch gefüllt via JavaScript -->
+    </div>
+  </div>
+  
+  <script src="/admin/js/dashboard.js"></script>
+</body>
+</html>
+```
+
+**Features:**
+
+1. **Dropdown-Navigation**
+   - Alle Skigebiete auswählbar
+   - Schnellsuche/Filter
+
+2. **Live-Refresh**
+   - Button zum manuellen Re-Crawl
+   - Auto-Refresh alle 5 Minuten (optional)
+
+3. **Expandable Sections**
+   - Lift-Details ein-/ausklappbar
+   - Pisten-Details ein-/ausklappbar
+   - JSON-Rohdaten ein-/ausklappbar
+
+4. **Export-Funktionen**
+   - JSON-Download
+   - CSV-Export (Lifte/Pisten)
+   - Screenshot-Funktion
+
+5. **Qualitäts-Indikatoren**
+   - Farbcodierung (🟢/🟡/🔴)
+   - Warnungen prominent anzeigen
+   - Success-Rate-Trend
+
+**Zugriffskontrolle:**
+- Route: `/admin/dashboard`
+- Basic Auth oder OAuth
+- Nur für Team-Mitglieder
+
+**Phase 2: Öffentliche Skigebiets-Detailseiten** (später)
+
+Das Admin-Dashboard dient als Basis für spätere öffentliche Detailseiten:
+
+- Route: `/resort/:resortId`
+- Schöneres Design
+- Nur relevante Daten für User
+- Keine Rohdaten/Metriken
+- SEO-optimiert
+- Responsive Design
+
+**Aufwand:** 3-4 Tage  
+**Dateien:** 
+- `admin/dashboard.html` (neu)
+- `admin/js/dashboard.js` (neu)
+- `admin/css/dashboard.css` (neu)
+- `backend/routes/admin.js` (erweitern)
+- `backend/services/dataQuality.js` (neu)
+
+**Abhängigkeiten:** 
+- Authentication-System
+- Zugriff auf Crawl-Historie
+
+**Vorteile:**
+- ✅ Schnelle Datenqualitäts-Überprüfung
+- ✅ Identifikation von Parser-Problemen
+- ✅ Basis für spätere User-Features
+- ✅ Dokumentation der Datenstruktur
+- ✅ Debugging-Tool für Entwickler
+
+---
+
 ### 🟡 P2 - Medium Priority
 
 #### BACK-005: Detailansicht pro Skigebiet
@@ -1137,24 +1426,28 @@ const savedFilters = JSON.parse(localStorage.getItem('resortFilters'));
 
 ## 📊 Statistik
 
-**Gesamt:** 21 Backlog Items
+**Gesamt:** 22 Backlog Items
 
 **Nach Priorität:**
 - P0 (Critical): 1
-- P1 (High): 8
+- P1 (High): 9
 - P2 (Medium): 7
 - P3 (Low): 5
 
 **Nach Status:**
-- 🔴 Nicht implementiert: 18
+- 🔴 Nicht implementiert: 19
 - 🟡 Teilweise implementiert: 3
 - 🟢 Implementiert: 0
 
-**Geschätzter Gesamtaufwand:** 110-157 Tage
+**Geschätzter Gesamtaufwand:** 113-161 Tage
 
 ---
 
 ## 🔄 Changelog
+
+### 2026-01-06 (Update 5)
+- BACK-022 hinzugefügt: Admin Data Quality Dashboard (Internes Monitoring)
+- Gesamt: 22 Items
 
 ### 2026-01-06 (Update 4)
 - BACK-021 hinzugefügt: Skigebiets-Expansion (DE/AT/CH) mit dynamischen Filtern
