@@ -198,9 +198,12 @@ async function handleAddressSearch() {
   }
 
   if (query.length < 3) {
-    alert("⚠️ Die Eingabe ist zu kurz. Bitte geben Sie mindestens 3 Zeichen ein.");
+    showError("⚠️ Die Eingabe ist zu kurz. Bitte geben Sie mindestens 3 Zeichen ein.");
     return;
   }
+
+  // Hide previous errors
+  hideError();
 
   // Show loading state
   const btn = document.getElementById("searchBtn");
@@ -235,7 +238,7 @@ async function handleAddressSearch() {
     if (err.message === "NOT_FOUND") {
       alert("❌ Adresse nicht gefunden.\n\nTipps:\n• Versuchen Sie nur den Ortsnamen (z.B. \"Augsburg\")\n• Prüfen Sie die Schreibweise\n• Verwenden Sie bekannte Städte in Bayern\n\nBeispiele:\n• Rosenheim\n• Garmisch-Partenkirchen\n• Marienplatz, München");
     } else if (err.message === "INVALID_RESPONSE") {
-      alert("❌ Ungültige Antwort vom Server. Bitte versuchen Sie es später erneut.");
+      showError("❌ Ungültige Antwort vom Server. Bitte versuchen Sie es später erneut.");
     } else {
       alert("❌ Fehler bei der Ortssuche.\n\nMögliche Ursachen:\n• Backend nicht erreichbar\n• Netzwerkproblem\n• API-Limit erreicht\n\nBitte versuchen Sie es später erneut.");
     }
