@@ -2,19 +2,19 @@
     {
         "id": "spitzingsee",
         "name": "Spitzingsee - Tegernsee",
-        "distance": 60,
+        "distance": 71,
         "piste_km": 20,
         "lifts": 10,
-        "price": 51.00,
+        "price": 51,
         "classification": "Familie",
         "website": "https://www.alpenbahnen-spitzingsee.de",
         "latitude": 47.6667,
         "longitude": 11.8833,
         "webcam": "https://www.foto-webcam.eu/webcam/spitzingsee/",
         "priceDetail": {
-            "adult": 51.00,
-            "youth": 44.00,
-            "child": 24.00,
+            "adult": 51,
+            "youth": 44,
+            "child": 24,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -22,19 +22,19 @@
     {
         "id": "brauneck",
         "name": "Brauneck / Lenggries",
-        "distance": 60,
+        "distance": 63,
         "piste_km": 34,
         "lifts": 15,
-        "price": 53.00,
+        "price": 53,
         "classification": "Genuss",
         "website": "https://www.brauneck-bergbahn.de",
-        "latitude": 47.6500,
+        "latitude": 47.65,
         "longitude": 11.5667,
         "webcam": "https://www.foto-webcam.eu/webcam/brauneck/",
         "priceDetail": {
-            "adult": 53.00,
-            "youth": 46.00,
-            "child": 26.00,
+            "adult": 53,
+            "youth": 46,
+            "child": 26,
             "currency": "€",
             "info": "Tageskarte 2024/25"
         }
@@ -42,39 +42,96 @@
     {
         "id": "garmisch",
         "name": "Garmisch-Classic",
-        "distance": 75,
+        "distance": 74,
         "piste_km": 40,
         "lifts": 18,
-        "price": 69.00,
+        "price": 69,
         "classification": "Sportlich",
         "website": "https://zugspitze.de",
         "latitude": 47.4814,
         "longitude": 11.0953,
         "webcam": "https://www.foto-webcam.eu/webcam/garmisch/",
         "priceDetail": {
-            "adult": 69.00,
-            "youth": 55.00,
-            "child": 35.50,
+            "adult": 69,
+            "youth": 55,
+            "child": 35.5,
             "currency": "€",
             "info": "Tageskarte Hauptsaison 2025/26"
-        }
+        },
+        "seasons": [
+            {
+                "name": "Hauptsaison (Weihnachten)",
+                "start": "2025-12-20",
+                "end": "2026-01-06",
+                "priceDetail": {
+                    "adult": 69,
+                    "youth": 55,
+                    "child": 35.5,
+                    "currency": "€"
+                }
+            },
+            {
+                "name": "Hauptsaison (Fasching)",
+                "start": "2026-02-14",
+                "end": "2026-02-22",
+                "priceDetail": {
+                    "adult": 69,
+                    "youth": 55,
+                    "child": 35.5,
+                    "currency": "€"
+                }
+            },
+            {
+                "name": "Nebensaison (Start)",
+                "start": "2025-12-13",
+                "end": "2025-12-19",
+                "priceDetail": {
+                    "adult": 67,
+                    "youth": 53.5,
+                    "child": 33.5,
+                    "currency": "€"
+                }
+            },
+            {
+                "name": "Nebensaison (Mitte)",
+                "start": "2026-01-07",
+                "end": "2026-02-13",
+                "priceDetail": {
+                    "adult": 67,
+                    "youth": 53.5,
+                    "child": 33.5,
+                    "currency": "€"
+                }
+            },
+            {
+                "name": "Nebensaison (Ende)",
+                "start": "2026-02-23",
+                "end": "2026-03-29",
+                "priceDetail": {
+                    "adult": 67,
+                    "youth": 53.5,
+                    "child": 33.5,
+                    "currency": "€"
+                }
+            }
+        ]
     },
     {
         "id": "sudelfeld",
         "name": "Sudelfeld - Bayrischzell",
-        "distance": 75,
+        "distance": 57,
         "piste_km": 31,
         "lifts": 13,
-        "price": 52.00,
+        "price": 52,
         "classification": "Familie",
         "website": "https://www.sudelfeld.de",
         "latitude": 47.6833,
         "longitude": 12.0833,
         "webcam": "https://www.foto-webcam.eu/webcam/sudelfeld/",
         "priceDetail": {
-            "adult": 52.00,
-            "youth": 42.00,
-            "child": 26.00,
+            "adult": 52,
+            "youth": 42,
+            "child": 26,
             "currency": "€",
             "info": "Tageskarte 2024/25"
         }
@@ -82,10 +139,10 @@
     {
         "id": "zugspitze",
         "name": "Zugspitze",
-        "distance": 90,
+        "distance": 81,
         "piste_km": 20,
         "lifts": 10,
-        "price": 69.00,
+        "price": 69,
         "classification": "Gletscher",
         "website": "https://zugspitze.de",
         "latitude": 47.4566,
@@ -93,9 +150,9 @@
         "address": "Am Eibsee 6, 82491 Grainau",
         "webcam": "https://www.foto-webcam.eu/webcam/zugspitze/",
         "priceDetail": {
-            "adult": 69.00,
-            "youth": 55.00,
-            "child": 34.50,
+            "adult": 69,
+            "youth": 55,
+            "child": 34.5,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -103,19 +160,19 @@
     {
         "id": "wilder-kaiser",
         "name": "SkiWelt Wilder Kaiser",
-        "distance": 80,
+        "distance": 99,
         "piste_km": 270,
         "lifts": 80,
-        "price": 69.00,
+        "price": 69,
         "classification": "Großraum",
         "website": "https://www.skiwelt.at",
-        "latitude": 47.4500,
+        "latitude": 47.45,
         "longitude": 12.1833,
         "webcam": "https://www.foto-webcam.eu/webcam/ellmau/",
         "priceDetail": {
-            "adult": 69.00,
-            "youth": 52.00,
-            "child": 34.50,
+            "adult": 69,
+            "youth": 52,
+            "child": 34.5,
             "currency": "€",
             "info": "Tageskarte Hauptsaison"
         }
@@ -123,18 +180,18 @@
     {
         "id": "hochkoessen",
         "name": "Hochkössen",
-        "distance": 80,
+        "distance": 88,
         "piste_km": 22,
         "lifts": 11,
-        "price": 36.00,
+        "price": 36,
         "classification": "Familie",
         "website": "https://www.bergbahnen-koessen.at",
-        "latitude": 47.6500,
+        "latitude": 47.65,
         "longitude": 12.4167,
         "priceDetail": {
-            "adult": 36.00,
-            "youth": 25.00,
-            "child": 18.00,
+            "adult": 36,
+            "youth": 25,
+            "child": 18,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -142,18 +199,18 @@
     {
         "id": "winklmoos",
         "name": "Reit im Winkl (Winklmoos)",
-        "distance": 90,
+        "distance": 88,
         "piste_km": 44,
         "lifts": 12,
-        "price": 63.00,
+        "price": 63,
         "classification": "Familie",
         "website": "https://www.winklmoosalm.de",
         "latitude": 47.6667,
         "longitude": 12.5167,
         "priceDetail": {
-            "adult": 63.00,
-            "youth": 47.50,
-            "child": 31.50,
+            "adult": 63,
+            "youth": 47.5,
+            "child": 31.5,
             "currency": "€",
             "info": "Tageskarte Hauptsaison 2025/26"
         }
@@ -161,18 +218,18 @@
     {
         "id": "steinplatte",
         "name": "Steinplatte Waidring",
-        "distance": 95,
+        "distance": 122,
         "piste_km": 42,
         "lifts": 14,
-        "price": 63.00,
+        "price": 63,
         "classification": "Sportlich",
         "website": "https://www.steinplatte.tirol",
         "latitude": 47.6316,
         "longitude": 12.5621,
         "priceDetail": {
-            "adult": 63.00,
-            "youth": 47.50,
-            "child": 31.50,
+            "adult": 63,
+            "youth": 47.5,
+            "child": 31.5,
             "currency": "€",
             "info": "Tageskarte Hauptsaison 2025/26"
         }
@@ -180,18 +237,18 @@
     {
         "id": "ehrwald",
         "name": "Ehrwalder Almbahn",
-        "distance": 90,
+        "distance": 105,
         "piste_km": 27,
         "lifts": 7,
-        "price": 68.00,
+        "price": 68,
         "classification": "Familie",
         "website": "https://www.almbahn.at",
-        "latitude": 47.4300,
-        "longitude": 10.9400,
+        "latitude": 47.43,
+        "longitude": 10.94,
         "priceDetail": {
-            "adult": 68.00,
-            "youth": 54.50,
-            "child": 34.00,
+            "adult": 68,
+            "youth": 54.5,
+            "child": 34,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -199,18 +256,18 @@
     {
         "id": "lermoos",
         "name": "Lermoos / Grubigstein",
-        "distance": 95,
+        "distance": 97,
         "piste_km": 27,
         "lifts": 8,
-        "price": 68.00,
+        "price": 68,
         "classification": "Genuss",
         "website": "https://www.bergbahnen-langes.at",
-        "latitude": 47.4000,
+        "latitude": 47.4,
         "longitude": 10.8833,
         "priceDetail": {
-            "adult": 68.00,
-            "youth": 54.50,
-            "child": 34.00,
+            "adult": 68,
+            "youth": 54.5,
+            "child": 34,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -218,19 +275,19 @@
     {
         "id": "tiroler-zugspitzbahn",
         "name": "Tiroler Zugspitzbahn",
-        "distance": 95,
+        "distance": 105,
         "piste_km": 17,
         "lifts": 9,
-        "price": 69.00,
+        "price": 69,
         "classification": "Genuss",
         "website": "https://www.zugspitze.at",
         "latitude": 47.4266,
         "longitude": 10.9419,
         "address": "Obermoos 1, 6632 Ehrwald, Österreich",
         "priceDetail": {
-            "adult": 69.00,
-            "youth": 55.00,
-            "child": 34.50,
+            "adult": 69,
+            "youth": 55,
+            "child": 34.5,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -238,18 +295,18 @@
     {
         "id": "st_johann",
         "name": "St. Johann in Tirol",
-        "distance": 95,
+        "distance": 101,
         "piste_km": 40,
         "lifts": 16,
-        "price": 62.00,
+        "price": 62,
         "classification": "Familie",
         "website": "https://www.kitzbueheler-alpen.com/de/stjo/aktuelles/geoeffnete-lifte.html",
         "latitude": 47.5233,
         "longitude": 12.4232,
         "priceDetail": {
-            "adult": 62.00,
-            "youth": 50.00,
-            "child": 31.00,
+            "adult": 62,
+            "youth": 50,
+            "child": 31,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -257,19 +314,19 @@
     {
         "id": "ski_juwel",
         "name": "Ski Juwel Alpbachtal",
-        "distance": 100,
+        "distance": 113,
         "piste_km": 113,
         "lifts": 45,
-        "price": 68.50,
+        "price": 68.5,
         "classification": "Großraum",
         "website": "https://www.skijuwel.com/de/winter/lifte-und-pisten",
         "latitude": 47.3815,
         "longitude": 11.9789,
         "webcam": "https://www.skijuwel.com/de/winter/webcams",
         "priceDetail": {
-            "adult": 68.50,
-            "youth": 55.00,
-            "child": 34.50,
+            "adult": 68.5,
+            "youth": 55,
+            "child": 34.5,
             "currency": "€",
             "info": "Tageskarte Hauptsaison 2025/26"
         }
@@ -277,37 +334,99 @@
     {
         "id": "kitzbuehel",
         "name": "Kitzbühel / Kirchberg",
-        "distance": 100,
+        "distance": 110,
         "piste_km": 233,
         "lifts": 58,
-        "price": 72.00,
+        "price": 72,
         "classification": "Großraum",
         "website": "https://www.kitzski.at",
         "latitude": 47.4464,
         "longitude": 12.3922,
         "priceDetail": {
-            "adult": 72.00,
-            "youth": 54.00,
-            "child": 36.00,
+            "adult": 79.5,
+            "youth": 59.5,
+            "child": 39.5,
             "currency": "€",
-            "info": "Tageskarte Hauptsaison"
-        }
+            "info": "Tageskarte Premium-Saison"
+        },
+        "seasons": [
+            {
+                "name": "Super Saver",
+                "start": "2025-11-07",
+                "end": "2025-12-06",
+                "priceDetail": {
+                    "adult": 66,
+                    "youth": 49.5,
+                    "child": 33,
+                    "currency": "€",
+                    "info": "Super Saver"
+                }
+            },
+            {
+                "name": "Super Saver (Late)",
+                "start": "2026-04-07",
+                "end": "2026-04-12",
+                "priceDetail": {
+                    "adult": 66,
+                    "youth": 49.5,
+                    "child": 33,
+                    "currency": "€",
+                    "info": "Super Saver"
+                }
+            },
+            {
+                "name": "Saver Season",
+                "start": "2025-12-07",
+                "end": "2025-12-20",
+                "priceDetail": {
+                    "adult": 72.5,
+                    "youth": 54,
+                    "child": 36,
+                    "currency": "€",
+                    "info": "Saver Season"
+                }
+            },
+            {
+                "name": "Saver Season (Spring)",
+                "start": "2026-03-15",
+                "end": "2026-04-06",
+                "priceDetail": {
+                    "adult": 72.5,
+                    "youth": 54,
+                    "child": 36,
+                    "currency": "€",
+                    "info": "Saver Season"
+                }
+            },
+            {
+                "name": "Premium Season",
+                "start": "2025-12-21",
+                "end": "2026-03-14",
+                "priceDetail": {
+                    "adult": 79.5,
+                    "youth": 59.5,
+                    "child": 39.5,
+                    "currency": "€",
+                    "info": "Premium Season"
+                }
+            }
+        ]
     },
     {
         "id": "berwang",
         "name": "Berwang",
-        "distance": 110,
+        "distance": 112,
         "piste_km": 36,
         "lifts": 12,
-        "price": 68.00,
+        "price": 68,
         "classification": "Genuss",
         "website": "https://www.berwang.tirol",
         "latitude": 47.4077,
         "longitude": 10.7475,
         "priceDetail": {
-            "adult": 68.00,
-            "youth": 54.50,
-            "child": 34.00,
+            "adult": 68,
+            "youth": 54.5,
+            "child": 34,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -315,18 +434,18 @@
     {
         "id": "seefeld",
         "name": "Seefeld / Rosshütte",
-        "distance": 100,
+        "distance": 104,
         "piste_km": 19,
         "lifts": 10,
-        "price": 61.50,
+        "price": 61.5,
         "classification": "Familie",
         "website": "https://www.seefeld.com",
-        "latitude": 47.3300,
+        "latitude": 47.33,
         "longitude": 11.1877,
         "priceDetail": {
-            "adult": 59.50,
-            "youth": 56.00,
-            "child": 40.00,
+            "adult": 59.5,
+            "youth": 56,
+            "child": 40,
             "currency": "€",
             "info": "Tageskarte (ab 09:00) 2025/26"
         }
@@ -334,18 +453,18 @@
     {
         "id": "hahnenkamm",
         "name": "Hahnenkamm (Reutte)",
-        "distance": 110,
+        "distance": 129,
         "piste_km": 16,
         "lifts": 5,
-        "price": 52.00,
+        "price": 52,
         "classification": "Genuss",
         "website": "https://www.bergwelt-hahnenkamm.at",
         "latitude": 47.4241,
         "longitude": 12.3652,
         "priceDetail": {
-            "adult": 52.00,
-            "youth": 36.00,
-            "child": 21.00,
+            "adult": 52,
+            "youth": 36,
+            "child": 21,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -353,18 +472,18 @@
     {
         "id": "lofer",
         "name": "Lofer / Almenwelt",
-        "distance": 110,
+        "distance": 115,
         "piste_km": 46,
         "lifts": 10,
-        "price": 62.00,
+        "price": 62,
         "classification": "Familie",
         "website": "https://www.skialm-lofer.com",
-        "latitude": 47.5800,
-        "longitude": 12.6800,
+        "latitude": 47.58,
+        "longitude": 12.68,
         "priceDetail": {
-            "adult": 62.00,
-            "youth": 49.50,
-            "child": 31.00,
+            "adult": 62,
+            "youth": 49.5,
+            "child": 31,
             "currency": "€",
             "info": "Tageskarte Hauptsaison 2025/26"
         }
@@ -372,18 +491,18 @@
     {
         "id": "ofterschwang",
         "name": "Ofterschwang",
-        "distance": 110,
+        "distance": 122,
         "piste_km": 16,
         "lifts": 7,
-        "price": 54.50,
+        "price": 54.5,
         "classification": "Sportlich",
         "website": "https://www.go-ofterschwang.de",
-        "latitude": 47.5000,
+        "latitude": 47.5,
         "longitude": 10.2333,
         "priceDetail": {
-            "adult": 54.50,
-            "youth": 41.50,
-            "child": 24.00,
+            "adult": 54.5,
+            "youth": 41.5,
+            "child": 24,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -391,18 +510,18 @@
     {
         "id": "bolsterlang",
         "name": "Bolsterlang",
-        "distance": 110,
+        "distance": 125,
         "piste_km": 17,
         "lifts": 5,
-        "price": 54.50,
+        "price": 54.5,
         "classification": "Genuss",
         "website": "https://www.hoernerbahn.de",
         "latitude": 47.4666,
         "longitude": 10.2333,
         "priceDetail": {
-            "adult": 54.50,
-            "youth": 41.50,
-            "child": 24.00,
+            "adult": 54.5,
+            "youth": 41.5,
+            "child": 24,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -410,18 +529,18 @@
     {
         "id": "oberaudorf",
         "name": "Oberaudorf - Hocheck",
-        "distance": 85,
+        "distance": 54,
         "piste_km": 12,
         "lifts": 5,
-        "price": 38.00,
+        "price": 38,
         "classification": "Familie",
         "website": "https://www.hocheck.com",
         "latitude": 47.6461,
         "longitude": 12.1764,
         "priceDetail": {
-            "adult": 38.00,
-            "youth": 34.00,
-            "child": 24.00,
+            "adult": 38,
+            "youth": 34,
+            "child": 24,
             "currency": "€",
             "info": "Tageskarte inkl. Nachtski"
         }
@@ -429,18 +548,18 @@
     {
         "id": "kampenwand",
         "name": "Kampenwand",
-        "distance": 90,
+        "distance": 68,
         "piste_km": 12,
         "lifts": 4,
-        "price": 32.00,
+        "price": 32,
         "classification": "Sportlich",
         "website": "https://www.kampenwand.de",
         "latitude": 47.7644,
         "longitude": 12.3551,
         "priceDetail": {
-            "adult": 32.00,
+            "adult": 32,
             "youth": null,
-            "child": 20.00,
+            "child": 20,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -448,19 +567,19 @@
     {
         "id": "oberstdorf",
         "name": "Oberstdorf / Kleinwalsertal",
-        "distance": 160,
+        "distance": 131,
         "piste_km": 130,
         "lifts": 48,
-        "price": 68.70,
+        "price": 68.7,
         "classification": "Großraum",
         "website": "https://www.ok-bergbahnen.com",
         "latitude": 47.4072,
         "longitude": 10.2783,
         "webcam": "https://www.foto-webcam.eu/webcam/nebelhorn/",
         "priceDetail": {
-            "adult": 68.70,
-            "youth": 52.90,
-            "child": 29.00,
+            "adult": 68.7,
+            "youth": 52.9,
+            "child": 29,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -468,19 +587,19 @@
     {
         "id": "oberjoch",
         "name": "Oberjoch (Bad Hindelang)",
-        "distance": 125,
+        "distance": 117,
         "piste_km": 30,
         "lifts": 6,
-        "price": 52.50,
+        "price": 52.5,
         "classification": "Familie",
         "website": "https://www.bergbahnen-hindelang-oberjoch.de",
         "latitude": 47.5136,
         "longitude": 10.4042,
         "webcam": "https://www.foto-webcam.eu/webcam/iseler/",
         "priceDetail": {
-            "adult": 52.50,
-            "youth": 42.50,
-            "child": 24.00,
+            "adult": 52.5,
+            "youth": 42.5,
+            "child": 24,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -488,19 +607,19 @@
     {
         "id": "balderschwang",
         "name": "Balderschwang",
-        "distance": 170,
+        "distance": 138,
         "piste_km": 41,
         "lifts": 12,
-        "price": 45.00,
+        "price": 45,
         "classification": "Familie",
         "website": "https://www.skigebiet-balderschwang.de",
         "latitude": 47.4622,
         "longitude": 10.1038,
         "webcam": "https://www.skigebiet-balderschwang.de/webcams/",
         "priceDetail": {
-            "adult": 45.00,
-            "youth": 38.00,
-            "child": 21.50,
+            "adult": 45,
+            "youth": 38,
+            "child": 21.5,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }
@@ -508,16 +627,16 @@
     {
         "id": "winterberg",
         "name": "Skiliftkarussell Winterberg",
-        "distance": 600,
+        "distance": 292,
         "piste_km": 27.5,
         "lifts": 26,
-        "price": 48.00,
+        "price": 48,
         "classification": "Familie",
         "website": "https://www.skiliftkarussell.de",
         "latitude": 51.196,
         "longitude": 8.526,
         "priceDetail": {
-            "adult": 48.00,
+            "adult": 48,
             "currency": "€",
             "info": "Tageskarte Hauptsaison"
         }
@@ -525,16 +644,16 @@
     {
         "id": "feldberg",
         "name": "Feldberg (Schwarzwald)",
-        "distance": 320,
+        "distance": 223,
         "piste_km": 30,
         "lifts": 14,
-        "price": 47.00,
+        "price": 47,
         "classification": "Sportlich",
         "website": "https://www.feldberg-erlebnis.de",
         "latitude": 47.859,
         "longitude": 8.005,
         "priceDetail": {
-            "adult": 47.00,
+            "adult": 47,
             "currency": "€",
             "info": "Tageskarte Hauptsaison"
         }
@@ -542,16 +661,16 @@
     {
         "id": "todtnauberg",
         "name": "Todtnauberg",
-        "distance": 330,
+        "distance": 239,
         "piste_km": 13,
         "lifts": 6,
-        "price": 38.00,
+        "price": 38,
         "classification": "Familie",
         "website": "https://www.skilifte-todtnauberg.de",
         "latitude": 47.848,
         "longitude": 7.945,
         "priceDetail": {
-            "adult": 38.00,
+            "adult": 38,
             "currency": "€",
             "info": "Tageskarte 2025/26"
         }

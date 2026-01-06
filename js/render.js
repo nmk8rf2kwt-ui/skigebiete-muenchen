@@ -118,17 +118,49 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
   });
 }
 
+
+// Helper to get current price based on date (Seasonal Pricing)
+function getCurrentPriceDetail(resort) {
+  if (!resort.seasons || !resort.seasons.length) {
+    return resort.priceDetail;
+  }
+
+  // Get local date as YYYY-MM-DD
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const todayStr = `${year}-${month}-${day}`;
+
+  // Find matching season
+  const currentSeason = resort.seasons.find(s => {
+    return todayStr >= s.start && todayStr <= s.end;
+  });
+
+  if (currentSeason) {
+    return {
+      ...currentSeason.priceDetail,
+      // Append season name to info if not present
+      info: currentSeason.priceDetail.info || currentSeason.name
+    };
+  }
+
+  // Fallback to default if no season matches (e.g. out of season)
+  return resort.priceDetail;
+}
+
 export function renderRow(row, data) {
   const isError = data.status === "error"; // || data.status === "unavailable";
   // Determine if data is missing or just zero
   const hasLive = data.status === "live";
 
   // Format price
-  // Format price
   let price = "-";
 
-  if (data.priceDetail) {
-    const pd = data.priceDetail;
+  // Dynamic Price Check
+  const pd = getCurrentPriceDetail(data);
+
+  if (pd) {
     const cur = pd.currency || "€";
     const fmt = (v) => v ? v.toFixed(2).replace('.', ',') + ' ' + cur : null;
 
