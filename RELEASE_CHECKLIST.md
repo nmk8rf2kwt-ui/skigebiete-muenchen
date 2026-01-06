@@ -25,6 +25,7 @@ This document defines the standardized check-up process for releasing new versio
 - [ ] **Interactivity**:
     - Details Modal opens/closes correctly.
     - Tooltips (Price, Difficulty) work on hover/touch.
+    - Seasonal Prices display correctly (High/Low logic).
     - Sorting works (asc/desc) for all columns.
     - Search filters table instantly.
 - [ ] **Visual Feedback**:

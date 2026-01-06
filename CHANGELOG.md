@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.2] - 2026-01-06
+
+### 🚀 Features
+- **Seasonal Pricing**: Implemented dynamic pricing logic based on season calendars (High/Low/Advantage seasons).
+    - **Frontend**: Automatically displays effective price for current date.
+    - **Backend**: Updated 26 resorts with 2025/2026 seasonal data.
+        - **Kitzbühel**: Premium vs. Saver seasons.
+        - **Wilder Kaiser**: Premium vs. Vantage seasons.
+        - **Garmisch-Classic**: High vs. Low season.
+        - **Ski Juwel**: High vs. Low season.
+        - **Hochkössen**: Info on dynamic pricing.
+
 ## [1.3.1] - 2026-01-06
 
 ### 🚀 Features
