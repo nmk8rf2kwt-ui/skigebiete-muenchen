@@ -1,55 +1,46 @@
+import { createResult, STATUS } from "../utils/parserUtils.js";
 import { fetchWithHeaders } from "../utils/fetcher.js";
-import * as cheerio from "cheerio";
 
 export const details = {
   id: "kitzbuehel",
   name: "Kitzbühel",
   url: "https://www.kitzski.at/de/aktuelle-info/kitzski-liftstatus.html",
+  apiUrl: "https://www.kitzski.at/webapi/micadoweb?api=SkigebieteManager/Micado.SkigebieteManager.Plugin.FacilityApi/ListFacilities.api&extensions=o&client=https%3A%2F%2Fsgm.kitzski.at&lang=de&location=&omitClosed=0&region=kitzski&season=winter&type=lift",
   district: "Kitzbühel",
 };
 
-export async function parse() {
-  const URL = details.url;
-  const res = await fetchWithHeaders(URL);
-  if (!res.ok) throw new Error("Failed to fetch KitzSki");
+export async function parse(options = {}) {
+  const res = await fetchWithHeaders(details.apiUrl, options);
+  if (!res.ok) throw new Error("Failed to fetch KitzSki API");
 
-  const html = await res.text();
-  const $ = cheerio.load(html);
+  const data = await res.json();
 
-  const lifts = {};
+  // API returns object with 'facilities' array (or sometimes just array?)
+  // Agent said: "The response contains a facilities array."
+  const facilities = data.facilities || [];
 
-  // Generic table parser for KitzSki
-  // Look for rows in tables that likely contain lift info
-  $("tbody tr").each((i, row) => {
-    const name = $(row).find("td").first().text().trim();
-    const statusHtml = $(row).html() || "";
-    
-    // Check key phrases or classes in the row
-    // Open: usually indicated by checkmarks, 'open' class, or 'In Betrieb' text if visible
-    // Closed: 'closed' class, 'Nicht in Betrieb'
-    
-    // Heuristic: If we find a green check or specific open class
-    const isOpen = statusHtml.includes("icon-check") || statusHtml.includes("open") || statusHtml.includes("status_1") ||  $(row).find(".open").length > 0;
-    const isClosed = statusHtml.includes("icon-close") || statusHtml.includes("closed") || statusHtml.includes("status_2") || $(row).find(".closed").length > 0;
+  if (facilities.length === 0) {
+    // Sometimes just 'data' is the array? Let's check keys if we fail
+    if (Array.isArray(data)) {
+      facilities.push(...data);
+    }
+  }
 
-    if (name && (isOpen || isClosed)) {
-      lifts[name] = isOpen ? "open" : "closed";
+  let liftsTotal = 0;
+  let liftsOpen = 0;
+
+  facilities.forEach(lift => {
+    liftsTotal++;
+    // status: 1 = Open, 2 = Closed? 
+    // Agent said: "status / operatingState: Integer value (1 usually indicates Geöffnet / Open)"
+    if (lift.operatingState === 1 || lift.status === 1 || lift.status === "opened") {
+      liftsOpen++;
     }
   });
 
-  const liftsTotal = Object.keys(lifts).length;
-  const liftsOpen = Object.values(lifts).filter((s) => s === "open").length;
-
   if (liftsTotal === 0) {
-    throw new Error("KitzSki parsing returned zero lifts. DOM structure might have changed.");
+    throw new Error("KitzSki parsing returned zero lifts from API");
   }
 
-  return {
-    lifts: {
-      total: liftsTotal,
-      open: liftsOpen,
-      status: liftsOpen === 0 ? "closed" : liftsOpen === liftsTotal ? "open" : "scheduled",
-    },
-    lastUpdated: new Date().toISOString(),
-  };
+  return createResult(details.id, { liftsOpen, liftsTotal }, "kitzski.at (API)");
 }

@@ -124,7 +124,17 @@ export function renderRow(row, data) {
   const hasLive = data.status === "live";
 
   // Format price
-  const price = data.price ? `€${data.price.toFixed(2)}` : "-";
+  let price = data.price ? `€${data.price.toFixed(2)}` : "-";
+  if (data.priceDetail) {
+    const pd = data.priceDetail;
+    const info = `
+Erwachsene: ${pd.currency}${pd.adult.toFixed(2)}
+Jugend: ${pd.currency}${pd.youth.toFixed(2)}
+Kinder: ${pd.currency}${pd.child.toFixed(2)}
+${pd.info || ""}
+`.trim();
+    price += ` <span title="${info}" style="cursor: help; margin-left: 2px;">ℹ️</span>`;
+  }
 
   // Format lifts
   let liftStatus = "-";
@@ -142,17 +152,46 @@ export function renderRow(row, data) {
     }
   }
 
-  // Format travel time
-  const travelTime = data.distance ? `${data.distance} min` : "-";
-  let travelDisplay = travelTime;
+  // Format travel time (Standard & Traffic)
+  const standardTime = data.distance || 0;
+  let standardDisplay = "-";
 
-  if (travelTime !== "-" && (data.latitude && data.longitude)) {
-    // Prefer address if available for cleaner navigation, otherwise validation coordinates
-    const destQuery = data.address ? encodeURIComponent(data.address) : `${data.latitude},${data.longitude}`;
-    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destQuery}&travelmode=driving`;
-    const tooltip = data.address ? `Ziel: ${data.address}` : "Navigation starten";
+  // 1. Standard Time with Link
+  if (standardTime) {
+    const timeText = `${standardTime} min`;
+    if (data.latitude && data.longitude) {
+      const destQuery = data.address ? encodeURIComponent(data.address) : `${data.latitude},${data.longitude}`;
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destQuery}&travelmode=driving`;
+      standardDisplay = `<a href="${mapsUrl}" target="_blank" title="Route planen (Google Maps)" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${timeText}</a>`;
+    } else {
+      standardDisplay = timeText;
+    }
+  }
 
-    travelDisplay = `<a href="${mapsUrl}" target="_blank" title="${tooltip}" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${travelTime}</a>`;
+  // 2. Traffic Time with Color
+  let trafficDisplay = '<span style="color: #bdc3c7; font-size: 0.9em;">-</span>'; // Default gray
+
+  // data.traffic comes from resortManager injection
+  if (data.traffic && data.traffic.duration) {
+    const liveTime = data.traffic.duration;
+    const delay = Math.max(0, liveTime - standardTime);
+    let style = "";
+
+    if (delay > 20) {
+      style = "color: #e74c3c; font-weight: bold;"; // Red (Heavy Traffic)
+    } else if (delay > 10) {
+      style = "color: #f39c12; font-weight: bold;"; // Orange/Yellow (Moderate)
+    } else if (delay > 0) {
+      style = "color: #f1c40f;"; // Yellow (Slight)
+    } else {
+      style = "color: #2ecc71;"; // Green (Good/Faster)
+    }
+
+    const delayText = delay > 0 ? ` (+${delay})` : '';
+    trafficDisplay = `<span style="${style}" title="Aktuell: ${liveTime} min${delayText}">${liveTime} min</span>`;
+  } else if (data.status === "live") {
+    // If live but no traffic data (API error or key missing), show Standard? Or "n.a."
+    trafficDisplay = `<span title="Keine Verkehrsdaten" style="color: #bdc3c7;">n.a.</span>`;
   }
 
   // Snow Display - use forecast data if available
@@ -287,7 +326,8 @@ export function renderRow(row, data) {
   row.innerHTML = `
     <td style="text-align: center;">${statusIndicator}</td>
     <td><a href="${data.website}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${data.name}</a></td>
-    <td>${travelDisplay}</td>
+    <td>${standardDisplay}</td>
+    <td>${trafficDisplay}</td>
     <td>${distanceDisplay}</td>
     <td>${data.piste_km ?? "-"} km</td>
     <td>${liftStatus}</td>

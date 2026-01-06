@@ -1,5 +1,4 @@
-import { fetchWithHeaders } from "../utils/fetcher.js";
-import * as cheerio from "cheerio";
+import { fetchHtml, createResult } from "../utils/parserUtils.js";
 
 export const details = {
     id: "hochkoessen",
@@ -8,51 +7,53 @@ export const details = {
     district: "Kitzbühel",
 };
 
-export async function parse() {
-    const URL = details.url;
-    const res = await fetchWithHeaders(URL);
-    if (!res.ok) throw new Error("Failed to fetch Hochkössen");
+export async function parse(options = {}) {
+    const $ = await fetchHtml(details.url, options);
 
-    const html = await res.text();
-    const $ = cheerio.load(html);
+    let liftsTotal = 0;
+    let liftsOpen = 0;
 
-    const lifts = {};
+    // Looking for list items with title and state
+    // Classes are hashed like "Title_title__oOG8L"
+    // We use partial matching
+    const titleElements = $("[class*='Title_title']");
 
-    // Kaiserwinkl list parsing
-    // Tables with lift names and status icons/text
+    // Iterate over titles (lift names) and find sibling state
+    titleElements.each((i, el) => {
+        const name = $(el).text().trim();
+        // Assuming the state is in the same row/container
+        // Find the closest common container or row then search for State
+        const row = $(el).closest("li, div[class*='Content_item']");
+        // Need to be loose here if we don't know the exact container class
+        // But usually titles are inside a container
 
-    $("table tr").each((i, row) => {
-        const name = $(row).find("td").first().text().trim();
-        const statusHtml = $(row).html() || "";
+        let stateText = "";
 
-        const isOpen = statusHtml.includes("icon-check") || statusHtml.includes("geöffnet") || statusHtml.includes("open");
-        const isClosed = statusHtml.includes("icon-close") || statusHtml.includes("geschlossen") || statusHtml.includes("closed");
+        // Try finding state within the parent container
+        if (row.length > 0) {
+            stateText = row.find("[class*='State_state']").text().trim();
+        } else {
+            // Fallback: search siblings
+            stateText = $(el).parent().find("[class*='State_state']").text().trim();
+        }
 
-        // Filter out slopes if possible, usually distinguishable by "Piste" in name or header
-        // But for now, getting data is priority.
+        const isOpen = stateText.toLowerCase().includes("geöffnet");
+        const isClosed = stateText.toLowerCase().includes("geschlossen");
+
         if (name && (isOpen || isClosed)) {
-            // Simple heuristic to avoid Pisten if they are explicitly named so
+            // Exclude slopes if possible. Heuristic: Piste usually has "Piste" or number only?
+            // But actually users want lifts.
+            // If name contains "Piste", skip?
             if (!name.toLowerCase().includes("piste") && !name.toLowerCase().includes("abfahrt")) {
-                lifts[name] = isOpen ? "open" : "closed";
+                liftsTotal++;
+                if (isOpen) liftsOpen++;
             }
         }
     });
 
-    const liftsTotal = Object.keys(lifts).length;
-    const liftsOpen = Object.values(lifts).filter((s) => s === "open").length;
-
     if (liftsTotal === 0) {
-        // Fallback: The user suggested tirol.at which has summary "8/11"
-        // If detailed parsing fails, we could try that, but let's throw for now to see in debug.
         throw new Error("Hochkössen parsing returned zero lifts");
     }
 
-    return {
-        lifts: {
-            total: liftsTotal,
-            open: liftsOpen,
-            status: liftsOpen === 0 ? "closed" : liftsOpen === liftsTotal ? "open" : "scheduled",
-        },
-        lastUpdated: new Date().toISOString(),
-    };
+    return createResult(details.id, { liftsOpen, liftsTotal }, "kaiserwinkl.com");
 }

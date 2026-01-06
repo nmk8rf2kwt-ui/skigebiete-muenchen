@@ -7,6 +7,7 @@ const __dirname = path.dirname(__filename);
 
 // history.js is in backend/, resorts.json is in backend/, data is in backend/data
 const DATA_DIR = path.join(__dirname, 'data/history');
+const TRAFFIC_DIR = path.join(__dirname, 'data/traffic');
 const RESORTS_FILE = path.join(__dirname, 'resorts.json');
 const RETENTION_DAYS = 30;
 
@@ -63,6 +64,39 @@ export function saveSnapshot(resortId, data) {
         return true;
     } catch (error) {
         console.error(`Error saving snapshot for ${resortId}:`, error);
+        return false;
+    }
+}
+
+// Ensure traffic directory exists
+function ensureTrafficDir() {
+    if (!fs.existsSync(TRAFFIC_DIR)) {
+        fs.mkdirSync(TRAFFIC_DIR, { recursive: true });
+    }
+}
+
+// Save traffic log
+export function saveTrafficLog(resortId, standardTime, currentTime) {
+    try {
+        ensureTrafficDir();
+        const date = new Date();
+        const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+        const timeStr = date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+
+        const filename = path.join(TRAFFIC_DIR, `${dateStr}_traffic.csv`);
+
+        // CSV Header if file doesn't exist
+        if (!fs.existsSync(filename)) {
+            fs.writeFileSync(filename, "Timestamp,ResortId,StandardTime,CurrentTime,Delay\n");
+        }
+
+        const delay = Math.max(0, currentTime - standardTime);
+        const line = `${timeStr},${resortId},${standardTime},${currentTime},${delay}\n`;
+
+        fs.appendFileSync(filename, line);
+        return true;
+    } catch (error) {
+        console.error(`Error saving traffic log for ${resortId}:`, error.message);
         return false;
     }
 }

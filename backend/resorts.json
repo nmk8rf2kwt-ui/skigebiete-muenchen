@@ -49,7 +49,14 @@
         "website": "https://www.sudelfeld.de",
         "latitude": 47.6833,
         "longitude": 12.0833,
-        "webcam": "https://www.foto-webcam.eu/webcam/sudelfeld/"
+        "webcam": "https://www.foto-webcam.eu/webcam/sudelfeld/",
+        "priceDetail": {
+            "adult": 52.00,
+            "youth": 42.00,
+            "child": 26.00,
+            "currency": "€",
+            "info": "Tageskarte 2024/25"
+        }
     },
     {
         "id": "zugspitze",
@@ -76,7 +83,14 @@
         "website": "https://www.skiwelt.at",
         "latitude": 47.4500,
         "longitude": 12.1833,
-        "webcam": "https://www.foto-webcam.eu/webcam/ellmau/"
+        "webcam": "https://www.foto-webcam.eu/webcam/ellmau/",
+        "priceDetail": {
+            "adult": 69.00,
+            "youth": 52.00,
+            "child": 34.50,
+            "currency": "€",
+            "info": "Tageskarte Hauptsaison"
+        }
     },
     {
         "id": "hochkoessen",
@@ -186,7 +200,14 @@
         "classification": "Sport",
         "website": "https://www.kitzski.at",
         "latitude": 47.4464,
-        "longitude": 12.3922
+        "longitude": 12.3922,
+        "priceDetail": {
+            "adult": 72.00,
+            "youth": 54.00,
+            "child": 36.00,
+            "currency": "€",
+            "info": "Tageskarte Hauptsaison"
+        }
     },
     {
         "id": "berwang",

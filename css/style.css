@@ -12,7 +12,8 @@ h1 {
   top: 0;
   background: #f4f6f9;
   margin: 0;
-  padding: 16px 0; /* Increased padding to maintain spacing without margin transparency */
+  padding: 16px 0;
+  /* Increased padding to maintain spacing without margin transparency */
   z-index: 1000;
 }
 
@@ -24,10 +25,12 @@ h1 {
 
 .controls {
   position: sticky;
-  top: 68px; /* Adjusted to sit below H1 */
+  top: 68px;
+  /* Adjusted to sit below H1 */
   background: #f4f6f9;
   margin: 0;
-  padding: 8px 0 16px 0; /* Padding bottom covers space to table header */
+  padding: 8px 0 16px 0;
+  /* Padding bottom covers space to table header */
   z-index: 900;
 }
 
@@ -69,10 +72,12 @@ th {
 
 thead th {
   position: sticky;
-  top: 130px; /* Adjusted for H1 + Controls height */
+  top: 130px;
+  /* Adjusted for H1 + Controls height */
   background: #e9eef3;
   z-index: 800;
-  box-shadow: 0 1px 0 #ccc; /* Fix for border-collapse rendering issues */
+  box-shadow: 0 1px 0 #ccc;
+  /* Fix for border-collapse rendering issues */
 }
 
 /* Zebra rows */
@@ -229,52 +234,72 @@ tr.unavailable small {
   }
 
   td:nth-child(3)::before {
-    content: "🚗 Reisezeit";
+    content: "🚗 Standard";
     color: #777;
   }
 
   td:nth-child(4)::before {
-    content: "🎿 Pisten";
+    content: "🚦 Aktuell";
     color: #777;
   }
 
   td:nth-child(5)::before {
-    content: "🚠 Lifte";
+    content: "📍 Distanz";
     color: #777;
   }
 
   td:nth-child(6)::before {
-    content: "💶 Preis";
+    content: "🎿 Pisten";
     color: #777;
   }
 
   td:nth-child(7)::before {
-    content: "👶 Typ";
+    content: "🚠 Lifte";
     color: #777;
   }
 
   td:nth-child(8)::before {
-    content: "❄️ Schnee";
+    content: "💶 Preis";
     color: #777;
   }
 
   td:nth-child(9)::before {
-    content: "🌤️ Wetter";
+    content: "👶 Typ";
     color: #777;
   }
 
   td:nth-child(10)::before {
-    content: "📷 Cam";
+    content: "❄️ Schnee";
     color: #777;
   }
 
   td:nth-child(11)::before {
+    content: "🌨️ Letzter Fall";
+    color: #777;
+  }
+
+  td:nth-child(12)::before {
+    content: "🌤️ Wetter";
+    color: #777;
+  }
+
+  td:nth-child(13)::before {
+    content: "📷 Cam";
+    color: #777;
+  }
+
+  td:nth-child(14)::before {
+    content: "📅 History";
+    color: #777;
+  }
+
+  td:nth-child(15)::before {
     content: "🏆 Score";
     color: #777;
     font-weight: bold;
   }
 
-  td:nth-child(11) {
+  td:nth-child(15) {
     background: #fdfdfd;
     font-weight: bold;
     margin-top: 8px;

@@ -162,8 +162,8 @@ export async function getAllResortsLive() {
                 // Inject Traffic Data
                 const traffic = trafficCache.get(resort.id);
                 if (traffic) {
-                    // Overwrite static distance with live duration
-                    resort.distance = traffic.duration; // Use live duration
+                    // Overwrite static distance with live duration - DISABLED to allow comparison
+                    // resort.distance = traffic.duration; 
                     liveData.traffic = traffic; // Pass full object if frontend needs distance km
                 }
 

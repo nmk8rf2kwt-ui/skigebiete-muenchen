@@ -10,6 +10,26 @@ export const ResortDataSchema = z.object({
     source: z.string().optional(),
     lastUpdated: z.string().datetime({ offset: true }).optional(), // ISO string
 
+    // Detailed Lift & Slope Data
+    lifts: z.array(z.object({
+        name: z.string(),
+        status: z.enum(["open", "closed", "unknown", "scheduled"]),
+        type: z.string().optional(),
+        capacity: z.number().optional(),
+        length: z.number().optional(), // meters
+        altitudeStart: z.number().optional(),
+        altitudeEnd: z.number().optional()
+    })).optional(),
+
+    slopes: z.array(z.object({
+        name: z.string(),
+        status: z.enum(["open", "closed", "unknown"]),
+        difficulty: z.enum(["blue", "red", "black", "freeride", "unknown"]).optional(),
+        length: z.number().optional(), // meters
+        altitudeStart: z.number().optional(),
+        altitudeEnd: z.number().optional()
+    })).optional(),
+
     // Allow other fields but strict on the core ones
 }).passthrough();
 

@@ -2,7 +2,7 @@ import { getStaticResorts } from "./resortManager.js";
 import { getWeatherForecast, getCurrentConditions } from "../weather.js";
 import { weatherCache, parserCache } from "../cache.js"; // Needed for snapshotting
 import { PARSERS } from "../parsers/index.js";
-import { saveSnapshot, cleanup as cleanupHistory } from "../history.js";
+import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog } from "../history.js";
 import { fetchTravelTimes } from "./traffic.js";
 import { trafficCache } from "../cache.js";
 
@@ -69,6 +69,26 @@ export async function refreshTraffic() {
             trafficCache.set(id, data);
         }
         console.log(`✅ Updated traffic for ${Object.keys(trafficData).length} resorts.`);
+
+        // Log to history if within 06:00 - 22:00
+        const now = new Date();
+        const hour = now.getHours();
+
+        if (hour >= 6 && hour < 22) {
+            console.log("📝 Logging traffic history...");
+            for (const resort of resorts) {
+                // Determine Standard Time (from static distance)
+                // Note: resort.distance is in minutes (e.g. 60) in resorts.json
+                const standard = resort.distance || 0;
+
+                // Determine Current Time (from traffic fetch)
+                const traffficInfo = trafficData[resort.id];
+
+                if (traffficInfo && traffficInfo.duration) {
+                    saveTrafficLog(resort.id, standard, traffficInfo.duration);
+                }
+            }
+        }
     }
 }
 

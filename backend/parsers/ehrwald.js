@@ -1,5 +1,4 @@
-import { fetchWithHeaders } from "../utils/fetcher.js";
-import * as cheerio from "cheerio";
+import { fetchHtml, createResult } from "../utils/parserUtils.js";
 
 export const details = {
     id: "ehrwald",
@@ -8,47 +7,50 @@ export const details = {
     district: "Tiroler Zugspitz Arena",
 };
 
-export async function parse() {
-    const URL = details.url;
-    const res = await fetchWithHeaders(URL);
-    if (!res.ok) throw new Error("Failed to fetch Ehrwald");
+export async function parse(options = {}) {
+    const $ = await fetchHtml(details.url, options);
 
-    const html = await res.text();
-    const $ = cheerio.load(html);
+    let liftsTotal = 0;
+    let liftsOpen = 0;
 
-    const lifts = {};
+    // Selector based on agent findings:
+    // Container usually has title and status as children or descendants
+    // .style-facility__title
+    // .style-facility__status > .style-facility__status-open / -closed matches
 
-    // Ehrwald "Anlagen & Pisten" page
-    // Table structure
-    $("table tbody tr").each((i, row) => {
-        const cells = $(row).find("td");
-        if (cells.length >= 2) {
-            const name = $(cells[0]).text().trim();
-            const statusHtml = $(cells[1]).html() || "";
+    // We can iterate over titles, find parent, then find status
+    $(".style-facility__title").each((i, el) => {
+        const name = $(el).text().trim();
+        const row = $(el).closest(".style-facility, li, div"); // Robust parenting
 
-            // Look for status icons
-            const isOpen = statusHtml.includes("icon-check") || statusHtml.includes("grün") || statusHtml.includes("open");
-            const isClosed = statusHtml.includes("icon-close") || statusHtml.includes("rot") || statusHtml.includes("closed");
+        // Find status indicator
+        const statusContainer = row.find(".style-facility__status");
 
-            if (name && (isOpen || isClosed)) {
-                lifts[name] = isOpen ? "open" : "closed";
-            }
+        // Check for specific modifier classes on the status container or its children
+        // The agent said: "class style-facility__status-open" exists.
+        // It might be ON the status div or a Child.
+        const hasOpenClass = statusContainer.find(".style-facility__status-open").length > 0 || statusContainer.hasClass("style-facility__status-open");
+        const hasClosedClass = statusContainer.find(".style-facility__status-closed").length > 0 || statusContainer.hasClass("style-facility__status-closed");
+        const hasPendingClass = statusContainer.find(".style-facility__status-pending").length > 0 || statusContainer.hasClass("style-facility__status-pending");
+
+        // Determine status
+        let status = "unknown";
+        if (hasOpenClass) status = "open";
+        else if (hasClosedClass) status = "closed";
+        else if (hasPendingClass) status = "scheduled";
+
+        if (name && (status === "open" || status === "closed")) {
+            // Heuristic: Filter out Pistes if they are mixed in?
+            // Usually lifts have specific names. "Ganghofer 6er" vs "Skiweg"
+            // But let's count everything for now to be safe, or filter "Abfahrt"
+            liftsTotal++;
+            if (status === "open") liftsOpen++;
         }
     });
-
-    const liftsTotal = Object.keys(lifts).length;
-    const liftsOpen = Object.values(lifts).filter((s) => s === "open").length;
 
     if (liftsTotal === 0) {
         throw new Error("Ehrwald parsing returned zero lifts");
     }
 
-    return {
-        lifts: {
-            total: liftsTotal,
-            open: liftsOpen,
-            status: liftsOpen === 0 ? "closed" : liftsOpen === liftsTotal ? "open" : "scheduled",
-        },
-        lastUpdated: new Date().toISOString(),
-    };
+    return createResult(details.id, { liftsOpen, liftsTotal }, "almbahn.at");
 }
