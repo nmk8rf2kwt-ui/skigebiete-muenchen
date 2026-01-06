@@ -107,7 +107,14 @@ function exportToCsv() {
   document.body.removeChild(link);
 }
 
-async function fetchTrafficForLocation(lat, lon) {
+// Munich Marienplatz coordinates (default)
+const MUNICH_DEFAULT = {
+  latitude: 48.1351,
+  longitude: 11.5820,
+  name: "München Innenstadt"
+};
+
+async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
   try {
     const res = await fetch(`${API_BASE_URL}/traffic/calculate`, {
       method: 'POST',
@@ -125,58 +132,74 @@ async function fetchTrafficForLocation(lat, lon) {
       if (t) {
         return {
           ...resort,
-          distance: t.duration, // Update main distance for sorting
-          traffic: t // Keep detailed object
+          distance: t.duration,
+          traffic: t
         };
       }
       return resort;
     });
 
-    // Re-render
     render();
-    alert("✅ Traffic updated based on your location!");
+
+    // Only show alert if not default Munich
+    if (locationName !== MUNICH_DEFAULT.name) {
+      alert(`✅ Fahrzeiten aktualisiert von: ${locationName}`);
+    }
 
   } catch (err) {
     console.error(err);
-    alert("❌ Failed to update traffic data.");
+    alert("❌ Fehler beim Berechnen der Fahrzeiten.");
   }
 }
 
 async function handleAddressSearch() {
-  const query = document.getElementById("addressInput").value;
-  if (!query) return;
+  const query = document.getElementById("addressInput").value.trim();
+  if (!query) {
+    alert("⚠️ Bitte geben Sie eine Adresse ein.");
+    return;
+  }
 
   try {
     const res = await fetch(`${API_BASE_URL}/traffic/geocode?q=${encodeURIComponent(query)}`);
     if (!res.ok) throw new Error("Address not found");
 
     const location = await res.json();
-    // Update map view center if map is active
-    // But mainly fetch traffic
-    await fetchTrafficForLocation(location.latitude, location.longitude);
+    await fetchTrafficForLocation(location.latitude, location.longitude, location.name);
 
   } catch (err) {
-    alert("❌ Address not found.");
+    console.error(err);
+    alert("❌ Adresse nicht gefunden. Bitte versuchen Sie es erneut.");
   }
 }
 
 async function handleGeolocation() {
   if (!navigator.geolocation) {
-    alert("❌ Geolocation is not supported by your browser.");
+    alert("❌ Geolocation wird von Ihrem Browser nicht unterstützt.");
     return;
   }
 
-  document.getElementById("locateBtn").textContent = "⌛ Locating...";
+  const btn = document.getElementById("locateBtn");
+  const originalText = btn.textContent;
+  btn.textContent = "⌛ Ortung läuft...";
+  btn.disabled = true;
 
   navigator.geolocation.getCurrentPosition(
     async (position) => {
-      document.getElementById("locateBtn").textContent = "📍 Mein Standort";
+      btn.textContent = originalText;
+      btn.disabled = false;
       const { latitude, longitude } = position.coords;
-      await fetchTrafficForLocation(latitude, longitude);
+      await fetchTrafficForLocation(latitude, longitude, "Ihr Standort");
     },
     (error) => {
-      document.getElementById("locateBtn").textContent = "📍 Mein Standort";
-      alert("❌ User denied geolocation.");
+      btn.textContent = originalText;
+      btn.disabled = false;
+      console.error("Geolocation error:", error);
+      alert("❌ Standort konnte nicht ermittelt werden. Bitte erlauben Sie den Standortzugriff.");
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
     }
   );
 }
