@@ -75,9 +75,10 @@ npm test
 npm run test:parsers
 ```
 
-## Deployment
+## Deployment & Release
 
-Siehe [DEPLOYMENT.md](./DEPLOYMENT.md) für detaillierte Anweisungen.
+- Siehe [DEPLOYMENT.md](./DEPLOYMENT.md) für detaillierte Anweisungen.
+- Siehe [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) für QA-Workflow vor jedem Release.
 
 ## Roadmap
 

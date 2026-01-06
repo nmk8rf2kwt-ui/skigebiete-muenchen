@@ -53,3 +53,47 @@ This document defines the standardized check-up process for releasing new versio
 ## 7. Automated Tests
 - [ ] `npm test` (Backend Unit Tests) passing.
 - [ ] `npm run test:parsers` (Integration Tests) passing.
+
+## 8. Manual Regression Test Suite (Critical Features)
+
+### 🟢 Core Functionality
+- [ ] **Initial Load**:
+    - Page loads without console errors.
+    - "Stand:" timestamp is valid.
+    - Resort table populated (> 0 rows).
+    - Status badges (🟢/🔴/⚪) visible.
+- [ ] **Data Integrity**:
+    - Lift counts match known values (e.g., Kitzbühel > 50).
+    - Weather icons present.
+
+### 📍 Geolocation & Search
+- [ ] **Search Input**: Accepts text (e.g., "Innsbruck").
+- [ ] **Search Button**: Clicking updates "Distanz" and "Fahrzeit".
+- [ ] **Mein Standort**: Clicking requests permission and updates table.
+
+### ↕️ Sorting & Filtering
+- [ ] **Sorting**:
+    - Click "Name" -> A-Z / Z-A.
+    - Click "Pisten" -> High-Low / Low-High.
+    - Click "Score" -> High-Low.
+- [ ] **Top 3 Filtering**:
+    - Click "🏆 Top 3".
+    - Table shows exactly 3 rows.
+
+### 🗺️ Map Visualization
+- [ ] **Map Load**: Map container visible.
+- [ ] **Markers**: Pins exist for resorts.
+- [ ] **Interactivity**: Clicking pin opens popup.
+
+### 📋 Details & Metadata
+- [ ] **Details Modal**:
+    - Click "📋" icon -> Modal opens.
+    - Sections: "Lifte", "Pisten", "7-Tage Verlauf".
+    - History Chart: Canvas rendered.
+- [ ] **Tooltips**:
+    - Prices: Hover `ℹ️` -> Shows Adult/Youth/Child.
+    - Difficulty: Hover Badge -> Shows description.
+
+### 💾 Export & Mobile
+- [ ] **CSV Export**: Button works and downloads valid CSV.
+- [ ] **Mobile View**: Table stacks/scrolls, Modal fits screen.
