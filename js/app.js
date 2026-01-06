@@ -1,4 +1,3 @@
-import { fetchResorts } from "./data.js";
 import { renderTable, calculateScore } from "./render.js";
 import { initMap, updateMap } from "./map.js";
 import { API_BASE_URL } from "./config.js";
@@ -13,7 +12,8 @@ let viewMode = "list"; // 'list' or 'map'
 async function load() {
   // 1. Fetch Static Data Fast
   try {
-    const staticRes = await fetch(`${API_BASE_URL}/api/resorts/static`);
+    const staticRes = await fetch(`${API_BASE_URL}/resorts/static`);
+    if (!staticRes.ok) throw new Error(`HTTP ${staticRes.status}`);
     const staticData = await staticRes.json();
 
     // Enrich with Score immediately
@@ -24,12 +24,14 @@ async function load() {
 
     render();
   } catch (err) {
-    console.error("Failed to load static data", err);
+    console.error("Failed to load static data:", err);
+    alert("❌ Fehler beim Laden der Daten. Bitte Backend überprüfen.");
   }
 
   // 2. Fetch Live Data
   try {
-    const liveRes = await fetch(`${API_BASE_URL}/api/resorts`);
+    const liveRes = await fetch(`${API_BASE_URL}/resorts`);
+    if (!liveRes.ok) throw new Error(`HTTP ${liveRes.status}`);
     const liveData = await liveRes.json();
 
     // Enrich
@@ -44,7 +46,7 @@ async function load() {
     const ts = document.getElementById("timestamp");
     if (ts) ts.innerText = new Date().toLocaleTimeString();
   } catch (err) {
-    console.error("Failed to load live data", err);
+    console.error("Failed to load live data:", err);
   }
 }
 
