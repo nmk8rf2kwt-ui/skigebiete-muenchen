@@ -208,7 +208,16 @@ function exportToCsv() {
 }
 
 async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
-  logToUI(`Fetching traffic for ${locationName} (${lat}, ${lon})...`);
+  logToUI(`Berechne Fahrzeiten von ${locationName}...`);
+
+  // 1. Show loading state for all resorts
+  const currentResorts = store.get().resorts;
+  const loadingResorts = currentResorts.map(r => ({
+    ...r,
+    traffic: { loading: true }
+  }));
+  store.setState({ resorts: loadingResorts }, render);
+
   try {
     const res = await fetch(`${API_BASE_URL}/traffic/calculate`, {
       method: "POST",
@@ -224,51 +233,46 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const trafficMap = await res.json();
 
-    // Convert object map back to array for frontend logic
-    // Old implementation expected array of objects { resortId, distance, duration, trafficAlert }
-    // New /calculate returns { resortId: { duration, distance } }
-
-    const trafficData = Object.entries(trafficMap).map(([id, data]) => ({
-      resortId: id,
-      duration: data.duration * 60, // backend returns minutes, frontend logic below expects seconds?
-      // Wait, backend traffic.js line 88 says: duration: Math.round(durationSeconds / 60) // minutes
-      // So backend returns minutes.
-      // Frontend line 145 says: duration: Math.round(trafficInfo.duration / 60)
-      // So frontend expects seconds.
-      // Let's ADJUST here to match frontend expectation or adjust frontend logic.
-      // Easiest is to provide what frontend expects (seconds) so line 145 works.
-      durationSeconds: data.duration * 60,
-      distance: data.distance * 1000 // backend km -> frontend meters
-    }));
-
     showUserLocation(lat, lon);
-    logToUI(`✅ Loaded traffic data for ${locationName}`);
 
-    // Update resorts with distance and duration
-    const currentResorts = store.get().resorts;
+    // 2. Update resorts with traffic data
     const updatedResorts = currentResorts.map(resort => {
-      const trafficInfo = trafficData.find(t => t.resortId === resort.id);
-      if (trafficInfo) {
+      const data = trafficMap[resort.id];
+      if (data) {
         return {
           ...resort,
-          distance: Math.round(trafficInfo.distance / 1000), // m -> km
-          duration: Math.round(trafficInfo.durationSeconds / 60), // s -> min
-          trafficAlert: null // trafficInfo.trafficAlert || null
+          traffic: {
+            duration: data.duration, // minutes (current time with traffic)
+            distanceKm: data.distanceKm // km as string
+          }
         };
       }
-      return resort;
+      return {
+        ...resort,
+        traffic: null // No traffic data available
+      };
     });
 
-    // Recalculate scores
+    // 3. Recalculate scores (uses resort.distance from resorts.json, not traffic data)
     const scoredResorts = updatedResorts.map(resort => ({
       ...resort,
       score: calculateScore(resort)
     }));
 
     store.setState({ resorts: scoredResorts }, render);
+    logToUI(`✅ Fahrzeiten für ${locationName} aktualisiert`);
+
   } catch (err) {
     console.error("Failed to load traffic data:", err);
-    showError(`❌ Traffic Load Error for ${locationName}: ${err.message}`);
+    showError(`❌ Verkehrsdaten konnten nicht geladen werden: ${err.message}`);
+    logToUI(`❌ Fehler beim Laden der Verkehrsdaten: ${err.message}`, "error");
+
+    // Reset loading state on error
+    const resetResorts = currentResorts.map(r => ({
+      ...r,
+      traffic: null
+    }));
+    store.setState({ resorts: resetResorts }, render);
   }
 }
 
@@ -342,11 +346,6 @@ async function handleAddressSearch() {
   btn.textContent = "⌛ Suche...";
   btn.disabled = true;
 
-  // Visual Reset: Clear current traffic data to show "Loading..."
-  const currentResorts = store.get().resorts;
-  const resetResorts = currentResorts.map(r => ({ ...r, distance: null, duration: null }));
-  store.setState({ resorts: resetResorts }, render);
-
   try {
     const res = await fetch(`${API_BASE_URL}/traffic/geocode?q=${encodeURIComponent(query)}`);
 
@@ -394,11 +393,6 @@ async function handleGeolocation() {
   const originalText = btn.textContent;
   btn.textContent = "⌛ Ortung läuft...";
   btn.disabled = true;
-
-  // Visual Reset
-  const currentResorts = store.get().resorts;
-  const resetResorts = currentResorts.map(r => ({ ...r, distance: null, duration: null }));
-  store.setState({ resorts: resetResorts }, render);
 
   navigator.geolocation.getCurrentPosition(
     async (position) => {

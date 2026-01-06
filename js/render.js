@@ -171,8 +171,10 @@ ${pd.info || ""}
   // 2. Traffic Time with Color
   let trafficDisplay = '<span style="color: #bdc3c7; font-size: 0.9em;">-</span>'; // Default gray
 
-  // data.traffic comes from resortManager injection
-  if (data.traffic && data.traffic.duration) {
+  if (data.traffic?.loading) {
+    // Show loading indicator
+    trafficDisplay = '<span class="loading-spinner-small"></span>';
+  } else if (data.traffic && data.traffic.duration) {
     const liveTime = data.traffic.duration;
     const delay = Math.max(0, liveTime - standardTime);
     let style = "";
@@ -394,8 +396,14 @@ ${pd.info || ""}
     : '<span title="Keine Webcam verfügbar">-</span>';
 
   // Distance (in km) - separate from travel time
-  const distanceKm = data.traffic?.distanceKm || data.distanceKm || null;
-  const distanceDisplay = distanceKm !== null ? `${distanceKm} km` : (data.distance === null ? '<span class="loading-spinner-small"></span>' : "-");
+  let distanceDisplay = "-";
+
+  if (data.traffic?.loading) {
+    distanceDisplay = '<span class="loading-spinner-small"></span>';
+  } else {
+    const distanceKm = data.traffic?.distanceKm || data.distanceKm || null;
+    distanceDisplay = distanceKm !== null ? `${distanceKm} km` : (data.distance === null ? '<span class="loading-spinner-small"></span>' : "-");
+  }
 
   // Combined Weather & Snow Display
   const combinedWeatherSnow = `
