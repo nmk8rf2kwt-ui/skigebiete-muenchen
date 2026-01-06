@@ -1,0 +1,15 @@
+{
+  "resortId": "lofer",
+  "date": "2025-12-10",
+  "timestamp": "2026-01-06T21:53:16.544Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-10",
+      "tempMax": 13.9,
+      "tempMin": 0.5,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0
+    }
+  }
+}

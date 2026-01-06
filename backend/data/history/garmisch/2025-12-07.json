@@ -1,0 +1,15 @@
+{
+  "resortId": "garmisch",
+  "date": "2025-12-07",
+  "timestamp": "2026-01-06T21:52:59.515Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-07",
+      "tempMax": 7.1,
+      "tempMin": 1.3,
+      "precipitation": 11,
+      "snowfall": 0,
+      "snowDepth": 0.3
+    }
+  }
+}

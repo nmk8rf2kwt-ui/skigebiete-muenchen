@@ -1,0 +1,15 @@
+{
+  "resortId": "zugspitze",
+  "date": "2025-12-20",
+  "timestamp": "2026-01-06T21:53:01.626Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-20",
+      "tempMax": 9.5,
+      "tempMin": -1.2,
+      "precipitation": 0.1,
+      "snowfall": 0,
+      "snowDepth": 0
+    }
+  }
+}

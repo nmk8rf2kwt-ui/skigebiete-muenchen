@@ -1,0 +1,15 @@
+{
+  "resortId": "seefeld",
+  "date": "2025-12-26",
+  "timestamp": "2026-01-06T21:53:14.456Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-26",
+      "tempMax": 3.7,
+      "tempMin": -7.7,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0.01
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "resortId": "wendelstein",
+  "date": "2026-01-02",
+  "timestamp": "2026-01-06T21:53:31.196Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2026-01-02",
+      "tempMax": -4.5,
+      "tempMin": -11.9,
+      "precipitation": 3.6,
+      "snowfall": 2.52,
+      "snowDepth": 0.04
+    }
+  }
+}

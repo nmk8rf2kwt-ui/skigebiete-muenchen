@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog } from "../history.js";
+import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog, updateHistoricalWeather } from "../history.js";
 import { fetchTrafficMatrix } from "./tomtom.js";
 import { getYesterdayWeather, backfillWeatherHistory, isBackfillCompleted, markBackfillCompleted } from "./historicalWeather.js";
 
@@ -221,7 +221,11 @@ export function initScheduler() {
 
             for (const resort of resorts) {
                 try {
-                    await backfillWeatherHistory(resort, 30);
+                    const weatherData = await backfillWeatherHistory(resort, 30);
+                    // Save each day
+                    for (const [date, data] of Object.entries(weatherData)) {
+                        updateHistoricalWeather(resort.id, date, data);
+                    }
                     successCount++;
                     // Small delay to avoid rate limiting
                     await new Promise(resolve => setTimeout(resolve, 1000));

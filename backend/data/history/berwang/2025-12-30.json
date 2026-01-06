@@ -1,0 +1,15 @@
+{
+  "resortId": "berwang",
+  "date": "2025-12-30",
+  "timestamp": "2026-01-06T21:53:13.372Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-30",
+      "tempMax": -3.8,
+      "tempMin": -7.1,
+      "precipitation": 1,
+      "snowfall": 0.42,
+      "snowDepth": 0
+    }
+  }
+}

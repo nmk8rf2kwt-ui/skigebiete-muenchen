@@ -1,0 +1,15 @@
+{
+  "resortId": "fichtelberg",
+  "date": "2026-01-03",
+  "timestamp": "2026-01-06T21:53:29.121Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2026-01-03",
+      "tempMax": -5.5,
+      "tempMin": -7.3,
+      "precipitation": 1.5,
+      "snowfall": 1.05,
+      "snowDepth": 0.19
+    }
+  }
+}

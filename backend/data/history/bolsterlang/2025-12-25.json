@@ -1,0 +1,15 @@
+{
+  "resortId": "bolsterlang",
+  "date": "2025-12-25",
+  "timestamp": "2026-01-06T21:53:18.688Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-25",
+      "tempMax": 7.8,
+      "tempMin": -3.8,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0.01
+    }
+  }
+}

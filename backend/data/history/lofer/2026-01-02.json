@@ -6,6 +6,14 @@
     "liftsOpen": 5,
     "liftsTotal": 10,
     "snow": "69 cm",
-    "weather": "Wolken"
+    "weather": "Wolken",
+    "historicalWeather": {
+      "date": "2026-01-02",
+      "tempMax": 1.8,
+      "tempMin": -8.1,
+      "precipitation": 1.8,
+      "snowfall": 1.19,
+      "snowDepth": 0.09
+    }
   }
 }

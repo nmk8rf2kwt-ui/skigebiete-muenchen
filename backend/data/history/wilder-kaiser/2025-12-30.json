@@ -1,0 +1,15 @@
+{
+  "resortId": "wilder-kaiser",
+  "date": "2025-12-30",
+  "timestamp": "2026-01-06T21:53:02.705Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-30",
+      "tempMax": -1.3,
+      "tempMin": -7,
+      "precipitation": 1.6,
+      "snowfall": 1.05,
+      "snowDepth": 0.01
+    }
+  }
+}

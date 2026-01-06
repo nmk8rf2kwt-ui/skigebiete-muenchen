@@ -1,0 +1,15 @@
+{
+  "resortId": "hintertux",
+  "date": "2025-12-30",
+  "timestamp": "2026-01-06T21:53:35.610Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-30",
+      "tempMax": -9.9,
+      "tempMin": -16.9,
+      "precipitation": 0.6,
+      "snowfall": 0.35,
+      "snowDepth": 0.4
+    }
+  }
+}

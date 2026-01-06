@@ -1,0 +1,15 @@
+{
+  "resortId": "winterberg",
+  "date": "2026-01-01",
+  "timestamp": "2026-01-06T21:53:24.979Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2026-01-01",
+      "tempMax": -1.1,
+      "tempMin": -2.9,
+      "precipitation": 4,
+      "snowfall": 2.52,
+      "snowDepth": 0.05
+    }
+  }
+}

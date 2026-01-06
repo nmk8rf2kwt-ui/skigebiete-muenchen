@@ -1,4 +1,4 @@
-# 🏔️ Skigebiet-Finder v1.3.3
+# 🏔️ Skigebiet-Finder v1.4.0
 
 ![CI/CD](https://github.com/YOUR_USERNAME/skigebiete-muenchen/workflows/CI%2FCD%20Pipeline/badge.svg)
 
@@ -11,7 +11,7 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detai
 - 🚡 **Detailliertes Lift-Tracking**: 350+ Lifte mit Status, Typ, Länge und Höhe
 - ⛷️ **Pisten-Details**: 600+ Pisten mit Schwierigkeitsgrad und Metadata
 - 📋 **Details-Modal**: Vollständige Übersicht aller Lifte und Pisten pro Skigebiet
-- 📊 **Historische Trends**: 7-Tage Verlauf der Lift-Verfügbarkeit
+- 📊 **Historische Trends**: 30-Tage Verlauf von Wetter, Schnee, Liften und Verkehr
 
 ### Navigation & Verkehr
 - ⏰ **HH:mm Zeitformat**: Fahrzeiten übersichtlich als Stunden:Minuten (z.B. "01:15 h")

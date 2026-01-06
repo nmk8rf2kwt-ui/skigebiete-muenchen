@@ -579,11 +579,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // History Modal Tab Switching
-  document.querySelectorAll('.history-tabs .tab-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  // History Modal Tab Switching
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('tab-btn')) {
       const tab = e.target.dataset.tab;
       switchHistoryTab(tab);
-    });
+    }
   });
 
   // Handle history button clicks
@@ -627,33 +628,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Tab switching logic for history modal
-  document.addEventListener("click", async (event) => {
-    if (event.target.classList.contains("tab-btn")) {
-      const tabName = event.target.dataset.tab;
-
-      // Update active tab button
-      document.querySelectorAll(".tab-btn").forEach(btn => {
-        btn.classList.remove("active");
-      });
-      event.target.classList.add("active");
-
-      // Show corresponding tab content
-      document.querySelectorAll(".tab-content").forEach(content => {
-        content.style.display = "none";
-      });
-
-      const targetTab = document.getElementById(`${tabName}Tab`);
-      if (targetTab) {
-        targetTab.style.display = "block";
-
-        // Load weather charts if weather tab is opened
-        if (tabName === "weather" && currentResortId) {
-          const { createCombinedWeatherChart } = await import('./weatherChart.js');
-          createCombinedWeatherChart("weatherChartsContainer", currentResortId, 30);
-        }
-      }
-    }
-  });
+  // (Old tab listener removed)
 });
 
 let historyChart = null;
@@ -739,18 +714,23 @@ function displayHistoryChart(history) {
 let currentResortIdForTraffic = null;
 let currentTrafficChartLoaded = false;
 
-function switchHistoryTab(tab) {
+async function switchHistoryTab(tab) {
   // Toggle active classes
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  const activeBtn = document.querySelector(`.history-tabs [data-tab="${tab}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
 
   // Toggle content visibility
-  document.getElementById('liftsTab').style.display = tab === 'lifts' ? 'block' : 'none';
-  document.getElementById('trafficTab').style.display = tab === 'traffic' ? 'block' : 'none';
+  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+  const targetContent = document.getElementById(`${tab}Tab`);
+  if (targetContent) targetContent.style.display = 'block';
 
-  // Load traffic data if needed
-  if (tab === 'traffic' && !currentTrafficChartLoaded && currentResortIdForTraffic) {
-    loadResortTrafficHistory(currentResortIdForTraffic);
+  // Load content
+  if (tab === 'traffic' && !currentTrafficChartLoaded && currentResortId) {
+    loadResortTrafficHistory(currentResortId);
+  } else if (tab === 'weather' && currentResortId) {
+    const { createCombinedWeatherChart } = await import('./weatherChart.js');
+    createCombinedWeatherChart("weatherChartsContainer", currentResortId, 30);
   }
 }
 

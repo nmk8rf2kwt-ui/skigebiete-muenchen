@@ -1,0 +1,15 @@
+{
+  "resortId": "spitzingsee",
+  "date": "2025-12-30",
+  "timestamp": "2026-01-06T21:52:57.363Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-30",
+      "tempMax": -4.4,
+      "tempMin": -7.2,
+      "precipitation": 3.5,
+      "snowfall": 1.82,
+      "snowDepth": 0.02
+    }
+  }
+}

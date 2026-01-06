@@ -1,0 +1,15 @@
+{
+  "resortId": "ehrwald",
+  "date": "2025-12-21",
+  "timestamp": "2026-01-06T21:53:07.044Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-21",
+      "tempMax": 6.8,
+      "tempMin": -2.4,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0
+    }
+  }
+}

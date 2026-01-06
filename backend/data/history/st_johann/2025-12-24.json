@@ -1,0 +1,15 @@
+{
+  "resortId": "st_johann",
+  "date": "2025-12-24",
+  "timestamp": "2026-01-06T21:53:10.226Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-24",
+      "tempMax": -0.6,
+      "tempMin": -2.7,
+      "precipitation": 1.5,
+      "snowfall": 0.98,
+      "snowDepth": 0.01
+    }
+  }
+}

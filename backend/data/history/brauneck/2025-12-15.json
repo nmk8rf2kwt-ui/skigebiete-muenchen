@@ -1,0 +1,15 @@
+{
+  "resortId": "brauneck",
+  "date": "2025-12-15",
+  "timestamp": "2026-01-06T21:52:58.460Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-15",
+      "tempMax": 8.9,
+      "tempMin": -4.4,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0
+    }
+  }
+}

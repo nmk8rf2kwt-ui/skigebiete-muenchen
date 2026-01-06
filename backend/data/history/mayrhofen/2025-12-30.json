@@ -1,0 +1,15 @@
+{
+  "resortId": "mayrhofen",
+  "date": "2025-12-30",
+  "timestamp": "2026-01-06T21:53:34.356Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-30",
+      "tempMax": -1.1,
+      "tempMin": -6.7,
+      "precipitation": 1.5,
+      "snowfall": 0.98,
+      "snowDepth": 0.07
+    }
+  }
+}

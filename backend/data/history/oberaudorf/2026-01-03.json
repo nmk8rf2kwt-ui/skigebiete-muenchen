@@ -1,0 +1,15 @@
+{
+  "resortId": "oberaudorf",
+  "date": "2026-01-03",
+  "timestamp": "2026-01-06T21:53:19.728Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2026-01-03",
+      "tempMax": 1,
+      "tempMin": -8.8,
+      "precipitation": 4,
+      "snowfall": 2.8,
+      "snowDepth": 0.18
+    }
+  }
+}

@@ -6,6 +6,14 @@
     "liftsOpen": 7,
     "liftsTotal": 14,
     "snow": "74 cm",
-    "weather": "Schnee"
+    "weather": "Schnee",
+    "historicalWeather": {
+      "date": "2026-01-03",
+      "tempMax": -3.8,
+      "tempMin": -12.6,
+      "precipitation": 5.2,
+      "snowfall": 3.64,
+      "snowDepth": 0.15
+    }
   }
 }

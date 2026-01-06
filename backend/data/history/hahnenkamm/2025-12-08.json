@@ -1,0 +1,15 @@
+{
+  "resortId": "hahnenkamm",
+  "date": "2025-12-08",
+  "timestamp": "2026-01-06T21:53:15.493Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-08",
+      "tempMax": 4.3,
+      "tempMin": -3.8,
+      "precipitation": 9.5,
+      "snowfall": 0.21,
+      "snowDepth": 0.05
+    }
+  }
+}

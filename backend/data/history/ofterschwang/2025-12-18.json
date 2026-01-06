@@ -1,0 +1,15 @@
+{
+  "resortId": "ofterschwang",
+  "date": "2025-12-18",
+  "timestamp": "2026-01-06T21:53:17.616Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-18",
+      "tempMax": 10.7,
+      "tempMin": -1.6,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0
+    }
+  }
+}

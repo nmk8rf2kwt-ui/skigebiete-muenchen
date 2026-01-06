@@ -277,6 +277,43 @@ export function getResortsWithHistory() {
     }
 }
 
+// Update historical weather for a specific date (used for backfill)
+export function updateHistoricalWeather(resortId, date, weatherData) {
+    try {
+        const dir = ensureDataDir(resortId);
+        const filename = path.join(dir, `${date}.json`);
+
+        let snapshot;
+
+        if (fs.existsSync(filename)) {
+            // Load existing
+            const content = fs.readFileSync(filename, 'utf8');
+            snapshot = JSON.parse(content);
+        } else {
+            // Create new minimal snapshot
+            snapshot = {
+                resortId,
+                date,
+                timestamp: new Date().toISOString(), // Use current timestamp for "created/modified"
+                data: {}
+            };
+        }
+
+        // Ensure data object exists
+        if (!snapshot.data) snapshot.data = {};
+
+        // Update weather data
+        snapshot.data.historicalWeather = weatherData;
+
+        // Save
+        fs.writeFileSync(filename, JSON.stringify(snapshot, null, 2));
+        return true;
+    } catch (error) {
+        console.error(`Error updating historical weather for ${resortId} on ${date}:`, error.message);
+        return false;
+    }
+}
+
 // Get weather history for a resort
 export function getWeatherHistory(resortId, days = 30) {
     try {
@@ -300,4 +337,45 @@ export function getWeatherHistory(resortId, days = 30) {
         console.error(`Error getting weather history for ${resortId}:`, error);
         return [];
     }
+}
+
+// Internal Helper to read Traffic CSV
+function readTrafficCsv(cityId) {
+    const safeCityId = cityId.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const filename = path.join(TRAFFIC_DIR, `traffic_${safeCityId}.csv`);
+
+    if (!fs.existsSync(filename)) return [];
+
+    try {
+        const content = fs.readFileSync(filename, 'utf-8');
+        const lines = content.trim().split('\n');
+
+        // Skip header
+        return lines.slice(1).map(line => {
+            const [timestamp, resortId, duration, delay] = line.split(',');
+            // Simple validation to ensure line has content
+            if (!timestamp || !resortId) return null;
+
+            return {
+                timestamp,
+                resortId,
+                duration: parseFloat(duration),
+                delay: parseFloat(delay)
+            };
+        }).filter(entry => entry !== null);
+    } catch (error) {
+        console.error(`Error reading traffic CSV for ${cityId}:`, error);
+        return [];
+    }
+}
+
+// Get full traffic history for a city
+export function getCityTrafficHistory(cityId) {
+    return readTrafficCsv(cityId);
+}
+
+// Get traffic history for a specific resort from a city
+export function getResortTrafficHistory(cityId, resortId) {
+    const allData = readTrafficCsv(cityId);
+    return allData.filter(entry => entry.resortId === resortId);
 }

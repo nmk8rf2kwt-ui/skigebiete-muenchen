@@ -1,0 +1,15 @@
+{
+  "resortId": "todtnauberg",
+  "date": "2025-12-21",
+  "timestamp": "2026-01-06T21:53:27.055Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-21",
+      "tempMax": 10.3,
+      "tempMin": 1.4,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0
+    }
+  }
+}

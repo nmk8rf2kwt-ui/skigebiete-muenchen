@@ -1,0 +1,15 @@
+{
+  "resortId": "hochkoessen",
+  "date": "2025-12-30",
+  "timestamp": "2026-01-06T21:53:03.839Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-30",
+      "tempMax": -1.7,
+      "tempMin": -5.7,
+      "precipitation": 5,
+      "snowfall": 3.29,
+      "snowDepth": 0.02
+    }
+  }
+}

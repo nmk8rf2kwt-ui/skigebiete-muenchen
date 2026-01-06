@@ -1,0 +1,15 @@
+{
+  "resortId": "zillertal_arena",
+  "date": "2025-12-26",
+  "timestamp": "2026-01-06T21:53:33.308Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-26",
+      "tempMax": 10.2,
+      "tempMin": -4.5,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0.02
+    }
+  }
+}

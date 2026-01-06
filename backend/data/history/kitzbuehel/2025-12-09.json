@@ -1,0 +1,15 @@
+{
+  "resortId": "kitzbuehel",
+  "date": "2025-12-09",
+  "timestamp": "2026-01-06T21:53:12.317Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-09",
+      "tempMax": 10.7,
+      "tempMin": -1,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0.07
+    }
+  }
+}

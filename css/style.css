@@ -413,12 +413,16 @@ tr.unavailable small {
 
 .modal-content {
   background-color: #fff;
-  margin: 10% auto;
+  margin: 5% auto;
   padding: 20px;
   border-radius: 12px;
-  width: 90%;
-  max-width: 600px;
+  width: 95%;
+  max-width: 800px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .close {
@@ -556,6 +560,10 @@ tr.unavailable small {
   gap: 10px;
   margin-bottom: 20px;
   border-bottom: 2px solid #ecf0f1;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
 }
 
 .tab-btn {

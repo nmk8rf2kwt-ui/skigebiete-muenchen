@@ -1,0 +1,15 @@
+{
+  "resortId": "wurmberg",
+  "date": "2025-12-10",
+  "timestamp": "2026-01-06T21:53:30.156Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-10",
+      "tempMax": 7.8,
+      "tempMin": 6.1,
+      "precipitation": 2.8,
+      "snowfall": 0,
+      "snowDepth": 0
+    }
+  }
+}

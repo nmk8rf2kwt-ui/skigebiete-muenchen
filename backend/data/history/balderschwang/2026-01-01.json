@@ -1,0 +1,15 @@
+{
+  "resortId": "balderschwang",
+  "date": "2026-01-01",
+  "timestamp": "2026-01-06T21:53:23.891Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2026-01-01",
+      "tempMax": 1.1,
+      "tempMin": -8.6,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0.01
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "resortId": "sudelfeld",
+  "date": "2025-12-30",
+  "timestamp": "2026-01-06T21:53:00.578Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-30",
+      "tempMax": -0.9,
+      "tempMin": -5.7,
+      "precipitation": 6,
+      "snowfall": 4.06,
+      "snowDepth": 0.01
+    }
+  }
+}

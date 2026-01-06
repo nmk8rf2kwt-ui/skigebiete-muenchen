@@ -1,0 +1,15 @@
+{
+  "resortId": "tiroler-zugspitzbahn",
+  "date": "2025-12-19",
+  "timestamp": "2026-01-06T21:53:09.183Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-19",
+      "tempMax": 6.4,
+      "tempMin": -1.7,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0
+    }
+  }
+}

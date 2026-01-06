@@ -1,0 +1,15 @@
+{
+  "resortId": "oberjoch",
+  "date": "2025-12-24",
+  "timestamp": "2026-01-06T21:53:22.860Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-24",
+      "tempMax": -2.8,
+      "tempMin": -4.7,
+      "precipitation": 2.9,
+      "snowfall": 1.82,
+      "snowDepth": 0.01
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "resortId": "lermoos",
+  "date": "2025-12-08",
+  "timestamp": "2026-01-06T21:53:08.120Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-08",
+      "tempMax": 11.4,
+      "tempMin": 1.4,
+      "precipitation": 3.9,
+      "snowfall": 0.21,
+      "snowDepth": 0.05
+    }
+  }
+}

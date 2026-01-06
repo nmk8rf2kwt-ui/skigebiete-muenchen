@@ -1,0 +1,15 @@
+{
+  "resortId": "willingen",
+  "date": "2025-12-12",
+  "timestamp": "2026-01-06T21:53:32.240Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-12",
+      "tempMax": 6.3,
+      "tempMin": 2.2,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0
+    }
+  }
+}

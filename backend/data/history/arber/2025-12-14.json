@@ -1,0 +1,15 @@
+{
+  "resortId": "arber",
+  "date": "2025-12-14",
+  "timestamp": "2026-01-06T21:53:28.088Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-14",
+      "tempMax": -1.5,
+      "tempMin": -4.6,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "resortId": "kampenwand",
+  "date": "2025-12-10",
+  "timestamp": "2026-01-06T21:53:20.784Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-10",
+      "tempMax": 9.4,
+      "tempMin": -3,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "resortId": "feldberg",
+  "date": "2025-12-18",
+  "timestamp": "2026-01-06T21:53:26.012Z",
+  "data": {
+    "historicalWeather": {
+      "date": "2025-12-18",
+      "tempMax": 7.9,
+      "tempMin": 1.2,
+      "precipitation": 0,
+      "snowfall": 0,
+      "snowDepth": 0.01
+    }
+  }
+}
