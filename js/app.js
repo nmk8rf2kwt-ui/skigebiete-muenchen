@@ -8,6 +8,13 @@ let currentSort = "score";
 let currentFilter = "all";
 let viewMode = "list"; // 'list' or 'map'
 
+// Munich Marienplatz coordinates (default)
+const MUNICH_DEFAULT = {
+  latitude: 48.1351,
+  longitude: 11.5820,
+  name: "München Innenstadt"
+};
+
 // Load Data
 async function load() {
   // 1. Fetch Static Data Fast
@@ -45,6 +52,10 @@ async function load() {
     // Update timestamp
     const ts = document.getElementById("timestamp");
     if (ts) ts.innerText = new Date().toLocaleTimeString();
+
+    // 3. Calculate initial traffic/distance from Munich
+    await fetchTrafficForLocation(MUNICH_DEFAULT.latitude, MUNICH_DEFAULT.longitude, MUNICH_DEFAULT.name);
+
   } catch (err) {
     console.error("Failed to load live data:", err);
   }
