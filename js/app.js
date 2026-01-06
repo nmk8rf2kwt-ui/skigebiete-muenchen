@@ -7,6 +7,7 @@ let allResorts = [];
 let currentSort = "score";
 let currentFilter = "all";
 let viewMode = "list"; // 'list' or 'map'
+let sortDirection = "desc"; // 'asc' or 'desc'
 
 // Munich Marienplatz coordinates (default)
 const MUNICH_DEFAULT = {
