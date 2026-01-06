@@ -19,6 +19,8 @@ import { ofterschwang } from "./ofterschwang.js";
 import { lofer } from "./lofer.js";
 import { seefeld } from "./seefeld.js";
 import { hahnenkamm } from "./hahnenkamm.js";
+import { oberaudorf } from "./oberaudorf.js";
+import { kampenwand } from "./kampenwand.js";
 
 export const PARSERS = {
     spitzingsee,
@@ -41,4 +43,6 @@ export const PARSERS = {
     lofer,
     seefeld,
     hahnenkamm,
+    oberaudorf,
+    kampenwand,
 };
