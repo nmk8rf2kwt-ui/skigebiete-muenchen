@@ -518,7 +518,7 @@ tr.unavailable small {
   padding-bottom: 2px;
 }
 
-```
+
 /* ================= Tooltip ================= */
 
 .tooltip-container {
@@ -536,7 +536,7 @@ tr.unavailable small {
   border: 1px solid #ddd;
   padding: 10px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 200px;
   z-index: 1000;
   font-weight: normal;
