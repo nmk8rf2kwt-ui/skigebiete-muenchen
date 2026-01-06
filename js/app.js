@@ -35,24 +35,36 @@ function showError(message) {
   content.scrollTop = content.scrollHeight;
 }
 
-function logToUI(msg) {
-  const container = document.getElementById("searchError");
-  const content = document.getElementById("errorContent");
+function logToUI(msg, type = "info") {
+  const container = type === "error" ? document.getElementById("searchError") : document.getElementById("statusConsole");
+  const content = type === "error" ? document.getElementById("errorContent") : document.getElementById("statusContent");
+
   if (!container || !content) return;
 
-  // Only show if it's already visible, or if we want logs to pop up (optional)
-  // For now, let's keep it visible if logs happen
+  // Always show status console when logging, unless explicit hide logic exists
   container.style.display = "block";
 
   const line = document.createElement("div");
+  // Keep clean style
   line.style.borderBottom = "1px solid #eee";
   line.style.padding = "2px 0";
-  line.style.fontSize = "0.85em";
-  line.style.color = "#555";
-  line.textContent = `${new Date().toLocaleTimeString()}: ${msg}`;
-  content.appendChild(line);
 
-  // Auto-scroll to bottom
+  const timestamp = new Date().toLocaleTimeString();
+
+  if (type === "error") {
+    line.innerHTML = `<span style="color:#d32f2f">❌ [${timestamp}] ${msg}</span>`;
+  } else {
+    // Check for specific keywords to add emojis or formatting
+    let icon = "ℹ️";
+    if (msg.includes("Lade")) icon = "⏳";
+    if (msg.includes("aktualisiert") || msg.includes("Loaded")) icon = "✅";
+    if (msg.includes("Verkehr")) icon = "🚦";
+    if (msg.includes("Wetter")) icon = "🌤️";
+
+    line.innerHTML = `<span style="color:#555">[${timestamp}] ${icon} ${msg}</span>`;
+  }
+
+  content.appendChild(line);
   content.scrollTop = content.scrollHeight;
 }
 
@@ -84,10 +96,12 @@ async function load() {
   // 1. Fetch Static Data Fast
   try {
     showLoading("Lade Basis-Daten...");
+    logToUI("Lade statische Konfiguration der Skigebiete...");
     const staticRes = await fetch(`${API_BASE_URL}/resorts/static`);
 
     if (!staticRes.ok) throw new Error(`HTTP ${staticRes.status}`);
     const staticData = await staticRes.json();
+    logToUI(`✅ ${staticData.length} Skigebiete konfiguriert.`);
 
     // Check if we already have resorts in store to avoid flicker
     if (store.get().resorts.length === 0) {
@@ -101,6 +115,7 @@ async function load() {
   // 2. Fetch Live Data
   try {
     showLoading("Lade Live-Status...");
+    logToUI("Frage Live-Daten ab (Intermaps, Bergfex, OpenMeteo)...");
     const liveRes = await fetch(`${API_BASE_URL}/resorts`);
 
     if (!liveRes.ok) {
@@ -111,6 +126,9 @@ async function load() {
     }
 
     const liveData = await liveRes.json();
+    logToUI(`✅ Live-Daten für ${liveData.length} Gebiete empfangen.`);
+    logToUI("Wetterinfos und Schneehöhen aktualisiert.");
+
     store.setState({ resorts: liveData, lastUpdated: new Date() }, render);
 
     // Update timestamp
@@ -119,6 +137,7 @@ async function load() {
 
     // 3. Calculate initial traffic/distance from Munich
     showLoading("Berechne Verkehr...");
+    logToUI(`Berechne Fahrzeiten ab ${MUNICH_DEFAULT.name} (OpenRouteService)...`);
     await fetchTrafficForLocation(MUNICH_DEFAULT.latitude, MUNICH_DEFAULT.longitude, MUNICH_DEFAULT.name);
 
     hideLoading();
@@ -126,6 +145,7 @@ async function load() {
   } catch (err) {
     console.error("Failed to load live data:", err);
     showError(`❌ Live-Daten Fehler: ${err.message}`);
+    logToUI(`❌ Fehler beim Laden der Live-Daten: ${err.message}`, "error");
     // Keep banner visible but red? Or hide? Let's hide and use persistent error
     hideLoading();
   }

@@ -634,4 +634,44 @@ tr.unavailable small {
     padding-top: 8px;
     border-top: 1px dashed #eee;
   }
+}/* ================= Status Console ================= */
+.status-console {
+  display: none;
+  background: #f8faff;
+  border: 1px solid #dae1eb;
+  margin: 10px 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.status-header {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 8px 12px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+.status-header:hover {
+  background: #bbdefb;
+}
+
+.status-content {
+  padding: 10px;
+  color: #333;
+  max-height: 150px; /* Smaller than error */
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 0.85em;
+  background: #fff;
+}
+
+.status-content div {
+  margin-bottom: 4px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 2px;
 }

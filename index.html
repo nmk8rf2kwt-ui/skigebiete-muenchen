@@ -35,6 +35,18 @@
 
     <!-- Error message display -->
     <!-- Error message display -->
+    <!-- Status Console -->
+    <div id="statusConsole" class="status-console" style="display: none;">
+      <div class="status-header"
+        onclick="this.parentElement.querySelector('.status-content').style.display = this.parentElement.querySelector('.status-content').style.display === 'none' ? 'block' : 'none'">
+        <span>ℹ️ System-Status</span>
+        <span class="status-toggle">▼</span>
+      </div>
+      <div class="status-content" id="statusContent">
+        <!-- Logs injected here -->
+      </div>
+    </div>
+
     <div id="searchError" class="error-container">
       <div class="error-header"
         onclick="this.parentElement.querySelector('.error-content').style.display = this.parentElement.querySelector('.error-content').style.display === 'none' ? 'block' : 'none'">
