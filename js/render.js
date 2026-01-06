@@ -118,7 +118,7 @@ export function renderRow(row, data) {
   if (data.forecast && Array.isArray(data.forecast) && data.forecast.length >= 3) {
     // Create three icons
     const icons = data.forecast.slice(0, 3).map(f => {
-      const icon = getWeatherIcon(f.weather);
+      const icon = f.weatherEmoji || getWeatherIcon(f.weather);
       // Tooltip: "Mon: 5°C"
       const date = new Date(f.date).toLocaleDateString('de-DE', { weekday: 'short' });
       return `<span title="${date}: ${f.tempMax}°C / ${f.tempMin}°C" style="cursor: help; margin-right: 4px;">${icon}</span>`;
