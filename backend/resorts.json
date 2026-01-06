@@ -10,7 +10,7 @@
         "website": "https://www.alpenbahnen-spitzingsee.de",
         "latitude": 47.6667,
         "longitude": 11.8833,
-        "webcam": "https://www.foto-webcam.eu/webcam/spitzingsee/",
+        "webcam": "https://www.alpenbahnen-spitzingsee.de/aktuelles/webcams/",
         "priceDetail": {
             "adult": 51,
             "youth": 44,
@@ -30,7 +30,7 @@
         "website": "https://www.brauneck-bergbahn.de",
         "latitude": 47.65,
         "longitude": 11.5667,
-        "webcam": "https://www.foto-webcam.eu/webcam/brauneck/",
+        "webcam": "https://www.brauneck-bergbahn.de/aktuelles/webcams/",
         "priceDetail": {
             "adult": 53,
             "youth": 46,
@@ -50,7 +50,7 @@
         "website": "https://zugspitze.de",
         "latitude": 47.4814,
         "longitude": 11.0953,
-        "webcam": "https://www.foto-webcam.eu/webcam/garmisch/",
+        "webcam": "https://zugspitze.de/de/Service-Informationen/Webcams",
         "priceDetail": {
             "adult": 69,
             "youth": 55,
@@ -127,7 +127,7 @@
         "website": "https://www.sudelfeld.de",
         "latitude": 47.6833,
         "longitude": 12.0833,
-        "webcam": "https://www.foto-webcam.eu/webcam/sudelfeld/",
+        "webcam": "https://www.sudelfeld.de/skigebiet/webcams-wetter",
         "priceDetail": {
             "adult": 52,
             "youth": 42,
@@ -148,7 +148,7 @@
         "latitude": 47.4566,
         "longitude": 10.9922,
         "address": "Am Eibsee 6, 82491 Grainau",
-        "webcam": "https://www.foto-webcam.eu/webcam/zugspitze/",
+        "webcam": "https://zugspitze.de/de/Service-Informationen/Webcams",
         "priceDetail": {
             "adult": 69,
             "youth": 55,
@@ -168,7 +168,7 @@
         "website": "https://www.skiwelt.at",
         "latitude": 47.45,
         "longitude": 12.1833,
-        "webcam": "https://www.foto-webcam.eu/webcam/ellmau/",
+        "webcam": "https://www.skiwelt.at/de/webcams-skiwelt-wilder-kaiser-brixental.html",
         "priceDetail": {
             "adult": 76.00,
             "youth": 57.00,
@@ -226,6 +226,7 @@
         "website": "https://www.bergbahnen-koessen.at",
         "latitude": 47.65,
         "longitude": 12.4167,
+        "webcam": "https://www.bergbahnen-koessen.at/de/wetter-webcam",
         "priceDetail": {
             "adult": 36,
             "youth": 25,
@@ -245,6 +246,7 @@
         "website": "https://www.winklmoosalm.de",
         "latitude": 47.6667,
         "longitude": 12.5167,
+        "webcam": "https://www.winklmoosalm.de/webcam.html",
         "priceDetail": {
             "adult": 63,
             "youth": 47.5,
@@ -264,6 +266,7 @@
         "website": "https://www.steinplatte.tirol",
         "latitude": 47.6316,
         "longitude": 12.5621,
+        "webcam": "https://www.steinplatte.tirol/de/webcams-steinplatte.html",
         "priceDetail": {
             "adult": 63,
             "youth": 47.5,
@@ -283,6 +286,7 @@
         "website": "https://www.almbahn.at",
         "latitude": 47.43,
         "longitude": 10.94,
+        "webcam": "https://www.almbahn.at/de/service/wetter-webcams/",
         "priceDetail": {
             "adult": 68,
             "youth": 54.5,
@@ -302,6 +306,7 @@
         "website": "https://www.bergbahnen-langes.at",
         "latitude": 47.4,
         "longitude": 10.8833,
+        "webcam": "https://www.bergbahnen-langes.at/service/webcams/",
         "priceDetail": {
             "adult": 68,
             "youth": 54.5,
@@ -322,6 +327,7 @@
         "latitude": 47.4266,
         "longitude": 10.9419,
         "address": "Obermoos 1, 6632 Ehrwald, Österreich",
+        "webcam": "https://www.zugspitze.at/de/Service-Infos/Webcams",
         "priceDetail": {
             "adult": 69,
             "youth": 55,
@@ -341,6 +347,7 @@
         "website": "https://www.kitzbueheler-alpen.com/de/stjo/aktuelles/geoeffnete-lifte.html",
         "latitude": 47.5233,
         "longitude": 12.4232,
+        "webcam": "https://www.kitzbueheler-alpen.com/de/stjo/aktuelles/webcams-wetter.html",
         "priceDetail": {
             "adult": 62,
             "youth": 50,
@@ -418,6 +425,7 @@
         "website": "https://www.kitzski.at",
         "latitude": 47.4464,
         "longitude": 12.3922,
+        "webcam": "https://www.kitzski.at/de/service-info/webcams-wetter/webcams.html",
         "priceDetail": {
             "adult": 79.5,
             "youth": 59.5,
@@ -499,6 +507,7 @@
         "website": "https://www.berwang.tirol",
         "latitude": 47.4077,
         "longitude": 10.7475,
+        "webcam": "https://www.berwang.tirol/webcams",
         "priceDetail": {
             "adult": 68,
             "youth": 54.5,
@@ -518,6 +527,7 @@
         "website": "https://www.seefeld.com",
         "latitude": 47.33,
         "longitude": 11.1877,
+        "webcam": "https://www.seefeld.com/wetter-webcam",
         "priceDetail": {
             "adult": 59.5,
             "youth": 56,
@@ -537,6 +547,7 @@
         "website": "https://www.bergwelt-hahnenkamm.at",
         "latitude": 47.4241,
         "longitude": 12.3652,
+        "webcam": "https://www.bergwelt-hahnenkamm.at/service-info/wetter-webcams/",
         "priceDetail": {
             "adult": 52,
             "youth": 36,
@@ -556,6 +567,7 @@
         "website": "https://www.skialm-lofer.com",
         "latitude": 47.58,
         "longitude": 12.68,
+        "webcam": "https://www.skialm-lofer.com/de/service/webcams",
         "priceDetail": {
             "adult": 62,
             "youth": 49.5,
@@ -575,6 +587,7 @@
         "website": "https://www.go-ofterschwang.de",
         "latitude": 47.5,
         "longitude": 10.2333,
+        "webcam": "https://www.go-ofterschwang.de/webcam.html",
         "priceDetail": {
             "adult": 54.5,
             "youth": 41.5,
@@ -594,6 +607,7 @@
         "website": "https://www.hoernerbahn.de",
         "latitude": 47.4666,
         "longitude": 10.2333,
+        "webcam": "https://www.hoernerbahn.de/webcam/",
         "priceDetail": {
             "adult": 54.5,
             "youth": 41.5,
@@ -613,6 +627,7 @@
         "website": "https://www.hocheck.com",
         "latitude": 47.6461,
         "longitude": 12.1764,
+        "webcam": "https://www.hocheck.com/wetter-webcams/",
         "priceDetail": {
             "adult": 38,
             "youth": 34,
@@ -632,6 +647,7 @@
         "website": "https://www.kampenwand.de",
         "latitude": 47.7644,
         "longitude": 12.3551,
+        "webcam": "https://www.kampenwand.de/webcams",
         "priceDetail": {
             "adult": 32,
             "youth": null,
@@ -651,7 +667,7 @@
         "website": "https://www.ok-bergbahnen.com",
         "latitude": 47.4072,
         "longitude": 10.2783,
-        "webcam": "https://www.foto-webcam.eu/webcam/nebelhorn/",
+        "webcam": "https://www.ok-bergbahnen.com/service/webcams/",
         "priceDetail": {
             "adult": 68.7,
             "youth": 52.9,
@@ -671,7 +687,7 @@
         "website": "https://www.bergbahnen-hindelang-oberjoch.de",
         "latitude": 47.5136,
         "longitude": 10.4042,
-        "webcam": "https://www.foto-webcam.eu/webcam/iseler/",
+        "webcam": "https://www.bergbahnen-hindelang-oberjoch.de/webcams/",
         "priceDetail": {
             "adult": 52.5,
             "youth": 42.5,
@@ -711,6 +727,7 @@
         "website": "https://www.skiliftkarussell.de",
         "latitude": 51.196,
         "longitude": 8.526,
+        "webcam": "https://www.skiliftkarussell.de/aktuelles/webcams/",
         "priceDetail": {
             "adult": 48,
             "currency": "€",
@@ -728,6 +745,7 @@
         "website": "https://www.feldberg-erlebnis.de",
         "latitude": 47.859,
         "longitude": 8.005,
+        "webcam": "https://www.feldberg-erlebnis.de/wetter-webcams",
         "priceDetail": {
             "adult": 47,
             "currency": "€",
@@ -745,10 +763,64 @@
         "website": "https://www.skilifte-todtnauberg.de",
         "latitude": 47.848,
         "longitude": 7.945,
+        "webcam": "https://www.skilifte-todtnauberg.de/webcam/",
         "priceDetail": {
             "adult": 38,
             "currency": "€",
             "info": "Tageskarte 2025/26"
+        }
+    },
+    {
+        "id": "arber",
+        "name": "Großer Arber",
+        "distance": 180,
+        "piste_km": 12,
+        "lifts": 9,
+        "price": 42.00,
+        "classification": "Familie",
+        "website": "https://www.arber.de",
+        "latitude": 49.112,
+        "longitude": 13.119,
+        "webcam": "https://www.arber.de/sommer/service/webcams.html",
+        "priceDetail": {
+            "adult": 42.00,
+            "currency": "€",
+            "info": "Tageskarte Hauptsaison"
+        }
+    },
+    {
+        "id": "fichtelberg",
+        "name": "Fichtelberg - Oberwiesenthal",
+        "distance": 320,
+        "piste_km": 15.5,
+        "lifts": 6,
+        "price": 39.00,
+        "classification": "Familie",
+        "website": "https://fichtelberg-ski.de",
+        "latitude": 50.428,
+        "longitude": 12.969,
+        "webcam": "https://fichtelberg-ski.de/wetter-webcams/",
+        "priceDetail": {
+            "adult": 39.00,
+            "currency": "€",
+            "info": "Tageskarte Hauptsaison"
+        }
+    },
+    {
+        "id": "wurmberg",
+        "name": "Wurmberg - Braunlage",
+        "distance": 350,
+        "piste_km": 11.8,
+        "lifts": 6,
+        "price": 45.00,
+        "classification": "Sportlich",
+        "website": "https://www.wurmberg-seilbahn.de",
+        "latitude": 51.745,
+        "longitude": 10.605,
+        "priceDetail": {
+            "adult": 45.00,
+            "currency": "€",
+            "info": "Tageskarte Hauptsaison"
         }
     }
 ]
