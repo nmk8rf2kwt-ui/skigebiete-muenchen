@@ -646,6 +646,13 @@ function displayResortDetails(resort) {
 
   let html = "";
 
+  // Historical Chart Section
+  html += `<div class="details-section">
+    <h3>📊 7-Tage Verlauf</h3>
+    <canvas id="detailsHistoryChart" style="max-height: 200px;"></canvas>
+    <p id="detailsHistoryStatus" style="text-align: center; color: #666; font-size: 0.9em;">Lade Verlaufsdaten...</p>
+  </div>`;
+
   // Lifts Section
   if (resort.lifts && resort.lifts.length > 0) {
     html += `<div class="details-section">
@@ -724,4 +731,75 @@ function displayResortDetails(resort) {
   }
 
   container.innerHTML = html;
+
+  // Fetch and render historical data
+  fetchDetailsHistory(resort.id);
+}
+
+let detailsHistoryChart = null;
+
+async function fetchDetailsHistory(resortId) {
+  const statusEl = document.getElementById("detailsHistoryStatus");
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/history/${resortId}?days=7`);
+    if (!res.ok) throw new Error("Failed to fetch history");
+
+    const data = await res.json();
+
+    if (!data.history || data.history.length === 0) {
+      statusEl.textContent = "Keine Verlaufsdaten verfügbar (Daten werden täglich gesammelt)";
+      return;
+    }
+
+    // Destroy previous chart
+    if (detailsHistoryChart) {
+      detailsHistoryChart.destroy();
+    }
+
+    const ctx = document.getElementById("detailsHistoryChart");
+    const dates = data.history.map(h => {
+      const date = new Date(h.date);
+      return date.toLocaleDateString('de-DE', { month: 'short', day: 'numeric' });
+    });
+
+    const liftsData = data.history.map(h => h.liftsOpen || null);
+
+    detailsHistoryChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dates,
+        datasets: [{
+          label: 'Geöffnete Lifte',
+          data: liftsData,
+          borderColor: '#2e7d32',
+          backgroundColor: 'rgba(46, 125, 50, 0.1)',
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        }
+      }
+    });
+
+    statusEl.style.display = "none";
+  } catch (error) {
+    console.error("History error:", error);
+    statusEl.textContent = "Verlaufsdaten noch nicht verfügbar";
+  }
 }
