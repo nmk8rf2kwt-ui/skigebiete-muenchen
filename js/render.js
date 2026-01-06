@@ -164,14 +164,14 @@ export function renderRow(row, data) {
   // Score
   const score = data.score ?? "-";
 
-  // Traffic light status indicator
-  let statusIndicator = "⚪"; // Default/unknown
+  // Traffic light status indicator with tooltips
+  let statusIndicator = '<span title="Status unbekannt">⚪</span>'; // Default/unknown
   if (data.status === "live") {
-    statusIndicator = "🟢"; // Green - successful parse
+    statusIndicator = '<span title="Live-Daten verfügbar - Aktuelle Informationen vom Skigebiet">🟢</span>'; // Green - successful parse
   } else if (data.status === "static_only") {
-    statusIndicator = "🟡"; // Yellow - no parser or waiting
+    statusIndicator = '<span title="Nur Basisdaten - Live-Daten werden geladen">🟡</span>'; // Yellow - no parser or waiting
   } else if (data.status === "error") {
-    statusIndicator = "🔴"; // Red - parser failed
+    statusIndicator = '<span title="Fehler beim Laden - Daten möglicherweise veraltet">🔴</span>'; // Red - parser failed
   }
 
   // Classification styling
