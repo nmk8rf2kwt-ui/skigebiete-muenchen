@@ -639,19 +639,29 @@ function displayWeather(forecast) {
 function displayResortDetails(resort) {
   const container = document.getElementById("detailsContent");
 
-  if (!resort.lifts && !resort.slopes) {
-    container.innerHTML = "<p>Keine detaillierten Daten verfügbar</p>";
-    return;
-  }
+  // Show loading state
+  container.innerHTML = `
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Lade Details für ${resort.name}...</p>
+    </div>
+  `;
 
-  let html = "";
+  // Small delay to show loading state
+  setTimeout(() => {
+    if (!resort.lifts && !resort.slopes) {
+      container.innerHTML = "<p>Keine detaillierten Daten verfügbar</p>";
+      return;
+    }
 
-  // Historical Chart Section
-  html += `<div class="details-section">
-    <h3>📊 7-Tage Verlauf</h3>
-    <canvas id="detailsHistoryChart" style="max-height: 200px;"></canvas>
-    <p id="detailsHistoryStatus" style="text-align: center; color: #666; font-size: 0.9em;">Lade Verlaufsdaten...</p>
-  </div>`;
+    let html = "";
+
+    // Historical Chart Section
+    html += `<div class="details-section">
+      <h3>📊 7-Tage Verlauf</h3>
+      <canvas id="detailsHistoryChart" style="max-height: 200px;"></canvas>
+      <p id="detailsHistoryStatus" style="text-align: center; color: #666; font-size: 0.9em;">Lade Verlaufsdaten...</p>
+    </div>`;
 
   // Lifts Section
   if (resort.lifts && resort.lifts.length > 0) {
