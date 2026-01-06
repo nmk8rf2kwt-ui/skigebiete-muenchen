@@ -89,8 +89,8 @@ This document defines the standardized check-up process for releasing new versio
   - [ ] **Check**: Alle 3 Traffic-Spalten zeigen sofort Lade-Kringel (⏳)
   - [ ] **Check**: Werte aktualisieren sich nach 2-5 Sekunden
   - [ ] **Check**: Distanz > 150km (für Stuttgart)
-  - [ ] **Check**: Fahrzeit (ohne Verkehr) bleibt statisch (verändert sich NICHT)
-  - [ ] **Check**: Fahrzeit (mit Verkehr) ist plausibel (> als ohne Verkehr)
+  - [ ] **Check**: Fahrzeit (ohne Verkehr) passt zur neuen Distanz (z.B. > 120 min)
+  - [ ] **Check**: Fahrzeit (mit Verkehr) ist plausibel (>= ohne Verkehr)
 - [ ] **Navigation**: Klick auf "Fahrzeit" öffnet Google Maps Route
 
 ### 🗺️ Map Visualization
