@@ -222,8 +222,8 @@ export function renderRow(row, data) {
   const distanceDisplay = distanceKm !== "-" ? `${distanceKm} km` : "-";
 
   row.innerHTML = `
-    <td>${data.rank}</td>
-    <td>${statusIndicator} <a href="${data.website}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${data.name}</a></td>
+    <td style="text-align: center;">${statusIndicator}</td>
+    <td><a href="${data.website}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${data.name}</a></td>
     <td>${travel}</td>
     <td>${distanceDisplay}</td>
     <td>${data.piste_km ?? "-"} km</td>
