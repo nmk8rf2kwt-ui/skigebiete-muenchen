@@ -7,6 +7,7 @@ import { parserCache, weatherCache, trafficCache } from "./cache.js";
 import logger from "./logger.js";
 import { statusLogger } from "./statusLogger.js"; // New status logger
 import { ResortDataSchema } from "../utils/schema.js";
+import * as Sentry from "@sentry/node";
 
 // -- PATH CONFIG --
 const __filename = fileURLToPath(import.meta.url);
@@ -117,24 +118,41 @@ export async function getAllResortsLive() {
 
                             if (!validation.success) {
                                 console.error(`❌ Validation failed for ${resort.id}:`, validation.error.format());
-                                throw new Error("Parser output didn't match schema");
+
+                                // Log to Sentry as warning (not error) so we track it but don't crash
+                                if (typeof Sentry !== 'undefined' && Sentry.captureMessage) {
+                                    Sentry.captureMessage(`Parser validation failed for ${resort.id}`, {
+                                        level: 'warning',
+                                        extra: {
+                                            resortId: resort.id,
+                                            resortName: resort.name,
+                                            validationErrors: validation.error.format(),
+                                            rawData: rawData
+                                        }
+                                    });
+                                }
+
+                                // Don't throw - gracefully degrade
+                                logger.scraper.warn(`Parser validation failed for ${resort.id}, using fallback`);
+                                liveData.status = "error";
+                                statusLogger.log('warning', 'scraper', `Parser validation failed for ${resort.name}`);
+                            } else {
+                                const data = validation.data;
+
+                                liveData = {
+                                    ...liveData,
+                                    ...data,
+                                    status: "live",
+                                    cached: false,
+                                };
+                                // Store in cache
+                                parserCache.set(resort.id, data);
+                                logger.scraper.info(`Updated ${resort.id}`, {
+                                    source: data.source || resort.website,
+                                    lifts: `${data.liftsOpen}/${data.liftsTotal}`
+
+                                });
                             }
-
-                            const data = validation.data;
-
-                            liveData = {
-                                ...liveData,
-                                ...data,
-                                status: "live",
-                                cached: false,
-                            };
-                            // Store in cache
-                            parserCache.set(resort.id, data);
-                            logger.scraper.info(`Updated ${resort.id}`, {
-                                source: data.source || resort.website,
-                                lifts: `${data.liftsOpen}/${data.liftsTotal}`
-
-                            });
                         } catch (error) {
                             logger.scraper.error(`Parser error for ${resort.id}: ${error.message}`);
                             liveData.status = "error";
