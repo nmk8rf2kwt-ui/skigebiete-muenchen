@@ -467,8 +467,14 @@ export function renderRow(row, data) {
     <td>${liftStatus}</td>
     <td>${price}</td>
     <td>${typeDisplay}</td>
-    <!-- Combined Block -->
-    <td style="background-color: #f8f9fa; border-left: 2px solid #ecf0f1; border-right: 2px solid #ecf0f1;">${combinedWeatherSnow}</td>
+    <!-- Separate Conditions Columns -->
+    <td style="text-align: center; background-color: #f8f9fa; border-left: 2px solid #ecf0f1;">${weatherDisplay}</td>
+    <td style="background-color: #f8f9fa; border-right: 2px solid #ecf0f1;">
+      <div style="display: flex; flex-direction: column; gap: 2px; font-size: 0.9em;">
+         <span>${snowDisplay}</span>
+         <span style="color: #7f8c8d; font-size: 0.85em;">${lastSnowfallDisplay !== '-' ? '❄️ ' + lastSnowfallDisplay : ''}</span>
+      </div>
+    </td>
     <td>${webcamDisplay}</td>
     <td>${detailsDisplay}</td>
     <td>${historyDisplay}</td>
