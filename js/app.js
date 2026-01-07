@@ -746,6 +746,17 @@ function renderStatusDashboard(data) {
     geocodingEl.style.color = "gray";
   }
 
+  // Monitoring (Sentry)
+  const monitoringEl = document.getElementById("statusMonitoring");
+  const sentryActive = data.monitoring?.sentry || false;
+  if (sentryActive) {
+    monitoringEl.textContent = "🛡️ Aktiv";
+    monitoringEl.style.color = "green";
+  } else {
+    monitoringEl.textContent = "⚠️ Inaktiv";
+    monitoringEl.style.color = "orange";
+  }
+
   // Traffic Analysis (Data Collection)
   const trafficAnalysisEl = document.getElementById("statusTrafficAnalysis");
   const trafficMetricsEl = document.getElementById("statusTrafficMetrics");
