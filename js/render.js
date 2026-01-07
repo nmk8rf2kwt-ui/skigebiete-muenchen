@@ -404,10 +404,9 @@ export function renderRow(row, data) {
     typeLabel = "Sportlich";
     typeIcon = "🔴";
     typeDesc = "Anspruchsvollere Pisten für Fortgeschrittene und Könner.";
-  } else if (cls === "großraum" || cls.includes("large")) {
-    typeLabel = "Großraum";
-    typeIcon = "🔴";
-    typeDesc = "Sehr großes Skigebiet mit vielen Pistenkilometern.";
+  } else if (cls.includes("großraum") || cls.includes("large")) {
+    typeIcon = "🔵";
+    typeDesc = "Große Pistenvielfalt";
   } else if (cls === "gletscher" || cls.includes("glacier")) {
     typeLabel = "Gletscher";
     typeIcon = "⚫";
