@@ -84,7 +84,7 @@ class StatusLogger {
     }
 
     updateMetric(key, value) {
-        if (this.metrics.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(this.metrics, key)) {
             this.metrics[key] = value;
         }
     }

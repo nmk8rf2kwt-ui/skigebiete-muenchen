@@ -1,5 +1,6 @@
 import { supabase } from './db.js';
 import { statusLogger } from './statusLogger.js';
+import logger from './logger.js';
 
 /**
  * Database Health Monitoring Service

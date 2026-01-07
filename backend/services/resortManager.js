@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import pLimit from "p-limit";
 import { PARSERS } from "../parsers/index.js";
 import { parserCache, weatherCache, trafficCache } from "./cache.js";
-import { logFetch } from "./fileLogger.js";
+import logger from "./logger.js";
 import { statusLogger } from "./statusLogger.js"; // New status logger
 import { ResortDataSchema } from "../utils/schema.js";
 
@@ -25,9 +25,9 @@ function loadResorts() {
         }
         const data = fs.readFileSync(RESORTS_FILE, "utf8");
         STATIC_RESORTS = JSON.parse(data);
-        console.log(`✅ Loaded ${STATIC_RESORTS.length} resorts from configuration.`);
+        logger.info(`✅ Loaded ${STATIC_RESORTS.length} resorts from configuration.`);
     } catch (err) {
-        console.error("❌ FATAL: Error reading resorts.json:", err);
+        logger.error("❌ FATAL: Error reading resorts.json:", err);
         process.exit(1);
     }
 }
@@ -130,20 +130,14 @@ export async function getAllResortsLive() {
                             };
                             // Store in cache
                             parserCache.set(resort.id, data);
-                            logFetch(
-                                resort.id,
-                                "SUCCESS",
-                                data.source || resort.website,
-                                `Lifts: ${data.liftsOpen}/${data.liftsTotal}`
-                            );
-                            // New System Status Log
-                            // Only log errors or significant changes to avoid spamming the status log?
-                            // Actually, let's log "Updated resort X" as info.
-                            // statusLogger.log('info', 'scraper', `Updated ${resort.name}`);
+                            logger.scraper.info(`Updated ${resort.id}`, {
+                                source: data.source || resort.website,
+                                lifts: `${data.liftsOpen}/${data.liftsTotal}`
+
+                            });
                         } catch (error) {
-                            console.error(`Parser error for ${resort.id}:`, error.message);
+                            logger.scraper.error(`Parser error for ${resort.id}: ${error.message}`);
                             liveData.status = "error";
-                            logFetch(resort.id, "ERROR", resort.website, error.message);
                             // Log error to system status
                             statusLogger.log('error', 'scraper', `Failed to update ${resort.name}: ${error.message}`);
                         }

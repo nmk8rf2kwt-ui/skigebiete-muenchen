@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog, updateHistoricalWeather, isBackfillCompleted, markBackfillCompleted, syncResortsToDatabase } from "./history.js";
+import logger from './logger.js';
 import { statusLogger } from "./statusLogger.js"; // Logging support
 import { checkDatabaseHealth } from './dbMonitoring.js';
 
@@ -153,9 +154,9 @@ export async function updateTrafficMatrix() {
                     }
                 }
             }
-            console.log("✅ Updated Standard Traffic Cache (Munich).");
+            logger.traffic.info("✅ Updated Standard Traffic Cache (Munich).");
         } else {
-            console.warn("⚠️ Munich data missing in matrix response. Cache not updated.");
+            logger.traffic.warn("⚠️ Munich data missing in matrix response. Cache not updated.");
         }
 
         // B. Log Detailed Matrix History (All 5 Cities)
@@ -179,7 +180,7 @@ export async function updateTrafficMatrix() {
                 }
             }
         }
-        console.log(`📝 Logged ${logCount} matrix entries.`);
+        logger.traffic.info(`📝 Logged ${logCount} matrix entries.`);
 
         // Mark traffic API as healthy after successful update
         statusLogger.updateComponentStatus('traffic', 'healthy');
@@ -192,7 +193,7 @@ export async function updateTrafficMatrix() {
         statusLogger.log('info', 'traffic_analysis', `Collected ${logCount} traffic data points for analysis.`);
 
     } catch (error) {
-        console.error("Error in updateTrafficMatrix:", error);
+        logger.traffic.error(`Error in updateTrafficMatrix: ${error.message}`);
         statusLogger.updateComponentStatus('traffic', 'degraded');
         statusLogger.updateComponentStatus('traffic_analysis', 'degraded');
         statusLogger.log('error', 'traffic', `Traffic Matrix update failed: ${error.message}`);
@@ -202,7 +203,7 @@ export async function updateTrafficMatrix() {
 // -- DATABASE HEALTH CHECK --
 
 async function runDatabaseHealthCheck() {
-    console.log('🔍 Running database health check...');
+    logger.db.info('🔍 Running database health check...');
 
     try {
         const health = await checkDatabaseHealth();
@@ -225,7 +226,7 @@ async function runDatabaseHealthCheck() {
         }
 
     } catch (error) {
-        console.error('Database health check failed:', error);
+        logger.db.error(`Database health check failed: ${error.message}`);
         statusLogger.log('error', 'database', `Health check error: ${error.message}`);
     }
 }
