@@ -17,7 +17,8 @@
   <h1>🏔️ Skigebiet-Finder – Live-Ranking</h1>
 
   <div class="meta">
-    Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten · <span style="color: #999;">v1.3.3</span>
+    Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten · <span style="color: #999;">v1.4.0</span> · <a
+      href="#" id="openStatusBtn" style="color: #999; text-decoration: none;">System Status</a>
   </div>
   <div id="loadingBanner" class="loading-banner" style="display: none;">
     <span class="loading-spinner-small"></span>
@@ -176,6 +177,38 @@
           Durchschnittliche Verkehrsverzögerung pro Wochentag/Uhrzeit (gemittelt über letzten Monat)
         </p>
         <canvas id="trafficHistoryChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Status Modal -->
+  <div id="statusModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <span class="close-status">&times;</span>
+      <h2>🖥️ System Status</h2>
+
+      <div class="status-grid">
+        <div class="status-card">
+          <h3>Database</h3>
+          <div id="statusDb" class="status-indicator">⚪ Checking...</div>
+        </div>
+        <div class="status-card">
+          <h3>Scraper</h3>
+          <div id="statusScraper" class="status-indicator">⚪ Checking...</div>
+        </div>
+        <div class="status-card">
+          <h3>Weather API</h3>
+          <div id="statusWeather" class="status-indicator">⚪ Checking...</div>
+        </div>
+        <div class="status-card">
+          <h3>Uptime</h3>
+          <div id="statusUptime" class="status-value">-</div>
+        </div>
+      </div>
+
+      <h3>Live Logs</h3>
+      <div id="systemLogs" class="system-logs">
+        <div class="log-entry">Loading logs...</div>
       </div>
     </div>
   </div>

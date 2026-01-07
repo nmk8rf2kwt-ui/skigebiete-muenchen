@@ -5,6 +5,7 @@ import pLimit from "p-limit";
 import { PARSERS } from "../parsers/index.js";
 import { parserCache, weatherCache, trafficCache } from "./cache.js";
 import { logFetch } from "../logger.js";
+import { statusLogger } from "./statusLogger.js"; // New status logger
 import { ResortDataSchema } from "../schema.js";
 
 // -- PATH CONFIG --
@@ -135,10 +136,16 @@ export async function getAllResortsLive() {
                                 data.source || resort.website,
                                 `Lifts: ${data.liftsOpen}/${data.liftsTotal}`
                             );
+                            // New System Status Log
+                            // Only log errors or significant changes to avoid spamming the status log?
+                            // Actually, let's log "Updated resort X" as info.
+                            // statusLogger.log('info', 'scraper', `Updated ${resort.name}`);
                         } catch (error) {
                             console.error(`Parser error for ${resort.id}:`, error.message);
                             liveData.status = "error";
                             logFetch(resort.id, "ERROR", resort.website, error.message);
+                            // Log error to system status
+                            statusLogger.log('error', 'scraper', `Failed to update ${resort.name}: ${error.message}`);
                         }
                     }
                 }
@@ -193,6 +200,14 @@ export async function getAllResortsLive() {
             })
         )
     );
+
+    // Log batch completion
+    const errorCount = results.filter(r => r.status === 'error').length;
+    if (errorCount > 0) {
+        statusLogger.log('warn', 'scraper', `Batch update finished with ${errorCount} errors.`);
+    } else {
+        statusLogger.log('success', 'scraper', `All ${resorts.length} resorts updated successfully.`);
+    }
 
     return results;
 }

@@ -7,7 +7,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog, updateHistoricalWeather, isBackfillCompleted, markBackfillCompleted } from "../history.js";
+import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog, updateHistoricalWeather, isBackfillCompleted, markBackfillCompleted, syncResortsToDatabase, syncCitiesToDatabase } from "../history.js";
+
+
 import { fetchTrafficMatrix } from "./tomtom.js";
 import { getYesterdayWeather, backfillWeatherHistory } from "./historicalWeather.js";
 
@@ -190,7 +192,20 @@ export function initScheduler() {
     // C. Initial fetch for weather
     setTimeout(refreshWeather, 2000);
 
-    // D. Snapshot Loop (Check every hour)
+    // D. Sync Static Resorts Config (One-time on start)
+    setTimeout(() => {
+        const resorts = getStaticResorts();
+        syncResortsToDatabase(resorts);
+
+        // Sync Cities
+        const citiesPath = path.join(__dirname, '../data/reference_cities.json');
+        if (fs.existsSync(citiesPath)) {
+            const cities = JSON.parse(fs.readFileSync(citiesPath, 'utf-8'));
+            syncCitiesToDatabase(cities);
+        }
+    }, 5000);
+
+    // E. Snapshot Loop (Check every hour)
     setInterval(() => {
         const now = new Date();
         const currentDate = now.toISOString().split('T')[0];

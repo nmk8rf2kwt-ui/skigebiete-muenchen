@@ -15,6 +15,7 @@ import weatherRouter from "./routes/weather.js";
 import historyRouter from "./routes/history.js";
 import trafficRouter from "./routes/traffic.js";
 import historicalWeatherRouter from "./routes/historicalWeather.js";
+import statusRouter from "./routes/status.js";
 
 // -- PATH SAFETY & STATIC CONFIG --
 const __filename = fileURLToPath(import.meta.url);
@@ -104,6 +105,7 @@ app.use("/api/weather", weatherRouter);
 app.use("/api", historyRouter); // mounts /history, /trends, /export
 app.use("/api/traffic", trafficRouter);
 app.use("/api/historical-weather", historicalWeatherRouter);
+app.use("/api/status", statusRouter);
 
 // Initialize Scheduler (Weather & History)
 initScheduler();
@@ -113,4 +115,10 @@ app.listen(PORT, () => {
   console.log(`📊 Historical data tracking enabled`);
   console.log(`🛡️ Security middleware enabled`);
   console.log(`📂 Serving static files from parent`);
+
+  // Log startup
+  import("./services/statusLogger.js").then(({ statusLogger }) => {
+    statusLogger.log('info', 'system', `Server started on port ${PORT}`);
+    statusLogger.updateComponentStatus('system', 'healthy');
+  });
 });

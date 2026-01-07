@@ -628,9 +628,87 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Tab switching logic for history modal
-  // (Old tab listener removed)
+  // Status Modal Handlers
+  const statusModal = document.getElementById("statusModal");
+  const closeStatusBtn = document.querySelector(".close-status");
+
+  document.getElementById("openStatusBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    statusModal.style.display = "block";
+    fetchSystemStatus();
+    // Start auto-refresh for status
+    if (!window.statusInterval) {
+      window.statusInterval = setInterval(fetchSystemStatus, 5000);
+    }
+  });
+
+  closeStatusBtn.addEventListener("click", () => {
+    statusModal.style.display = "none";
+    if (window.statusInterval) {
+      clearInterval(window.statusInterval);
+      window.statusInterval = null;
+    }
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target === statusModal) {
+      statusModal.style.display = "none";
+      if (window.statusInterval) {
+        clearInterval(window.statusInterval);
+        window.statusInterval = null;
+      }
+    }
+  });
 });
+
+async function fetchSystemStatus() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/status`);
+    if (!res.ok) throw new Error("Status API failed");
+    const data = await res.json();
+    renderStatusDashboard(data);
+  } catch (err) {
+    console.error("Status error:", err);
+  }
+}
+
+function renderStatusDashboard(data) {
+  // Database
+  const dbEl = document.getElementById("statusDb");
+  const dbOk = data.database?.connected;
+  dbEl.textContent = dbOk ? "🟢 Online" : "🔴 Offline";
+  dbEl.style.color = dbOk ? "green" : "red";
+  if (!dbOk) dbEl.title = data.database?.message || "Unknown error";
+
+  // Uptime
+  const uptime = Math.floor(data.uptime || 0);
+  const hours = Math.floor(uptime / 3600);
+  const mins = Math.floor((uptime % 3600) / 60);
+  document.getElementById("statusUptime").textContent = `${hours}h ${mins}m`;
+
+  // Logs
+  const logContainer = document.getElementById("systemLogs");
+  if (data.logs && data.logs.length > 0) {
+    logContainer.innerHTML = data.logs.map(log => {
+      const time = new Date(log.timestamp).toLocaleTimeString();
+      let color = "#333";
+      if (log.level === 'error') color = "#d32f2f";
+      if (log.level === 'warn') color = "#f57c00";
+      if (log.level === 'success') color = "#43a047";
+
+      let icon = "ℹ️";
+      if (log.level === 'error') icon = "❌";
+      if (log.level === 'warn') icon = "⚠️";
+      if (log.level === 'success') icon = "✅";
+
+      return `<div class="log-entry" style="border-bottom: 1px solid #eee; padding: 4px 0; font-family: monospace; font-size: 0.9em; color: ${color};">
+        <span style="color: #999;">[${time}]</span> ${icon} <strong>[${log.component.toUpperCase()}]</strong> ${log.message}
+      </div>`;
+    }).join("");
+  } else {
+    logContainer.innerHTML = "<div class='log-entry'>No logs available</div>";
+  }
+}
 
 let historyChart = null;
 

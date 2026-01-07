@@ -46,13 +46,14 @@
     *   Caching layer (in-memory).
     *   Scheduler for fetching weather and snow data.
     *   Scheduler for fetching weather and snow data.
-    *   **Database**: Persists history and traffic logs via Supabase (`db.js`).
+    *   **Database**: Persists history, traffic logs, and reference data (cities, resorts) via Supabase (`db.js`).
     *   **Traffic Calculation**: Handles `POST /api/traffic/calculate` to fetch matrix data from OpenRouteService.
 *   **`parsers/`**: Contains the logic to extract data for each resort. Each file exports a function that returns standardization data (`liftsOpen`, `snow`, `weather`).
 *   **`db.js`**: Initializes the Supabase client.
-*   **`schema.sql`**: Defines the PostgreSQL database schema (`resort_snapshots`, `traffic_logs`).
-*   **`resorts.json`**: The "Source of Truth" for static data (Names, IDs, coordinates, URLs, Base Prices).
+*   **`schema.sql`**: Defines the PostgreSQL database schema (`resorts`, `cities`, `resort_snapshots`, `traffic_logs`).
+*   **`resorts.json`**: The "Source of Truth" for static resort configuration. Uses "Sync-on-Start" to populate the DB.
     *   **New**: Supports `priceDetail` object for Adult/Youth/Child breakdown.
+*   **`data/reference_cities.json`**: Source of truth for cities, synced to `cities` table on start.
 
 ### Frontend
 *   **`index.html`**: Pure HTML structure.

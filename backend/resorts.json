@@ -913,5 +913,373 @@
             "currency": "€",
             "info": "Tageskarte Ganzjährig"
         }
+    },
+    {
+        "id": "soelden",
+        "name": "Sölden",
+        "distance": 190,
+        "piste_km": 144,
+        "lifts": 31,
+        "price": 75.00,
+        "classification": "Sportlich",
+        "website": "https://www.soelden.com",
+        "latitude": 46.9655,
+        "longitude": 11.0076,
+        "priceDetail": {
+            "adult": 75.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "obertauern",
+        "name": "Obertauern",
+        "distance": 180,
+        "piste_km": 100,
+        "lifts": 26,
+        "price": 65.00,
+        "classification": "Sportlich",
+        "website": "https://www.obertauern.com",
+        "latitude": 47.2483,
+        "longitude": 13.5600,
+        "priceDetail": {
+            "adult": 65.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "ischgl",
+        "name": "Ischgl / Samnaun",
+        "distance": 210,
+        "piste_km": 239,
+        "lifts": 45,
+        "price": 72.00,
+        "classification": "Großraum",
+        "website": "https://www.ischgl.com",
+        "latitude": 47.0114,
+        "longitude": 10.2906,
+        "priceDetail": {
+            "adult": 72.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "st_anton",
+        "name": "St. Anton am Arlberg",
+        "distance": 230,
+        "piste_km": 305,
+        "lifts": 88,
+        "price": 75.00,
+        "classification": "Großraum",
+        "website": "https://www.skiarlberg.at",
+        "latitude": 47.1306,
+        "longitude": 10.2678,
+        "priceDetail": {
+            "adult": 75.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "serfaus_fiss_ladis",
+        "name": "Serfaus-Fiss-Ladis",
+        "distance": 190,
+        "piste_km": 214,
+        "lifts": 68,
+        "price": 68.00,
+        "classification": "Familie",
+        "website": "https://www.serfaus-fiss-ladis.at",
+        "latitude": 47.0379,
+        "longitude": 10.6075,
+        "priceDetail": {
+            "adult": 68.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "saalbach",
+        "name": "Saalbach Hinterglemm Leogang Fieberbrunn",
+        "distance": 180,
+        "piste_km": 270,
+        "lifts": 70,
+        "price": 72.00,
+        "classification": "Großraum",
+        "website": "https://www.saalbach.com",
+        "latitude": 47.3912,
+        "longitude": 12.6373,
+        "priceDetail": {
+            "adult": 72.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "schladming",
+        "name": "Schladming-Dachstein (Planai)",
+        "distance": 210,
+        "piste_km": 123,
+        "lifts": 44,
+        "price": 73.50,
+        "classification": "Sportlich",
+        "website": "https://www.planai.at",
+        "latitude": 47.3934,
+        "longitude": 13.6896,
+        "priceDetail": {
+            "adult": 73.50,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "hochzillertal_hochfuegen",
+        "name": "Hochzillertal / Hochfügen",
+        "distance": 130,
+        "piste_km": 90,
+        "lifts": 39,
+        "price": 72.50,
+        "classification": "Sportlich",
+        "website": "https://www.hochzillertal.com",
+        "latitude": 47.2885,
+        "longitude": 11.8744,
+        "priceDetail": {
+            "adult": 72.50,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "kitzsteinhorn",
+        "name": "Zell am See / Kaprun (Kitzsteinhorn)",
+        "distance": 170,
+        "piste_km": 61,
+        "lifts": 23,
+        "price": 76.00,
+        "classification": "Gletscher",
+        "website": "https://www.kitzsteinhorn.at",
+        "latitude": 47.2284,
+        "longitude": 12.7214,
+        "priceDetail": {
+            "adult": 76.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "nassfeld",
+        "name": "Nassfeld",
+        "distance": 260,
+        "piste_km": 110,
+        "lifts": 30,
+        "price": 62.00,
+        "classification": "Sportlich",
+        "website": "https://www.nassfeld.at",
+        "latitude": 46.5670,
+        "longitude": 13.2770,
+        "priceDetail": {
+            "adult": 62.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "obergurgl_hochgurgl",
+        "name": "Obergurgl-Hochgurgl",
+        "distance": 195,
+        "piste_km": 112,
+        "lifts": 25,
+        "price": 73.00,
+        "classification": "Sportlich",
+        "website": "https://www.obergurgl.com",
+        "latitude": 46.8703,
+        "longitude": 11.0264,
+        "priceDetail": {
+            "adult": 73.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "axamer_lizum",
+        "name": "Axamer Lizum",
+        "distance": 150,
+        "piste_km": 40,
+        "lifts": 9,
+        "price": 54.00,
+        "classification": "Sportlich",
+        "website": "https://www.axamer-lizum.at",
+        "latitude": 47.1953,
+        "longitude": 11.3023,
+        "priceDetail": {
+            "adult": 54.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "kuehtai",
+        "name": "Kühtai",
+        "distance": 130,
+        "piste_km": 47,
+        "lifts": 12,
+        "price": 52.00,
+        "classification": "Familie",
+        "website": "https://www.kuehtai.info",
+        "latitude": 47.2137,
+        "longitude": 11.0206,
+        "priceDetail": {
+            "adult": 52.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "stubaier_gletscher",
+        "name": "Stubaier Gletscher",
+        "distance": 170,
+        "piste_km": 65,
+        "lifts": 26,
+        "price": 66.00,
+        "classification": "Gletscher",
+        "website": "https://www.stubaier-gletscher.com",
+        "latitude": 47.0101,
+        "longitude": 11.1394,
+        "priceDetail": {
+            "adult": 66.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "snow_space_salzburg",
+        "name": "Snow Space Salzburg",
+        "distance": 170,
+        "piste_km": 210,
+        "lifts": 70,
+        "price": 73.00,
+        "classification": "Großraum",
+        "website": "https://www.snow-space.com",
+        "latitude": 47.3458,
+        "longitude": 13.3888,
+        "priceDetail": {
+            "adult": 73.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "hochkoenig",
+        "name": "Hochkönig",
+        "distance": 175,
+        "piste_km": 120,
+        "lifts": 34,
+        "price": 73.00,
+        "classification": "Familie",
+        "website": "https://www.hochkoenig.at",
+        "latitude": 47.3997,
+        "longitude": 13.0487,
+        "priceDetail": {
+            "adult": 73.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "silvretta_montafon",
+        "name": "Silvretta Montafon",
+        "distance": 220,
+        "piste_km": 140,
+        "lifts": 35,
+        "price": 74.00,
+        "classification": "Sportlich",
+        "website": "https://www.silvretta-montafon.at",
+        "latitude": 47.0673,
+        "longitude": 9.9142,
+        "priceDetail": {
+            "adult": 74.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "damuels_mellau",
+        "name": "Damüls Mellau",
+        "distance": 210,
+        "piste_km": 109,
+        "lifts": 28,
+        "price": 66.00,
+        "classification": "Familie",
+        "website": "https://www.damuels-mellau.at",
+        "latitude": 47.2800,
+        "longitude": 9.8970,
+        "priceDetail": {
+            "adult": 66.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "turracher_hoehe",
+        "name": "Turracher Höhe",
+        "distance": 240,
+        "piste_km": 42,
+        "lifts": 15,
+        "price": 60.00,
+        "classification": "Familie",
+        "website": "https://www.turracherhoehe.at",
+        "latitude": 46.9147,
+        "longitude": 13.8744,
+        "priceDetail": {
+            "adult": 60.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "bad_kleinkirchheim",
+        "name": "Bad Kleinkirchheim",
+        "distance": 260,
+        "piste_km": 103,
+        "lifts": 24,
+        "price": 62.00,
+        "classification": "Familie",
+        "website": "https://www.badkleinkirchheim.com",
+        "latitude": 46.8157,
+        "longitude": 13.7744,
+        "priceDetail": {
+            "adult": 62.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "kronplatz",
+        "name": "Kronplatz",
+        "distance": 215,
+        "piste_km": 120,
+        "lifts": 32,
+        "price": 74.00,
+        "classification": "Sportlich",
+        "website": "https://www.kronplatz.com",
+        "latitude": 46.7725,
+        "longitude": 11.9566,
+        "priceDetail": {
+            "adult": 74.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "dolomitisuperski",
+        "name": "Dolomiti Superski",
+        "distance": 230,
+        "piste_km": 1200,
+        "lifts": 450,
+        "price": 80.00,
+        "classification": "Großraum",
+        "website": "https://www.dolomitisuperski.com",
+        "latitude": 46.5516,
+        "longitude": 11.8596,
+        "priceDetail": {
+            "adult": 80.00,
+            "info": "Tageskarte"
+        }
+    },
+    {
+        "id": "sella_ronda",
+        "name": "Sella Ronda",
+        "distance": 230,
+        "piste_km": 40,
+        "lifts": 10,
+        "price": 80.00,
+        "classification": "Sportlich",
+        "website": "https://www.dolomitisuperski.com",
+        "latitude": 46.5510,
+        "longitude": 11.8590,
+        "priceDetail": {
+            "adult": 80.00,
+            "info": "Tageskarte"
+        }
     }
 ]

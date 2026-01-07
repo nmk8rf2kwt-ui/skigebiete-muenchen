@@ -326,3 +326,80 @@ export async function markBackfillCompleted() {
             data: { weatherBackfill: true }
         }, { onConflict: 'resort_id, date' });
 }
+
+// Sync resorts configuration to database
+export async function syncResortsToDatabase(resorts) {
+    if (!supabase) return;
+
+    if (!resorts || resorts.length === 0) {
+        console.warn("No resorts to sync.");
+        return;
+    }
+
+    try {
+        console.log(`🔄 Syncing ${resorts.length} resorts to DB...`);
+
+        // Transform to match DB schema
+        const rows = resorts.map(r => ({
+            id: r.id,
+            name: r.name,
+            district: r.district || null,
+            distance: r.distance || null,
+            piste_km: r.piste_km || null,
+            lifts: r.lifts || null,
+            price: r.price || null,
+            classification: r.classification || null,
+            website: r.website || null,
+            latitude: r.latitude || null,
+            longitude: r.longitude || null,
+            price_detail: r.priceDetail || null,
+            updated_at: new Date().toISOString()
+        }));
+
+        const { error } = await supabase
+            .from('resorts')
+            .upsert(rows, { onConflict: 'id' });
+
+        if (error) {
+            console.error("Supabase error syncing resorts:", error.message);
+        } else {
+            console.log("✅ Resorts configuration synced to DB.");
+        }
+    } catch (error) {
+        console.error("Error syncing resorts to DB:", error);
+    }
+}
+
+// Sync cities usage to database
+export async function syncCitiesToDatabase(cities) {
+    if (!supabase) return;
+
+    if (!cities || cities.length === 0) {
+        console.warn("No cities to sync.");
+        return;
+    }
+
+    try {
+        console.log(`🔄 Syncing ${cities.length} cities to DB...`);
+
+        const rows = cities.map(c => ({
+            id: c.id,
+            name: c.name,
+            latitude: c.latitude,
+            longitude: c.longitude,
+            created_at: new Date().toISOString()
+        }));
+
+        const { error } = await supabase
+            .from('cities')
+            .upsert(rows, { onConflict: 'id' });
+
+        if (error) {
+            console.error("Supabase error syncing cities:", error.message);
+        } else {
+            console.log("✅ Cities configuration synced to DB.");
+        }
+    } catch (error) {
+        console.error("Error syncing cities to DB:", error);
+    }
+}
