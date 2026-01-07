@@ -44,31 +44,16 @@ export async function fetchTravelTimes(destinations, origin = null) {
     if (destPoints.length === 0) return {};
 
     // TomTom Batch Limit: Matrix synchronous is limited to 100 cells (1 origin * 100 dests). 
-    // We have ~30 resorts, so 1 batch is fine.
+    // We have ~60 resorts, so 1 batch is fine.
 
     const url = `https://api.tomtom.com/routing/1/matrix/sync/json?key=${TOMTOM_API_KEY}`;
 
     const body = {
         origins: origins,
-        destinations: destPoints,
-        options: {
-            traffic: "historical", // or "live" (default seems to cover live if traffic flow is used?)
-            // TomTom "traffic" parameter isn't in Matrix, it uses "routeType" defaults.
-            // Wait, checks docs: https://developer.tomtom.com/routing-api/documentation/matrix-routing/synchronous-matrix
-            // It says "traffic" defaults to true? No, that's regular Routing.
-            // Matrix V2: "traffic" is stored in the POST body? No.
-            // Actually, we usually rely on default behavior which includes traffic.
-            // Let's check "computeTravelTimeFor" = "all" to get "noTrafficTravelTimeInSeconds".
-        }
+        destinations: destPoints
+        // Note: Traffic is included by default in Matrix API
+        // No 'options' parameter needed - it causes 400 errors
     };
-
-    // NOTE: TomTom Matrix doesn't clearly state "traffic: true" in body.
-    // However, it supports "computeTravelTimeFor": "all" (which gives 'live', 'historic', 'no_traffic').
-    // Let's construct the URL parameters properly if needed, but the POST body is structure.
-
-    // FIX: To get traffic delay, we might need specific params.
-    // Standard Routing API has "traffic: true". Matrix API?
-    // Let's try basic request first.
 
     try {
         const response = await fetch(url, {
@@ -133,72 +118,92 @@ export async function fetchTrafficMatrix(origins, destinations) {
         return null;
     }
 
-    const locations = [];
+    // TomTom Matrix API Limit: 100 cells max (origins * destinations <= 100)
+    // We have 5 cities and 60 resorts = 300 cells → Need to batch!
+    // Strategy: Split destinations into batches of 20 (5 origins * 20 dests = 100 cells)
 
-    // Prepare origins
-    const originCoords = origins.map(o => ({
-        point: { latitude: o.latitude, longitude: o.longitude }
-    }));
+    const BATCH_SIZE = 20; // 5 origins * 20 destinations = 100 cells
+    const results = {};
 
-    // Prepare destinations
-    const destCoords = destinations.map(d => ({
-        point: { latitude: d.latitude, longitude: d.longitude }
-    }));
+    // Initialize results structure
+    origins.forEach(origin => {
+        results[origin.id] = {};
+    });
 
-    const body = {
-        origins: originCoords,
-        destinations: destCoords
-    };
+    // Split destinations into batches
+    for (let i = 0; i < destinations.length; i += BATCH_SIZE) {
+        const destBatch = destinations.slice(i, i + BATCH_SIZE);
 
-    const url = `https://api.tomtom.com/routing/matrix/2?key=${TOMTOM_API_KEY}`;
+        console.log(`Fetching traffic matrix batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(destinations.length / BATCH_SIZE)} (${destBatch.length} destinations)...`);
 
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        });
+        // Prepare origins
+        const originCoords = origins.map(o => ({
+            point: { latitude: o.latitude, longitude: o.longitude }
+        }));
 
-        if (!response.ok) {
-            const errText = await response.text();
-            throw new Error(`TomTom Matrix Error: ${response.status} ${errText}`);
-        }
+        // Prepare destinations
+        const destCoords = destBatch.map(d => ({
+            point: { latitude: d.latitude, longitude: d.longitude }
+        }));
 
-        const data = await response.json();
+        const body = {
+            origins: originCoords,
+            destinations: destCoords
+        };
 
-        // Response data is in data.data (array of results)
-        // Ordered by Origin, then Destination.
-        // Index = originIndex * numDestinations + destIndex
+        const url = `https://api.tomtom.com/routing/matrix/2?key=${TOMTOM_API_KEY}`;
 
-        const results = {};
-        const nDest = destinations.length;
-
-        origins.forEach((origin, oIdx) => {
-            results[origin.id] = {};
-            destinations.forEach((dest, dIdx) => {
-                const flatIndex = oIdx * nDest + dIdx;
-                const routeData = data.data[flatIndex];
-
-                if (routeData && routeData.routeSummary) {
-                    const travelTime = routeData.routeSummary.travelTimeInSeconds; // live
-                    const trafficDelay = routeData.routeSummary.trafficDelayInSeconds; // delay
-
-                    results[origin.id][dest.id] = {
-                        duration: Math.round(travelTime / 60),
-                        delay: Math.round(trafficDelay / 60)
-                    };
-                } else {
-                    results[origin.id][dest.id] = null;
-                }
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
             });
-        });
 
-        return results;
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`TomTom Matrix Error: ${response.status} ${errText}`);
+            }
 
-    } catch (error) {
-        console.error("Traffic Matrix fetch failed:", error.message);
-        return null;
+            const data = await response.json();
+
+            // Response data is in data.data (array of results)
+            // Ordered by Origin, then Destination.
+            // Index = originIndex * numDestinations + destIndex
+
+            const nDest = destBatch.length;
+
+            origins.forEach((origin, oIdx) => {
+                destBatch.forEach((dest, dIdx) => {
+                    const flatIndex = oIdx * nDest + dIdx;
+                    const routeData = data.data[flatIndex];
+
+                    if (routeData && routeData.routeSummary) {
+                        const travelTime = routeData.routeSummary.travelTimeInSeconds; // live
+                        const trafficDelay = routeData.routeSummary.trafficDelayInSeconds; // delay
+
+                        results[origin.id][dest.id] = {
+                            duration: Math.round(travelTime / 60),
+                            delay: Math.round(trafficDelay / 60)
+                        };
+                    } else {
+                        results[origin.id][dest.id] = null;
+                    }
+                });
+            });
+
+            // Small delay between batches to avoid rate limiting
+            if (i + BATCH_SIZE < destinations.length) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+        } catch (error) {
+            console.error(`Traffic Matrix batch ${Math.floor(i / BATCH_SIZE) + 1} failed:`, error.message);
+            // Continue with next batch even if one fails
+        }
     }
+
+    return results;
 }
 
 
