@@ -124,7 +124,19 @@ app.use("/admin", basicAuth);
 app.use("/api/admin", basicAuth);
 
 // Serve Static Frontend Files
-app.use(express.static(path.join(__dirname, '../')));
+// Serve Static Frontend Files (Securely)
+app.use('/css', express.static(path.join(__dirname, '../css')));
+app.use('/js', express.static(path.join(__dirname, '../js')));
+app.use('/docs', express.static(path.join(__dirname, '../docs')));
+// Note: /admin is protected by basicAuth middleware defined above
+app.use('/admin', express.static(path.join(__dirname, '../admin')));
+
+// Root HTML Files (Explicit Whitelist)
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
+app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
+app.get('/impressum.html', (req, res) => res.sendFile(path.join(__dirname, '../impressum.html')));
+app.get('/datenschutz.html', (req, res) => res.sendFile(path.join(__dirname, '../datenschutz.html')));
+app.get('/robots.txt', (req, res) => res.sendFile(path.join(__dirname, '../robots.txt')));
 
 
 

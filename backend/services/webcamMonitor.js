@@ -20,13 +20,11 @@ class WebcamMonitor {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-            const response = await fetch(url, {
-                method: 'GET', // GET is more reliable than HEAD for some servers
+            // Use fetchWithHeaders for better anti-blocking (rotating UAs)
+            const response = await fetchWithHeaders(url, {
+                method: 'GET',
                 signal: controller.signal,
-                headers: {
-                    // Use standard browser UA to avoid blocking
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-                }
+                timeout: timeout // fetchWithHeaders supports timeout if passed to AbortController? No, it takes signal.
             });
 
             clearTimeout(timeoutId);
