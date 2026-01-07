@@ -15,6 +15,11 @@ All notable changes to this project will be documented in this file.
 - **Traffic Analysis**: Verified background service implementation.
 - **Resort Status**: Update Implementation Status to 34 implemented / 26 pending.
 
+## [1.6.5] - 2026-01-07
+
+### Improvements
+- **UX**: Added subtle admin dashboard link (gear icon) to the header.
+
 ## [1.6.4] - 2026-01-07
 
 ### Admin Dashboard Extended
