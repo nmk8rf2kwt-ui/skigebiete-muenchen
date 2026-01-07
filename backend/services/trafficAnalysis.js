@@ -18,7 +18,7 @@ export async function getResortCongestionAnalysis(resortId, days = 7) {
 
         // Query: Get all traffic data for this resort from all cities
         const { data, error } = await supabase
-            .from('matrix_traffic_logs')
+            .from('traffic_logs')
             .select('*')
             .eq('resort_id', resortId)
             .gte('timestamp', startDate.toISOString())
@@ -142,7 +142,7 @@ export async function getAllResortsCongestionAnalysis(days = 7) {
     try {
         // Get unique resort IDs from traffic logs
         const { data: resorts, error } = await supabase
-            .from('matrix_traffic_logs')
+            .from('traffic_logs')
             .select('resort_id')
             .limit(1000);
 
@@ -180,7 +180,7 @@ function getWeekdayName(day) {
 export async function checkDataAvailability(resortId) {
     try {
         const { count, error } = await supabase
-            .from('matrix_traffic_logs')
+            .from('traffic_logs')
             .select('*', { count: 'exact', head: true })
             .eq('resort_id', resortId);
 
