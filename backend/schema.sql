@@ -37,7 +37,8 @@ create table if not exists resort_snapshots (
   date date not null,
   timestamp timestamptz not null default now(),
   data jsonb not null,
-  created_at timestamptz default now()
+  created_at timestamptz default now(),
+  CONSTRAINT unique_resort_date UNIQUE (resort_id, date)
 );
 
 -- Create table for traffic logs
