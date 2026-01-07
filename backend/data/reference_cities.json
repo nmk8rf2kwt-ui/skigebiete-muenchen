@@ -28,5 +28,23 @@
         "name": "Salzburg",
         "latitude": 47.8095,
         "longitude": 13.0550
+    },
+    {
+        "id": "innsbruck",
+        "name": "Innsbruck",
+        "latitude": 47.2692,
+        "longitude": 11.4041
+    },
+    {
+        "id": "wien",
+        "name": "Wien",
+        "latitude": 48.2082,
+        "longitude": 16.3738
+    },
+    {
+        "id": "zuerich",
+        "name": "Zürich",
+        "latitude": 47.3769,
+        "longitude": 8.5417
     }
 ]

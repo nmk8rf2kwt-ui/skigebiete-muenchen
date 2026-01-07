@@ -108,7 +108,7 @@ export async function updateTrafficMatrix() {
         return;
     }
 
-    console.log("🚦 Updating Traffic Matrix (5 Cities)...");
+    console.log("🚦 Updating Traffic Matrix (8 Cities × 60 Resorts)...");
 
     try {
         // 1. Load Data
@@ -205,9 +205,9 @@ export function initScheduler() {
     // A. Weather Loop (1 hour)
     setInterval(refreshWeather, 60 * 60 * 1000);
 
-    // B. Traffic Matrix Loop (1 hour)
+    // B. Traffic Matrix Loop (15 minutes) - High frequency for detailed analysis
     setTimeout(() => {
-        setInterval(updateTrafficMatrix, 2 * 60 * 60 * 1000);
+        setInterval(updateTrafficMatrix, 15 * 60 * 1000); // Every 15 minutes
         updateTrafficMatrix(); // Initial run
     }, 5000);
 
