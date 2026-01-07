@@ -28,9 +28,9 @@ This project follows a clean, layered architecture designed to separate stable c
     - `backend/services/tomtom.js`: External Traffic API Interface.
 
 ### 4. Data Access Layer (DAL)
-- **Role**: Persistence. Abstracts the underlying storage mechanism (File System: JSON/CSV).
+- **Role**: Persistence. Abstracts the underlying storage mechanism (Supabase: PostgreSQL).
 - **Location**: `backend/history.js`.
-- **Constraint**: The only module allowed to import `fs` for data storage purposes.
+- **Constraint**: The only module allowed to interact with the database client (`db.js`).
 
 ### 5. External Integrations (Dirty Edge)
 - **Role**: Parsing 3rd party websites. Isolated due to high volatility.
@@ -38,7 +38,7 @@ This project follows a clean, layered architecture designed to separate stable c
 - **Pattern**: Each resort or group has a dedicated parser module. `index.js` acts as the registry.
 
 ## Data Flow
-`Frontend` -> `API Route` -> `Service` -> `DAL` -> `File System`
+`Frontend` -> `API Route` -> `Service` -> `DAL` -> `Database`
 
 ## Design Principles
 1.  **Isolation of Volatility**: Parsers `backend/parsers/*` are kept separate from the stable core to minimize the impact of website changes.
