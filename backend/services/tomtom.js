@@ -91,9 +91,9 @@ export async function fetchTravelTimes(destinations, origin = null) {
 
             if (summary) {
                 results[resortId] = {
-                    duration: Math.round(summary.travelTimeInSeconds / 60), // Current (Live)
+                    duration: summary.travelTimeInSeconds, // Store in seconds!
                     distanceKm: (summary.lengthInMeters / 1000).toFixed(1),
-                    delay: Math.round(summary.trafficDelayInSeconds / 60)   // Delay
+                    delay: summary.trafficDelayInSeconds   // Store in seconds!
                 };
             }
         });
