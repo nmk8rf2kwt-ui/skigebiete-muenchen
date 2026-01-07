@@ -17,7 +17,9 @@ class StatusLogger {
         };
         this.metrics = {
             traffic_data_points: 0,
-            traffic_last_update: null
+            traffic_last_update: null,
+            db_size_mb: 0,
+            db_percent_used: 0
         };
     }
 

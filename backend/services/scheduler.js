@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog, updateHistoricalWeather, isBackfillCompleted, markBackfillCompleted, syncResortsToDatabase } from "./history.js";
 import { statusLogger } from "./statusLogger.js"; // Logging support
+import { checkDatabaseHealth } from './dbMonitoring.js';
 
 import { fetchTrafficMatrix } from "./tomtom.js";
 import { getYesterdayWeather, backfillWeatherHistory } from "./historicalWeather.js";
@@ -198,6 +199,37 @@ export async function updateTrafficMatrix() {
     }
 }
 
+// -- DATABASE HEALTH CHECK --
+
+async function runDatabaseHealthCheck() {
+    console.log('🔍 Running database health check...');
+
+    try {
+        const health = await checkDatabaseHealth();
+
+        if (health.status === 'critical') {
+            statusLogger.updateComponentStatus('database', 'degraded');
+            statusLogger.log('error', 'database', `CRITICAL: ${health.message} - ${health.action}`);
+        } else if (health.status === 'warning') {
+            statusLogger.updateComponentStatus('database', 'healthy');
+            statusLogger.log('warn', 'database', `WARNING: ${health.message} - ${health.action}`);
+        } else if (health.status === 'healthy') {
+            statusLogger.updateComponentStatus('database', 'healthy');
+            statusLogger.log('info', 'database', health.message);
+        }
+
+        // Update metrics in statusLogger
+        if (health.sizeInfo) {
+            statusLogger.updateMetric('db_size_mb', parseFloat(health.sizeInfo.totalSizeMB));
+            statusLogger.updateMetric('db_percent_used', parseFloat(health.sizeInfo.percentUsed));
+        }
+
+    } catch (error) {
+        console.error('Database health check failed:', error);
+        statusLogger.log('error', 'database', `Health check error: ${error.message}`);
+    }
+}
+
 // -- SCHEDULER --
 
 let lastSnapshotDate = null;
@@ -245,6 +277,18 @@ export function initScheduler() {
     if (now.getHours() === 0) {
         lastSnapshotDate = now.toISOString().split('T')[0];
     }
+
+    // F. Database Health Check (Daily at 03:00)
+    setInterval(() => {
+        const currentHour = new Date().getHours();
+        if (currentHour === 3) {
+            runDatabaseHealthCheck();
+        }
+    }, 60 * 60 * 1000); // Check every hour, run at 03:00
+
+    // Initial health check on startup
+    setTimeout(runDatabaseHealthCheck, 10000); // 10 seconds after startup
+
 
     // E. History Cleanup (Daily)
     setInterval(cleanupHistory, 24 * 60 * 60 * 1000);

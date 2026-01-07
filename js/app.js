@@ -635,11 +635,31 @@ async function fetchSystemStatus() {
 
 function renderStatusDashboard(data) {
   // Database
-  const dbEl = document.getElementById("statusDb");
+  const dbEl = document.getElementById("statusDatabase");
+  const dbSizeEl = document.getElementById("statusDatabaseSize");
   const dbOk = data.database?.connected;
   dbEl.textContent = dbOk ? "🟢 Online" : "🔴 Offline";
   dbEl.style.color = dbOk ? "green" : "red";
   if (!dbOk) dbEl.title = data.database?.message || "Unknown error";
+
+  // Show database size metrics if available
+  if (data.metrics && data.metrics.db_size_mb > 0) {
+    const sizeMB = data.metrics.db_size_mb.toFixed(1);
+    const percentUsed = data.metrics.db_percent_used.toFixed(1);
+    let color = "#27ae60"; // Green
+
+    if (percentUsed >= 90) {
+      color = "#e74c3c"; // Red
+    } else if (percentUsed >= 80) {
+      color = "#f39c12"; // Orange
+    }
+
+    dbSizeEl.textContent = `${sizeMB} MB (${percentUsed}%)`;
+    dbSizeEl.style.color = color;
+  } else {
+    dbSizeEl.textContent = "Größe wird ermittelt...";
+    dbSizeEl.style.color = "#95a5a6";
+  }
 
   // Scraper
   const scraperEl = document.getElementById("statusScraper");
