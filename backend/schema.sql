@@ -9,7 +9,7 @@ create table if not exists resorts (
   name text not null,
   district text,
   distance integer,
-  piste_km integer,
+  piste_km numeric,
   lifts integer,
   price numeric,
   classification text,
