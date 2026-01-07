@@ -24,6 +24,7 @@ This project follows a clean, layered architecture designed to separate stable c
 - **Key Modules**:
     - `backend/services/resortManager.js`: Managing static and dynamic resort data.
     - `backend/services/scheduler.js`: Orchestrating periodic tasks (Parsers, Weather, Traffic).
+    - `backend/services/statusLogger.js`: Event logging and component health tracking (System Status).
     - `backend/services/historicalWeather.js`: Fetching and processing weather data.
     - `backend/services/tomtom.js`: External Traffic API Interface.
 

@@ -58,6 +58,11 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detai
 - **CI/CD**: GitHub Actions
 - **Testing**: Jest (34 Tests)
 
+## 📚 Documentation
+- [Architecture & Design Principles](./docs/ARCHITECTURE.md)
+- [API Reference](./docs/API.md)
+- [Implementation Status](./docs/IMPLEMENTATION_STATUS.md)
+
 ## Development
 
 ```bash
