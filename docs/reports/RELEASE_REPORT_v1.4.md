@@ -23,6 +23,7 @@ The primary focus of this release was to harden the infrastructure, improve obse
 ### 3. Smart Error Handling
 - **Frontend Diagnostics**: Improved error messages for Rate Limits (429) and CORS/Network issues.
 - **Smoke Tests**: Automated GitHub Workflow to verify production API health post-deployment.
+- **Sentry Integration**: Full implementation of Exception Tracking for Frontend (Browser JS) and Backend (Node.js). Warnings and Errors are now automatically alerted.
 
 ## 🛠️ Technical Improvements
 
