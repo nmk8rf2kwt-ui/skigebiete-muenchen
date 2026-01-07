@@ -7,7 +7,7 @@ export const details = {
     district: "Paznaun",
 };
 
-export async function parse(options = {}) {
+export async function parse(_options = {}) {
     // TODO: Implement parsing (API not found, HTML needs research) or find API
     return createResult(details.id, { liftsOpen: 0, liftsTotal: 0, lifts: [], slopes: [] }, "ischgl.com (Placeholder)");
 }

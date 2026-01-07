@@ -7,7 +7,7 @@ export const details = {
     district: "Zillertal",
 };
 
-export async function parse(options = {}) {
+export async function parse(_options = {}) {
     // Placeholder parser as direct data source is currently unavailable/protected
     // TODO: Implement advanced scraping or find valid API
 

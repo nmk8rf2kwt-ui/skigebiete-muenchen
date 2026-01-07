@@ -7,6 +7,6 @@ export const details = {
     district: "Vorarlberg",
 };
 
-export async function parse(options = {}) {
+export async function parse(_options = {}) {
     return createResult(details.id, { liftsOpen: 0, liftsTotal: 0, lifts: [], slopes: [] }, "damuels-mellau.at (Placeholder)");
 }

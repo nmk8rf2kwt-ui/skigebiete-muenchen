@@ -1,4 +1,4 @@
-import { createResult, STATUS } from "../utils/parserUtils.js";
+import { createResult } from "../utils/parserUtils.js";
 import { fetchWithHeaders } from "../utils/fetcher.js";
 
 export const details = {
