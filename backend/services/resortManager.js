@@ -136,6 +136,7 @@ export async function getAllResortsLive() {
                                 logger.scraper.warn(`Parser validation failed for ${resort.id}, using fallback`);
                                 liveData.status = "error";
                                 statusLogger.log('warning', 'scraper', `Parser validation failed for ${resort.name}`);
+                                statusLogger.updateComponentStatus('scraper', 'degraded'); // Mark scraper as degraded
                             } else {
                                 const data = validation.data;
 
