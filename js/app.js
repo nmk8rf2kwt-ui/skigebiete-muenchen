@@ -858,6 +858,31 @@ function renderStatusDashboard(data) {
     monitoringEl.style.color = "orange";
   }
 
+  // Webcams
+  const webcamEl = document.getElementById("statusWebcams");
+  if (webcamEl) {
+    const webcamData = data.webcams;
+    if (webcamData && webcamData.summary) {
+      const { ok, total, error } = webcamData.summary;
+      if (error === 0 && ok > 0) {
+        webcamEl.textContent = `🟢 ${ok}/${total} OK`;
+        webcamEl.style.color = "green";
+      } else if (error > 0) {
+        webcamEl.textContent = `⚠️ ${error} Errors (${ok} OK)`;
+        webcamEl.style.color = "orange";
+      } else {
+        webcamEl.textContent = "⚪ No Data";
+        webcamEl.style.color = "gray";
+      }
+      if (webcamData.summary.lastCheck) {
+        webcamEl.title = `Last Check: ${new Date(webcamData.summary.lastCheck).toLocaleTimeString()}`;
+      }
+    } else {
+      webcamEl.textContent = "⚪ Unknown";
+      webcamEl.style.color = "gray";
+    }
+  }
+
   // Traffic Analysis (Data Collection)
   const trafficAnalysisEl = document.getElementById("statusTrafficAnalysis");
   const trafficMetricsEl = document.getElementById("statusTrafficMetrics");

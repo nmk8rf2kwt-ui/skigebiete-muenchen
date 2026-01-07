@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.6.1] - 2026-01-07
+## [1.6.2] - 2026-01-07
+
+### Admin Dashboard Extended
+
+### Added
+- **Webcam Monitor Dashboard**: Visual overview of webcam health in `/admin/dashboard.html` with error details and check trigger.
+- **Scraper Control Center**: Status table for all data fetchers with "Force Refresh" capability per resort.
+- **Log Viewer**: Integrated server log viewer (Live-Tail) directly in the admin interface.
+- **System Stats**: Cache size visualization and "Clear Cache" buttons for Parser, Weather, and Traffic data.
+- **Webcam Integrity**: Comprehensive audit and fixing of all 60 webcam links.
+- **Monitoring Service**: Backend service checking webcam availability every 6 hours, utilizing anti-blocking techniques to ensure reliability. Status visible in Admin Dashboard.
+
+### Changed
+- **Admin API**: Added endpoints `/api/admin/system`, `/api/admin/logs`, and `/api/admin/parsers/refresh`.
+
 
 ### Security & Monitoring
 

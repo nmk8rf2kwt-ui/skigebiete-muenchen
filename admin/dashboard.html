@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TomTom API Dashboard</title>
+    <title>Skitouren Admin Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -16,6 +16,7 @@
             --danger-color: #f85149;
             --warning-color: #d29922;
             --success-color: #2ea043;
+            --muted-color: #8b949e;
         }
 
         body {
@@ -27,7 +28,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
@@ -35,6 +36,9 @@
             margin-bottom: 30px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         h1 {
@@ -46,7 +50,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
 
         .card {
@@ -54,17 +58,19 @@
             border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
 
         .metric {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: bold;
             display: block;
             margin-bottom: 5px;
         }
 
         .label {
-            color: #8b949e;
+            color: var(--muted-color);
             font-size: 14px;
         }
 
@@ -82,6 +88,7 @@
             transition: width 0.3s ease;
         }
 
+        /* Status Colors */
         .status-ok {
             color: var(--success-color);
         }
@@ -94,17 +101,20 @@
             color: var(--danger-color);
         }
 
+        /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
             color: var(--text-color);
+            margin-top: 10px;
         }
 
         th,
         td {
             text-align: left;
-            padding: 12px;
+            padding: 8px;
             border-bottom: 1px solid var(--border-color);
+            font-size: 0.85em;
         }
 
         th {
@@ -112,18 +122,98 @@
             font-weight: 600;
         }
 
-        .refresh-btn {
+        /* Badges */
+        .badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .badge-live {
+            background: #238636;
+            color: white;
+        }
+
+        .badge-ok {
+            background: #238636;
+            color: white;
+        }
+
+        .badge-error {
+            background: #da3633;
+            color: white;
+        }
+
+        .badge-missing {
+            background: #6e7681;
+            color: white;
+        }
+
+        .badge-static {
+            background: #1f6feb;
+            color: white;
+        }
+
+        /* Buttons */
+        .btn {
             background-color: var(--accent-color);
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
-            float: right;
+            font-size: 0.9em;
         }
 
-        .refresh-btn:hover {
+        .btn:hover {
             opacity: 0.9;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.8em;
+            background: #21262d;
+            border: 1px solid var(--border-color);
+            color: #c9d1d9;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .btn-sm:hover {
+            background: #30363d;
+            border-color: #8b949e;
+        }
+
+        /* Logs */
+        .log-entry {
+            font-family: monospace;
+            border-bottom: 1px solid #30363d;
+            padding: 4px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .log-ts {
+            color: #8b949e;
+            min-width: 140px;
+        }
+
+        .log-lvl {
+            font-weight: bold;
+            min-width: 60px;
+        }
+
+        .log-lvl.error {
+            color: #f85149;
+        }
+
+        .log-lvl.warn {
+            color: #d29922;
+        }
+
+        .log-lvl.info {
+            color: #58a6ff;
         }
     </style>
 </head>
@@ -131,53 +221,112 @@
 <body>
     <div class="container">
         <header>
-            <button class="refresh-btn" onclick="fetchData()">Aktualisieren</button>
-            <h1>📡 TomTom API Dashboard</h1>
-            <p>Überwachung der API-Limits und Nutzung</p>
+            <h1>📡 Admin Dashboard</h1>
+            <div style="display:flex; gap:10px;">
+                <span id="lastRefresh" style="font-size:0.8em; color:#8b949e; align-self:center;"></span>
+                <button class="btn" onclick="fetchAll()">Aktualisieren</button>
+            </div>
         </header>
 
+        <!-- Top Metrics Grid -->
         <div class="grid">
+            <!-- API Usage -->
             <div class="card">
-                <span class="label">Nutzung Heute</span>
+                <h3>🚦 API Usage</h3>
                 <span class="metric" id="todayRequests">0</span>
-                <span class="label">von 2500 Requests</span>
+                <span class="label">von 2500 heute</span>
                 <div class="progress-bar">
                     <div class="progress-fill" id="todayProgress" style="width: 0%"></div>
                 </div>
+                <div style="margin-top: 10px; font-size: 0.9em;" id="usageStatus">...</div>
             </div>
 
+            <!-- Webcam Monitor -->
             <div class="card">
-                <span class="label">Status</span>
-                <span class="metric" id="statusText">OK</span>
-                <span class="label" id="lastUpdated">loading...</span>
+                <div style="display:flex; justify-content:space-between;">
+                    <h3>📷 Webcams</h3>
+                    <button class="btn-sm" onclick="checkWebcams()">Check</button>
+                </div>
+                <span class="metric" id="webcamCount">-</span>
+                <div id="webcamSummary" style="margin-top:auto;">Wait...</div>
             </div>
 
+            <!-- Parser Status -->
             <div class="card">
-                <span class="label">Total Requests (All Time)</span>
-                <span class="metric" id="totalRequests">0</span>
+                <h3>🕷️ Scrapers</h3>
+                <span class="metric" id="scraperCount">-</span>
+                <div id="scraperSummary" style="margin-top:auto;">Wait...</div>
+            </div>
+
+            <!-- System Stats -->
+            <div class="card">
+                <h3>⚙️ System & Cache</h3>
+                <div id="systemStats" style="font-size:0.9em; line-height:1.6;">Loading...</div>
+                <div style="margin-top:auto; display:flex; gap:5px; flex-wrap:wrap;">
+                    <button class="btn-sm" onclick="confirmClear('parser')">Clear Parsers</button>
+                    <button class="btn-sm" onclick="confirmClear('weather')">Clear Weather</button>
+                    <button class="btn-sm" onclick="confirmClear('traffic')">Clear Traffic</button>
+                </div>
             </div>
         </div>
 
-        <div class="card" style="margin-bottom: 20px;">
-            <h3>Verlauf (Letzte 30 Tage)</h3>
-            <canvas id="usageChart" height="100"></canvas>
+        <!-- Details Grid -->
+        <div class="grid" style="grid-template-columns: 2fr 1fr;">
+            <!-- Main Content: Parsers Table -->
+            <div class="card" style="height: 500px;">
+                <h3>🚡 Resort Scraper Status</h3>
+                <div style="overflow-y: auto; flex:1;">
+                    <table id="parserTable">
+                        <thead>
+                            <tr style="position:sticky; top:0; z-index:10;">
+                                <th>Resort</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                                <th>Cache</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="parserBody">
+                            <tr>
+                                <td colspan="5">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Side Content -->
+            <div style="display:flex; flex-direction:column; gap: 20px;">
+                <!-- Usage History -->
+                <div class="card">
+                    <h3>📊 30-Day API Trend</h3>
+                    <canvas id="usageChart" height="150"></canvas>
+                </div>
+
+                <!-- Failed Webcams -->
+                <div class="card" id="webcamErrorCard" style="display:none; max-height: 250px; overflow-y:auto;">
+                    <h3>⚠️ Broken Webcams</h3>
+                    <table id="webcamErrorTable">
+                        <tbody id="webcamErrorBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
+        <!-- Logs Section -->
         <div class="card">
-            <h3>Details Heute</h3>
-            <table id="detailsTable">
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Count</th>
-                    </tr>
-                </thead>
-                <tbody id="detailsBody">
-                    <tr>
-                        <td colspan="2">Keine Daten</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <h3>📜 Server Logs (Live Tail)</h3>
+                <div>
+                    <button class="btn-sm" onclick="fetchLogs('combined')">All Logs</button>
+                    <button class="btn-sm" onclick="fetchLogs('error')"
+                        style="background:#da3633; border-color:#b52a27;">Errors Only</button>
+                </div>
+            </div>
+            <div id="logViewer"
+                style="background:#0d1117; padding:10px; height:300px; overflow-y:scroll; font-size:0.85em; border:1px solid #30363d; border-radius:4px;">
+                Click 'All Logs' to load...
+            </div>
         </div>
     </div>
 
@@ -185,119 +334,259 @@
         const API_LIMIT = 2500;
         let chartInstance = null;
 
-        async function fetchData() {
+        document.addEventListener('DOMContentLoaded', fetchAll);
+
+        function fetchAll() {
+            const now = new Date().toLocaleTimeString();
+            document.getElementById('lastRefresh').innerText = 'Last update: ' + now;
+
+            fetchUsage();
+            fetchWebcams();
+            fetchParsers();
+            fetchSystem();
+            fetchLogs('combined');
+        }
+
+        // --- Usage Stats ---
+        async function fetchUsage() {
             try {
-                const response = await fetch('/api/admin/usage');
-                const data = await response.json();
-                renderDashboard(data);
-            } catch (error) {
-                console.error("Error fetching usage stats:", error);
-                document.getElementById('statusText').innerText = "ERROR";
-                document.getElementById('statusText').className = "metric status-crit";
+                const res = await fetch('/api/admin/usage');
+                const data = await res.json();
+                renderUsage(data);
+            } catch (e) {
+                console.error("Usage Error", e);
             }
         }
 
-        function renderDashboard(data) {
+        function renderUsage(data) {
             const today = new Date().toISOString().split('T')[0];
-            const dailyData = data.daily[today] || { requests: 0, breakdown: {}, last_updated: new Date().toISOString() };
-
-            // Metrics
+            const dailyData = data.daily[today] || { requests: 0 };
             const count = dailyData.requests;
             const percent = Math.min((count / API_LIMIT) * 100, 100);
 
             document.getElementById('todayRequests').innerText = count;
-            document.getElementById('totalRequests').innerText = data.total_requests;
-            document.getElementById('lastUpdated').innerText = 'Last Request: ' + new Date(dailyData.last_updated).toLocaleTimeString();
+            const bar = document.getElementById('todayProgress');
+            const status = document.getElementById('usageStatus');
 
-            const progressEl = document.getElementById('todayProgress');
-            progressEl.style.width = percent + '%';
-
-            const statusEl = document.getElementById('statusText');
+            bar.style.width = percent + '%';
             if (percent > 90) {
-                progressEl.style.backgroundColor = 'var(--danger-color)';
-                statusEl.innerText = 'CRITICAL';
-                statusEl.className = 'metric status-crit';
+                bar.style.backgroundColor = 'var(--danger-color)';
+                status.innerHTML = '<span class="status-crit">CRITICAL</span>';
             } else if (percent > 75) {
-                progressEl.style.backgroundColor = 'var(--warning-color)';
-                statusEl.innerText = 'WARNING';
-                statusEl.className = 'metric status-warn';
+                bar.style.backgroundColor = 'var(--warning-color)';
+                status.innerHTML = '<span class="status-warn">WARNING</span>';
             } else {
-                progressEl.style.backgroundColor = 'var(--success-color)';
-                statusEl.innerText = 'OK';
-                statusEl.className = 'metric status-ok';
+                bar.style.backgroundColor = 'var(--success-color)';
+                status.innerHTML = '<span class="status-ok">Simple requests</span>';
             }
 
-            // Breakdown Table
-            const tbody = document.getElementById('detailsBody');
-            tbody.innerHTML = '';
-            if (dailyData.breakdown && Object.keys(dailyData.breakdown).length > 0) {
-                for (const [type, reqCount] of Object.entries(dailyData.breakdown)) {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${type}</td><td>${reqCount}</td>`;
-                    tbody.appendChild(tr);
-                }
-            } else {
-                tbody.innerHTML = '<tr><td colspan="2">Noch keine Requests heute</td></tr>';
-            }
-
-            // Chart
             renderChart(data.daily);
         }
 
         function renderChart(dailyStats) {
             const ctx = document.getElementById('usageChart').getContext('2d');
-
-            // Get last 30 days
             const labels = [];
             const values = [];
-
             for (let i = 29; i >= 0; i--) {
                 const d = new Date();
                 d.setDate(d.getDate() - i);
                 const dateStr = d.toISOString().split('T')[0];
-                labels.push(dateStr);
+                labels.push(dateStr.slice(5)); // MM-DD
                 values.push(dailyStats[dateStr] ? dailyStats[dateStr].requests : 0);
             }
 
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-
+            if (chartInstance) chartInstance.destroy();
             chartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'API Requests',
+                        label: 'Requests',
                         data: values,
-                        backgroundColor: 'rgba(88, 166, 255, 0.5)',
+                        backgroundColor: '#58a6ff',
                         borderColor: '#58a6ff',
                         borderWidth: 1
                     }]
                 },
                 options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#30363d' },
-                            ticks: { color: '#8b949e' }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: '#8b949e' }
-                        }
+                        y: { beginAtZero: true, grid: { color: '#30363d' }, ticks: { color: '#8b949e' } },
+                        x: { grid: { display: false }, ticks: { color: '#8b949e' } }
                     },
-                    plugins: {
-                        legend: { labels: { color: '#c9d1d9' } }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             });
         }
 
-        // Init
-        fetchData();
-        // Auto refresh every 5 min
-        setInterval(fetchData, 300000);
+        // --- Parsers ---
+        async function fetchParsers() {
+            try {
+                const res = await fetch('/api/admin/parsers');
+                const data = await res.json();
+                renderParsers(data);
+            } catch (e) { console.error(e); }
+        }
+
+        function renderParsers(list) {
+            const tbody = document.getElementById('parserBody');
+            tbody.innerHTML = '';
+
+            let liveCount = 0;
+            let errorCount = 0;
+
+            list.forEach(r => {
+                if (r.status === 'live') liveCount++;
+                if (r.status === 'error') errorCount++;
+
+                const tr = document.createElement('tr');
+                let badgeClass = 'badge-static';
+                if (r.status === 'live') badgeClass = 'badge-live';
+                if (r.status === 'error') badgeClass = 'badge-error';
+
+                tr.innerHTML = `
+                    <td><strong>${r.name}</strong></td>
+                    <td><span class="badge ${badgeClass}">${r.status}</span></td>
+                    <td>${r.lifts}</td>
+                    <td><small>${r.lastUpdated}</small></td>
+                    <td>
+                        <button class="btn-sm" onclick="refreshResort('${r.id}', this)">🔄</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('scraperCount').innerText = `${liveCount}/${list.length}`;
+            document.getElementById('scraperSummary').innerHTML =
+                errorCount > 0 ? `<span class="status-crit">${errorCount} Errors</span>` : `<span class="status-ok">All Systems Normal</span>`;
+        }
+
+        async function refreshResort(id, btn) {
+            btn.innerText = '⏳';
+            btn.disabled = true;
+            try {
+                const res = await fetch(`/api/admin/parsers/refresh/${id}`, { method: 'POST' });
+                const json = await res.json();
+                if (json.success) {
+                    btn.innerText = '✅';
+                    setTimeout(fetchParsers, 1000);
+                } else {
+                    btn.innerText = '❌';
+                    alert('Error: ' + json.error);
+                }
+            } catch (e) {
+                btn.innerText = '❌';
+                console.error(e);
+            }
+            setTimeout(() => { btn.disabled = false; btn.innerText = '🔄'; }, 2000);
+        }
+
+        // --- Webcams ---
+        async function fetchWebcams() {
+            try {
+                const res = await fetch('/api/status/webcams');
+                const data = await res.json();
+                renderWebcams(data);
+            } catch (e) { console.error(e); }
+        }
+
+        async function checkWebcams() {
+            document.getElementById('webcamSummary').innerText = "Checking...";
+            await fetch('/api/status/webcams/check', { method: 'POST' });
+            fetchWebcams();
+        }
+
+        function renderWebcams(data) {
+            const sum = data.summary;
+            document.getElementById('webcamCount').innerText = `${sum.ok}/${sum.total}`;
+
+            let html = `<span class="status-ok">${sum.ok} OK</span> · <span class="status-crit">${sum.error} Errors</span>`;
+            document.getElementById('webcamSummary').innerHTML = html;
+
+            const errorBody = document.getElementById('webcamErrorBody');
+            const errorCard = document.getElementById('webcamErrorCard');
+            errorBody.innerHTML = '';
+
+            const errors = data.webcams.filter(w => w.status === 'error');
+            if (errors.length > 0) {
+                errorCard.style.display = 'block';
+                errors.forEach(w => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${w.resortId}</td><td style="color:var(--danger-color);">${w.error || 'Unknown'}</td>`;
+                    errorBody.appendChild(tr);
+                });
+            } else {
+                errorCard.style.display = 'none';
+            }
+        }
+
+        // --- System & Logs ---
+        async function fetchSystem() {
+            try {
+                const res = await fetch('/api/admin/system');
+                const data = await res.json();
+
+                let html = '<strong>Cache Status:</strong><br>';
+                html += `Parsers: ${data.cache.parser.size} items<br>`;
+                html += `Weather: ${data.cache.weather.size} items<br>`;
+                html += `Traffic: ${data.cache.traffic.size} items<br>`;
+
+                if (data.traffic_csv.exists) {
+                    html += `<br><strong>Traffic History CSV:</strong><br>${data.traffic_csv.size} (Last: ${new Date(data.traffic_csv.lastModified).toLocaleTimeString()})`;
+                }
+
+                document.getElementById('systemStats').innerHTML = html;
+            } catch (e) { console.error(e); }
+        }
+
+        async function confirmClear(type) {
+            if (confirm(`Really clear ${type} cache?`)) {
+                await fetch('/api/admin/cache/clear', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type })
+                });
+                fetchSystem();
+            }
+        }
+
+        async function fetchLogs(type) {
+            const viewer = document.getElementById('logViewer');
+            viewer.innerHTML = 'Loading...';
+            try {
+                const res = await fetch(`/api/admin/logs?type=${type}`);
+                const data = await res.json();
+
+                if (!data.logs || data.logs.length === 0) {
+                    viewer.innerHTML = 'No logs found.';
+                    return;
+                }
+
+                viewer.innerHTML = `<strong>File: ${data.file}</strong><br><br>`;
+
+                data.logs.forEach(log => {
+                    const div = document.createElement('div');
+                    div.className = 'log-entry';
+
+                    if (log.timestamp) {
+                        const lvlClass = `log-lvl ${log.level}`;
+                        div.innerHTML = `<span class="log-ts">${log.timestamp}</span> <span class="${lvlClass}">${log.level ? log.level.toUpperCase() : 'INFO'}</span> <span>${log.message}</span>`;
+                        if (log.meta && Object.keys(log.meta).length > 0) {
+                            div.innerHTML += ` <span style="color:#666">${JSON.stringify(log.meta)}</span>`;
+                        }
+                    } else {
+                        // Raw text fallback
+                        div.innerHTML = log.message || JSON.stringify(log);
+                    }
+                    viewer.appendChild(div);
+                });
+
+            } catch (e) {
+                viewer.innerText = "Error loading logs.";
+                console.error(e);
+            }
+        }
     </script>
 </body>
 
