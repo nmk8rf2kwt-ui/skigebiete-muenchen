@@ -15,29 +15,45 @@ const INITIAL_STATS = {
     last_updated: null
 };
 
-// Helper to ensure file exists
-function ensureFile() {
+// In-memory cache for performance (Non-blocking I/O)
+let statsCache = null;
+let saveTimer = null;
+
+// Helper to ensure file exists and load data
+function ensureStatsLoaded() {
+    if (statsCache) return;
+
     if (!fs.existsSync(USAGE_FILE)) {
-        fs.writeFileSync(USAGE_FILE, JSON.stringify(INITIAL_STATS, null, 2));
+        // Create new
+        statsCache = JSON.parse(JSON.stringify(INITIAL_STATS));
+        try {
+            // Sync write valid only on first creation
+            fs.writeFileSync(USAGE_FILE, JSON.stringify(statsCache, null, 2));
+        } catch (err) {
+            console.error("Error creating usage file:", err);
+        }
+    } else {
+        // Load existing
+        try {
+            const data = fs.readFileSync(USAGE_FILE, 'utf8');
+            statsCache = JSON.parse(data);
+        } catch (err) {
+            console.error("Error reading usage file:", err);
+            statsCache = JSON.parse(JSON.stringify(INITIAL_STATS));
+        }
     }
 }
 
-// Read stats
+// Read stats (from cache - O(1))
 export function getUsageStats() {
-    ensureFile();
-    try {
-        const data = fs.readFileSync(USAGE_FILE, 'utf8');
-        return JSON.parse(data);
-    } catch (err) {
-        console.error("Error reading usage file:", err);
-        return INITIAL_STATS;
-    }
+    ensureStatsLoaded();
+    return statsCache;
 }
 
-// Track a request
+// Track a request (Updates cache, schedules async save)
 export function trackApiUsage(apiName = 'tomtom') {
-    ensureFile();
-    const stats = getUsageStats();
+    ensureStatsLoaded();
+    const stats = statsCache;
     const today = new Date().toISOString().split('T')[0];
 
     // Init daily entry if missing
@@ -55,7 +71,7 @@ export function trackApiUsage(apiName = 'tomtom') {
     stats.daily[today].requests++;
     stats.daily[today].last_updated = new Date().toISOString();
 
-    // Increment breakdown (e.g., 'routing', 'tile', 'matrix')
+    // Increment breakdown
     if (!stats.daily[today].breakdown[apiName]) {
         stats.daily[today].breakdown[apiName] = 0;
     }
@@ -63,14 +79,25 @@ export function trackApiUsage(apiName = 'tomtom') {
 
     stats.last_updated = new Date().toISOString();
 
-    try {
-        fs.writeFileSync(USAGE_FILE, JSON.stringify(stats, null, 2));
-    } catch (err) {
-        console.error("Error writing usage stats:", err);
+    // Schedule Save (Debounce 5s) to avoid Disk I/O spam
+    if (!saveTimer) {
+        saveTimer = setTimeout(() => {
+            saveStats();
+        }, 5000);
     }
 
     // Simple Monitoring Check
     checkLimits(stats.daily[today].requests);
+}
+
+// Async save to disk
+function saveStats() {
+    if (!statsCache) return;
+
+    fs.writeFile(USAGE_FILE, JSON.stringify(statsCache, null, 2), (err) => {
+        if (err) console.error("Error writing usage stats:", err);
+        saveTimer = null;
+    });
 }
 
 // Simple threshold check
@@ -80,7 +107,6 @@ function checkLimits(dailyCount) {
 
     if (dailyCount === WARNING_THRESHOLD) {
         console.warn(`⚠️ WARNING: API Usage reached 80% (${dailyCount}/${LIMIT}) for today!`);
-        // Here you could add email notification logic
     } else if (dailyCount >= LIMIT) {
         console.error(`🚨 CRITICAL: API Usage limit reached (${dailyCount}/${LIMIT})!`);
     }

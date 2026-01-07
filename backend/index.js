@@ -123,7 +123,6 @@ app.use(cors({
 app.use("/admin", basicAuth);
 app.use("/api/admin", basicAuth);
 
-// Serve Static Frontend Files
 // Serve Static Frontend Files (Securely)
 app.use('/css', express.static(path.join(__dirname, '../css')));
 app.use('/js', express.static(path.join(__dirname, '../js')));

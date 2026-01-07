@@ -1,5 +1,10 @@
 import auth from 'basic-auth';
 
+// Security Warning
+if (!process.env.ADMIN_PASS && process.env.NODE_ENV !== 'test') {
+    console.warn("⚠️  SECURITY WARNING: Default Admin Password in use! Set ADMIN_PASS in .env.");
+}
+
 export function basicAuth(req, res, next) {
     const user = auth(req);
 

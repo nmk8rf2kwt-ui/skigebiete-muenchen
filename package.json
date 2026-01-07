@@ -1,6 +1,6 @@
 {
   "name": "skigebiete-muenchen",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "description": "![CI/CD](https://github.com/YOUR_USERNAME/skigebiete-muenchen/workflows/CI%2FCD%20Pipeline/badge.svg)",
   "main": "eslint.config.js",
   "directories": {
