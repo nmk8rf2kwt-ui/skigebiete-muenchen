@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skitouren Admin Dashboard</title>
+    <title>Skigebiete München - Admin Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -27,7 +28,7 @@
         }
 
         .container {
-            max-width: 1600px; 
+            max-width: 1600px;
             margin: 0 auto;
         }
 
@@ -40,7 +41,10 @@
             align-items: center;
         }
 
-        h1 { font-size: 24px; margin: 0; }
+        h1 {
+            font-size: 24px;
+            margin: 0;
+        }
 
         .grid {
             display: grid;
@@ -65,7 +69,10 @@
             margin-bottom: 5px;
         }
 
-        .label { color: var(--muted-color); font-size: 14px; }
+        .label {
+            color: var(--muted-color);
+            font-size: 14px;
+        }
 
         .progress-bar {
             height: 10px;
@@ -82,22 +89,71 @@
         }
 
         /* Status Colors */
-        .status-ok { color: var(--success-color); }
-        .status-warn { color: var(--warning-color); }
-        .status-crit { color: var(--danger-color); }
+        .status-ok {
+            color: var(--success-color);
+        }
+
+        .status-warn {
+            color: var(--warning-color);
+        }
+
+        .status-crit {
+            color: var(--danger-color);
+        }
 
         /* Tables */
-        table { width: 100%; border-collapse: collapse; color: var(--text-color); margin-top: 10px; }
-        th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border-color); font-size: 0.85em; }
-        th { background-color: #21262d; font-weight: 600; }
-        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--text-color);
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85em;
+        }
+
+        th {
+            background-color: #21262d;
+            font-weight: 600;
+        }
+
         /* Badges */
-        .badge { padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
-        .badge-live { background: #238636; color: white; }
-        .badge-ok { background: #238636; color: white; }
-        .badge-error { background: #da3633; color: white; }
-        .badge-missing { background: #6e7681; color: white; }
-        .badge-static { background: #1f6feb; color: white; }
+        .badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .badge-live {
+            background: #238636;
+            color: white;
+        }
+
+        .badge-ok {
+            background: #238636;
+            color: white;
+        }
+
+        .badge-error {
+            background: #da3633;
+            color: white;
+        }
+
+        .badge-missing {
+            background: #6e7681;
+            color: white;
+        }
+
+        .badge-static {
+            background: #1f6feb;
+            color: white;
+        }
 
         /* Buttons */
         .btn {
@@ -109,17 +165,56 @@
             cursor: pointer;
             font-size: 0.9em;
         }
-        .btn:hover { opacity: 0.9; }
-        .btn-sm { padding: 4px 8px; font-size: 0.8em; background: #21262d; border: 1px solid var(--border-color); color: #c9d1d9; cursor: pointer; border-radius: 3px; }
-        .btn-sm:hover { background: #30363d; border-color: #8b949e; }
-        
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.8em;
+            background: #21262d;
+            border: 1px solid var(--border-color);
+            color: #c9d1d9;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .btn-sm:hover {
+            background: #30363d;
+            border-color: #8b949e;
+        }
+
         /* Logs */
-        .log-entry { font-family: monospace; border-bottom: 1px solid #30363d; padding: 4px; display: flex; gap: 10px; }
-        .log-ts { color: #8b949e; min-width: 140px; }
-        .log-lvl { font-weight: bold; min-width: 60px; }
-        .log-lvl.error { color: #f85149; }
-        .log-lvl.warn { color: #d29922; }
-        .log-lvl.info { color: #58a6ff; }
+        .log-entry {
+            font-family: monospace;
+            border-bottom: 1px solid #30363d;
+            padding: 4px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .log-ts {
+            color: #8b949e;
+            min-width: 140px;
+        }
+
+        .log-lvl {
+            font-weight: bold;
+            min-width: 60px;
+        }
+
+        .log-lvl.error {
+            color: #f85149;
+        }
+
+        .log-lvl.warn {
+            color: #d29922;
+        }
+
+        .log-lvl.info {
+            color: #58a6ff;
+        }
     </style>
 </head>
 
@@ -128,8 +223,8 @@
         <header>
             <h1>📡 Admin Dashboard</h1>
             <div style="display:flex; gap:10px;">
-                 <span id="lastRefresh" style="font-size:0.8em; color:#8b949e; align-self:center;"></span>
-                 <button class="btn" onclick="fetchAll()">Aktualisieren</button>
+                <span id="lastRefresh" style="font-size:0.8em; color:#8b949e; align-self:center;"></span>
+                <button class="btn" onclick="fetchAll()">Aktualisieren</button>
             </div>
         </header>
 
@@ -156,15 +251,15 @@
                 <div id="webcamSummary" style="margin-top:auto;">Wait...</div>
             </div>
 
-             <!-- Parser Status -->
-             <div class="card">
+            <!-- Parser Status -->
+            <div class="card">
                 <h3>🕷️ Scrapers</h3>
                 <span class="metric" id="scraperCount">-</span>
                 <div id="scraperSummary" style="margin-top:auto;">Wait...</div>
             </div>
 
-             <!-- System Stats -->
-             <div class="card">
+            <!-- System Stats -->
+            <div class="card">
                 <h3>⚙️ System & Cache</h3>
                 <div id="systemStats" style="font-size:0.9em; line-height:1.6;">Loading...</div>
                 <div style="margin-top:auto; display:flex; gap:5px; flex-wrap:wrap;">
@@ -192,14 +287,16 @@
                             </tr>
                         </thead>
                         <tbody id="parserBody">
-                            <tr><td colspan="5">Loading...</td></tr>
+                            <tr>
+                                <td colspan="5">Loading...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-             <!-- Side Content -->
-             <div style="display:flex; flex-direction:column; gap: 20px;">
+            <!-- Side Content -->
+            <div style="display:flex; flex-direction:column; gap: 20px;">
                 <!-- Usage History -->
                 <div class="card">
                     <h3>📊 30-Day API Trend</h3>
@@ -213,20 +310,22 @@
                         <tbody id="webcamErrorBody"></tbody>
                     </table>
                 </div>
-             </div>
+            </div>
         </div>
 
         <!-- Logs Section -->
         <div class="card">
-             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                 <h3>📜 Server Logs (Live Tail)</h3>
                 <div>
-                   <button class="btn-sm" onclick="fetchLogs('combined')">All Logs</button>
-                   <button class="btn-sm" onclick="fetchLogs('error')" style="background:#da3633; border-color:#b52a27;">Errors Only</button>
+                    <button class="btn-sm" onclick="fetchLogs('combined')">All Logs</button>
+                    <button class="btn-sm" onclick="fetchLogs('error')"
+                        style="background:#da3633; border-color:#b52a27;">Errors Only</button>
                 </div>
             </div>
-            <div id="logViewer" style="background:#0d1117; padding:10px; height:300px; overflow-y:scroll; font-size:0.85em; border:1px solid #30363d; border-radius:4px;">
-               Click 'All Logs' to load...
+            <div id="logViewer"
+                style="background:#0d1117; padding:10px; height:300px; overflow-y:scroll; font-size:0.85em; border:1px solid #30363d; border-radius:4px;">
+                Click 'All Logs' to load...
             </div>
         </div>
     </div>
@@ -240,7 +339,7 @@
         function fetchAll() {
             const now = new Date().toLocaleTimeString();
             document.getElementById('lastRefresh').innerText = 'Last update: ' + now;
-            
+
             fetchUsage();
             fetchWebcams();
             fetchParsers();
@@ -268,7 +367,7 @@
             document.getElementById('todayRequests').innerText = count;
             const bar = document.getElementById('todayProgress');
             const status = document.getElementById('usageStatus');
-            
+
             bar.style.width = percent + '%';
             if (percent > 90) {
                 bar.style.backgroundColor = 'var(--danger-color)';
@@ -333,18 +432,18 @@
         function renderParsers(list) {
             const tbody = document.getElementById('parserBody');
             tbody.innerHTML = '';
-            
+
             let liveCount = 0;
             let errorCount = 0;
 
             list.forEach(r => {
-                if(r.status === 'live') liveCount++;
-                if(r.status === 'error') errorCount++;
+                if (r.status === 'live') liveCount++;
+                if (r.status === 'error') errorCount++;
 
                 const tr = document.createElement('tr');
                 let badgeClass = 'badge-static';
-                if(r.status === 'live') badgeClass = 'badge-live';
-                if(r.status === 'error') badgeClass = 'badge-error';
+                if (r.status === 'live') badgeClass = 'badge-live';
+                if (r.status === 'error') badgeClass = 'badge-error';
 
                 tr.innerHTML = `
                     <td><strong>${r.name}</strong></td>
@@ -359,7 +458,7 @@
             });
 
             document.getElementById('scraperCount').innerText = `${liveCount}/${list.length}`;
-            document.getElementById('scraperSummary').innerHTML = 
+            document.getElementById('scraperSummary').innerHTML =
                 errorCount > 0 ? `<span class="status-crit">${errorCount} Errors</span>` : `<span class="status-ok">All Systems Normal</span>`;
         }
 
@@ -369,9 +468,9 @@
             try {
                 const res = await fetch(`/api/admin/parsers/refresh/${id}`, { method: 'POST' });
                 const json = await res.json();
-                if(json.success) {
+                if (json.success) {
                     btn.innerText = '✅';
-                    setTimeout(fetchParsers, 1000); 
+                    setTimeout(fetchParsers, 1000);
                 } else {
                     btn.innerText = '❌';
                     alert('Error: ' + json.error);
@@ -386,7 +485,7 @@
         // --- Webcams ---
         async function fetchWebcams() {
             try {
-                const res = await fetch('/api/admin/webcams');
+                const res = await fetch('/api/status/webcams');
                 const data = await res.json();
                 renderWebcams(data);
             } catch (e) { console.error(e); }
@@ -394,14 +493,14 @@
 
         async function checkWebcams() {
             document.getElementById('webcamSummary').innerText = "Checking...";
-            await fetch('/api/admin/webcams/check', { method: 'POST' });
+            await fetch('/api/status/webcams/check', { method: 'POST' });
             fetchWebcams();
         }
 
         function renderWebcams(data) {
             const sum = data.summary;
             document.getElementById('webcamCount').innerText = `${sum.ok}/${sum.total}`;
-            
+
             let html = `<span class="status-ok">${sum.ok} OK</span> · <span class="status-crit">${sum.error} Errors</span>`;
             document.getElementById('webcamSummary').innerHTML = html;
 
@@ -424,57 +523,57 @@
 
         // --- System & Logs ---
         async function fetchSystem() {
-             try {
+            try {
                 const res = await fetch('/api/admin/system');
                 const data = await res.json();
-                
+
                 let html = '<strong>Cache Status:</strong><br>';
                 html += `Parsers: ${data.cache.parser.size} items<br>`;
                 html += `Weather: ${data.cache.weather.size} items<br>`;
                 html += `Traffic: ${data.cache.traffic.size} items<br>`;
-                
+
                 if (data.traffic_csv.exists) {
-                     html += `<br><strong>Traffic History CSV:</strong><br>${data.traffic_csv.size} (Last: ${new Date(data.traffic_csv.lastModified).toLocaleTimeString()})`;
+                    html += `<br><strong>Traffic History CSV:</strong><br>${data.traffic_csv.size} (Last: ${new Date(data.traffic_csv.lastModified).toLocaleTimeString()})`;
                 }
-                
+
                 document.getElementById('systemStats').innerHTML = html;
             } catch (e) { console.error(e); }
         }
 
         async function confirmClear(type) {
-            if(confirm(`Really clear ${type} cache?`)) {
-                 await fetch('/api/admin/cache/clear', { 
-                     method: 'POST',
-                     headers: { 'Content-Type': 'application/json' },
-                     body: JSON.stringify({ type })
-                 });
-                 fetchSystem();
+            if (confirm(`Really clear ${type} cache?`)) {
+                await fetch('/api/admin/cache/clear', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type })
+                });
+                fetchSystem();
             }
         }
 
         async function fetchLogs(type) {
-             const viewer = document.getElementById('logViewer');
-             viewer.innerHTML = 'Loading...';
-             try {
+            const viewer = document.getElementById('logViewer');
+            viewer.innerHTML = 'Loading...';
+            try {
                 const res = await fetch(`/api/admin/logs?type=${type}`);
                 const data = await res.json();
-                
+
                 if (!data.logs || data.logs.length === 0) {
                     viewer.innerHTML = 'No logs found.';
                     return;
                 }
-                
+
                 viewer.innerHTML = `<strong>File: ${data.file}</strong><br><br>`;
-                
+
                 data.logs.forEach(log => {
                     const div = document.createElement('div');
                     div.className = 'log-entry';
-                    
+
                     if (log.timestamp) {
                         const lvlClass = `log-lvl ${log.level}`;
                         div.innerHTML = `<span class="log-ts">${log.timestamp}</span> <span class="${lvlClass}">${log.level ? log.level.toUpperCase() : 'INFO'}</span> <span>${log.message}</span>`;
                         if (log.meta && Object.keys(log.meta).length > 0) {
-                             div.innerHTML += ` <span style="color:#666">${JSON.stringify(log.meta)}</span>`;
+                            div.innerHTML += ` <span style="color:#666">${JSON.stringify(log.meta)}</span>`;
                         }
                     } else {
                         // Raw text fallback
@@ -482,12 +581,13 @@
                     }
                     viewer.appendChild(div);
                 });
-                
-            } catch (e) { 
+
+            } catch (e) {
                 viewer.innerText = "Error loading logs.";
-                console.error(e); 
+                console.error(e);
             }
         }
     </script>
 </body>
+
 </html>

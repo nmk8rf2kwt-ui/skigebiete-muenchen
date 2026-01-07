@@ -1,7 +1,7 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
 import { fetchTravelTimes as fetchTomTomTraffic } from "../services/tomtom.js";
-import { geocodeAddress } from "../services/ors.js";
+import { geocodeAddress } from "../services/tomtom.js";
 import { getStaticResorts } from "../services/resortManager.js";
 
 const router = express.Router();

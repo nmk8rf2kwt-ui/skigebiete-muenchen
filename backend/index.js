@@ -29,7 +29,8 @@ import { initScheduler } from "./services/scheduler.js";
 import logger from "./services/logger.js";
 
 // Routes
-import resortsRouter, { liftsRouter } from "./routes/resorts.js";
+import resortsRouter from "./routes/resorts.js";
+import liftsRouter from "./routes/lifts.js";
 import weatherRouter from "./routes/weather.js";
 import historyRouter from "./routes/history.js";
 import trafficRouter from "./routes/traffic.js";
@@ -163,7 +164,7 @@ app.use("/api/traffic", trafficRouter);
 app.use("/api/traffic-analysis", trafficAnalysisRouter);
 app.use("/api/historical-weather", historicalWeatherRouter);
 app.use("/api/status", statusRouter); // Must be before /api (history) to avoid /:resortId match
-app.use("/api/db-health", dbHealthRouter);
+app.use("/api/db-health", basicAuth, dbHealthRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api", historyRouter); // mounts /history, /trends
 

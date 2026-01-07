@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.6.3] - 2026-01-07
+## [1.6.6] - 2026-01-07
+
+### Fixed
+- **package.json**: Updated repository username from `YOUR_USERNAME` to `nmk8rf2kwt-ui`.
+- **package.json**: Corrected entry point from `eslint.config.js` to `eslint.config.mjs`.
+- **Admin Dashboard**: Updated webcam monitoring API endpoints from `/api/admin/webcams` to `/api/status/webcams`.
+
+## [1.6.5] - 2026-01-07
 
 ### Fixes & Backlog Cleanups
 
