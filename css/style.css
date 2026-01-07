@@ -815,3 +815,32 @@ tr.unavailable small {
     margin: 8px 0;
   }
 }
+
+/* ================= Radius Slider ================= */
+
+.radius-slider-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+    border-left: 1px solid #ddd;
+    height: 38px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+/* Mobile Responsiveness for Toolbar extras */
+@media (max-width: 768px) {
+  .radius-slider-group {
+    border-left: none;
+    border-top: 1px solid #ddd;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 8px; 
+    order: 3; 
+  }
+
+  .search-group {
+      flex-wrap: wrap; 
+  }
+}

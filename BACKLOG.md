@@ -1472,6 +1472,37 @@ const savedFilters = JSON.parse(localStorage.getItem('resortFilters'));
 
 ---
 
+## ✅ Completed (v1.3 - v1.5)
+
+### FEAT-005: Add New Resorts (Oberaudorf, Kampenwand)
+**Completed:** 2026-01-07
+**Status:** ✅ Fully Implemented
+
+### Backlog Items
+- **BACK-018: Multi-City Traffic Data Collection** (Backend Only) ✅
+  - Data collection for 8 cities active
+  - Reference cities configured
+  - Matrix API integration working
+- **Traffic Analysis & Congestion** ✅
+  - `webcamMonitor.js` service active
+  - `trafficAnalysis.js` service active
+  - `/api/traffic-analysis` endpoint mounted
+- **Seasonal Pricing** ✅
+  - Dynamic pricing based on dates
+  - Configured for multiple resorts
+- **Detailed Price Information** ✅
+  - Adult/Youth/Child breakdown
+  - Tooltip UI implemented
+- **Difficulty Classification** ✅
+  - Standardized categories (Familie, Genuss, etc.)
+  - Legend added to UI
+- **Progressive Traffic Updates** ✅
+  - Async loading with spinners
+  - Standard vs. Live time columns
+
+---
+
+
 ## 🔄 Changelog
 
 ### 2026-01-06 (Update 5)

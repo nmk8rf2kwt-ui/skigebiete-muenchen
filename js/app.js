@@ -2,7 +2,7 @@ import { renderTable, calculateScore } from "./render.js";
 import { initMap, updateMap, showUserLocation } from "./map.js";
 import { API_BASE_URL } from "./config.js";
 import { store } from "./store.js";
-import { escapeHtml } from "./utils.js";
+import { escapeHtml, getDistanceFromLatLonInKm } from "./utils.js";
 
 // Global Error Handler
 // Global Error Handler
@@ -20,6 +20,7 @@ const MUNICH_DEFAULT = {
 
 // Global State
 let currentResortId = null;
+let currentSearchLocation = { ...MUNICH_DEFAULT }; // Initialize with default
 
 // Show message in UI (persistent for debugging)
 // Show message in UI (persistent for debugging)
@@ -194,15 +195,57 @@ async function load() {
 
 
 async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
-  logToUI(`🚗 Berechne Anfahrt & Verkehr von ${locationName} (TomTom)...`);
+  // Update global state
+  currentSearchLocation = { latitude: lat, longitude: lon, name: locationName };
 
-  // 1. Show loading state for all resorts
+  const radiusInput = document.getElementById("radiusSlider");
+  const radiusKm = radiusInput ? parseInt(radiusInput.value, 10) : 150;
+
+  logToUI(`🚗 Berechne Anfahrt & Verkehr von ${locationName} (Radius: ${radiusKm}km)...`);
+
+  // 1. Calculate Air Distance & Filter
   const currentResorts = store.get().resorts;
-  const loadingResorts = currentResorts.map(r => ({
+
+  // Pre-calculate air distances to determine who is "in range"
+  const resortsWithAirDist = currentResorts.map(r => {
+    // Lat/Lon are in r.latitude, r.longitude (strings or numbers? ensure number)
+    if (!r.latitude || !r.longitude) return { ...r, airDist: 9999, inRadius: false };
+
+    const dist = getDistanceFromLatLonInKm(lat, lon, parseFloat(r.latitude), parseFloat(r.longitude));
+    return { ...r, airDist: dist, inRadius: dist <= radiusKm };
+  });
+
+  const resortsInRange = resortsWithAirDist.filter(r => r.inRadius);
+  const resortsOutOfRange = resortsWithAirDist.filter(r => !r.inRadius);
+
+  logToUI(`🔍 ${resortsInRange.length} Skigebiete im Radius von ${radiusKm}km gefunden.`);
+
+  // Show loading for ONLY resorts in range
+  const loadingResorts = resortsWithAirDist.map(r => ({
     ...r,
-    traffic: { loading: true }
+    traffic: r.inRadius ? { loading: true } : null
   }));
-  store.setState({ resorts: loadingResorts }, render);
+  store.setState({ resorts: loadingResorts }, render); // Render to show loading spinners
+
+  // 2. Prepare API Call
+  if (resortsInRange.length === 0) {
+    logToUI("⚠️ Keine Skigebiete im gewählten Radius.", "info");
+    // Just reset loading
+    const finalResorts = resortsWithAirDist.map(r => ({ ...r, traffic: null }));
+    store.setState({ resorts: finalResorts }, render);
+    return;
+  }
+
+  // We only send IDs for 'in range' resorts
+  // BUT the API endpoint expects a lat/lon and returns a map for ALL destinations it calculates.
+  // We need to tell the backend WHICH destinations calculation is needed for? 
+  // currently /traffic/calculate calculates for ALL resorts in resorts.json?
+  // Let's check backend/routes/traffic.js. If it calculates for *all*, my client-side optimization does nothing for the API load.
+  // I need to modify the Backend API to accept a list of resort IDs!
+
+  // Assuming I will optimize the backend next. For now, let's optimize the client side logic 
+  // to *send* the list of IDs we want.
+  const targetIds = resortsInRange.map(r => r.id);
 
   try {
     const res = await fetch(`${API_BASE_URL}/traffic/calculate`, {
@@ -212,7 +255,8 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
       },
       body: JSON.stringify({
         latitude: lat,
-        longitude: lon
+        longitude: lon,
+        resortIds: targetIds // New parameter for optimization
       })
     });
 
@@ -221,57 +265,49 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
 
     showUserLocation(lat, lon);
 
-    // 2. Update resorts with traffic data
-    // Note: OpenRouteService Matrix API (free) usually returns "driving times based on speed limits", 
-    // effectively "Standard Time without Traffic". Real-time traffic is not included in standard ORS Matrix.
+    // 3. Merge Data
+    const isDefaultLocation = locationName === "München Innenstadt" || locationName === "München";
 
-    const isDefaultLocation = locationName === "München Innenstadt" || locationName === "München"; // Basic check
+    const updatedResorts = resortsWithAirDist.map(resort => {
+      // If out of range, keep it as is (no traffic data)
+      if (!resort.inRadius) {
+        return { ...resort, traffic: null };
+      }
 
-    const updatedResorts = currentResorts.map(resort => {
       const data = trafficMap[resort.id];
       if (data) {
-        // If we are searching from a NEW location (not the default Munich one),
-        // we must update the "Standard Travel Time" (distance) because the static JSON value 
-        // (e.g. 60min from Munich) is irrelevant for Stuttgart.
-        // For custom locations, Standard Time = Calculated Time (approx).
-
         const newStandardTime = isDefaultLocation ? resort.distance : data.duration;
-
         return {
           ...resort,
-          distance: newStandardTime, // Update Standard Time if custom location
+          distance: newStandardTime,
           traffic: {
-            duration: data.duration, // Current Time (from API)
-            distanceKm: data.distanceKm, // km
+            duration: data.duration,
+            distanceKm: data.distanceKm,
             loading: false
           }
         };
       }
-      return {
-        ...resort,
-        traffic: null
-      };
+      // Error or missing data for in-range resort
+      return { ...resort, traffic: null };
     });
 
-    // 3. Recalculate scores (uses resort.distance from resorts.json, not traffic data)
+    // 4. Recalculate scores & Render
+    // (Note: Resorts out of radius will have 'traffic: null' and likely be filtered out by UI filter logic if we implement it)
     const scoredResorts = updatedResorts.map(resort => ({
       ...resort,
       score: calculateScore(resort)
     }));
 
-    store.setState({ resorts: scoredResorts }, render);
+    // Update Store with Filter settings? 
+    // We should probably store the 'radius' in the store to filter the list view efficiently in render()
+    store.setState({ resorts: scoredResorts, radiusKm: radiusKm }, render);
     logToUI(`✅ Fahrzeiten für ${locationName} aktualisiert`);
 
   } catch (err) {
     console.error("Failed to load traffic data:", err);
-    showError(`❌ Verkehrsdaten konnten nicht geladen werden: ${err.message}`);
-    logToUI(`❌ Fehler beim Laden der Verkehrsdaten: ${err.message}`, "error");
+    showError(`❌ Verkehrsdaten Fehler: ${err.message}`);
 
-    // Reset loading state on error
-    const resetResorts = currentResorts.map(r => ({
-      ...r,
-      traffic: null
-    }));
+    const resetResorts = resortsWithAirDist.map(r => ({ ...r, traffic: null }));
     store.setState({ resorts: resetResorts }, render);
   }
 }
@@ -428,6 +464,23 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("addressInput").addEventListener("keypress", (e) => {
     if (e.key === 'Enter') handleAddressSearch();
   });
+
+  // Radius Slider
+  const radiusSlider = document.getElementById("radiusSlider");
+  const radiusValue = document.getElementById("radiusValue");
+  if (radiusSlider && radiusValue) {
+    // Update label live
+    radiusSlider.addEventListener("input", () => {
+      radiusValue.textContent = `${radiusSlider.value} km`;
+    });
+
+    // Trigger search on release (change)
+    radiusSlider.addEventListener("change", () => {
+      if (currentSearchLocation && currentSearchLocation.latitude) {
+        fetchTrafficForLocation(currentSearchLocation.latitude, currentSearchLocation.longitude, currentSearchLocation.name);
+      }
+    });
+  }
 
   // Buttons
   document.getElementById("viewToggle").addEventListener("click", () => {

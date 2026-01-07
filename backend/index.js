@@ -37,6 +37,7 @@ import trafficAnalysisRouter from "./routes/trafficAnalysis.js";
 import historicalWeatherRouter from "./routes/historicalWeather.js";
 import statusRouter from "./routes/status.js";
 import dbHealthRouter from "./routes/dbHealth.js";
+import adminRouter from "./routes/admin.js";
 
 // -- PATH SAFETY & STATIC CONFIG --
 const __filename = fileURLToPath(import.meta.url);
@@ -147,6 +148,7 @@ app.use("/api/traffic-analysis", trafficAnalysisRouter);
 app.use("/api/historical-weather", historicalWeatherRouter);
 app.use("/api/status", statusRouter); // Must be before /api (history) to avoid /:resortId match
 app.use("/api/db-health", dbHealthRouter);
+app.use("/api/admin", adminRouter);
 app.use("/api", historyRouter); // mounts /history, /trends
 
 // Initialize Scheduler (Weather & History)

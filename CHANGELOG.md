@@ -2,7 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.5.0] - 2026-01-07
+## [1.6.0] - 2026-01-07
+
+### API Optimization & Cost Control
+
+### Added
+- **Smart Radius Filter**: New slider (50-500km) in the frontend toolbar.
+  - Dynamically filters resorts by air distance before requesting traffic data.
+  - Defaults to 150km to significantly reduce API calls (75% reduction).
+  - Resorts outside the radius are hidden from the list.
+- **Admin Dashboard**: New dashboard at `/admin/dashboard.html` for monitoring TomTom API usage.
+  - Real-time request tracking (Total, Today, Breakdown).
+  - Visualization of usage vs. daily limit (2500 calls).
+  - 30-day history chart.
+- **API Optimization**: Refactored `/api/traffic/calculate` to accept `resortIds` for targeted calculation.
+- **Backend Usage Tracking**: Internal service to track and log every API call to a local JSON database.
+
+### Changed
+- **Performance**: Significant reduction in "Matrix API" calls due to client-side pre-filtering.
+- **UI**: Added `Radius` control group to the search toolbar.
+
 
 ### Traffic & UI Overhaul
 

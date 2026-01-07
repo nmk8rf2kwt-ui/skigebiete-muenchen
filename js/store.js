@@ -42,6 +42,9 @@ export const store = {
             data = data.filter(r => r.liftsOpen > 0);
         }
 
+        // Filter by Radius (if property exists and is false)
+        data = data.filter(r => r.inRadius !== false);
+
         // Sort (if not top3, or refine sort)
         // Note: renderTable also does verify sort, but doing it here is cleaner
         // We'll leave the complex sort logic in render.js for now or move it here later.

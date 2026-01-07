@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const TOMTOM_API_KEY = process.env.TOMTOM_API_KEY;
+import { trackApiUsage } from "./usageTracker.js";
 // Munich Center (Marienplatz approx)
 const MUNICH_COORDS = { lat: 48.1351, lon: 11.5820 };
 
@@ -56,6 +57,7 @@ export async function fetchTravelTimes(destinations, origin = null) {
     };
 
     try {
+        trackApiUsage('routing_sync');
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -154,6 +156,7 @@ export async function fetchTrafficMatrix(origins, destinations) {
         const url = `https://api.tomtom.com/routing/matrix/2?key=${TOMTOM_API_KEY}`;
 
         try {
+            trackApiUsage('matrix_batch');
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -213,6 +216,7 @@ export async function geocodeAddress(query) {
     const url = `https://api.tomtom.com/search/2/search/${encodeURIComponent(query)}.json?key=${TOMTOM_API_KEY}&limit=1`;
 
     try {
+        trackApiUsage('geocode');
         const res = await fetch(url);
         if (!res.ok) throw new Error(`Geocode failed: ${res.status}`);
 

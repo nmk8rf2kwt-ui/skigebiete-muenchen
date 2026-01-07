@@ -23,7 +23,7 @@ const geocodeLimiter = rateLimit({
 // POST /api/traffic/calculate
 // Body: { latitude, longitude }
 router.post("/calculate", trafficCalculateLimiter, async (req, res) => {
-    const { latitude, longitude } = req.body;
+    const { latitude, longitude, resortIds } = req.body;
 
     if (!latitude || !longitude) {
         return res.status(400).json({ error: "Missing coordinates" });
@@ -31,10 +31,15 @@ router.post("/calculate", trafficCalculateLimiter, async (req, res) => {
 
     try {
         const resorts = getStaticResorts();
-        const destinations = resorts.filter(r => r.latitude && r.longitude);
+        let destinations = resorts.filter(r => r.latitude && r.longitude);
+
+        // OPTIMIZATION: If client provided specific resort IDs (e.g. via radius filter), 
+        // only calculate for those to save API calls/costs.
+        if (resortIds && Array.isArray(resortIds) && resortIds.length > 0) {
+            destinations = destinations.filter(r => resortIds.includes(r.id));
+        }
 
         // Usage: fetchTomTomTraffic(destinations, { lat, lon })
-        // I need to update tomtom.js to support this overload
         const trafficMap = await fetchTomTomTraffic(destinations, { lat: latitude, lon: longitude });
         res.json(trafficMap);
     } catch (error) {

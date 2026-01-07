@@ -21,7 +21,7 @@
   <h1>🏔️ Skigebiet-Finder – Live-Ranking</h1>
 
   <div class="meta">
-    Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten · <span style="color: #999;">v1.4.0</span> · <a
+    Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten · <span style="color: #999;">v1.6.0</span> · <a
       href="#" id="openStatusBtn" style="color: #999; text-decoration: none;">System Status</a>
   </div>
   <div id="loadingBanner" class="loading-banner" style="display: none;">
@@ -59,6 +59,16 @@
       <input type="text" id="addressInput" placeholder="München, Marienplatz"
         title="Geben Sie einen Ort oder eine Adresse ein (mind. 3 Zeichen)"
         style="width: 250px; flex: none; max-width: 100%;" />
+
+      <!-- Radius Slider -->
+      <div class="radius-slider-group"
+        style="display: flex; align-items: center; gap: 10px; padding: 0 10px; border-left: 1px solid #ddd; height: 38px;">
+        <label for="radiusSlider" style="font-size: 0.9em; color: #555;">Radius:</label>
+        <input type="range" id="radiusSlider" min="50" max="500" value="150" step="10" style="width: 120px;"
+          title="Suchradius bestimmt die max. Entfernung für Routing-Berechnungen">
+        <span id="radiusValue" style="font-size: 0.9em; font-weight: bold; width: 50px;">150 km</span>
+      </div>
+
       <button id="searchBtn" title="Fahrzeiten von dieser Adresse berechnen">🔍 Suchen</button>
     </div>
 
