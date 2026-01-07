@@ -3,8 +3,8 @@ import { initMap, updateMap, showUserLocation } from "./map.js";
 import { API_BASE_URL } from "./config.js";
 import { store } from "./store.js";
 import { escapeHtml, getDistanceFromLatLonInKm } from "./utils.js";
+import { initEventListeners } from "./events.js";
 
-// Global Error Handler
 // Global Error Handler
 window.onerror = function (msg, url, lineNo, columnNo, error) {
   showError(`Global Error: ${msg} (Line: ${lineNo})`);
@@ -19,67 +19,57 @@ const MUNICH_DEFAULT = {
 };
 
 // Global State
-let currentResortId = null;
 let currentSearchLocation = { ...MUNICH_DEFAULT }; // Initialize with default
+window.userLocation = currentSearchLocation; // Sync for other modules
+
+// Exports for events.js
+export const getCurrentSearchLocation = () => currentSearchLocation;
+
+export const setCurrentSearchLocation = (loc) => {
+  currentSearchLocation = loc;
+  window.userLocation = loc; // Sync
+};
 
 // Show message in UI (persistent for debugging)
-// Show message in UI (persistent for debugging)
-function showError(message) {
+export function showError(message) {
   const container = document.getElementById("searchError");
   const content = document.getElementById("errorContent");
   if (!container || !content) return;
 
+  const time = new Date().toLocaleTimeString();
+  const entry = `<div class="error-entry">
+    <span style="color: #999;">[${time}]</span> ${message}
+  </div>`;
+
+  content.innerHTML = entry + content.innerHTML;
   container.style.display = "block";
-
-  const msgDiv = document.createElement("div");
-  msgDiv.textContent = `❌ ${message}`;
-  msgDiv.style.color = "#d32f2f";
-  content.appendChild(msgDiv);
-
-  // Auto-scroll to bottom
-  content.scrollTop = content.scrollHeight;
 }
 
-function logToUI(msg, type = "info") {
-  const container = type === "error" ? document.getElementById("searchError") : document.getElementById("statusConsole");
-  const content = type === "error" ? document.getElementById("errorContent") : document.getElementById("statusContent");
-
+export function logToUI(msg, type = "info") {
+  const container = document.getElementById("statusConsole");
+  const content = document.getElementById("statusContent");
   if (!container || !content) return;
 
-  // Always show status console when logging, unless explicit hide logic exists
+  const time = new Date().toLocaleTimeString();
+  let icon = "ℹ️";
+  if (type === "success") icon = "✅";
+  if (type === "warning") icon = "⚠️";
+  if (type === "error") icon = "❌";
+
+  const entry = `<div class="status-entry">
+    <span style="color: #999;">[${time}]</span> ${icon} ${msg}
+  </div>`;
+
+  content.innerHTML = entry + content.innerHTML;
   container.style.display = "block";
-
-  const line = document.createElement("div");
-  // Keep clean style
-  line.style.borderBottom = "1px solid #eee";
-  line.style.padding = "2px 0";
-
-  const timestamp = new Date().toLocaleTimeString();
-
-  if (type === "error") {
-    line.innerHTML = `<span style="color:#d32f2f">❌ [${timestamp}] ${msg}</span>`;
-  } else {
-    // Check for specific keywords to add emojis or formatting
-    let icon = "ℹ️";
-    if (msg.includes("Lade")) icon = "⏳";
-    if (msg.includes("aktualisiert") || msg.includes("Loaded")) icon = "✅";
-    if (msg.includes("Verkehr")) icon = "🚦";
-    if (msg.includes("Wetter")) icon = "🌤️";
-
-    line.innerHTML = `<span style="color:#555">[${timestamp}] ${icon} ${msg}</span>`;
-  }
-
-  content.appendChild(line);
-  content.scrollTop = content.scrollHeight;
 }
 
-// Hide error message
-function hideError() {
-  // Disable auto-hide for debugging
+export function hideError() {
+  const container = document.getElementById("searchError");
+  if (container) container.style.display = "none";
 }
 
-// Show Loading Banner
-function showLoading(msg = "Lade Live-Daten...") {
+export function showLoading(msg = "Lade Live-Daten...") {
   const banner = document.getElementById("loadingBanner");
   const text = document.getElementById("loadingText");
   if (banner && text) {
@@ -88,1335 +78,180 @@ function showLoading(msg = "Lade Live-Daten...") {
   }
 }
 
-// Hide Loading Banner
-function hideLoading() {
+export function hideLoading() {
   const banner = document.getElementById("loadingBanner");
   if (banner) banner.style.display = "none";
 }
 
-// Load Data
-async function load() {
-  showLoading("🚀 Starte App...");
-
-  // 1. Fetch Static Data Fast
+/**
+ * Load Data from Backend
+ */
+export async function load() {
+  showLoading();
   try {
-    showLoading("Lade Basis-Daten...");
-    logToUI("Lade statische Konfiguration der Skigebiete...");
-    const staticRes = await fetch(`${API_BASE_URL}/resorts/static`);
+    const res = await fetch(`${API_BASE_URL}/resorts`);
+    if (!res.ok) throw new Error("Failed to fetch resort data");
 
-    if (!staticRes.ok) {
-      if (staticRes.status === 429) throw new Error("⚠️ Zu viele Anfragen. Bitte warten Sie einen Moment.");
-      throw new Error(`HTTP ${staticRes.status}`);
-    }
-    const staticData = await staticRes.json();
-    logToUI(`✅ ${staticData.length} Skigebiete konfiguriert.`);
+    let resorts = await res.json();
+    const timestamp = new Date().toLocaleTimeString();
+    document.getElementById("timestamp").textContent = timestamp;
 
-    // Check if we already have resorts in store to avoid flicker
-    if (store.get().resorts.length === 0) {
-      store.setState({ resorts: staticData }, render);
-    }
-  } catch (err) {
-    console.error("Failed to load static data:", err);
-    let msg = err.message;
-    // Detect CORS/Network failure (when status is 0 or message indicates fetch failure)
-    if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
-      msg = "Verbindung fehlgeschlagen (Netzwerk/CORS). Server erreichbar?";
-    }
-    showError(`❌ Basis-Daten Fehler: ${msg}`);
-  }
-
-  // 2. Fetch Live Data
-  try {
-    showLoading("Lade Live-Status...");
-    logToUI("🔄 Starte Daten-Synchronisation...", "loading");
-    logToUI("📡 Frage Lift- & Pistenstatus ab (Intermaps, Micado, Quellwebsites der Resorts)", "info");
-    logToUI("🌤️ Aktualisiere Wetterdaten (OpenMeteo)", "info");
-    const liveRes = await fetch(`${API_BASE_URL}/resorts`);
-
-    if (!liveRes.ok) {
-      // Detailed Error Mapping
-      if (liveRes.status === 429) throw new Error("⚠️ Zu viele Anfragen (Rate Limit). Bitte warten.");
-      if (liveRes.status === 503) throw new Error("Backend wird gestartet (ca. 30s)...");
-      if (liveRes.status === 504) throw new Error("Zeitüberschreitung beim Laden");
-      throw new Error(`Server Status ${liveRes.status}`);
-    }
-
-    const liveData = await liveRes.json();
-    logToUI(`✅ Live-Daten für ${liveData.length} Gebiete empfangen.`);
-
-    // Log individual updates
-    let updateCount = 0;
-    liveData.forEach(r => {
-      // Log if Fresh (not cached) AND Live
-      if (r.status === "live" && r.cached === false) {
-        updateCount++;
-        logToUI(`🔄 ${r.name}: Daten erfolgreich aktualisiert.`);
-      }
-      // Log errors (fresh only to avoid spamming on every poll? Or always? Let's do fresh)
-      else if (r.status === "error" && r.cached === false) {
-        logToUI(`⚠️ ${r.name}: Fehler beim Aktualisieren.`, "error");
-      }
-    });
-
-    if (updateCount > 0) {
-      logToUI(`📊 ${updateCount} Skigebiete wurden in diesem Durchlauf aktualisiert.`);
-    } else {
-      logToUI("ℹ️ Keine Änderungen (Daten aus Cache).");
-    }
-
-    logToUI("Wetterinfos und Schneehöhen aktualisiert.");
-
-    store.setState({ resorts: liveData, lastUpdated: new Date() }, render);
-
-    // Update timestamp
-    const ts = document.getElementById("timestamp");
-    if (ts) ts.innerText = new Date().toLocaleTimeString();
-
-    // 3. Calculate initial traffic/distance from Munich
-    showLoading("Berechne Verkehr...");
-    await fetchTrafficForLocation(MUNICH_DEFAULT.latitude, MUNICH_DEFAULT.longitude, MUNICH_DEFAULT.name);
-
-    hideLoading();
-
-  } catch (err) {
-    console.error("Failed to load live data:", err);
-    let msg = err.message;
-    if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
-      msg = "Verbindung fehlgeschlagen (Netzwerk/CORS).";
-    }
-    showError(`❌ Live-Daten Fehler: ${msg}`);
-    logToUI(`❌ Fehler beim Laden der Live-Daten: ${err.message}`, "error");
-    // Keep banner visible but red? Or hide? Let's hide and use persistent error
-    hideLoading();
-  }
-}
-
-// Export CSV
-
-
-async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
-  // Update global state
-  currentSearchLocation = { latitude: lat, longitude: lon, name: locationName };
-
-  const radiusInput = document.getElementById("radiusSlider");
-  const radiusKm = radiusInput ? parseInt(radiusInput.value, 10) : 150;
-
-  logToUI(`🚗 Berechne Anfahrt & Verkehr von ${locationName} (Radius: ${radiusKm}km)...`);
-
-  // 1. Calculate Air Distance & Filter
-  const currentResorts = store.get().resorts;
-
-  // Pre-calculate air distances to determine who is "in range"
-  const resortsWithAirDist = currentResorts.map(r => {
-    // Lat/Lon are in r.latitude, r.longitude (strings or numbers? ensure number)
-    if (!r.latitude || !r.longitude) return { ...r, airDist: 9999, inRadius: false };
-
-    const dist = getDistanceFromLatLonInKm(lat, lon, parseFloat(r.latitude), parseFloat(r.longitude));
-    return { ...r, airDist: dist, inRadius: dist <= radiusKm };
-  });
-
-  const resortsInRange = resortsWithAirDist.filter(r => r.inRadius);
-  const resortsOutOfRange = resortsWithAirDist.filter(r => !r.inRadius);
-
-  logToUI(`🔍 ${resortsInRange.length} Skigebiete im Radius von ${radiusKm}km gefunden.`);
-
-  // Show loading for ONLY resorts in range
-  const loadingResorts = resortsWithAirDist.map(r => ({
-    ...r,
-    traffic: r.inRadius ? { loading: true } : null
-  }));
-  store.setState({ resorts: loadingResorts }, render); // Render to show loading spinners
-
-  // 2. Prepare API Call
-  if (resortsInRange.length === 0) {
-    logToUI("⚠️ Keine Skigebiete im gewählten Radius.", "info");
-    // Just reset loading
-    const finalResorts = resortsWithAirDist.map(r => ({ ...r, traffic: null }));
-    store.setState({ resorts: finalResorts }, render);
-    return;
-  }
-
-  // We only send IDs for 'in range' resorts
-  // BUT the API endpoint expects a lat/lon and returns a map for ALL destinations it calculates.
-  // We need to tell the backend WHICH destinations calculation is needed for? 
-  // currently /traffic/calculate calculates for ALL resorts in resorts.json?
-  // Let's check backend/routes/traffic.js. If it calculates for *all*, my client-side optimization does nothing for the API load.
-  // I need to modify the Backend API to accept a list of resort IDs!
-
-  // Assuming I will optimize the backend next. For now, let's optimize the client side logic 
-  // to *send* the list of IDs we want.
-  const targetIds = resortsInRange.map(r => r.id);
-
-  try {
-    const res = await fetch(`${API_BASE_URL}/routing/calculate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        latitude: lat,
-        longitude: lon,
-        resortIds: targetIds // New parameter for optimization
-      })
-    });
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const trafficMap = await res.json();
-
-    showUserLocation(lat, lon);
-
-    // 3. Merge Data
-    const isDefaultLocation = locationName === "München Innenstadt" || locationName === "München";
-
-    const updatedResorts = resortsWithAirDist.map(resort => {
-      // If out of range, keep it as is (no traffic data)
-      if (!resort.inRadius) {
-        return { ...resort, traffic: null };
-      }
-
-      const data = trafficMap[resort.id];
-      if (data) {
-        const newStandardTime = isDefaultLocation ? resort.distance : data.duration;
-        return {
-          ...resort,
-          distance: newStandardTime,
-          traffic: {
-            duration: data.duration,
-            distanceKm: data.distanceKm,
-            loading: false
-          }
-        };
-      }
-      // Error or missing data for in-range resort
-      return { ...resort, traffic: null };
-    });
-
-    // 4. Recalculate scores & Render
-    // (Note: Resorts out of radius will have 'traffic: null' and likely be filtered out by UI filter logic if we implement it)
-    const scoredResorts = updatedResorts.map(resort => ({
+    // Calculate score for each resort
+    resorts = resorts.map(resort => ({
       ...resort,
       score: calculateScore(resort)
     }));
 
-    // Update Store with Filter settings? 
-    // We should probably store the 'radius' in the store to filter the list view efficiently in render()
-    store.setState({ resorts: scoredResorts, radiusKm: radiusKm }, render);
-    logToUI(`✅ Fahrzeiten für ${locationName} aktualisiert`);
+    // Re-calculate distances if we have a search location
+    if (currentSearchLocation.latitude) {
+      resorts = resorts.map(resort => {
+        if (resort.latitude && resort.longitude) {
+          const dist = getDistanceFromLatLonInKm(
+            currentSearchLocation.latitude,
+            currentSearchLocation.longitude,
+            resort.latitude,
+            resort.longitude
+          );
+          return { ...resort, distance: Math.round(dist) };
+        }
+        return resort;
+      });
+    }
 
+    store.setState({ resorts, lastUpdated: new Date() }, render);
+    logToUI(`Successfully loaded ${resorts.length} resorts`, "success");
   } catch (err) {
-    console.error("Failed to load traffic data:", err);
-    showError(`❌ Verkehrsdaten Fehler: ${err.message}`);
-
-    const resetResorts = resortsWithAirDist.map(r => ({ ...r, traffic: null }));
-    store.setState({ resorts: resetResorts }, render);
+    showError(`Load Error: ${err.message}`);
+    logToUI(`Load Error: ${err.message}`, "error");
+  } finally {
+    hideLoading();
   }
 }
 
-function render() {
-  hideError();
+/**
+ * Fetch Traffic Details for a specific starting point
+ */
+export async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
+  showLoading(`Berechne Fahrzeiten von ${locationName}...`);
+  try {
+    const res = await fetch(`${API_BASE_URL}/routing/matrix?lat=${lat}&lon=${lon}`);
+    if (!res.ok) throw new Error("Matrix API failed");
+
+    const matrix = await res.json();
+    const resorts = store.get().resorts;
+
+    const updatedResorts = resorts.map(resort => {
+      const trafficData = matrix.resorts?.[resort.id];
+      if (trafficData) {
+        return {
+          ...resort,
+          distance_km: trafficData.distance_km,
+          traffic_duration: trafficData.traffic_duration,
+          live_duration: trafficData.live_duration,
+          delay_min: trafficData.delay_min,
+          inRadius: trafficData.inRadius
+        };
+      }
+      return resort;
+    });
+
+    store.setState({ resorts: updatedResorts }, render);
+    logToUI(`Traffic times updated for ${locationName}`, "success");
+
+    // Also update map to show user location highlight
+    updateMap(updatedResorts);
+    showUserLocation(lat, lon, locationName);
+
+  } catch (err) {
+    showError(`Traffic Error: ${err.message}`);
+    logToUI(`Traffic Error: ${err.message}`, "error");
+  } finally {
+    hideLoading();
+  }
+}
+
+/**
+ * Render logic
+ */
+export function render() {
   const state = store.get();
-  const { viewMode, sortKey, filter, sortDirection } = state;
+  const resorts = store.getProcessedResorts();
 
-  // 1. Get processed data (filtered)
-  // We still need to handle the specific "top3" logic if getProcessedResorts doesn't do it fully,
-  // but let's rely on the store helper we created.
-  let resortsToRender = store.getProcessedResorts();
-
-  // Ensure scores are calculated if not present (handled in load/traffic, but safeguard)
-  resortsToRender = resortsToRender.map(r => ({
-    ...r,
-    score: r.score !== undefined ? r.score : calculateScore(r)
-  }));
-
-
-  // 2. Update Map
-  if (viewMode === "map") {
+  // Rendering table (list mode)
+  if (state.viewMode === "list") {
+    document.getElementById("skiTable").style.display = "table";
+    document.getElementById("map-view").style.display = "none";
+    renderTable(resorts);
+  } else {
     document.getElementById("skiTable").style.display = "none";
     document.getElementById("map-view").style.display = "block";
-    document.getElementById("map-view").style.visibility = "visible";
-
-    initMap(resortsToRender);
-    updateMap(resortsToRender);
-
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 200);
-
-  } else {
-    // 3. Render Table
-    document.getElementById("skiTable").style.display = "";
-    document.getElementById("map-view").style.display = "none";
-
-    renderTable(resortsToRender, sortKey, filter, sortDirection);
+    updateMap(resorts);
   }
-
-  // Update sort indicators
-  document.querySelectorAll("th[data-sort]").forEach(th => {
-    th.classList.remove("sort-asc", "sort-desc");
-    if (th.dataset.sort === sortKey) {
-      th.classList.add(`sort-${sortDirection}`);
-    }
-  });
 }
 
-async function handleAddressSearch() {
-  const query = document.getElementById("addressInput").value.trim();
+/**
+ * Address Search Handler
+ */
+export async function handleAddressSearch() {
+  const input = document.getElementById("addressInput").value;
+  if (!input || input.length < 3) return;
 
-  // Validation
-  if (!query) {
-    alert("⚠️ Bitte geben Sie einen Ort ein.\n\nBeispiele:\n• Augsburg\n• Rosenheim\n• Marienplatz 1, München");
-    return;
-  }
-
-  if (query.length < 3) {
-    showError("⚠️ Die Eingabe ist zu kurz. Bitte geben Sie mindestens 3 Zeichen ein.");
-    return;
-  }
-
-  // Hide previous errors
-  hideError();
-
-  // Show loading state
-  const btn = document.getElementById("searchBtn");
-  const originalText = btn.textContent;
-  btn.textContent = "⌛ Suche...";
-  btn.disabled = true;
-
+  showLoading(`Suche Standort: ${input}...`);
   try {
-    const res = await fetch(`${API_BASE_URL}/locating/geocode?q=${encodeURIComponent(query)}`);
+    const res = await fetch(`${API_BASE_URL}/locating/geocode?query=${input}`);
+    if (!res.ok) throw new Error("Geocoding failed");
 
-    if (!res.ok) {
-      if (res.status === 404 || res.status === 400) {
-        throw new Error("NOT_FOUND");
-      }
-      throw new Error(`HTTP ${res.status}`);
-    }
+    const data = await res.json();
+    if (!data || !data.latitude) throw new Error("Ort nicht gefunden");
 
-    const location = await res.json();
+    setCurrentSearchLocation({
+      latitude: data.latitude,
+      longitude: data.longitude,
+      name: data.name || input
+    });
 
-    if (!location || !location.latitude || !location.longitude) {
-      throw new Error("INVALID_RESPONSE");
-    }
-
-    await fetchTrafficForLocation(location.latitude, location.longitude, location.name);
-
-    // Clear input on success
-    document.getElementById("addressInput").value = "";
+    logToUI(`Standort gefunden: ${currentSearchLocation.name}`, "success");
+    fetchTrafficForLocation(data.latitude, data.longitude, currentSearchLocation.name);
 
   } catch (err) {
-    console.error("Geocoding error:", err);
-
-    if (err.message === "NOT_FOUND") {
-      alert("❌ Adresse nicht gefunden.\n\nTipps:\n• Versuchen Sie nur den Ortsnamen (z.B. \"Augsburg\")\n• Prüfen Sie die Schreibweise\n• Verwenden Sie bekannte Städte in Bayern\n\nBeispiele:\n• Rosenheim\n• Garmisch-Partenkirchen\n• Marienplatz, München");
-    } else if (err.message === "INVALID_RESPONSE") {
-      showError("❌ Ungültige Antwort vom Server. Bitte versuchen Sie es später erneut.");
-    } else {
-      alert("❌ Fehler bei der Ortssuche.\n\nMögliche Ursachen:\n• Backend nicht erreichbar\n• Netzwerkproblem\n• API-Limit erreicht\n\nBitte versuchen Sie es später erneut.");
-    }
+    showError(`Such-Fehler: ${err.message}`);
   } finally {
-    btn.textContent = originalText;
-    btn.disabled = false;
+    hideLoading();
   }
 }
 
-async function handleGeolocation() {
+/**
+ * Geolocation Handler
+ */
+export async function handleGeolocation() {
   if (!navigator.geolocation) {
-    alert("❌ Geolocation wird von Ihrem Browser nicht unterstützt.");
+    showError("Geolocation is not supported by your browser");
     return;
   }
 
-  const btn = document.getElementById("locateBtn");
-  const originalText = btn.textContent;
-  btn.textContent = "⌛ Ortung läuft...";
-  btn.disabled = true;
-
+  showLoading("Ermittle Standort...");
   navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      btn.textContent = originalText;
-      btn.disabled = false;
+    (position) => {
       const { latitude, longitude } = position.coords;
-      await fetchTrafficForLocation(latitude, longitude, "Ihr Standort");
+      setCurrentSearchLocation({ latitude, longitude, name: "Ihre aktuelle Position" });
+      logToUI("Eigener Standort gefunden", "success");
+      fetchTrafficForLocation(latitude, longitude, "Ihre Position");
     },
-    (error) => {
-      btn.textContent = originalText;
-      btn.disabled = false;
-      console.error("Geolocation error:", error);
-      alert("❌ Standort konnte nicht ermittelt werden. Bitte erlauben Sie den Standortzugriff.");
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0
+    (err) => {
+      showError(`Geolocation failed: ${err.message}`);
+      hideLoading();
     }
   );
 }
 
-// Event Listeners
+// Initializing the application
 document.addEventListener("DOMContentLoaded", () => {
-  // Initial Load
-  load();
-  // Auto-refresh
-  setInterval(load, 30 * 60 * 1000);
-
-  // Search
-  document.getElementById("searchBtn").addEventListener("click", handleAddressSearch);
-  document.getElementById("locateBtn").addEventListener("click", handleGeolocation);
-  document.getElementById("addressInput").addEventListener("keypress", (e) => {
-    if (e.key === 'Enter') handleAddressSearch();
-  });
-
-  // Radius Slider
-  const radiusSlider = document.getElementById("radiusSlider");
-  const radiusValue = document.getElementById("radiusValue");
-  if (radiusSlider && radiusValue) {
-    // Update label live
-    radiusSlider.addEventListener("input", () => {
-      radiusValue.textContent = `${radiusSlider.value} km`;
-    });
-
-    // Trigger search on release (change)
-    radiusSlider.addEventListener("change", () => {
-      if (currentSearchLocation && currentSearchLocation.latitude) {
-        fetchTrafficForLocation(currentSearchLocation.latitude, currentSearchLocation.longitude, currentSearchLocation.name);
-      }
-    });
-  }
-
-  // Buttons
-  document.getElementById("viewToggle").addEventListener("click", () => {
-    const nextMode = store.get().viewMode === "list" ? "map" : "list";
-    document.getElementById("viewToggle").textContent = nextMode === "list" ? "🗺️ Karte anzeigen" : "📋 Liste anzeigen";
-    store.setState({ viewMode: nextMode }, render);
-  });
-
-  document.getElementById("top3").addEventListener("click", () => {
-    const nextFilter = store.get().filter === "top3" ? "all" : "top3";
-    document.getElementById("top3").textContent = nextFilter === "top3" ? "❌ Alle anzeigen" : "🏆 Nur Top-3 heute";
-    store.setState({ filter: nextFilter }, render);
-  });
-
-
-
-  // Sort Headers
-  document.querySelectorAll("th[data-sort]").forEach(th => {
-    th.style.cursor = "pointer";
-    th.addEventListener("click", () => {
-      const newSort = th.dataset.sort;
-      const currentSort = store.get().sortKey;
-      let sortDirection = store.get().sortDirection;
-
-      // If clicking the same column, toggle direction
-      if (currentSort === newSort) {
-        sortDirection = sortDirection === "desc" ? "asc" : "desc";
-      } else {
-        // New column - set default direction based on column type
-        // Distance and price should default to ascending (lower is better)
-        // Score, pistes, snow should default to descending (higher is better)
-        sortDirection = ['distance', 'distance_km', 'traffic_duration', 'price'].includes(newSort) ? "asc" : "desc";
-      }
-
-      store.setState({ sortKey: newSort, sortDirection }, render);
-    });
-  });
-
-  // Mobile Sort Buttons
-  document.querySelectorAll(".sort-mobile button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      store.setState({ sortKey: btn.dataset.sort }, render);
-    });
-  });
-
-  // Weather Modal Handlers
-  const modal = document.getElementById("weatherModal");
-  const closeBtn = document.querySelector(".close");
-
-  // Close modal when clicking X
-  closeBtn.addEventListener("click", () => {
-    modal.style.display = "none";
-  });
-
-  // Close modal when clicking outside
-  window.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      modal.style.display = "none";
-    }
-  });
-
-  // Handle weather button clicks (delegated)
-  document.addEventListener("click", async (event) => {
-    if (event.target.classList.contains("weather-btn")) {
-      const resortId = event.target.dataset.resortId;
-      const resortName = event.target.dataset.resortName;
-
-      // Show modal
-      modal.style.display = "block";
-      document.getElementById("weatherResortName").textContent = `${resortName} - 3-Day Forecast`;
-      document.getElementById("weatherForecast").innerHTML = "<p>Loading...</p>";
-
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/weather/${resortId}`);
-        if (!res.ok) throw new Error("Failed to fetch weather");
-
-        const data = await res.json();
-        displayWeather(data.forecast);
-      } catch (error) {
-        console.error("Weather error:", error);
-        document.getElementById("weatherForecast").innerHTML = "<p>❌ Weather data unavailable</p>";
-      }
-    }
-  });
-
-  // Details Modal Handlers
-  const detailsModal = document.getElementById("detailsModal");
-  const closeDetailsBtn = document.querySelector(".close-details");
-
-  closeDetailsBtn.addEventListener("click", () => {
-    detailsModal.style.display = "none";
-  });
-
-  window.addEventListener("click", (event) => {
-    if (event.target === detailsModal) {
-      detailsModal.style.display = "none";
-    }
-  });
-
-  // Handle details button clicks
-  document.addEventListener("click", (event) => {
-    if (event.target.classList.contains("details-btn")) {
-      const resortId = event.target.dataset.resortId;
-      const resortName = event.target.dataset.resortName;
-
-      // Find resort data
-      const resort = store.get().resorts.find(r => r.id === resortId);
-
-      if (!resort) {
-        alert("Resort data not found");
-        return;
-      }
-
-      // Show modal
-      detailsModal.style.display = "block";
-      document.getElementById("detailsResortName").textContent = `${resortName} - Details`;
-
-      // Render details
-      displayResortDetails(resort);
-    }
-  });
-
-  // History Modal Handlers
-  const historyModal = document.getElementById("historyModal");
-  const closeHistoryBtn = document.querySelector(".close-history");
-
-  closeHistoryBtn.addEventListener("click", () => {
-    historyModal.style.display = "none";
-  });
-
-  window.addEventListener("click", (event) => {
-    if (event.target === historyModal) {
-      historyModal.style.display = "none";
-    }
-  });
-
-  // History Modal Tab Switching
-  // History Modal Tab Switching
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('tab-btn')) {
-      const tab = e.target.dataset.tab;
-      switchHistoryTab(tab);
-    }
-  });
-
-  // Handle history button clicks
-  document.addEventListener("click", async (event) => {
-    if (event.target.classList.contains("history-btn")) {
-      const resortId = event.target.dataset.resortId;
-      const resortName = event.target.dataset.resortName;
-      currentResortId = resortId;
-
-      // Update Traffic History State
-      currentResortIdForTraffic = resortId;
-      currentTrafficChartLoaded = false;
-
-      // Reset to Lifts tab
-      switchHistoryTab('lifts');
-
-      historyModal.style.display = "block";
-      document.getElementById("historyResortName").textContent = `${resortName} - History`;
-
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/history/${resortId}?days=7`);
-        if (!res.ok) throw new Error("Failed to fetch history");
-
-        const data = await res.json();
-        displayHistoryChart(data.history);
-      } catch (error) {
-        console.error("History error:", error);
-        alert("History data not available yet. Data is collected daily.");
-      }
-    }
-  });
-
-
-  // Status Modal Handlers
-  const statusModal = document.getElementById("statusModal");
-  const closeStatusBtn = document.querySelector(".close-status");
-
-  document.getElementById("openStatusBtn").addEventListener("click", (e) => {
-    e.preventDefault();
-    statusModal.style.display = "block";
-    fetchSystemStatus();
-    // Start auto-refresh for status
-    if (!window.statusInterval) {
-      window.statusInterval = setInterval(fetchSystemStatus, 5000);
-    }
-  });
-
-  closeStatusBtn.addEventListener("click", () => {
-    statusModal.style.display = "none";
-    if (window.statusInterval) {
-      clearInterval(window.statusInterval);
-      window.statusInterval = null;
-    }
-  });
-
-  window.addEventListener("click", (event) => {
-    if (event.target === statusModal) {
-      statusModal.style.display = "none";
-      if (window.statusInterval) {
-        clearInterval(window.statusInterval);
-        window.statusInterval = null;
-      }
-    }
-  });
-
-  // Sentry Session Replay Test Button
-  document.getElementById("testSentryBtn")?.addEventListener("click", async () => {
-    const resultDiv = document.getElementById("sentryTestResult");
-    const btn = document.getElementById("testSentryBtn");
-
-    if (!window.Sentry) {
-      resultDiv.innerHTML = '<span style="color: #e74c3c;">❌ Sentry ist nicht geladen</span>';
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = "⏳ Sende Test...";
-    resultDiv.innerHTML = '<span style="color: #3498db;">📡 Sende Test-Fehler an Sentry...</span>';
-
-    try {
-      // Send test message
-      window.Sentry.captureMessage('Test: Session Replay Verification', 'info');
-
-      // Trigger test error after short delay
-      setTimeout(() => {
-        try {
-          throw new Error('🧪 Test Error: Session Replay Verification - ' + new Date().toISOString());
-        } catch (error) {
-          window.Sentry.captureException(error);
-
-          resultDiv.innerHTML = `
-            <div style="color: #27ae60; background: #d4edda; padding: 10px; border-radius: 4px; border-left: 4px solid #27ae60;">
-              <strong>✅ Test erfolgreich!</strong><br>
-              <small>
-                • Fehler wurde an Sentry gesendet<br>
-                • Session Replay wurde aufgezeichnet<br>
-                • Überprüfen Sie Ihr Sentry Dashboard in ~30 Sekunden
-              </small>
-            </div>
-          `;
-
-          btn.disabled = false;
-          btn.textContent = "🎬 Session Replay testen";
-        }
-      }, 1000);
-
-    } catch (error) {
-      resultDiv.innerHTML = '<span style="color: #e74c3c;">❌ Fehler beim Test: ' + error.message + '</span>';
-      btn.disabled = false;
-      btn.textContent = "🎬 Session Replay testen";
-    }
+  initEventListeners({
+    load,
+    render,
+    handleAddressSearch,
+    handleGeolocation,
+    fetchTrafficForLocation,
+    getCurrentSearchLocation
   });
 });
-
-async function fetchSystemStatus() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/status`);
-    if (!res.ok) throw new Error("Status API failed");
-    const data = await res.json();
-    renderStatusDashboard(data);
-  } catch (err) {
-    console.error("Status error:", err);
-  }
-}
-
-function renderStatusDashboard(data) {
-  // Database
-  const dbEl = document.getElementById("statusDatabase");
-  const dbSizeEl = document.getElementById("statusDatabaseSize");
-  const dbOk = data.database?.connected;
-  dbEl.textContent = dbOk ? "🟢 Online" : "🔴 Offline";
-  dbEl.style.color = dbOk ? "green" : "red";
-  if (!dbOk) dbEl.title = data.database?.message || "Unknown error";
-
-  // Show database size metrics if available
-  if (data.metrics && data.metrics.db_size_mb > 0) {
-    const sizeMB = data.metrics.db_size_mb.toFixed(1);
-    const percentUsed = data.metrics.db_percent_used.toFixed(1);
-    let color = "#27ae60"; // Green
-
-    if (percentUsed >= 90) {
-      color = "#e74c3c"; // Red
-    } else if (percentUsed >= 80) {
-      color = "#f39c12"; // Orange
-    }
-
-    dbSizeEl.textContent = `${sizeMB} MB (${percentUsed}%)`;
-    dbSizeEl.style.color = color;
-  } else {
-    dbSizeEl.textContent = "Größe wird ermittelt...";
-    dbSizeEl.style.color = "#95a5a6";
-  }
-
-  // Scraper
-  const scraperEl = document.getElementById("statusScraper");
-  const scraperStatus = data.components?.scraper || 'unknown';
-  if (scraperStatus === 'healthy') {
-    scraperEl.textContent = "🟢 Active";
-    scraperEl.style.color = "green";
-  } else if (scraperStatus === 'degraded') {
-    scraperEl.textContent = "🟡 Degraded";
-    scraperEl.style.color = "orange";
-  } else {
-    scraperEl.textContent = "⚪ Checking...";
-    scraperEl.style.color = "gray";
-  }
-
-  // Weather API
-  const weatherEl = document.getElementById("statusWeather");
-  const weatherStatus = data.components?.weather || 'unknown';
-  if (weatherStatus === 'healthy') {
-    weatherEl.textContent = "🟢 Active";
-    weatherEl.style.color = "green";
-  } else if (weatherStatus === 'degraded') {
-    weatherEl.textContent = "🟡 Degraded";
-    weatherEl.style.color = "orange";
-  } else {
-    weatherEl.textContent = "⚪ Checking...";
-    weatherEl.style.color = "gray";
-  }
-
-  // Scheduler
-  const schedulerEl = document.getElementById("statusScheduler");
-  const schedulerStatus = data.components?.scheduler || 'unknown';
-  if (schedulerStatus === 'healthy') {
-    schedulerEl.textContent = "🟢 Running";
-    schedulerEl.style.color = "green";
-  } else if (schedulerStatus === 'degraded') {
-    schedulerEl.textContent = "🟡 Degraded";
-    schedulerEl.style.color = "orange";
-  } else {
-    schedulerEl.textContent = "⚪ Checking...";
-    schedulerEl.style.color = "gray";
-  }
-
-  // Traffic API (TomTom)
-  const trafficEl = document.getElementById("statusTraffic");
-  const trafficStatus = data.components?.traffic || 'unknown';
-  if (trafficStatus === 'healthy') {
-    trafficEl.textContent = "🟢 Active";
-    trafficEl.style.color = "green";
-  } else if (trafficStatus === 'degraded') {
-    trafficEl.textContent = "🟡 Degraded";
-    trafficEl.style.color = "orange";
-  } else {
-    trafficEl.textContent = "⚪ Checking...";
-    trafficEl.style.color = "gray";
-  }
-
-  // Geocoding (OpenRouteService)
-  const geocodingEl = document.getElementById("statusGeocoding");
-  const geocodingStatus = data.components?.geocoding || 'unknown';
-  if (geocodingStatus === 'healthy') {
-    geocodingEl.textContent = "🟢 Active";
-    geocodingEl.style.color = "green";
-  } else if (geocodingStatus === 'degraded') {
-    geocodingEl.textContent = "🟡 Degraded";
-    geocodingEl.style.color = "orange";
-  } else {
-    geocodingEl.textContent = "⚪ On-Demand";
-    geocodingEl.style.color = "gray";
-  }
-
-  // Monitoring (Sentry)
-  const monitoringEl = document.getElementById("statusMonitoring");
-  const sentryActive = data.monitoring?.sentry || false;
-  if (sentryActive) {
-    monitoringEl.textContent = "🛡️ Aktiv";
-    monitoringEl.style.color = "green";
-  } else {
-    monitoringEl.textContent = "⚠️ Inaktiv";
-    monitoringEl.style.color = "orange";
-  }
-
-  // Webcams
-  const webcamEl = document.getElementById("statusWebcams");
-  if (webcamEl) {
-    const webcamData = data.webcams;
-    if (webcamData && webcamData.summary) {
-      const { ok, total, error } = webcamData.summary;
-      if (error === 0 && ok > 0) {
-        webcamEl.textContent = `🟢 ${ok}/${total} OK`;
-        webcamEl.style.color = "green";
-      } else if (error > 0) {
-        webcamEl.textContent = `⚠️ ${error} Errors (${ok} OK)`;
-        webcamEl.style.color = "orange";
-      } else {
-        webcamEl.textContent = "⚪ No Data";
-        webcamEl.style.color = "gray";
-      }
-      if (webcamData.summary.lastCheck) {
-        webcamEl.title = `Last Check: ${new Date(webcamData.summary.lastCheck).toLocaleTimeString()}`;
-      }
-    } else {
-      webcamEl.textContent = "⚪ Unknown";
-      webcamEl.style.color = "gray";
-    }
-  }
-
-  // Traffic Analysis (Data Collection)
-  const trafficAnalysisEl = document.getElementById("statusTrafficAnalysis");
-  const trafficMetricsEl = document.getElementById("statusTrafficMetrics");
-  const trafficAnalysisStatus = data.components?.traffic_analysis || 'unknown';
-
-  if (trafficAnalysisStatus === 'healthy') {
-    trafficAnalysisEl.textContent = "🟢 Collecting";
-    trafficAnalysisEl.style.color = "green";
-
-    // Show metrics if available
-    if (data.metrics) {
-      const dataPoints = data.metrics.traffic_data_points || 0;
-      const lastUpdate = data.metrics.traffic_last_update
-        ? new Date(data.metrics.traffic_last_update).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
-        : 'N/A';
-      trafficMetricsEl.textContent = `${dataPoints} Einträge | ${lastUpdate}`;
-      trafficMetricsEl.style.color = "#27ae60";
-    }
-  } else if (trafficAnalysisStatus === 'degraded') {
-    trafficAnalysisEl.textContent = "🟡 Issues";
-    trafficAnalysisEl.style.color = "orange";
-    trafficMetricsEl.textContent = "Datensammlung unterbrochen";
-    trafficMetricsEl.style.color = "#f39c12";
-  } else {
-    trafficAnalysisEl.textContent = "⚪ Initializing";
-    trafficAnalysisEl.style.color = "gray";
-    trafficMetricsEl.textContent = "Warte auf erste Daten...";
-    trafficMetricsEl.style.color = "#95a5a6";
-  }
-
-  // Uptime
-  const uptime = Math.floor(data.uptime || 0);
-  const hours = Math.floor(uptime / 3600);
-  const mins = Math.floor((uptime % 3600) / 60);
-  document.getElementById("statusUptime").textContent = `${hours}h ${mins}m`;
-
-  // Logs
-  const logContainer = document.getElementById("systemLogs");
-  if (data.logs && data.logs.length > 0) {
-    logContainer.innerHTML = data.logs.map(log => {
-      const time = new Date(log.timestamp).toLocaleTimeString();
-      let color = "#333";
-      if (log.level === 'error') color = "#d32f2f";
-      if (log.level === 'warn') color = "#f57c00";
-      if (log.level === 'success') color = "#43a047";
-
-      let icon = "ℹ️";
-      if (log.level === 'error') icon = "❌";
-      if (log.level === 'warn') icon = "⚠️";
-      if (log.level === 'success') icon = "✅";
-
-      return `<div class="log-entry" style="border-bottom: 1px solid #eee; padding: 4px 0; font-family: monospace; font-size: 0.9em; color: ${color};">
-        <span style="color: #999;">[${time}]</span> ${icon} <strong>[${log.component.toUpperCase()}]</strong> ${log.message}
-      </div>`;
-    }).join("");
-  } else {
-    logContainer.innerHTML = "<div class='log-entry'>No logs available</div>";
-  }
-}
-
-let historyChart = null;
-
-function displayHistoryChart(history) {
-  const ctx = document.getElementById("historyChart");
-
-  if (!history || history.length === 0) {
-    ctx.parentElement.innerHTML = "<p>No historical data available yet. Data is collected daily starting from today.</p>";
-    return;
-  }
-
-  // Destroy previous chart if exists
-  if (historyChart) {
-    historyChart.destroy();
-  }
-
-  const dates = history.map(h => {
-    const date = new Date(h.date);
-    return date.toLocaleDateString('de-DE', { month: 'short', day: 'numeric' });
-  });
-
-  const snowData = history.map(h => parseInt(h.snow) || null);
-  const liftsData = history.map(h => h.liftsOpen || null);
-
-  historyChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: dates,
-      datasets: [
-        {
-          label: 'Snow Depth (cm)',
-          data: snowData,
-          borderColor: '#1976d2',
-          backgroundColor: 'rgba(25, 118, 210, 0.1)',
-          yAxisID: 'y',
-          tension: 0.3
-        },
-        {
-          label: 'Lifts Open',
-          data: liftsData,
-          borderColor: '#2e7d32',
-          backgroundColor: 'rgba(46, 125, 50, 0.1)',
-          yAxisID: 'y1',
-          tension: 0.3
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      },
-      scales: {
-        y: {
-          type: 'linear',
-          display: true,
-          position: 'left',
-          title: {
-            display: true,
-            text: 'Snow Depth (cm)'
-          }
-        },
-        y1: {
-          type: 'linear',
-          display: true,
-          position: 'right',
-          title: {
-            display: true,
-            text: 'Lifts Open'
-          },
-          grid: {
-            drawOnChartArea: false,
-          },
-        },
-      }
-    }
-  });
-}
-
-// -- TRAFFIC HISTORY CHART --
-let currentResortIdForTraffic = null;
-let currentTrafficChartLoaded = false;
-
-async function switchHistoryTab(tab) {
-  // Toggle active classes
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  const activeBtn = document.querySelector(`.history-tabs [data-tab="${tab}"]`);
-  if (activeBtn) activeBtn.classList.add('active');
-
-  // Toggle content visibility
-  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-  const targetContent = document.getElementById(`${tab}Tab`);
-  if (targetContent) targetContent.style.display = 'block';
-
-  // Load content
-  if (tab === 'traffic' && !currentTrafficChartLoaded && currentResortId) {
-    loadResortTrafficHistory(currentResortId);
-  } else if (tab === 'weather' && currentResortId) {
-    const { createCombinedWeatherChart } = await import('./weatherChart.js');
-    createCombinedWeatherChart("weatherChartsContainer", currentResortId, 30);
-  }
-}
-
-// Find nearest city based on user location
-function findNearestCity(lat, lon) {
-  const cities = [
-    { id: 'munich', lat: 48.1351, lon: 11.5820 },
-    { id: 'augsburg', lat: 48.3705, lon: 10.8978 },
-    { id: 'salzburg', lat: 47.8095, lon: 13.0550 }
-  ];
-
-  let nearest = cities[0];
-  let minDist = Infinity;
-
-  cities.forEach(city => {
-    const dist = Math.sqrt(
-      Math.pow(lat - city.lat, 2) + Math.pow(lon - city.lon, 2)
-    );
-    if (dist < minDist) {
-      minDist = dist;
-      nearest = city;
-    }
-  });
-
-  return nearest.id;
-}
-
-// Load resort-specific traffic history
-async function loadResortTrafficHistory(resortId) {
-  // Determine nearest city based on user location
-  const userLat = window.userLocation?.latitude || 48.1351; // Munich default
-  const userLon = window.userLocation?.longitude || 11.5820;
-
-  const nearestCity = findNearestCity(userLat, userLon);
-
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/history/traffic/${nearestCity}/${resortId}`);
-    if (!res.ok) throw new Error('Failed to fetch traffic history');
-
-    const response = await res.json();
-    renderResortTrafficChart(response.data, resortId, nearestCity);
-    currentTrafficChartLoaded = true;
-  } catch (error) {
-    console.error('Traffic history error:', error);
-    const ctx = document.getElementById('trafficHistoryChart');
-    if (ctx) {
-      ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
-      // Show error message
-    }
-  }
-}
-
-// Render resort-specific traffic chart (weekly bar chart)
-let resortTrafficChartInstance = null;
-
-function renderResortTrafficChart(data, resortId, cityId) {
-  const ctx = document.getElementById('trafficHistoryChart');
-
-  if (resortTrafficChartInstance) {
-    resortTrafficChartInstance.destroy();
-  }
-
-  if (!data || data.length === 0) {
-    console.log('No traffic data available for', resortId);
-    return;
-  }
-
-  // Aggregate data by day-of-week and hour
-  const weeklyData = aggregateWeeklyTraffic(data);
-  const labels = generateWeekLabels();
-
-  resortTrafficChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: `Ø Verzögerung ab ${getCityName(cityId)} (min)`,
-        data: weeklyData,
-        backgroundColor: weeklyData.map(delay => getTrafficColor(delay)),
-        borderWidth: 0
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: { display: true, text: 'Verzögerung (Minuten)' }
-        },
-        x: {
-          title: { display: true, text: 'Wochentag / Uhrzeit' },
-          ticks: {
-            maxRotation: 90,
-            minRotation: 45,
-            autoSkip: true,
-            maxTicksLimit: 20
-          }
-        }
-      }
-    }
-  });
-}
-
-// Aggregate traffic data by day-of-week and hour
-function aggregateWeeklyTraffic(data) {
-  // Group by day-of-week (0-6) and hour (0-23)
-  const grid = Array(7).fill(null).map(() => Array(24).fill(null).map(() => []));
-
-  data.forEach(entry => {
-    const date = new Date(entry.timestamp);
-    const day = date.getDay(); // 0 = Sunday, 1 = Monday, ...
-    const hour = date.getHours();
-    const adjustedDay = day === 0 ? 6 : day - 1; // Convert to Mo=0, So=6
-
-    grid[adjustedDay][hour].push(entry.delay);
-  });
-
-  // Calculate averages and flatten to 168 values
-  const weeklyData = [];
-  for (let day = 0; day < 7; day++) {
-    for (let hour = 0; hour < 24; hour++) {
-      const delays = grid[day][hour];
-      const avg = delays.length > 0
-        ? delays.reduce((sum, d) => sum + d, 0) / delays.length
-        : 0;
-      weeklyData.push(Math.round(avg));
-    }
-  }
-
-  return weeklyData;
-}
-
-// Generate week labels (Mo 00:00 - So 23:00)
-function generateWeekLabels() {
-  const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-  const labels = [];
-
-  for (let day = 0; day < 7; day++) {
-    for (let hour = 0; hour < 24; hour++) {
-      labels.push(`${days[day]} ${hour.toString().padStart(2, '0')}:00`);
-    }
-  }
-
-  return labels;
-}
-
-// Get traffic color based on delay
-function getTrafficColor(delay) {
-  if (delay > 20) return 'rgba(231, 76, 60, 0.8)'; // Red
-  if (delay > 10) return 'rgba(243, 156, 18, 0.8)'; // Orange
-  if (delay > 5) return 'rgba(241, 196, 15, 0.8)'; // Yellow
-  return 'rgba(46, 204, 113, 0.8)'; // Green
-}
-
-// Helper to get city name
-function getCityName(cityId) {
-  const cityNames = {
-    'munich': 'München',
-    'augsburg': 'Augsburg',
-    'salzburg': 'Salzburg'
-  };
-  return cityNames[cityId] || cityId;
-}
-
-function displayWeather(forecast) {
-  // ...
-  const container = document.getElementById("weatherForecast");
-
-  if (!forecast || forecast.length === 0) {
-    container.innerHTML = "<p>No forecast data available</p>";
-    return;
-  }
-
-  const html = forecast.map(day => {
-    const date = new Date(day.date);
-    const dayName = date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
-
-    return `
-      <div class="weather-day">
-        <div class="date">${dayName}</div>
-        <div class="emoji">${day.weatherEmoji}</div>
-        <div class="desc">${day.weatherDesc}</div>
-        <div class="temp">
-          <span class="temp-max">${day.tempMax}°</span> /
-          <span class="temp-min">${day.tempMin}°</span>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  container.innerHTML = html;
-}
-
-function displayResortDetails(resort) {
-  const container = document.getElementById("detailsContent");
-  const safeResortName = escapeHtml(resort.name);
-
-  // Show loading state
-  container.innerHTML = `
-    <div class="loading-container">
-      <div class="loading-spinner"></div>
-      <p>Lade Details für ${safeResortName}...</p>
-    </div>
-  `;
-
-  // Small delay to show loading state
-  setTimeout(() => {
-    if (!resort.lifts && !resort.slopes) {
-      container.innerHTML = "<p>Keine detaillierten Daten verfügbar</p>";
-      return;
-    }
-
-    let html = "";
-
-    // Historical Chart Section
-    html += `<div class="details-section">
-      <h3>📊 7-Tage Verlauf</h3>
-      <canvas id="detailsHistoryChart" style="max-height: 200px;"></canvas>
-      <p id="detailsHistoryStatus" style="text-align: center; color: #666; font-size: 0.9em;">Lade Verlaufsdaten...</p>
-    </div>`;
-
-    // Lifts Section
-    if (resort.lifts && resort.lifts.length > 0) {
-      html += `<div class="details-section">
-      <h3>🚡 Lifte (${resort.liftsOpen || 0}/${resort.liftsTotal || resort.lifts.length})</h3>
-      <div class="facilities-list">`;
-
-      resort.lifts.forEach(lift => {
-        const statusClass = lift.status === "open" ? "status-open" :
-          lift.status === "closed" ? "status-closed" : "status-unknown";
-        const statusIcon = lift.status === "open" ? "🟢" :
-          lift.status === "closed" ? "🔴" : "⚪";
-
-        const safeLiftName = escapeHtml(lift.name);
-
-        html += `<div class="facility-item">
-        <div class="facility-header">
-          <span class="facility-status ${statusClass}">${statusIcon}</span>
-          <span class="facility-name">${safeLiftName}</span>
-        </div>`;
-
-        // Metadata
-        const metadata = [];
-        if (lift.type) metadata.push(`Typ: ${escapeHtml(lift.type)}`);
-        if (lift.length) metadata.push(`Länge: ${lift.length}m`); // Number, safe
-        if (lift.altitudeStart) metadata.push(`Höhe: ${lift.altitudeStart}m`); // Number, safe
-        if (lift.operatingHours) metadata.push(`⏰ ${escapeHtml(lift.operatingHours)}`);
-
-        if (metadata.length > 0) {
-          html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
-        }
-
-        html += `</div>`;
-      });
-
-      html += `</div></div>`;
-    }
-
-    // Slopes Section
-    if (resort.slopes && resort.slopes.length > 0) {
-      const slopesOpen = resort.slopes.filter(s => s.status === "open").length;
-      html += `<div class="details-section">
-      <h3>⛷️ Pisten (${slopesOpen}/${resort.slopes.length})</h3>
-      <div class="facilities-list">`;
-
-      resort.slopes.forEach(slope => {
-        const statusClass = slope.status === "open" ? "status-open" :
-          slope.status === "closed" ? "status-closed" : "status-unknown";
-        const statusIcon = slope.status === "open" ? "🟢" :
-          slope.status === "closed" ? "🔴" : "⚪";
-
-        const difficultyIcon = slope.difficulty === "blue" ? "🔵" :
-          slope.difficulty === "red" ? "🔴" :
-            slope.difficulty === "black" ? "⚫" :
-              slope.difficulty === "freeride" ? "🟠" : "";
-
-        const safeSlopeName = escapeHtml(slope.name);
-
-        html += `<div class="facility-item">
-        <div class="facility-header">
-          <span class="facility-status ${statusClass}">${statusIcon}</span>
-          ${difficultyIcon ? `<span class="difficulty-badge">${difficultyIcon}</span>` : ''}
-          <span class="facility-name">${safeSlopeName}</span>
-        </div>`;
-
-        // Metadata
-        const metadata = [];
-        if (slope.difficulty) metadata.push(`Schwierigkeit: ${escapeHtml(slope.difficulty)}`);
-        if (slope.length) metadata.push(`Länge: ${slope.length}m`);
-        if (slope.altitudeStart) metadata.push(`Höhe: ${slope.altitudeStart}m`);
-        if (slope.operatingHours) metadata.push(`⏰ ${escapeHtml(slope.operatingHours)}`);
-
-        if (metadata.length > 0) {
-          html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
-        }
-
-        html += `</div>`;
-      });
-
-      html += `</div></div>`;
-    }
-
-    container.innerHTML = html;
-
-    // Fetch and render historical data
-    fetchDetailsHistory(resort.id);
-  }, 100);
-}
-
-let detailsHistoryChart = null;
-
-async function fetchDetailsHistory(resortId) {
-  const statusEl = document.getElementById("detailsHistoryStatus");
-
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/history/${resortId}?days=7`);
-    if (!res.ok) throw new Error("Failed to fetch history");
-
-    const data = await res.json();
-
-    if (!data.history || data.history.length === 0) {
-      statusEl.textContent = "Keine Verlaufsdaten verfügbar (Daten werden täglich gesammelt)";
-      return;
-    }
-
-    // Destroy previous chart
-    if (detailsHistoryChart) {
-      detailsHistoryChart.destroy();
-    }
-
-    const ctx = document.getElementById("detailsHistoryChart");
-    const dates = data.history.map(h => {
-      const date = new Date(h.date);
-      return date.toLocaleDateString('de-DE', { month: 'short', day: 'numeric' });
-    });
-
-    const liftsData = data.history.map(h => h.liftsOpen || null);
-
-    detailsHistoryChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: dates,
-        datasets: [{
-          label: 'Geöffnete Lifte',
-          data: liftsData,
-          borderColor: '#2e7d32',
-          backgroundColor: 'rgba(46, 125, 50, 0.1)',
-          tension: 0.3,
-          fill: true
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              stepSize: 1
-            }
-          }
-        }
-      }
-    });
-
-    statusEl.style.display = "none";
-  } catch (error) {
-    console.error("History error:", error);
-    statusEl.textContent = "Verlaufsdaten noch nicht verfügbar";
-  }
-}

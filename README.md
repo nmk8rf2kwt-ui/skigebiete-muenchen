@@ -48,7 +48,7 @@ Eine vollständige Übersicht aller verwendeten Komponenten und Versionen finden
 | **GitHub Actions**| `v4` | CI/CD Pipeline (Checkout & Setup-Node v4) |
 
 ### Frontend
-- **Vanilla JS (ES6+)**: Keine Frameworks, maximale Performance.
+- **Vanilla JS (ES6+)**: Modular architecture (`app.js`, `events.js`, `modals.js`) for better maintainability and <100ms load times.
 - **Leaflet (v1.9.4)**: Kartenintegration.
 - **Chart.js (v4.x)**: Datenvisualisierung.
 - **Bootstrap (v5.3)**: Styling & Grid System.

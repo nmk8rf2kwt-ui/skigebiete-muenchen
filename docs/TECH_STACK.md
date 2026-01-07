@@ -26,7 +26,7 @@ The frontend is designed for speed and simplicity, avoiding heavy framework bund
 
 | Component | Version | Description & Rationale |
 |-----------|---------|-------------------------|
-| **Vanilla JS** | `ES6+` | Standard JavaScript modules (`.mjs` style logic). No React/Vue/Angular overhead ensures <100ms load times. |
+| **Vanilla JS** | `ES6+` | Modular architecture (`app.js`, `events.js`, `modals.js`). No React/Vue/Angular overhead ensures <100ms load times. |
 | **Bootstrap** | `v5.3` | CSS Framework. Used for grid layout, responsive utilities, and icons (Bootstrap Icons). |
 | **Leaflet** | `1.9.4` | Open-source mapping library. Lightweight and mobile-friendly alternative to Google Maps API. |
 | **Chart.js** | `4.x` | Canvas-based charting library. Used for rendering "Snow History" and "Traffic Trends" graphs. |

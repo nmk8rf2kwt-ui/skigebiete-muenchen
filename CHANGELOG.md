@@ -11,6 +11,11 @@ All notable changes to this project will be documented in this file.
 - **Compatibility**: Preserved 100% backward compatibility for all API endpoints through a multi-router strategy in consolidated files.
 - **Stability**: Refactored internal dependencies and updated the full test suite to align with the new directory structure.
 
+### Frontend Modularization
+- **Organization**: Refactored the monolithic `js/app.js` into a modular structure with dedicated files for event handling (`js/events.js`) and modal management (`js/modals.js`).
+- **Readability**: Reduced `js/app.js` complexity significantly, focusing it on core data orchestration and state synchronization.
+- **Maintainability**: Centralized event listeners and modal logic to simplify future feature additions and debugging.
+
 ## [1.6.6] - 2026-01-07
 
 ### Security & Hardening (ISO 25010 Audit)
