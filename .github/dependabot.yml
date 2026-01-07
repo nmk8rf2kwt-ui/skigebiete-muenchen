@@ -6,6 +6,11 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    groups:
+      # Group all npm root updates into one PR
+      all-npm-root-dependencies:
+        patterns:
+          - "*"
 
   # Maintain backend dependencies
   - package-ecosystem: "npm"
@@ -13,9 +18,19 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    groups:
+      # Group all backend updates into one PR
+      all-backend-dependencies:
+        patterns:
+          - "*"
 
   # Maintain GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
+    groups:
+      # Group all action updates into one PR
+      all-actions:
+        patterns:
+          - "*"
