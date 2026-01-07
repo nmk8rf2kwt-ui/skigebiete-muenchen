@@ -1,6 +1,7 @@
 // Score calculation constants
 import { sortResorts } from './sorting.js';
 import { escapeHtml } from './utils.js';
+import { renderCongestionCell } from './congestionForecast.js';
 
 const SCORE_WEIGHTS = {
   PISTE_KM: 2,
@@ -455,6 +456,7 @@ export function renderRow(row, data) {
     <td>${distanceDisplay}</td>
     <td>${standardDisplay}</td>
     <td>${trafficDisplay}</td>
+    ${renderCongestionCell(data, data.id)}
     <td>${data.piste_km ?? "-"} km</td>
     <td>${liftStatus}</td>
     <td>${price}</td>
