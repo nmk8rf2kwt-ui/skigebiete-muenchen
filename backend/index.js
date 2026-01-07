@@ -5,6 +5,24 @@ import path from "path";
 import { fileURLToPath } from "url";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import * as Sentry from "@sentry/node";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
+
+// -- Sentry Init (Must be initialized before app creation) --
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    integrations: [
+      nodeProfilingIntegration(),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: 1.0, // Capture 100% of the transactions (adjust in production)
+    // Profiling
+    profilesSampleRate: 1.0,
+  });
+  console.log("🛡️ Sentry initialized and monitoring");
+}
+
 import { parserCache } from "./services/cache.js";
 import { getStaticResorts } from "./services/resortManager.js";
 import { initScheduler } from "./services/scheduler.js";
@@ -25,6 +43,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// Sentry Request Handler MUST be the first middleware on the app
+if (process.env.SENTRY_DSN) {
+  app.use(Sentry.Handlers.requestHandler());
+  // TracingHandler creates a trace for every incoming request
+  app.use(Sentry.Handlers.tracingHandler());
+}
+
 const PORT = process.env.PORT || 10000;
 
 // System Info Logging
@@ -50,10 +76,10 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "unpkg.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "unpkg.com", "js-de.sentry-cdn.com"], // Added Sentry CDN
       styleSrc: ["'self'", "'unsafe-inline'", "unpkg.com", "fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https:", "w7.weather.com.cn", "foto-webcam.eu"],
-      connectSrc: ["'self'", "https://api.open-meteo.com"], // Allow weather API
+      connectSrc: ["'self'", "https://api.open-meteo.com", "*.sentry.io"], // Allow Sentry ingest
       fontSrc: ["'self'", "fonts.gstatic.com"],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
@@ -130,6 +156,11 @@ app.use("/api", historyRouter); // mounts /history, /trends
 
 // Initialize Scheduler (Weather & History)
 initScheduler();
+
+// Sentry Error Handler MUST be before any other error middleware and after all controllers
+if (process.env.SENTRY_DSN) {
+  app.use(Sentry.Handlers.errorHandler());
+}
 
 app.listen(PORT, () => {
   console.log(`✅ Backend running on port ${PORT}`);
