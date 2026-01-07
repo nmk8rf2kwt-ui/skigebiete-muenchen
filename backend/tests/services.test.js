@@ -51,7 +51,7 @@ describe('Data Schema Validation', () => {
 
 describe('Cache System', () => {
     test('should import cache modules', async () => {
-        const { parserCache, weatherCache, trafficCache } = await import('../cache.js');
+        const { parserCache, weatherCache, trafficCache } = await import('../services/cache.js');
         expect(parserCache).toBeDefined();
         expect(weatherCache).toBeDefined();
         expect(trafficCache).toBeDefined();
