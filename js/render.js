@@ -123,9 +123,8 @@ function getCurrentPriceDetail(resort) {
 }
 
 export function renderRow(row, data) {
-  const isError = data.status === "error"; // || data.status === "unavailable";
   // Determine if data is missing or just zero
-  const hasLive = data.status === "live";
+  // const hasLive = data.status === "live"; // Unused
 
   // Escape Common Inputs
   const safeName = escapeHtml(data.name);
@@ -236,8 +235,8 @@ export function renderRow(row, data) {
   // Check for new object structure first
   if (data.snow && typeof data.snow === 'object') {
     const s = data.snow;
-    const mountain = s.mountain !== null ? `${s.mountain} cm` : "-";
-    const valley = s.valley !== null ? `${s.valley} cm` : "-";
+    // const mountain = s.mountain !== null ? `${s.mountain} cm` : "-";
+    // const valley = s.valley !== null ? `${s.valley} cm` : "-";
 
     // Combined display: "Mountain / Valley" or just one if the other is missing?
     // User asked for "schneehöhen für tal und berg".
@@ -443,17 +442,7 @@ export function renderRow(row, data) {
   }
 
   // Combined Weather & Snow Display
-  const combinedWeatherSnow = `
-    <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.9em; min-width: 180px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 2px;">
-        <span style="font-size: 1.2em;">${weatherDisplay}</span>
-      </div>
-      <div style="display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 500;">${snowDisplay}</span>
-        <span style="color: #7f8c8d; font-size: 0.85em;">${lastSnowfallDisplay !== '-' ? '❄️ ' + lastSnowfallDisplay : ''}</span>
-      </div>
-    </div>
-  `;
+  // Combined Weather & Snow Display (Removed)
 
   row.innerHTML = `
     <td style="text-align: center;">${statusIndicator}</td>

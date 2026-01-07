@@ -18,6 +18,9 @@ const MUNICH_DEFAULT = {
   name: "München Innenstadt"
 };
 
+// Global State
+let currentResortId = null;
+
 // Show message in UI (persistent for debugging)
 // Show message in UI (persistent for debugging)
 function showError(message) {
@@ -571,8 +574,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Handle history button clicks
-  let currentResortId = null;
-
   document.addEventListener("click", async (event) => {
     if (event.target.classList.contains("history-btn")) {
       const resortId = event.target.dataset.resortId;
@@ -1067,7 +1068,7 @@ function getCityName(cityId) {
     'augsburg': 'Augsburg',
     'salzburg': 'Salzburg'
   };
-  return map[id] || id;
+  return cityNames[cityId] || cityId;
 }
 
 function displayWeather(forecast) {
