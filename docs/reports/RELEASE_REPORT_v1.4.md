@@ -24,6 +24,7 @@ The primary focus of this release was to harden the infrastructure, improve obse
 - **Frontend Diagnostics**: Improved error messages for Rate Limits (429) and CORS/Network issues.
 - **Smoke Tests**: Automated GitHub Workflow to verify production API health post-deployment.
 - **Sentry Integration**: Full implementation of Exception Tracking for Frontend (Browser JS) and Backend (Node.js). Warnings and Errors are now automatically alerted.
+- **Safe Deployment**: CI/CD Pipeline updated to trigger Render deployment ONLY after all tests pass via Deploy Hooks. This prevents broken code from reaching production.
 
 ## 🛠️ Technical Improvements
 
