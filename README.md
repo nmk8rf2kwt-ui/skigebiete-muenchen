@@ -32,6 +32,7 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten, Verkehrs
 - 📱 **Mobile Responsive**: Optimiert für alle Geräte (iOS/Android)
 - 🎯 **Smart Scoring**: Intelligentes Ranking basierend auf Distanz, Pisten, Liften und Preis
 - 📊 **System Status Dashboard**: Live-Monitoring aller Komponenten (Database, APIs, Scheduler, Sentry)
+- 🎥 **Sentry Replay**: Session-Aufzeichnung zur Fehleranalyse (Privacy-konform)
 
 ## 🛠️ Tech Stack & Versionen
 
