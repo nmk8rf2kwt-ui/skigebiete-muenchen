@@ -8,27 +8,43 @@
  */
 
 // Wait for Sentry to be loaded by the loader script
-window.addEventListener('DOMContentLoaded', () => {
-  if (window.Sentry) {
-    // Session Replay is enabled via the Loader Script configuration
-    // Additional configuration can be done here if needed
-    
-    console.log('✅ Sentry initialized with Session Replay');
-    
-    // Set user context (optional - helps identify sessions)
-    // We don't collect personal data, just a session ID
-    window.Sentry.setUser({
-      id: generateSessionId()
-    });
-    
-    // Add custom tags for better filtering
-    window.Sentry.setTag('app_version', '1.4.0');
-    window.Sentry.setTag('environment', window.location.hostname.includes('localhost') ? 'development' : 'production');
-    
-  } else {
-    console.warn('⚠️ Sentry not loaded - Session Replay disabled');
-  }
-});
+// The Sentry loader script provides an onLoad callback
+function initializeSentry() {
+  console.log('✅ Sentry SDK fully loaded');
+
+  // Set user context (optional - helps identify sessions)
+  // We don't collect personal data, just a session ID
+  window.Sentry.setUser({
+    id: generateSessionId()
+  });
+
+  // Add custom tags for better filtering
+  window.Sentry.setTag('app_version', '1.7.3');
+  window.Sentry.setTag('environment', window.location.hostname.includes('localhost') ? 'development' : 'production');
+}
+
+// Use the Sentry loader's onLoad callback if available
+if (window.Sentry && typeof window.Sentry.onLoad === 'function') {
+  window.Sentry.onLoad(initializeSentry);
+} else {
+  // Fallback: wait for Sentry to be available
+  let attempts = 0;
+  const maxAttempts = 50; // 5 seconds max
+
+  const checkSentry = () => {
+    attempts++;
+
+    if (window.Sentry && typeof window.Sentry.onLoad === 'function') {
+      window.Sentry.onLoad(initializeSentry);
+    } else if (attempts >= maxAttempts) {
+      console.warn('⚠️ Sentry loader not available after 5 seconds - Session Replay disabled');
+    } else {
+      setTimeout(checkSentry, 100);
+    }
+  };
+
+  checkSentry();
+}
 
 /**
  * Generate a random session ID for tracking
@@ -70,15 +86,15 @@ export function captureMessage(message, level = 'info') {
  */
 export function testSentryReplay() {
   console.log('🧪 Testing Sentry Session Replay...');
-  
+
   if (!window.Sentry) {
     alert('❌ Sentry is not loaded. Check your configuration.');
     return;
   }
-  
+
   // Capture a test message
   window.Sentry.captureMessage('Test: Session Replay Verification', 'info');
-  
+
   // Trigger a test error after a short delay
   setTimeout(() => {
     try {

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.7.3] - 2026-01-08
+
+### Fixed
+- **Sentry Integration**: Fixed Sentry SDK initialization errors that prevented error tracking from working correctly.
+  - Updated `js/sentry-config.js` to use the Sentry loader's `onLoad` callback instead of polling, ensuring the SDK is fully loaded before initialization.
+  - Added `browser.sentry-cdn.com` to the Content Security Policy (CSP) `script-src` directive in `backend/index.js` to allow the full SDK bundle to load.
+  - Resolved `TypeError: window.Sentry.setUser is not a function` error that appeared on page load.
+- **Error Handling**: Application now properly initializes Sentry Session Replay for enhanced debugging capabilities.
+
 ## [1.7.2] - 2026-01-08
 
 ### Austrian Resort Expansion
