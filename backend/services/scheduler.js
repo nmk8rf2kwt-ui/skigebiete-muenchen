@@ -180,9 +180,14 @@ export async function updateTrafficMatrix() {
         }
         console.log(`📝 Logged ${logCount} matrix entries.`);
 
+        // Mark traffic API as healthy after successful update
+        statusLogger.updateComponentStatus('traffic', 'healthy');
+        statusLogger.log('success', 'traffic', `Traffic matrix updated successfully (${logCount} entries).`);
+
     } catch (error) {
         console.error("Error in updateTrafficMatrix:", error);
-        statusLogger.log('error', 'scheduler', `Traffic Matrix update failed: ${error.message}`);
+        statusLogger.updateComponentStatus('traffic', 'degraded');
+        statusLogger.log('error', 'traffic', `Traffic Matrix update failed: ${error.message}`);
     }
 }
 

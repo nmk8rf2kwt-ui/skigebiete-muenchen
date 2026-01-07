@@ -9,6 +9,7 @@ class StatusLogger {
             database: 'unknown', // unknown, healthy, degraded, down
             scraper: 'unknown',
             weather: 'unknown',
+            traffic: 'unknown',
             scheduler: 'unknown'
         };
     }

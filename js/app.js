@@ -722,6 +722,20 @@ function renderStatusDashboard(data) {
     schedulerEl.style.color = "gray";
   }
 
+  // Traffic API (TomTom)
+  const trafficEl = document.getElementById("statusTraffic");
+  const trafficStatus = data.components?.traffic || 'unknown';
+  if (trafficStatus === 'healthy') {
+    trafficEl.textContent = "🟢 Active";
+    trafficEl.style.color = "green";
+  } else if (trafficStatus === 'degraded') {
+    trafficEl.textContent = "🟡 Degraded";
+    trafficEl.style.color = "orange";
+  } else {
+    trafficEl.textContent = "⚪ Checking...";
+    trafficEl.style.color = "gray";
+  }
+
   // Uptime
   const uptime = Math.floor(data.uptime || 0);
   const hours = Math.floor(uptime / 3600);
