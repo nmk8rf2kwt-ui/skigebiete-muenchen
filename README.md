@@ -56,11 +56,12 @@ Eine vollständige Übersicht aller verwendeten Komponenten und Versionen finden
 ## 📚 Documentation & Operations
 
 - [**System Architecture**](./docs/ARCHITECTURE.md)
-- [**Tech Stack Details**](./docs/TECH_STACK.md) (✨ Neu)
+- [**Tech Stack Details**](./docs/TECH_STACK.md)
 - [**Implementation Status**](./docs/IMPLEMENTATION_STATUS.md)
-- [**Monitoring Concept**](./docs/ops/MONITORING_CONCEPT.md)
+- [**Operations & Monitoring**](./docs/ops/OPERATIONS.md)
+- [**Database Schema & Management**](./docs/DATABASE.md)
+- [**Features & UI Reference**](./docs/FEATURES_UI.md)
 - [**Admin Dashboard Guide**](./docs/ops/ADMIN_DASHBOARD.md)
-- [**Traffic Logic & Calculation**](./docs/ARCHITECTURE.md#traffic-logic--calculation)
 
 ## 🚀 Quick Start (Local Development)
 

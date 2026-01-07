@@ -1,4 +1,4 @@
-# 📡 API Documentation (v1.5.0)
+# 📡 API Documentation (v1.7.1)
 
 Base URL: `/api`
 
