@@ -7,7 +7,7 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten, Verkehrs
 ## ✨ Features
 
 ### Live-Daten & Tracking
-- ✅ **Live-Daten**: Aktuelle Lift-Status und Schneehöhen für 34+ Skigebiete (DE, AT, IT)
+- ✅ **Live-Daten**: Aktuelle Lift-Status und Schneehöhen für 38+ Skigebiete (DE, AT, IT)
 - 🚡 **Detailliertes Lift-Tracking**: 350+ Lifte mit Status, Typ, Länge und Höhe
 - ⛷️ **Pisten-Details**: 600+ Pisten mit Schwierigkeitsgrad und Metadata
 - 📋 **Details-Modal**: Vollständige Übersicht aller Lifte und Pisten pro Skigebiet

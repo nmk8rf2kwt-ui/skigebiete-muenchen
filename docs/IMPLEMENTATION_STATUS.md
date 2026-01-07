@@ -5,8 +5,8 @@
 ## 📊 Overall Progress
 
 - **Total Resorts:** 60
-- **Implemented:** 34 resorts (56%)
-- **Pending/Placeholders:** 26 resorts (44%)
+- **Implemented:** 38 resorts (63%)
+- **Pending/Placeholders:** 22 resorts (37%)
 
 ---
 
@@ -34,7 +34,7 @@
 19. ✅ Wurmberg
 20. ✅ Zugspitze
 
-### 🇦🇹 Austria (13)
+### 🇦🇹 Austria (17)
 1. ✅ Berwang
 2. ✅ Ehrwalder Almbahn
 3. ✅ Hahnenkamm (Reutte)
@@ -43,21 +43,25 @@
 6. ✅ Kitzbühel / Kirchberg
 7. ✅ Lermoos / Grubigstein
 8. ✅ Lofer / Almenwelt
-9. ✅ Reit im Winkl (Winklmoos)
-10. ✅ Seefeld / Rosshütte
-11. ✅ Ski Juwel Alpbachtal
-12. ✅ St. Johann in Tirol
-13. ✅ Steinplatte Waidring
+9. ✅ Obertauern
+10. ✅ Reit im Winkl (Winklmoos)
+11. ✅ Saalbach Hinterglemm Leogang Fieberbrunn
+12. ✅ Schladming-Dachstein (Planai)
+13. ✅ Seefeld / Rosshütte
+14. ✅ Ski Juwel Alpbachtal
+15. ✅ Sölden
+16. ✅ St. Johann in Tirol
+17. ✅ Steinplatte Waidring
 
 ### 🇮🇹 Italy (1)
 1. ✅ Kronplatz
 
 ---
 
-## ❌ Not Yet Implemented (26)
+## ❌ Not Yet Implemented (22)
 *(Placeholder parsers exist)*
 
-### 🇦🇹 Austria (24)
+### 🇦🇹 Austria (20)
 1. ❌ Axamer Lizum
 2. ❌ Bad Kleinkirchheim
 3. ❌ Damüls Mellau
@@ -69,19 +73,15 @@
 9. ❌ Mayrhofen
 10. ❌ Nassfeld
 11. ❌ Obergurgl-Hochgurgl
-12. ❌ Obertauern
-13. ❌ Saalbach Hinterglemm Leogang Fieberbrunn
-14. ❌ Schladming-Dachstein (Planai)
-15. ❌ Serfaus-Fiss-Ladis
-16. ❌ Silvretta Montafon
-17. ❌ SkiWelt Wilder Kaiser (Currently failing/stubbed?)
-18. ❌ Snow Space Salzburg
-19. ❌ Sölden
-20. ❌ St. Anton am Arlberg
-21. ❌ Stubaier Gletscher
-22. ❌ Tiroler Zugspitzbahn
-23. ❌ Turracher Höhe
-24. ❌ Zillertal Arena
+12. ❌ Serfaus-Fiss-Ladis
+13. ❌ Silvretta Montafon
+14. ❌ SkiWelt Wilder Kaiser (Currently failing/stubbed?)
+15. ❌ Snow Space Salzburg
+16. ❌ St. Anton am Arlberg
+17. ❌ Stubaier Gletscher
+18. ❌ Tiroler Zugspitzbahn
+19. ❌ Turracher Höhe
+20. ❌ Zillertal Arena
 
 ### 🇮🇹 Italy (2)
 1. ❌ Dolomiti Superski

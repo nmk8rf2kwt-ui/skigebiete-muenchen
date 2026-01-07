@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## [1.7.2] - 2026-01-08
+
+### Austrian Resort Expansion
+
+### Added
+- **4 Major Austrian Resorts** (Intermaps API):
+  - ✅ **Saalbach Hinterglemm Leogang Fieberbrunn** (72 lifts) - One of Austria's largest ski areas
+  - ✅ **Schladming-Dachstein** (83 lifts) - Home of the Nightrace
+  - ✅ **Obertauern** (26 lifts) - High-altitude snow-sure resort
+  - ✅ **Sölden** (31 lifts) - Glacier skiing paradise
+- **+212 tracked lifts** across these 4 resorts
+- **Intermaps JSON API integration** - Reusable helper for future resorts
+
+### Changed
+- **Coverage**: 38/60 resorts now live (63%, up from 56%)
+- **Austria**: 17/37 Austrian resorts implemented (46%, up from 35%)
+
 ## [1.7.1] - 2026-01-07
 
 ### Traffic Tracker & Workflow Fix

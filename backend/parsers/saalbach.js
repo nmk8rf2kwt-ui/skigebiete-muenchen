@@ -1,13 +1,18 @@
-import { createResult } from "../utils/parserUtils.js";
+import { fetchIntermaps } from './intermaps.js';
+import { createResult } from '../utils/parserUtils.js';
 
 export const details = {
-    id: "saalbach",
-    name: "Saalbach Hinterglemm",
-    url: "https://www.saalbach.com",
-    district: "Pinzgau",
+    id: 'saalbach',
+    name: 'Saalbach Hinterglemm Leogang Fieberbrunn',
+    url: 'https://www.saalbach.com',
+    apiUrl: 'https://winter.intermaps.com/saalbach_hinterglemm_leogang_fieberbrunn/data?lang=de',
+    district: 'Pinzgau'
 };
 
 export async function parse(options = {}) {
-    // TODO: Implement parsing (API not found)
-    return createResult(details.id, { liftsOpen: 0, liftsTotal: 0, lifts: [], slopes: [] }, "saalbach.com (Placeholder)");
+    const data = await fetchIntermaps(details.apiUrl);
+    if (!data) {
+        throw new Error('Failed to fetch Saalbach Intermaps data');
+    }
+    return createResult(details.id, data, 'intermaps.com (Saalbach)');
 }

@@ -1,13 +1,18 @@
-import { createResult } from "../utils/parserUtils.js";
+import { fetchIntermaps } from './intermaps.js';
+import { createResult } from '../utils/parserUtils.js';
 
 export const details = {
-    id: "schladming",
-    name: "Schladming-Dachstein",
-    url: "https://www.planai.at",
-    district: "Steiermark",
+    id: 'schladming',
+    name: 'Schladming-Dachstein (Planai)',
+    url: 'https://www.planai.at',
+    apiUrl: 'https://winter.intermaps.com/schladming_dachstein/data?lang=de',
+    district: 'Steiermark'
 };
 
 export async function parse(options = {}) {
-    // TODO: Implement parsing (API not found)
-    return createResult(details.id, { liftsOpen: 0, liftsTotal: 0, lifts: [], slopes: [] }, "planai.at (Placeholder)");
+    const data = await fetchIntermaps(details.apiUrl);
+    if (!data) {
+        throw new Error('Failed to fetch Schladming Intermaps data');
+    }
+    return createResult(details.id, data, 'intermaps.com (Schladming)');
 }

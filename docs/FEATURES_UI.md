@@ -1,12 +1,12 @@
-# Tabellenstruktur - Skigebiete München
+# Features & UI Reference
 
-Dieses Dokument beschreibt die vollständige Struktur der Skigebiete-Tabelle, einschließlich aller Spalten, deren Datenquellen und Darstellungslogik.
+Complete reference for all table columns, data sources, and frontend display logic.
 
-> **Verwandte Dokumentation:**
-> - [README.md](../README.md) - Projekt-Übersicht und Features
-> - [ARCHITECTURE.md](../ARCHITECTURE.md) - System-Architektur und Datenfluss
-> - [DEPLOYMENT.md](../DEPLOYMENT.md) - Deployment-Anleitung
-> - [BACKLOG.md](../BACKLOG.md) - Geplante Features und Verbesserungen
+> **Related Documentation:**
+> - [README.md](../README.md) - Project overview and features
+> - [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture and data flow
+> - [DATABASE.md](DATABASE.md) - Database schema and management
+> - [API.md](API.md) - API endpoint reference
 
 ## Spaltenübersicht
 
@@ -14,9 +14,9 @@ Dieses Dokument beschreibt die vollständige Struktur der Skigebiete-Tabelle, ei
 |-----|--------|----------|-------------|-------------|--------|
 | 1 | Abfragestatus | Enum | Icon (🟢/🟡/🔴) | Live (Parser Status) | ✅ |
 | 2 | Skigebiet | String | Text + Link | Statisch (`resorts.json` → `name`, `website`) | ✅ |
-| 3 | Distanz | Float | Zahl + "km" | Live (OpenRouteService API → `traffic.distanceKm`) | ✅ |
+| 3 | Distanz | Float | Zahl + "km" | Live (TomTom Matrix API → `traffic.distanceKm`) | ✅ |
 | 4 | Fahrzeit (ohne Verkehrslage) | Integer | Zahl + "min" + Link | Statisch (`resorts.json` → `distance`) | ✅ |
-| 5 | Fahrzeit (mit Verkehrslage) | Integer | Zahl + "min" (farbig) | Live (OpenRouteService API → `traffic.duration`) | ✅ |
+| 5 | Fahrzeit (mit Verkehrslage) | Integer | Zahl + "min" (farbig) | Live (TomTom Matrix API → `traffic.duration`) | ✅ |
 | 6 | Größe des Skigebiets | Integer | Zahl + "km" | Statisch (`resorts.json` → `piste_km`) | ✅ |
 | 7 | Geöffnete Lifte | Fraction | "X/Y" (farbig) | Live (Parser → `liftsOpen`/`liftsTotal`) | ✅ |
 | 8 | Preis | Float | "€XX.XX" + Info-Icon | Statisch (`resorts.json` → `price`, `priceDetail`) | ✅ |
@@ -53,7 +53,7 @@ Dieses Dokument beschreibt die vollständige Struktur der Skigebiete-Tabelle, ei
 - **Datentyp**: Float (Kilometer)
 - **Darstellung**: Zahl + "km"
   - Format: `XX km` oder `XX.X km`
-- **Datenquelle**: OpenRouteService Matrix API
+- **Datenquelle**: TomTom Matrix API
   - Feld: `traffic.distanceKm` oder `distanceKm`
 - **Fallback**: "-" wenn keine Daten
 - **Implementierung**: `render.js` - Zeilen 396-398
@@ -64,8 +64,8 @@ Dieses Dokument beschreibt die vollständige Struktur der Skigebiete-Tabelle, ei
   - Format: `<a href="https://google.com/maps/dir/...">XX min</a>`
   - Link öffnet Google Maps Navigation
 - **Tooltip**: Zeigt Talstation-Adresse
-- **Datenquelle**: OpenRouteService Matrix API
-  - Feld: `distance` (Fahrzeit ohne Traffic)
+- **Datenquelle**: Statisch (`resorts.json`)
+  - Feld: `distance` (Standard-Fahrzeit von München)
 - **Fallback**: "-" wenn keine Daten verfügbar
 - **Implementierung**: `render.js` - Zeilen 156-169
 
@@ -77,7 +77,7 @@ Dieses Dokument beschreibt die vollständige Struktur der Skigebiete-Tabelle, ei
   - 🟠 Orange: 11-20 min Verzögerung
   - 🔴 Rot: >20 min Verzögerung
 - **Tooltip**: "Aktuell: XX min (+Y)" (Y = Verzögerung)
-- **Datenquelle**: OpenRouteService Matrix API
+- **Datenquelle**: TomTom Matrix API
   - Feld: `traffic.duration` (Fahrzeit mit Live-Traffic)
 - **Berechnung**: `delay = traffic.duration - distance`
 - **Fallback**: "n.a." (grau) wenn keine Traffic-Daten
@@ -466,11 +466,14 @@ Die Sortierlogik befindet sich in `render.js`:
 - `lifts[]` (Array, optional) - Detaillierte Lift-Daten
 - `slopes[]` (Array, optional) - Detaillierte Pisten-Daten
 
-### Traffic-Daten (OpenRouteService API)
+### Traffic-Daten (TomTom Matrix API)
 
 **Felder:**
 - `traffic.duration` (Integer, Minuten)
 - `traffic.distance` (Float, Kilometer)
+- `traffic.delay` (Integer, Minuten)
+
+**Note**: OpenRouteService (ORS) is used for geocoding only (`/api/locating/geocode`).
 
 ## API-Endpunkte
 
@@ -579,4 +582,4 @@ Alle geplanten Features und Verbesserungen sind im **[BACKLOG.md](../BACKLOG.md)
 
 - **Frontend**: `js/render.js`, `index.html`, `css/style.css`
 - **Backend**: `backend/index.js`, `backend/resorts.json`, `backend/parsers/*.js`
-- **Datenquellen**: OpenRouteService API, Open-Meteo API, Resort-spezifische APIs
+- **Datenquellen**: TomTom Matrix API (traffic), OpenRouteService API (geocoding), Open-Meteo API (weather), Resort-spezifische APIs (lifts/slopes)
