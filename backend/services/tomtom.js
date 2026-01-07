@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const TOMTOM_API_KEY = process.env.TOMTOM_API_KEY;
-import { trackApiUsage } from "./usageTracker.js";
+import { trackApiUsage } from './system/usage.js';
 // Munich Center (Marienplatz approx)
 const MUNICH_COORDS = { lat: 48.1351, lon: 11.5820 };
 

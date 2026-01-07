@@ -1,6 +1,6 @@
 # 🛠️ Tech Stack Documentation
 
-This document provides a detailed overview of the technologies, libraries, and versions used in **Skigebiet-Finder v1.5.0**, along with the rationale for their selection.
+This document provides a detailed overview of the technologies, libraries, and versions used in **Skigebiet-Finder v1.7.0**, along with the rationale for their selection.
 
 ## 🖥️ Backend (Node.js)
 
@@ -55,4 +55,4 @@ We use fully automated workflows for testing and deployment.
 
 ---
 
-*Last Updated: 2026-01-07 (v1.5.0)*
+*Last Updated: 2026-01-07 (v1.7.0)*

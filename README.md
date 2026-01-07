@@ -1,4 +1,4 @@
-# 🏔️ Skigebiet-Finder v1.6.6
+# 🏔️ Skigebiet-Finder v1.7.0
 
 ![CI/CD Pipeline](https://github.com/nmk8rf2kwt-ui/skigebiete-muenchen/actions/workflows/ci.yml/badge.svg)
 
@@ -59,36 +59,38 @@ Eine vollständige Übersicht aller verwendeten Komponenten und Versionen finden
 - [**Tech Stack Details**](./docs/TECH_STACK.md) (✨ Neu)
 - [**Implementation Status**](./docs/IMPLEMENTATION_STATUS.md)
 - [**Monitoring Concept**](./docs/ops/MONITORING_CONCEPT.md)
-- [**API Documentation**](./docs/API.md)
+- [**Admin Dashboard Guide**](./docs/ops/ADMIN_DASHBOARD.md)
+- [**Traffic Strategy**](./docs/ops/TRAFFIC_STRATEGY.md)
 
-## Development
+## 🚀 Quick Start (Local Development)
 
+### Prerequisites
+- Node.js v20+
+- Supabase Project (URL & Key)
+- TomTom API Key
+- ORS API Key
+
+### Installation
+1. `git clone https://github.com/nmk8rf2kwt-ui/skigebiete-muenchen.git`
+2. `cd skigebiete-muenchen`
+3. `npm install`
+4. Copy `.env.example` to `.env` and fill in your keys.
+
+### Running
+- **Backend**: `npm run dev` (Runs on port 10000)
+- **Frontend**: Open `index.html` via Live Server (VS Code Extension) or serve localy on port 5500.
+
+## 🧪 Testing
+Run backend tests:
 ```bash
-# Backend starten
-cd backend
-npm install
-npm start
-
-# Frontend
-# index.html mit Live Server öffnen
-```
-
-## Testing
-
-```bash
-# Unit Tests (Jest)
 cd backend
 npm test
-
-# Release Verification
-node scripts/verify-release.js
 ```
 
-## Deployment & Release
+## 🔒 Security & Performance
+- **Compliance**: Follows ISO 25010 for Security, Reliability, and Performance.
+- **Privacy**: Sentry Session Replay utilizes strict privacy masks (GDPR-ready).
+- **Hardening**: Backend features Basic Auth protection for sensitive endpoints and an explicit static file whitelist.
 
-- Siehe [DEPLOYMENT.md](./DEPLOYMENT.md) für detaillierte Anweisungen.
-- Siehe [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) für QA-Workflow vor jedem Release.
-
-## License
-
-MIT
+---
+*Created with ❤️ for the Munich Ski Community.*

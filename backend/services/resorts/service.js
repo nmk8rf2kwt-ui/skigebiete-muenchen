@@ -2,18 +2,18 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import pLimit from "p-limit";
-import { PARSERS } from "../parsers/index.js";
-import { parserCache, weatherCache, trafficCache } from "./cache.js";
-import logger from "./logger.js";
-import { statusLogger } from "./statusLogger.js"; // New status logger
-import { ResortDataSchema } from "../utils/schema.js";
+import { PARSERS } from "../../parsers/index.js";
+import { parserCache, weatherCache, trafficCache } from "../cache.js";
+import logger from "../logger.js";
+import { statusLogger } from "../system/monitoring.js"; // Unified monitoring service
+import { ResortDataSchema } from "../../utils/schema.js";
 import * as Sentry from "@sentry/node";
 
 // -- PATH CONFIG --
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // We are in backend/services, resorts.json is in backend/
-const RESORTS_FILE = path.join(__dirname, "../resorts.json");
+const RESORTS_FILE = path.join(__dirname, "../../resorts.json");
 
 // -- STATE --
 let STATIC_RESORTS = [];
@@ -173,7 +173,7 @@ export async function getAllResortsLive() {
 
                     // Inject Fallback Snow Data if missing or error
                     if (!liveData.snow || liveData.status === "error") {
-                        const { getFallbackSnow } = await import("./snowFallback.js");
+                        const { getFallbackSnow } = await import("../weather/snow.js");
                         const fallbackSnow = getFallbackSnow(weatherData);
                         if (fallbackSnow) {
                             liveData.snow = fallbackSnow;

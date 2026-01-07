@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.7.0] - 2026-01-07
+
+### Backend Architecture Refinement
+- **Architecture**: Implemented a **Service Layer Pattern** with hierarchical folders (`weather/`, `resorts/`, `system/`) to improve separation of concerns and maintainability.
+- **Consolidation**: Reduced redundant and fragmented route files from 10 to 6, grouping related endpoints into unified controllers (e.g., Resorts + Lifts, Weather Forecast + Historical Weather).
+- **Monitoring**: Unified system status, database health, and webcam monitoring into a single `system/monitoring.js` service.
+- **Compatibility**: Preserved 100% backward compatibility for all API endpoints through a multi-router strategy in consolidated files.
+- **Stability**: Refactored internal dependencies and updated the full test suite to align with the new directory structure.
+
 ## [1.6.6] - 2026-01-07
 
 ### Security & Hardening (ISO 25010 Audit)

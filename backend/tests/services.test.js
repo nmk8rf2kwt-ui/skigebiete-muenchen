@@ -1,5 +1,5 @@
 import { describe, test, expect } from '@jest/globals';
-import { getStaticResorts, getResortConfig } from '../services/resortManager.js';
+import { getStaticResorts, getResortConfig } from '../services/resorts/service.js';
 import { ResortDataSchema } from '../utils/schema.js';
 
 describe('Resort Manager', () => {
