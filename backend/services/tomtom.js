@@ -113,6 +113,8 @@ export async function fetchTravelTimes(destinations, origin = null) {
             }
         });
 
+        return results;
+
     } catch (error) {
         console.error("Travel Times fetch failed:", error.message);
         return {};
