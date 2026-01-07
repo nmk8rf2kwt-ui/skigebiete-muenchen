@@ -80,8 +80,31 @@ We have already migrated to `Winston`. Next steps:
 
 ## 5. Action Plan
 
-1.  [x] **Phase 1**: Improve Frontend Error Messages (Done).
-2.  [x] **Phase 2**: Smoke Test Workflow (Done).
-3.  [ ] **Phase 3**: Register Sentry Account (Free Tier).
-4.  [ ] **Phase 4**: Add Sentry DSN to Environment Variables.
-5.  [ ] **Phase 5**: Deploy Sentry SDKs.
+## 5. Activation Guide (How to Turn On)
+
+### Step 1: Create Sentry Account
+1. Go to [sentry.io](https://sentry.io).
+2. Create project "skigebiete-frontend" (Framework: Browser JS).
+3. Create project "skigebiete-backend" (Framework: Node.js).
+4. Copy the DSNs (API Keys).
+
+### Step 2: Activate Frontend (GitHub Pages)
+1. Open `index.html`.
+2. Find the commented out Sentry script around line 13.
+3. Uncomment it and replace `YOUR_PUBLIC_KEY` with your Loader Key (found in Sentry under Settings -> Projects -> Frontend -> Client Keys).
+   ```html
+   <script src="https://js.sentry-cdn.com/12345abcdef.min.js" crossorigin="anonymous"></script>
+   ```
+4. Commit & Push.
+
+### Step 3: Activate Backend (Render)
+1. **Install SDK**: Run this locally to update `package.json`:
+   ```bash
+   cd backend
+   npm install @sentry/node
+   ```
+2. **Commit & Push**: Commit the `package.json` and `package-lock.json` changes.
+3. **Configure Render**:
+   - Go to Render Dashboard -> Environment Variables.
+   - Add `SENTRY_DSN` with the value from your Sentry Backend project.
+4. **Deploy**: Render will auto-deploy, install the new dependency, and the Logger will automatically start sending errors to Sentry.
