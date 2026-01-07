@@ -178,6 +178,7 @@ export function renderRow(row, data) {
   let standardMins = 0;
   let trafficDisplay = '<span style="color: #bdc3c7; font-size: 0.9em;">-</span>'; // Default gray
   let standardDisplay = "-";
+  let delayDisplay = "-";
 
   // Check if we have live traffic data (duration & delay in seconds from backend)
   if (data.traffic?.loading) {
@@ -206,6 +207,10 @@ export function renderRow(row, data) {
     const delayText = delayMins > 0 ? ` (+${delayMins} min)` : '';
     const formattedLive = formatDuration(liveMins);
     trafficDisplay = `<span style="${style}" title="Aktuell: ${liveMins} min${escapeHtml(delayText)}">${formattedLive}</span>`;
+
+    // 3. Independent Delay Display
+    const formattedDelay = formatDuration(delayMins);
+    delayDisplay = `<span style="${style}">${formattedDelay}</span>`;
   } else if (data.distance) {
     // Fallback to static data (resorts.json) if no traffic API
     standardMins = data.distance;
@@ -455,6 +460,7 @@ export function renderRow(row, data) {
     <td><a href="${safeWebsite}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${safeName}</a></td>
     <td>${distanceDisplay}</td>
     <td>${standardDisplay}</td>
+    <td>${delayDisplay}</td>
     <td>${trafficDisplay}</td>
     ${renderCongestionCell(data, data.id)}
     <td>${data.piste_km ?? "-"} km</td>
