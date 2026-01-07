@@ -27,6 +27,9 @@ router.get("/", async (req, res) => {
     // 3. Assemble Response
     const response = {
         components: statusLogger.getStatus(),
+        monitoring: {
+            sentry: !!process.env.SENTRY_DSN
+        },
         database: {
             connected: dbStatus.ok,
             message: dbStatus.message
