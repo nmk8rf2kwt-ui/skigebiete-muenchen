@@ -1,4 +1,4 @@
-# 🏔️ Skigebiet-Finder v1.7.0
+# 🏔️ Skigebiet-Finder v1.7.1
 
 ![CI/CD Pipeline](https://github.com/nmk8rf2kwt-ui/skigebiete-muenchen/actions/workflows/ci.yml/badge.svg)
 
@@ -60,7 +60,7 @@ Eine vollständige Übersicht aller verwendeten Komponenten und Versionen finden
 - [**Implementation Status**](./docs/IMPLEMENTATION_STATUS.md)
 - [**Monitoring Concept**](./docs/ops/MONITORING_CONCEPT.md)
 - [**Admin Dashboard Guide**](./docs/ops/ADMIN_DASHBOARD.md)
-- [**Traffic Strategy**](./docs/ops/TRAFFIC_STRATEGY.md)
+- [**Traffic Logic & Calculation**](./docs/ARCHITECTURE.md#traffic-logic--calculation)
 
 ## 🚀 Quick Start (Local Development)
 

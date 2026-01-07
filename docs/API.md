@@ -83,6 +83,7 @@ Returns current traffic data for all resorts relative to Munich.
 
 - **URL**: `/traffic`
 - **Method**: `GET`
+- **Logic**: See [Traffic Logic & Calculation](./ARCHITECTURE.md#traffic-logic--calculation) in ARCHITECTURE.md.
 
 ### Get Traffic Analysis
 Returns aggregated traffic statistics (average delay by hour of day) to visualize congestion patterns.

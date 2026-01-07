@@ -2,9 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.7.0] - 2026-01-07
+## [1.7.1] - 2026-01-07
 
-### Backend Architecture Refinement
+### Traffic Tracker & Workflow Fix
+- **Workflow**: Migrated the "Traffic Tracker" GitHub Action from legacy CSV logging to **Supabase persistence**.
+- **Automation**: Updated `scripts/update_travel_times.mjs` to fetch the full TomTom Matrix (5 Cities x 34+ Resorts) and sync results to the database synchronously.
+- **Consistency**: The workflow now automatically keeps the local `backend/resorts.json` in sync with the latest Munich-base travel times to ensure high performance for initial client loads.
+- **Stability**: Fixed broken references to non-existent scripts and removed redundant CSV commit steps.
+
+## [1.7.0] - 2026-01-07
 - **Architecture**: Implemented a **Service Layer Pattern** with hierarchical folders (`weather/`, `resorts/`, `system/`) to improve separation of concerns and maintainability.
 - **Consolidation**: Reduced redundant and fragmented route files from 10 to 6, grouping related endpoints into unified controllers (e.g., Resorts + Lifts, Weather Forecast + Historical Weather).
 - **Monitoring**: Unified system status, database health, and webcam monitoring into a single `system/monitoring.js` service.

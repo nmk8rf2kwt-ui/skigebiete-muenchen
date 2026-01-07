@@ -62,3 +62,26 @@ This project follows a clean, layered architecture designed to separate stable c
   - `routes/`: HTTP Interface.
   - `data/`: Storage (Git-ignored content).
 - `js/`: Frontend Scripts.
+
+## Traffic Logic & Calculation
+
+To ensure accurate and consistent travel times, we utilize the **TomTom Matrix API** for all routing calculations.
+
+### Core Calculation
+Consistency is ensured by deriving both total time and delay from the same source.
+- **Duration (`travelTimeInSeconds`)**: Total time *right now*, including traffic.
+- **Delay (`trafficDelayInSeconds`)**: Seconds lost due to congestion.
+- **Base Time**: Calculated as `Duration - Delay`. This represents the "free-flow" time.
+
+### Formulas (Frontend)
+The frontend receives units in **seconds** and processes them as follows:
+```javascript
+const liveMins = Math.round(duration / 60);
+const delayMins = Math.round(delay / 60);
+const baseMins = Math.round((duration - delay) / 60);
+```
+
+### Data Flow & Automation
+1. **Real-time**: Fetched via `backend/services/tomtom.js` upon request or by the scheduler.
+2. **Historical Analysis**: Averaged `delay` values aggregated by hour/resort from `traffic_logs` (Supabase).
+3. **Traffic Tracker**: A GitHub Action (`traffic-tracker.yml`) runs every 30 mins (06:00-22:00) to fetch a full matrix (Munich + 4 other cities) and sync it to Supabase.

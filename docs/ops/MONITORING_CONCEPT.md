@@ -78,9 +78,17 @@ We have already migrated to `Winston`. Next steps:
 *   **GitHub Action Smoke Test**: Checks availability after deployment.
 *   **External Pinger**: Use UptimeRobot or BetterStack to ping `/api/status` every 5 min.
 
-## 5. Action Plan
+## 5. Automated Data Collection (Traffic)
 
-## 5. Activation Guide (How to Turn On)
+Beyond just system uptime, we monitor the health of our historical data collection.
+
+- **GitHub Action (`traffic-tracker.yml`)**: A scheduled job (every 30 mins, 06:00 - 22:00) that performs a full matrix fetch (TomTom API) for 5 reference cities.
+- **Verification**: If the tracker fails to sync with Supabase, an alert is triggered in GitHub Actions.
+- **Resorts Sync**: The tracker also updates `backend/resorts.json` with fresh Munich-base durations to ensure static configuration stays accurate for initial client loads.
+
+## 6. Action Plan
+
+## 7. Activation Guide (How to Turn On)
 
 ### Step 1: Create Sentry Account
 1. Go to [sentry.io](https://sentry.io).
