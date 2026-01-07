@@ -7,8 +7,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog, updateHistoricalWeather, isBackfillCompleted, markBackfillCompleted, syncResortsToDatabase, syncCitiesToDatabase } from "../history.js";
-
+import { saveSnapshot, cleanup as cleanupHistory, saveTrafficLog, saveMatrixTrafficLog, updateHistoricalWeather, isBackfillCompleted, markBackfillCompleted, syncResortsToDatabase } from "../history.js";
+import { statusLogger } from "./statusLogger.js"; // Logging support
 
 import { fetchTrafficMatrix } from "./tomtom.js";
 import { getYesterdayWeather, backfillWeatherHistory } from "./historicalWeather.js";
@@ -18,7 +18,10 @@ import { getYesterdayWeather, backfillWeatherHistory } from "./historicalWeather
 // 1. Refresh Weather (Hourly)
 export async function refreshWeather() {
     console.log("Refreshing weather data...");
+    statusLogger.log('info', 'weather', 'Starting hourly weather refresh...');
     const resorts = getStaticResorts();
+    let successCount = 0;
+
     for (const resort of resorts) {
         if (resort.latitude && resort.longitude) {
             try {
@@ -26,19 +29,25 @@ export async function refreshWeather() {
                 if (forecast) {
                     const current = getCurrentConditions(forecast);
                     weatherCache.set(resort.id, { forecast, current, timestamp: Date.now() });
+                    successCount++;
                 }
             } catch (err) {
                 console.error(`Failed to fetch weather for ${resort.id}:`, err);
+                statusLogger.log('warn', 'weather', `Failed to fetch weather for ${resort.name}`);
             }
         }
     }
     console.log("Weather refresh complete.");
+    statusLogger.updateComponentStatus('weather', 'healthy');
+    statusLogger.log('success', 'weather', `Weather refresh complete (${successCount}/${resorts.length} resorts).`);
 }
 
 // 2. Daily Snapshots (Midnight)
 export async function saveDailySnapshots() {
     console.log("📸 Saving daily snapshots...");
+    statusLogger.log('info', 'db', 'Starting daily snapshot capture...');
     const resorts = getStaticResorts();
+    let count = 0;
 
     for (const resort of resorts) {
         const parser = PARSERS[resort.id];
@@ -76,12 +85,15 @@ export async function saveDailySnapshots() {
                 // UPDATED: Await async save
                 await saveSnapshot(resort.id, data);
                 console.log(`  ✓ Saved snapshot for ${resort.id}`);
+                count++;
             } catch (error) {
                 console.error(`  ✗ Failed to save snapshot for ${resort.id}:`, error.message);
+                statusLogger.log('error', 'db', `Snapshot failed for ${resort.name}: ${error.message}`);
             }
         }
     }
     console.log("📸 Daily snapshots complete");
+    statusLogger.log('success', 'db', `Daily snapshots complete (${count} saved).`);
 }
 
 // 3. Unified Traffic Matrix Job (Hourly 06-22)
@@ -170,6 +182,7 @@ export async function updateTrafficMatrix() {
 
     } catch (error) {
         console.error("Error in updateTrafficMatrix:", error);
+        statusLogger.log('error', 'scheduler', `Traffic Matrix update failed: ${error.message}`);
     }
 }
 
@@ -200,8 +213,8 @@ export function initScheduler() {
         // Sync Cities
         const citiesPath = path.join(__dirname, '../data/reference_cities.json');
         if (fs.existsSync(citiesPath)) {
-            const cities = JSON.parse(fs.readFileSync(citiesPath, 'utf-8'));
-            syncCitiesToDatabase(cities);
+            // const cities = JSON.parse(fs.readFileSync(citiesPath, 'utf-8'));
+            // syncCitiesToDatabase(cities);
         }
     }, 5000);
 
