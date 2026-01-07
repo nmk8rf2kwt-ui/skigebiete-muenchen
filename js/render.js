@@ -458,10 +458,10 @@ export function renderRow(row, data) {
   row.innerHTML = `
     <td style="text-align: center;">${statusIndicator}</td>
     <td><a href="${safeWebsite}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${safeName}</a></td>
+    <td>${typeDisplay}</td>
     <td>${data.piste_km ?? "-"} km</td>
     <td>${liftStatus}</td>
     <td>${price}</td>
-    <td>${typeDisplay}</td>
     <td>${distanceDisplay}</td>
     <td>${standardDisplay}</td>
     <td>${delayDisplay}</td>
