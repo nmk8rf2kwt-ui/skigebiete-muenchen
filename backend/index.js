@@ -44,12 +44,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Sentry Request Handler MUST be the first middleware on the app
-if (process.env.SENTRY_DSN) {
-  app.use(Sentry.Handlers.requestHandler());
-  // TracingHandler creates a trace for every incoming request
-  app.use(Sentry.Handlers.tracingHandler());
-}
+// Sentry v10 uses automatic instrumentation, no manual request handlers needed
 
 const PORT = process.env.PORT || 10000;
 
@@ -157,9 +152,9 @@ app.use("/api", historyRouter); // mounts /history, /trends
 // Initialize Scheduler (Weather & History)
 initScheduler();
 
-// Sentry Error Handler MUST be before any other error middleware and after all controllers
+// Sentry Error Handler (v10 API)
 if (process.env.SENTRY_DSN) {
-  app.use(Sentry.Handlers.errorHandler());
+  Sentry.setupExpressErrorHandler(app);
 }
 
 app.listen(PORT, () => {
