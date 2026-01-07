@@ -55,8 +55,17 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detai
 - **Backend**: Node.js, Express, Supabase (PostgreSQL)
 - **APIs**: OpenRouteService, Open-Meteo, Micado, Intermaps
 - **Deployment**: GitHub Pages + Render.com
-- **CI/CD**: GitHub Actions
-- **Testing**: Jest (34 Tests)
+- **CI/CD**: GitHub Actions (inkl. Smoke Tests & Safe Deployment)
+- **Testing**: Jest (73 Tests)
+- **Monitoring**: Datadog/Sentry Ready, Logging (JSON)
+
+## 📚 Documentation & Operations
+
+- [**System Architecture**](./docs/ARCHITECTURE.md)
+- [**Implementation Status**](./docs/IMPLEMENTATION_STATUS.md)
+- [**Monitoring Concept**](./docs/ops/MONITORING_CONCEPT.md): How to monitor errors (Sentry) and status.
+- [**Database Maintenance**](./docs/ops/DATABASE_MONITORING.md): How the DB stays healthy.
+- [**API Documentation**](./docs/API.md)
 
 ## 📚 Documentation
 - [Architecture & Design Principles](./docs/ARCHITECTURE.md)

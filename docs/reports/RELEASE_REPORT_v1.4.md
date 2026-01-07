@@ -37,7 +37,7 @@ The primary focus of this release was to harden the infrastructure, improve obse
 - **CORS**: Refined configuration to securely allow valid cross-origin requests from the GitHub Pages frontend.
 
 ## 📝 Documentation
-- **New Concepts**: Added `MONITORING_CONCEPT.md` and `DATABASE_MONITORING.md`.
+- **New Concepts**: Added `docs/ops/MONITORING_CONCEPT.md` and `docs/ops/DATABASE_MONITORING.md`.
 - **Code Audit**: Comprehensive code audit performed and findings resolved.
 - **API Docs**: Updated with new endpoints.
 
