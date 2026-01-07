@@ -38,6 +38,7 @@ import historicalWeatherRouter from "./routes/historicalWeather.js";
 import statusRouter from "./routes/status.js";
 import dbHealthRouter from "./routes/dbHealth.js";
 import adminRouter from "./routes/admin.js";
+import { basicAuth } from "./middleware/auth.js";
 
 // -- PATH SAFETY & STATIC CONFIG --
 const __filename = fileURLToPath(import.meta.url);
@@ -117,6 +118,10 @@ app.use(cors({
   },
   credentials: true
 }));
+
+// Protect Admin Area (Dashboard & API)
+app.use("/admin", basicAuth);
+app.use("/api/admin", basicAuth);
 
 // Serve Static Frontend Files
 app.use(express.static(path.join(__dirname, '../')));

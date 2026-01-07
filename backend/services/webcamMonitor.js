@@ -21,10 +21,11 @@ class WebcamMonitor {
             const timeoutId = setTimeout(() => controller.abort(), timeout);
 
             const response = await fetch(url, {
-                method: 'HEAD', // Use HEAD to avoid downloading full page
+                method: 'GET', // GET is more reliable than HEAD for some servers
                 signal: controller.signal,
                 headers: {
-                    'User-Agent': 'Mozilla/5.0 (compatible; SkiResortMonitor/1.0)'
+                    // Use standard browser UA to avoid blocking
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
                 }
             });
 
@@ -78,7 +79,7 @@ class WebcamMonitor {
             }
 
             const result = await this.checkWebcam(resort.webcam);
-            
+
             this.status.set(resort.id, {
                 url: resort.webcam,
                 status: result.available ? 'ok' : 'error',
@@ -160,10 +161,10 @@ export const webcamMonitor = new WebcamMonitor();
  */
 export function initWebcamMonitoring(intervalHours = 6) {
     console.log(`📹 Initializing webcam monitoring (check every ${intervalHours}h)...`);
-    
+
     // Initial check
     webcamMonitor.checkAllWebcams();
-    
+
     // Schedule regular checks
     const intervalMs = intervalHours * 60 * 60 * 1000;
     setInterval(() => {

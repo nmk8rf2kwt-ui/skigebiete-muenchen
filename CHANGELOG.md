@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.6.0] - 2026-01-07
+## [1.6.1] - 2026-01-07
+
+### Security & Monitoring
+
+### Added
+- **Admin Security**: Added Basic Authentication for `/admin/dashboard.html` and related APIs.
+  - Default credentials can be configured via `.env`.
+- **API Alerting**: Implemented automated console warnings when API usage reaches 80% and 100%.
+
+### Changed
+- **Documentation**: Added `docs/ops/ADMIN_DASHBOARD.md` usage guide.
+
 
 ### API Optimization & Cost Control
 

@@ -170,9 +170,9 @@
         "longitude": 12.1833,
         "webcam": "https://www.skiwelt.at/de/webcams.html",
         "priceDetail": {
-            "adult": 76.00,
-            "youth": 57.00,
-            "child": 38.00,
+            "adult": 76,
+            "youth": 57,
+            "child": 38,
             "currency": "€",
             "info": "Tageskarte Premium-Saison"
         },
@@ -182,9 +182,9 @@
                 "start": "2025-12-20",
                 "end": "2026-03-13",
                 "priceDetail": {
-                    "adult": 76.00,
-                    "youth": 57.00,
-                    "child": 38.00,
+                    "adult": 76,
+                    "youth": 57,
+                    "child": 38,
                     "currency": "€",
                     "info": "Premium-Saison"
                 }
@@ -194,9 +194,9 @@
                 "start": "2025-11-29",
                 "end": "2025-12-19",
                 "priceDetail": {
-                    "adult": 68.50,
-                    "youth": 51.50,
-                    "child": 34.50,
+                    "adult": 68.5,
+                    "youth": 51.5,
+                    "child": 34.5,
                     "currency": "€",
                     "info": "Vorteils-Saison"
                 }
@@ -206,9 +206,9 @@
                 "start": "2026-03-14",
                 "end": "2026-04-06",
                 "priceDetail": {
-                    "adult": 68.50,
-                    "youth": 51.50,
-                    "child": 34.50,
+                    "adult": 68.5,
+                    "youth": 51.5,
+                    "child": 34.5,
                     "currency": "€",
                     "info": "Vorteils-Saison"
                 }
@@ -266,7 +266,7 @@
         "website": "https://www.steinplatte.tirol",
         "latitude": 47.6316,
         "longitude": 12.5621,
-        "webcam": "https://www.steinplatte.tirol/de/winter/livecams-steinplatte.html",
+        "webcam": "https://www.steinplatte.tirol/de/webcams-steinplatte-waidring-tirol.html",
         "priceDetail": {
             "adult": 63,
             "youth": 47.5,
@@ -381,9 +381,9 @@
                 "start": "2025-12-20",
                 "end": "2026-03-13",
                 "priceDetail": {
-                    "adult": 68.50,
-                    "youth": 55.00,
-                    "child": 34.50,
+                    "adult": 68.5,
+                    "youth": 55,
+                    "child": 34.5,
                     "currency": "€",
                     "info": "Hauptsaison"
                 }
@@ -393,9 +393,9 @@
                 "start": "2025-12-05",
                 "end": "2025-12-19",
                 "priceDetail": {
-                    "adult": 56.00,
-                    "youth": 45.00,
-                    "child": 28.00,
+                    "adult": 56,
+                    "youth": 45,
+                    "child": 28,
                     "currency": "€",
                     "info": "Nebensaison"
                 }
@@ -405,9 +405,9 @@
                 "start": "2026-03-14",
                 "end": "2026-04-12",
                 "priceDetail": {
-                    "adult": 56.00,
-                    "youth": 45.00,
-                    "child": 28.00,
+                    "adult": 56,
+                    "youth": 45,
+                    "child": 28,
                     "currency": "€",
                     "info": "Nebensaison"
                 }
@@ -425,7 +425,7 @@
         "website": "https://www.kitzski.at",
         "latitude": 47.4464,
         "longitude": 12.3922,
-        "webcam": "https://www.kitzski.at/de/service-info/webcams.html",
+        "webcam": "https://www.kitzski.at/de/aktuelle-info/webcams.html",
         "priceDetail": {
             "adult": 79.5,
             "youth": 59.5,
@@ -547,7 +547,7 @@
         "website": "https://www.bergwelt-hahnenkamm.at",
         "latitude": 47.4833,
         "longitude": 10.7167,
-        "webcam": "https://www.bergwelt-hahnenkamm.at/service-info/webcams/",
+        "webcam": "https://bergwelt-hahnenkamm.at/webcam/",
         "priceDetail": {
             "adult": 52,
             "youth": 36,
@@ -567,7 +567,7 @@
         "website": "https://www.skialm-lofer.com",
         "latitude": 47.58,
         "longitude": 12.68,
-        "webcam": "https://www.skialm-lofer.com/de/webcams",
+        "webcam": "https://www.skialm-lofer.com/de/wetter/webcams",
         "priceDetail": {
             "adult": 62,
             "youth": 49.5,
@@ -727,7 +727,7 @@
         "website": "https://www.skiliftkarussell.de",
         "latitude": 51.196,
         "longitude": 8.526,
-        "webcam": "https://www.skiliftkarussell.de/webcams/",
+        "webcam": "https://www.skiliftkarussell.de/aktuelles/webcams/",
         "priceDetail": {
             "adult": 48,
             "currency": "€",
@@ -745,7 +745,7 @@
         "website": "https://www.feldberg-erlebnis.de",
         "latitude": 47.859,
         "longitude": 8.005,
-        "webcam": "https://www.feldberg.de/webcams",
+        "webcam": "https://www.feldberg-erlebnis.de/webcams",
         "priceDetail": {
             "adult": 47,
             "currency": "€",
@@ -776,14 +776,14 @@
         "distance": 180,
         "piste_km": 12,
         "lifts": 9,
-        "price": 42.00,
+        "price": 42,
         "classification": "Familie",
         "website": "https://www.arber.de",
         "latitude": 49.112,
         "longitude": 13.119,
         "webcam": "https://www.arber.de/sommer/service/webcams.html",
         "priceDetail": {
-            "adult": 42.00,
+            "adult": 42,
             "currency": "€",
             "info": "Tageskarte Hauptsaison"
         }
@@ -794,14 +794,14 @@
         "distance": 320,
         "piste_km": 15.5,
         "lifts": 6,
-        "price": 39.00,
+        "price": 39,
         "classification": "Familie",
         "website": "https://fichtelberg-ski.de",
         "latitude": 50.428,
         "longitude": 12.969,
-        "webcam": "https://fichtelberg-ski.de/webcams/",
+        "webcam": "https://fichtelberg-ski.de/wetter-webcams/",
         "priceDetail": {
-            "adult": 39.00,
+            "adult": 39,
             "currency": "€",
             "info": "Tageskarte Hauptsaison"
         }
@@ -812,16 +812,17 @@
         "distance": 350,
         "piste_km": 11.8,
         "lifts": 6,
-        "price": 45.00,
+        "price": 45,
         "classification": "Sportlich",
         "website": "https://www.wurmberg-seilbahn.de",
         "latitude": 51.745,
         "longitude": 10.605,
         "priceDetail": {
-            "adult": 45.00,
+            "adult": 45,
             "currency": "€",
             "info": "Tageskarte Hauptsaison"
-        }
+        },
+        "webcam": "https://www.wurmberg-seilbahn.de/webcams"
     },
     {
         "id": "wendelstein",
@@ -829,16 +830,17 @@
         "distance": 65,
         "piste_km": 8,
         "lifts": 4,
-        "price": 38.00,
+        "price": 38,
         "classification": "Familie",
         "website": "https://www.wendelsteinbahn.de",
         "latitude": 47.7044,
         "longitude": 12.0103,
         "priceDetail": {
-            "adult": 38.00,
+            "adult": 38,
             "currency": "€",
             "info": "Tageskarte 2025/26"
-        }
+        },
+        "webcam": "https://www.wendelsteinbahn.de/webcams"
     },
     {
         "id": "willingen",
@@ -846,16 +848,17 @@
         "distance": 420,
         "piste_km": 18,
         "lifts": 16,
-        "price": 44.00,
+        "price": 44,
         "classification": "Familie",
         "website": "https://www.skigebiet-willingen.de",
         "latitude": 51.2944,
         "longitude": 8.6128,
         "priceDetail": {
-            "adult": 44.00,
+            "adult": 44,
             "currency": "€",
             "info": "Tageskarte Hauptsaison"
-        }
+        },
+        "webcam": "https://www.ettelsberg-seilbahn.de/webcam.php"
     },
     {
         "id": "zillertal_arena",
@@ -863,18 +866,19 @@
         "distance": 125,
         "piste_km": 150,
         "lifts": 52,
-        "price": 72.00,
+        "price": 72,
         "classification": "Großraum",
         "website": "https://www.zillertalarena.com",
         "latitude": 47.2333,
         "longitude": 11.8667,
         "priceDetail": {
-            "adult": 72.00,
-            "youth": 54.00,
-            "child": 36.00,
+            "adult": 72,
+            "youth": 54,
+            "child": 36,
             "currency": "€",
             "info": "Tageskarte Hauptsaison 2025/26"
-        }
+        },
+        "webcam": "https://www.zillertalarena.com/info-service/livecams-wetter/livecams/"
     },
     {
         "id": "mayrhofen",
@@ -882,18 +886,19 @@
         "distance": 130,
         "piste_km": 42,
         "lifts": 21,
-        "price": 68.50,
+        "price": 68.5,
         "classification": "Sportlich",
         "website": "https://www.mayrhofen.at",
         "latitude": 47.1667,
         "longitude": 11.8667,
         "priceDetail": {
-            "adult": 68.50,
-            "youth": 51.50,
-            "child": 34.50,
+            "adult": 68.5,
+            "youth": 51.5,
+            "child": 34.5,
             "currency": "€",
             "info": "Tageskarte 2025/26"
-        }
+        },
+        "webcam": "https://www.mayrhofen.at/de/pages/livecams"
     },
     {
         "id": "hintertux",
@@ -901,18 +906,19 @@
         "distance": 140,
         "piste_km": 60,
         "lifts": 21,
-        "price": 72.00,
+        "price": 72,
         "classification": "Gletscher",
         "website": "https://www.hintertuxergletscher.at",
         "latitude": 47.0833,
         "longitude": 11.6667,
         "priceDetail": {
-            "adult": 72.00,
-            "youth": 54.00,
-            "child": 36.00,
+            "adult": 72,
+            "youth": 54,
+            "child": 36,
             "currency": "€",
             "info": "Tageskarte Ganzjährig"
-        }
+        },
+        "webcam": "https://www.hintertuxergletscher.at/webcams"
     },
     {
         "id": "soelden",
@@ -920,15 +926,16 @@
         "distance": 190,
         "piste_km": 144,
         "lifts": 31,
-        "price": 75.00,
+        "price": 75,
         "classification": "Sportlich",
         "website": "https://www.soelden.com",
         "latitude": 46.9655,
         "longitude": 11.0076,
         "priceDetail": {
-            "adult": 75.00,
+            "adult": 75,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.soelden.com/de/live-information/livecams"
     },
     {
         "id": "obertauern",
@@ -936,15 +943,16 @@
         "distance": 180,
         "piste_km": 100,
         "lifts": 26,
-        "price": 65.00,
+        "price": 65,
         "classification": "Sportlich",
         "website": "https://www.obertauern.com",
         "latitude": 47.2483,
-        "longitude": 13.5600,
+        "longitude": 13.56,
         "priceDetail": {
-            "adult": 65.00,
+            "adult": 65,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.obertauern.com/de/webcams.html"
     },
     {
         "id": "ischgl",
@@ -952,15 +960,16 @@
         "distance": 210,
         "piste_km": 239,
         "lifts": 45,
-        "price": 72.00,
+        "price": 72,
         "classification": "Großraum",
         "website": "https://www.ischgl.com",
         "latitude": 47.0114,
         "longitude": 10.2906,
         "priceDetail": {
-            "adult": 72.00,
+            "adult": 72,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.ischgl.com/de/Active/Active-Winter/Webcams"
     },
     {
         "id": "st_anton",
@@ -968,15 +977,16 @@
         "distance": 230,
         "piste_km": 305,
         "lifts": 88,
-        "price": 75.00,
+        "price": 75,
         "classification": "Großraum",
         "website": "https://www.skiarlberg.at",
         "latitude": 47.1306,
         "longitude": 10.2678,
         "priceDetail": {
-            "adult": 75.00,
+            "adult": 75,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.stantonamarlberg.com/de/service/webcams"
     },
     {
         "id": "serfaus_fiss_ladis",
@@ -984,15 +994,16 @@
         "distance": 190,
         "piste_km": 214,
         "lifts": 68,
-        "price": 68.00,
+        "price": 68,
         "classification": "Familie",
         "website": "https://www.serfaus-fiss-ladis.at",
         "latitude": 47.0379,
         "longitude": 10.6075,
         "priceDetail": {
-            "adult": 68.00,
+            "adult": 68,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.serfaus-fiss-ladis.at/de/live-info/webcams"
     },
     {
         "id": "saalbach",
@@ -1000,15 +1011,16 @@
         "distance": 180,
         "piste_km": 270,
         "lifts": 70,
-        "price": 72.00,
+        "price": 72,
         "classification": "Großraum",
         "website": "https://www.saalbach.com",
         "latitude": 47.3912,
         "longitude": 12.6373,
         "priceDetail": {
-            "adult": 72.00,
+            "adult": 72,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.saalbach.com/de/service/webcams"
     },
     {
         "id": "schladming",
@@ -1016,15 +1028,16 @@
         "distance": 210,
         "piste_km": 123,
         "lifts": 44,
-        "price": 73.50,
+        "price": 73.5,
         "classification": "Sportlich",
         "website": "https://www.planai.at",
         "latitude": 47.3934,
         "longitude": 13.6896,
         "priceDetail": {
-            "adult": 73.50,
+            "adult": 73.5,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.planai.at/de/aktuelles/webcams"
     },
     {
         "id": "hochzillertal_hochfuegen",
@@ -1032,15 +1045,16 @@
         "distance": 130,
         "piste_km": 90,
         "lifts": 39,
-        "price": 72.50,
+        "price": 72.5,
         "classification": "Sportlich",
         "website": "https://www.hochzillertal.com",
         "latitude": 47.2885,
         "longitude": 11.8744,
         "priceDetail": {
-            "adult": 72.50,
+            "adult": 72.5,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.hochzillertal.com/de/service/webcams"
     },
     {
         "id": "kitzsteinhorn",
@@ -1048,15 +1062,16 @@
         "distance": 170,
         "piste_km": 61,
         "lifts": 23,
-        "price": 76.00,
+        "price": 76,
         "classification": "Gletscher",
         "website": "https://www.kitzsteinhorn.at",
         "latitude": 47.2284,
         "longitude": 12.7214,
         "priceDetail": {
-            "adult": 76.00,
+            "adult": 76,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.kitzsteinhorn.at/de/service/webcams"
     },
     {
         "id": "nassfeld",
@@ -1064,15 +1079,16 @@
         "distance": 260,
         "piste_km": 110,
         "lifts": 30,
-        "price": 62.00,
+        "price": 62,
         "classification": "Sportlich",
         "website": "https://www.nassfeld.at",
-        "latitude": 46.5670,
-        "longitude": 13.2770,
+        "latitude": 46.567,
+        "longitude": 13.277,
         "priceDetail": {
-            "adult": 62.00,
+            "adult": 62,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.nassfeld.at/de/Service/Live-aus-der-Region/Webcam"
     },
     {
         "id": "obergurgl_hochgurgl",
@@ -1080,15 +1096,16 @@
         "distance": 195,
         "piste_km": 112,
         "lifts": 25,
-        "price": 73.00,
+        "price": 73,
         "classification": "Sportlich",
         "website": "https://www.obergurgl.com",
         "latitude": 46.8703,
         "longitude": 11.0264,
         "priceDetail": {
-            "adult": 73.00,
+            "adult": 73,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.gurgl.com/de/live-information/livecams"
     },
     {
         "id": "axamer_lizum",
@@ -1096,15 +1113,16 @@
         "distance": 150,
         "piste_km": 40,
         "lifts": 9,
-        "price": 54.00,
+        "price": 54,
         "classification": "Sportlich",
         "website": "https://www.axamer-lizum.at",
         "latitude": 47.1953,
         "longitude": 11.3023,
         "priceDetail": {
-            "adult": 54.00,
+            "adult": 54,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.axamer-lizum.at/webcams"
     },
     {
         "id": "kuehtai",
@@ -1112,15 +1130,16 @@
         "distance": 130,
         "piste_km": 47,
         "lifts": 12,
-        "price": 52.00,
+        "price": 52,
         "classification": "Familie",
         "website": "https://www.kuehtai.info",
         "latitude": 47.2137,
         "longitude": 11.0206,
         "priceDetail": {
-            "adult": 52.00,
+            "adult": 52,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.kuehtai.info/livecams"
     },
     {
         "id": "stubaier_gletscher",
@@ -1128,15 +1147,16 @@
         "distance": 170,
         "piste_km": 65,
         "lifts": 26,
-        "price": 66.00,
+        "price": 66,
         "classification": "Gletscher",
         "website": "https://www.stubaier-gletscher.com",
         "latitude": 47.0101,
         "longitude": 11.1394,
         "priceDetail": {
-            "adult": 66.00,
+            "adult": 66,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.stubaier-gletscher.com/de/service/webcams"
     },
     {
         "id": "snow_space_salzburg",
@@ -1144,15 +1164,16 @@
         "distance": 170,
         "piste_km": 210,
         "lifts": 70,
-        "price": 73.00,
+        "price": 73,
         "classification": "Großraum",
         "website": "https://www.snow-space.com",
         "latitude": 47.3458,
         "longitude": 13.3888,
         "priceDetail": {
-            "adult": 73.00,
+            "adult": 73,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.snow-space.com/de/winter/informationen-skigebiet/live/webcams"
     },
     {
         "id": "hochkoenig",
@@ -1160,15 +1181,16 @@
         "distance": 175,
         "piste_km": 120,
         "lifts": 34,
-        "price": 73.00,
+        "price": 73,
         "classification": "Familie",
         "website": "https://www.hochkoenig.at",
         "latitude": 47.3997,
         "longitude": 13.0487,
         "priceDetail": {
-            "adult": 73.00,
+            "adult": 73,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.hochkoenig.at/de/winter/skigebiet/webcams.html"
     },
     {
         "id": "silvretta_montafon",
@@ -1176,15 +1198,16 @@
         "distance": 220,
         "piste_km": 140,
         "lifts": 35,
-        "price": 74.00,
+        "price": 74,
         "classification": "Sportlich",
         "website": "https://www.silvretta-montafon.at",
         "latitude": 47.0673,
         "longitude": 9.9142,
         "priceDetail": {
-            "adult": 74.00,
+            "adult": 74,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.silvretta-montafon.at/de/service/webcams"
     },
     {
         "id": "damuels_mellau",
@@ -1192,15 +1215,16 @@
         "distance": 210,
         "piste_km": 109,
         "lifts": 28,
-        "price": 66.00,
+        "price": 66,
         "classification": "Familie",
         "website": "https://www.damuels-mellau.at",
-        "latitude": 47.2800,
-        "longitude": 9.8970,
+        "latitude": 47.28,
+        "longitude": 9.897,
         "priceDetail": {
-            "adult": 66.00,
+            "adult": 66,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.damuels-mellau.at/de/webcams-damuels-mellau.html"
     },
     {
         "id": "turracher_hoehe",
@@ -1208,15 +1232,16 @@
         "distance": 240,
         "piste_km": 42,
         "lifts": 15,
-        "price": 60.00,
+        "price": 60,
         "classification": "Familie",
         "website": "https://www.turracherhoehe.at",
         "latitude": 46.9147,
         "longitude": 13.8744,
         "priceDetail": {
-            "adult": 60.00,
+            "adult": 60,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.turracherhoehe.at/de/aktuelles/wetterbericht"
     },
     {
         "id": "bad_kleinkirchheim",
@@ -1224,15 +1249,16 @@
         "distance": 260,
         "piste_km": 103,
         "lifts": 24,
-        "price": 62.00,
+        "price": 62,
         "classification": "Familie",
         "website": "https://www.badkleinkirchheim.com",
         "latitude": 46.8157,
         "longitude": 13.7744,
         "priceDetail": {
-            "adult": 62.00,
+            "adult": 62,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.badkleinkirchheim.com/de/webcams/"
     },
     {
         "id": "kronplatz",
@@ -1240,15 +1266,16 @@
         "distance": 215,
         "piste_km": 120,
         "lifts": 32,
-        "price": 74.00,
+        "price": 74,
         "classification": "Sportlich",
         "website": "https://www.kronplatz.com",
         "latitude": 46.7725,
         "longitude": 11.9566,
         "priceDetail": {
-            "adult": 74.00,
+            "adult": 74,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.kronplatz.com/de/service/webcams"
     },
     {
         "id": "dolomitisuperski",
@@ -1256,15 +1283,16 @@
         "distance": 230,
         "piste_km": 1200,
         "lifts": 450,
-        "price": 80.00,
+        "price": 80,
         "classification": "Großraum",
         "website": "https://www.dolomitisuperski.com",
         "latitude": 46.5516,
         "longitude": 11.8596,
         "priceDetail": {
-            "adult": 80.00,
+            "adult": 80,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.dolomitisuperski.com/de/live-info/webcams"
     },
     {
         "id": "sella_ronda",
@@ -1272,14 +1300,15 @@
         "distance": 230,
         "piste_km": 40,
         "lifts": 10,
-        "price": 80.00,
+        "price": 80,
         "classification": "Sportlich",
         "website": "https://www.dolomitisuperski.com",
-        "latitude": 46.5510,
-        "longitude": 11.8590,
+        "latitude": 46.551,
+        "longitude": 11.859,
         "priceDetail": {
-            "adult": 80.00,
+            "adult": 80,
             "info": "Tageskarte"
-        }
+        },
+        "webcam": "https://www.valgardena.it/de/webcams/"
     }
 ]

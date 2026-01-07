@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const DATA_DIR = path.join(__dirname, '../data');
-const USAGE_FILE = path.join(DATA_DIR, 'api_usage.json');
+const USAGE_FILE = process.env.USAGE_DB_PATH || path.join(DATA_DIR, 'api_usage.json');
 
 // Ensure stats structure
 const INITIAL_STATS = {
