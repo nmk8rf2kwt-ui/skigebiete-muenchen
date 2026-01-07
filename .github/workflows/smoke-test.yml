@@ -1,0 +1,38 @@
+name: Production Smoke Test
+
+on:
+  workflow_run:
+    workflows: ["Deploy to Render"]
+    types:
+      - completed
+  schedule:
+    - cron: '*/30 * * * *' # Every 30 minutes
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name != 'workflow_run' }}
+    steps:
+      - name: Check API Status
+        run: |
+          echo "Checking Production API Health..."
+          HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" https://skigebiete-muenchen-backend.onrender.com/api/status)
+          echo "Status Code: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "❌ API Status Check FAILED (Expected 200, got $HTTP_STATUS)"
+            exit 1
+          fi
+          echo "✅ API Status Check PASSED"
+
+      - name: Check Resorts Data
+        run: |
+          echo "Checking Data Integrity..."
+          RESPONSE=$(curl -s https://skigebiete-muenchen-backend.onrender.com/api/resorts)
+          # Simple check if response implies valid JSON array
+          if [[ "$RESPONSE" == *"["* ]]; then
+             echo "✅ Resorts Data Valid (JSON Array received)"
+          else
+             echo "❌ Resorts Data Check FAILED (Invalid JSON)"
+             exit 1
+          fi

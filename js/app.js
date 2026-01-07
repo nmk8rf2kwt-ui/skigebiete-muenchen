@@ -100,7 +100,10 @@ async function load() {
     logToUI("Lade statische Konfiguration der Skigebiete...");
     const staticRes = await fetch(`${API_BASE_URL}/resorts/static`);
 
-    if (!staticRes.ok) throw new Error(`HTTP ${staticRes.status}`);
+    if (!staticRes.ok) {
+      if (staticRes.status === 429) throw new Error("⚠️ Zu viele Anfragen. Bitte warten Sie einen Moment.");
+      throw new Error(`HTTP ${staticRes.status}`);
+    }
     const staticData = await staticRes.json();
     logToUI(`✅ ${staticData.length} Skigebiete konfiguriert.`);
 
@@ -110,7 +113,12 @@ async function load() {
     }
   } catch (err) {
     console.error("Failed to load static data:", err);
-    showError(`❌ Basis-Daten Fehler: ${err.message}`);
+    let msg = err.message;
+    // Detect CORS/Network failure (when status is 0 or message indicates fetch failure)
+    if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
+      msg = "Verbindung fehlgeschlagen (Netzwerk/CORS). Server erreichbar?";
+    }
+    showError(`❌ Basis-Daten Fehler: ${msg}`);
   }
 
   // 2. Fetch Live Data
@@ -121,6 +129,7 @@ async function load() {
 
     if (!liveRes.ok) {
       // Detailed Error Mapping
+      if (liveRes.status === 429) throw new Error("⚠️ Zu viele Anfragen (Rate Limit). Bitte warten.");
       if (liveRes.status === 503) throw new Error("Backend wird gestartet (ca. 30s)...");
       if (liveRes.status === 504) throw new Error("Zeitüberschreitung beim Laden");
       throw new Error(`Server Status ${liveRes.status}`);
@@ -166,7 +175,11 @@ async function load() {
 
   } catch (err) {
     console.error("Failed to load live data:", err);
-    showError(`❌ Live-Daten Fehler: ${err.message}`);
+    let msg = err.message;
+    if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
+      msg = "Verbindung fehlgeschlagen (Netzwerk/CORS).";
+    }
+    showError(`❌ Live-Daten Fehler: ${msg}`);
     logToUI(`❌ Fehler beim Laden der Live-Daten: ${err.message}`, "error");
     // Keep banner visible but red? Or hide? Let's hide and use persistent error
     hideLoading();
