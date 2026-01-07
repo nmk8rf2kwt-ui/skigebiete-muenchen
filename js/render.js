@@ -175,54 +175,55 @@ export function renderRow(row, data) {
   }
 
   // Format travel time (Standard & Traffic)
-  const standardTime = data.distance || 0;
+  let standardMins = 0;
+  let trafficDisplay = '<span style="color: #bdc3c7; font-size: 0.9em;">-</span>'; // Default gray
   let standardDisplay = "-";
 
-  // 1. Standard Time with Link
-  if (standardTime) {
-    const timeText = formatDuration(standardTime);
-    if (data.latitude && data.longitude) {
-      const destQuery = data.address ? encodeURIComponent(data.address) : `${data.latitude},${data.longitude}`;
-      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destQuery}&travelmode=driving`;
-      // Maps URL is constructed from encoded components, safe.
-      standardDisplay = `<a href="${mapsUrl}" target="_blank" title="Route planen (Google Maps - ${standardTime} min)" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${timeText}</a>`;
-    } else {
-      standardDisplay = timeText;
+  // Check if we have live traffic data (duration & delay in seconds from backend)
+  if (data.traffic?.loading) {
+    trafficDisplay = '<span class="loading-spinner-small"></span>';
+    // Fallback to static distance for standard display while loading
+    if (data.distance) standardMins = data.distance;
+  } else if (data.traffic && data.traffic.duration) {
+    // Backend delivers seconds since v1.4.1 fix
+    const durationSecs = data.traffic.duration;
+    const delaySecs = data.traffic.delay || 0;
+
+    // Calculate Live & Base Minutes
+    const liveMins = Math.round(durationSecs / 60);
+    const baseMins = Math.round((durationSecs - delaySecs) / 60);
+
+    standardMins = baseMins;
+
+    // 2. Traffic Time with Color
+    const delayMins = Math.round(delaySecs / 60);
+    let style = "";
+    if (delayMins > 20) style = "color: #e74c3c; font-weight: bold;"; // Red
+    else if (delayMins > 10) style = "color: #f39c12; font-weight: bold;"; // Orange
+    else if (delayMins > 0) style = "color: #f1c40f;"; // Yellow
+    else style = "color: #2ecc71;"; // Green
+
+    const delayText = delayMins > 0 ? ` (+${delayMins} min)` : '';
+    const formattedLive = formatDuration(liveMins);
+    trafficDisplay = `<span style="${style}" title="Aktuell: ${liveMins} min${escapeHtml(delayText)}">${formattedLive}</span>`;
+  } else if (data.distance) {
+    // Fallback to static data (resorts.json) if no traffic API
+    standardMins = data.distance;
+    if (data.status === "live") {
+      trafficDisplay = `<span title="Keine Verkehrsdaten" style="color: #bdc3c7;">n.a.</span>`;
     }
   }
 
-  // 2. Traffic Time with Color
-  let trafficDisplay = '<span style="color: #bdc3c7; font-size: 0.9em;">-</span>'; // Default gray
-
-  if (data.traffic?.loading) {
-    // Show loading indicator
-    trafficDisplay = '<span class="loading-spinner-small"></span>';
-  } else if (data.traffic && data.traffic.duration) {
-    const liveTime = data.traffic.duration;
-
-    // Use explicit delay if provided (TomTom), otherwise fallback to (Live - Standard)
-    const delay = data.traffic.delay !== undefined
-      ? data.traffic.delay
-      : Math.max(0, liveTime - standardTime);
-
-    let style = "";
-
-    if (delay > 20) {
-      style = "color: #e74c3c; font-weight: bold;"; // Red (Heavy Traffic)
-    } else if (delay > 10) {
-      style = "color: #f39c12; font-weight: bold;"; // Orange/Yellow (Moderate)
-    } else if (delay > 0) {
-      style = "color: #f1c40f;"; // Yellow (Slight)
+  // Render Standard Display (Column 1)
+  if (standardMins > 0) {
+    const timeText = formatDuration(standardMins);
+    if (data.latitude && data.longitude) {
+      const destQuery = data.address ? encodeURIComponent(data.address) : `${data.latitude},${data.longitude}`;
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destQuery}&travelmode=driving`;
+      standardDisplay = `<a href="${mapsUrl}" target="_blank" title="Route planen (Google Maps - Basis: ${standardMins} min)" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${timeText}</a>`;
     } else {
-      style = "color: #2ecc71;"; // Green (Good/Faster)
+      standardDisplay = timeText;
     }
-
-    const delayText = delay > 0 ? ` (+${delay} min)` : '';
-    const formattedLive = formatDuration(liveTime);
-    trafficDisplay = `<span style="${style}" title="Aktuell: ${liveTime} min${escapeHtml(delayText)}">${formattedLive}</span>`;
-  } else if (data.status === "live") {
-    // If live but no traffic data (API error or key missing), show Standard? Or "n.a."
-    trafficDisplay = `<span title="Keine Verkehrsdaten" style="color: #bdc3c7;">n.a.</span>`;
   }
 
   // Snow Display - use forecast data if available
