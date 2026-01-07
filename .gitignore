@@ -4,12 +4,20 @@ backend/node_modules/
 
 # Environment variables
 .env
-backenode_modules/
-.env
+
+# System files
 .DS_Store
+Thumbs.db
+
+# Logs
 *.log
 logs/
+backend/logs/
+
+# Cache
 backend/cache/
+
+# IDE
 .vscode/
 .idea/
 
@@ -24,12 +32,6 @@ test-parser*.mjs
 widget.js
 detailView.js
 variables.jss
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
 
 # Build outputs
 dist/

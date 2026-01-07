@@ -209,13 +209,6 @@ export function initScheduler() {
     setTimeout(() => {
         const resorts = getStaticResorts();
         syncResortsToDatabase(resorts);
-
-        // Sync Cities
-        const citiesPath = path.join(__dirname, '../data/reference_cities.json');
-        if (fs.existsSync(citiesPath)) {
-            // const cities = JSON.parse(fs.readFileSync(citiesPath, 'utf-8'));
-            // syncCitiesToDatabase(cities);
-        }
     }, 5000);
 
     // E. Snapshot Loop (Check every hour)
