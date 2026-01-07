@@ -216,7 +216,7 @@ export async function cleanupOldSnapshots(daysToKeep = 90) {
  * Run automated maintenance
  */
 export async function runDatabaseMaintenance() {
-    console.log('🔧 Running database maintenance...');
+    logger.db.info('🔧 Running database maintenance...');
 
     // 1. Check health
     const health = await checkDatabaseHealth();
