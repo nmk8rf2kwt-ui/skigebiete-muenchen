@@ -1,8 +1,8 @@
-# 🏔️ Skigebiet-Finder v1.4.0
+# 🏔️ Skigebiet-Finder v1.5.0
 
-![CI/CD](https://github.com/YOUR_USERNAME/skigebiete-muenchen/workflows/CI%2FCD%20Pipeline/badge.svg)
+![CI/CD Pipeline](https://github.com/nmk8rf2kwt-ui/skigebiete-muenchen/actions/workflows/ci.yml/badge.svg)
 
-Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detailliertem Tracking.
+Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten, Verkehrs-Check und detailliertem Tracking.
 
 ## ✨ Features
 
@@ -18,7 +18,7 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detai
 - ⏰ **HH:mm Zeitformat**: Fahrzeiten übersichtlich als Stunden:Minuten (z.B. "01:15 h")
 - 🔄 **Erweiterte Sortierung**: Alle Verkehrsspalten (Distanz, Standard, Live) sortierbar
 - 🚦 **Verkehrs-Check**: Split zwischen Standard-Fahrzeit und aktueller Verkehrslage (Live Traffic)
-- 🚗 **Personalisierte Fahrzeiten**: Berechnung von Ihrem Standort
+- 🚗 **Personalisierte Fahrzeiten**: Berechnung von Ihrem Standort (via TomTom Matrix API)
 - 🧭 **Direkte Navigation**: One-Click Google Maps Routing zu Talstationen
 
 ### Wetter & Bedingungen
@@ -26,51 +26,38 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detai
 - ❄️ **Daten-Fallback**: Automatische Wetter-API Daten wenn Skigebiet-Infos fehlen
 - 📷 **Webcams**: Direktlinks zu Live-Webcams
 
-### Preise & Klassifizierung
-- 💶 **Preis-Details**: Detaillierte Preise für Erwachsene, Jugendliche und Kinder (Tooltip)
-- ℹ️ **Schwierigkeitsgrad-Legende**: Interaktiver Tooltip erklärt die Klassifizierungen (Familie, Genuss, Sportlich, etc.)
-- 📋 **Kategorien**: Gruppierte Tabellen-Header für bessere Übersicht
-
-### Visualisierung
+### Visualisierung & UI
 - 🗺️ **Interaktive Karte**: Leaflet-basierte Visualisierung aller Skigebiete
 - 📈 **Trend-Charts**: Chart.js Visualisierung der historischen Daten
-
-### Technisch
-- 🔒 **Rate Limiting**: Schutz vor API-Missbrauch
-- 📱 **Mobile Responsive**: Optimiert für alle Geräte
+- 📱 **Mobile Responsive**: Optimiert für alle Geräte (iOS/Android)
 - 🎯 **Smart Scoring**: Intelligentes Ranking basierend auf Distanz, Pisten, Liften und Preis
-- 📊 **System Status Dashboard**: Live-Monitoring aller Komponenten (Database, APIs, Scheduler)
+- 📊 **System Status Dashboard**: Live-Monitoring aller Komponenten (Database, APIs, Scheduler, Sentry)
 
-## 📊 Daten-Abdeckung
+## 🛠️ Tech Stack & Versionen
 
-- **26 Skigebiete** mit detailliertem Tracking (11 🇩🇪 Deutschland, 15 🇦🇹 Österreich)
-- **350+ Lifte** mit Status und Metadata
-- **600+ Pisten** mit Schwierigkeitsgrad
-- **8 Skigebiete** mit vollständigen Metadata (Länge, Höhe, Betriebszeiten)
-- Siehe [docs/IMPLEMENTATION_STATUS.md](./docs/IMPLEMENTATION_STATUS.md) für vollständige Liste
+Eine vollständige Übersicht aller verwendeten Komponenten und Versionen finden Sie in [**docs/TECH_STACK.md**](./docs/TECH_STACK.md).
 
-## Tech Stack
+### Kern-Komponenten
+| Komponente | Version | Beschreibung |
+|------------|---------|--------------|
+| **Node.js** | `v20 (LTS)` | Runtime Environment (Iron) |
+| **Express** | `^5.0.0` | Backend Framework (Modernes Error Handling) |
+| **Supabase** | `v2.x` | PostgreSQL Datenbank & Realtime Features |
+| **GitHub Actions**| `v4` | CI/CD Pipeline (Checkout & Setup-Node v4) |
 
-- **Frontend**: Vanilla JS, Leaflet.js, Chart.js
-- **Backend**: Node.js, Express, Supabase (PostgreSQL)
-- **APIs**: OpenRouteService, Open-Meteo, Micado, Intermaps
-- **Deployment**: GitHub Pages + Render.com
-- **CI/CD**: GitHub Actions (inkl. Smoke Tests & Safe Deployment)
-- **Testing**: Jest (73 Tests)
-- **Monitoring**: Datadog/Sentry Ready, Logging (JSON)
+### Frontend
+- **Vanilla JS (ES6+)**: Keine Frameworks, maximale Performance.
+- **Leaflet (v1.9.4)**: Kartenintegration.
+- **Chart.js (v4.x)**: Datenvisualisierung.
+- **Bootstrap (v5.3)**: Styling & Grid System.
 
 ## 📚 Documentation & Operations
 
 - [**System Architecture**](./docs/ARCHITECTURE.md)
+- [**Tech Stack Details**](./docs/TECH_STACK.md) (✨ Neu)
 - [**Implementation Status**](./docs/IMPLEMENTATION_STATUS.md)
-- [**Monitoring Concept**](./docs/ops/MONITORING_CONCEPT.md): How to monitor errors (Sentry) and status.
-- [**Database Maintenance**](./docs/ops/DATABASE_MONITORING.md): How the DB stays healthy.
+- [**Monitoring Concept**](./docs/ops/MONITORING_CONCEPT.md)
 - [**API Documentation**](./docs/API.md)
-
-## 📚 Documentation
-- [Architecture & Design Principles](./docs/ARCHITECTURE.md)
-- [API Reference](./docs/API.md)
-- [Implementation Status](./docs/IMPLEMENTATION_STATUS.md)
 
 ## Development
 
@@ -87,30 +74,18 @@ npm start
 ## Testing
 
 ```bash
-# Unit Tests
+# Unit Tests (Jest)
 cd backend
 npm test
 
-# Parser Tests
-npm run test:parsers
+# Release Verification
+node scripts/verify-release.js
 ```
 
 ## Deployment & Release
 
 - Siehe [DEPLOYMENT.md](./DEPLOYMENT.md) für detaillierte Anweisungen.
 - Siehe [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) für QA-Workflow vor jedem Release.
-
-## Roadmap
-
-Geplante Features und Verbesserungen sind im [BACKLOG.md](./BACKLOG.md) dokumentiert.
-
-## CI/CD Pipeline
-
-Jeder Push auf `main` triggert:
-1. ✅ Unit Tests (34/34 passing)
-2. ✅ Linting
-3. ✅ Server Startup Test
-4. 🚀 Auto-Deploy (Render + GitHub Pages)
 
 ## License
 
