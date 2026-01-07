@@ -1,7 +1,8 @@
 # Traffic Data Strategy & Calculation
-
 **Last Updated**: 2026-01-07
 **Status**: Active
+**Scope**: All Resorts (DACH + IT), with focus on Munich + 150km (Default).
+**Goal**: Provide accurate traffic delays & history (Supabase) for optimized routing.
 
 ## 1. Overview
 We use real-time traffic data from **TomTom Matrix API** to provide accurate travel times and congestion delays for all ski resorts.

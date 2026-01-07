@@ -27,39 +27,44 @@ ADMIN_PASS=meinSicheresPasswort
 ## 📊 Features
 
 ### 1. Dashboard (`/admin/dashboard.html`)
+Eine zentrale Kommandozentrale für den Betrieb der Anwendung.
+
+**Komponenten:**
+
+#### 🚦 API Usage (TomTom)
 - **Live-Status:** Zeigt die Anzahl der heutigen Requests an.
-- **Fortschrittsbalken:** Visualisiert die Auslastung (Grün < 75%, Gelb > 75%, Rot > 90%).
-- **Historie:** Balkendiagramm der letzten 30 Tage.
-- **Breakdown:** Aufschlüsselung nach Request-Typ:
-  - `routing_sync`: Einzelne Routenberechnungen
-  - `matrix_batch`: Optimierte Matrix-Abfragen (1 Request = bis zu 100 Ziele!)
-  - `geocode`: Adresssuche
+- **Limit-Warnung:** Visueller Alarm bei > 75% Auslastung.
+- **Historie:** 30-Tage Trendanalyse.
+- **Breakdown:** Detailansicht der Request-Typen.
 
-### 2. Monitoring Alerts
-Das Backend überwacht jeden API-Call und gibt Warnungen in den Server-Logs aus:
+#### 📷 Webcam Monitor
+- **Status:** Zeigt sofort, wie viele Webcams erreichbar sind.
+- **Fehler-Liste:** Listet defekte Webcams mit HTTP-Statuscode (z.B. 404, 500).
+- **Check-Button:** `Check Now` prüft alle URLs in Echtzeit.
 
-- **⚠️ WARNING (80%):** Bei 2.000 Requests/Tag.
-- **🚨 CRITICAL (100%):** Bei 2.500 Requests/Tag.
+#### 🕷️ Scraper Status (Parser)
+- **Status-Matrix:** Zeigt für jedes Skigebiet:
+  - **Status:** Live (🟢), Error (🔴) oder Static (🔵).
+  - **Lifts:** Anzahl offener Lifte.
+  - **Source:** Letztes Update (Cache vs. Fresh).
+- **Action:** `🔄` Button erzwingt ein sofortiges Neuladen der Daten für ein spezifisches Skigebiet ("Force Refresh").
 
-### 3. API Optimization (Smart Radius)
-Seit v1.6.0 wird client-seitig ein **Radius-Filter** (Slider) eingesetzt.
-- **Funktion:** Vor der Abfrage an TomTom wird die Luftlinie geprüft.
-- **Effekt:** Nur Skigebiete im Radius (Standard 150km) erzeugen API-Last.
-- **Ersparnis:** Reduziert die API-Calls um ca. 75% pro User-Suche.
+#### ⚙️ System & Cache
+- **Cache Stats:** Zeigt die Größe der In-Memory Caches (Parser, Weather, Traffic).
+- **Maintenance:** Buttons zum Leeren der Caches (`Clear Cache`).
+- **CSV Status:** Überwacht die Größe der `traffic_history.csv`.
+
+#### 📜 Server Logs
+- **Live Tail:** Zeigt die letzten 100 Zeilen der Server-Logs (`combined` oder `error`).
+- Kann direkt im Browser eingesehen werden, ohne SSH-Zugriff.
 
 ---
 
-## 🛠️ Troubleshooting
+### 2. Monitoring Alerts & Sicherheit
+- **Logs:** Automatische Warnungen in `backend/logs/` bei API-Limit Annäherung (80%/100%).
+- **Auth:** Basic Auth Schutz für alle Admin-Bereiche.
+- **Security Check:** Warnung beim Start, falls Default-Passwort genutzt wird.
 
-### Login funktioniert nicht
-- Überprüfen Sie die `.env` Datei im `backend/` Verzeichnis.
-- Starten Sie den Server neu (`npm restart`).
+### 3. API Optimization (Smart Radius)
+(Unverändert)
 
-### Dashboard zeigt "ERROR"
-- Stellen Sie sicher, dass das Backend läuft.
-- Prüfen Sie die Netzwerkkonsole auf 401 Unauthorized Fehler.
-- Prüfen Sie die Logs auf Fehler im `usageTracker.js`.
-
-### API Limit erreicht
-1. Prüfen Sie im Dashboard, ob es sich um einen einmaligen Spike handelt.
-2. Wenn das Limit regelmäßig erreicht wird (siehe "Kostenanalyse 2026"), sollte auf einen Paid-Plan (Pay-As-You-Grow) gewechselt werden.

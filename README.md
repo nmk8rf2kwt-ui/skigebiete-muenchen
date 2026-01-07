@@ -1,4 +1,4 @@
-# 🏔️ Skigebiet-Finder v1.5.0
+# 🏔️ Skigebiet-Finder v1.6.5
 
 ![CI/CD Pipeline](https://github.com/nmk8rf2kwt-ui/skigebiete-muenchen/actions/workflows/ci.yml/badge.svg)
 
@@ -7,7 +7,7 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten, Verkehrs
 ## ✨ Features
 
 ### Live-Daten & Tracking
-- ✅ **Live-Daten**: Aktuelle Lift-Status und Schneehöhen für 26 Skigebiete
+- ✅ **Live-Daten**: Aktuelle Lift-Status und Schneehöhen für 34+ Skigebiete (DE, AT, IT)
 - 🚡 **Detailliertes Lift-Tracking**: 350+ Lifte mit Status, Typ, Länge und Höhe
 - ⛷️ **Pisten-Details**: 600+ Pisten mit Schwierigkeitsgrad und Metadata
 - 📋 **Details-Modal**: Vollständige Übersicht aller Lifte und Pisten pro Skigebiet
@@ -20,18 +20,19 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten, Verkehrs
 - 🚦 **Verkehrs-Check**: Split zwischen Standard-Fahrzeit und aktueller Verkehrslage (Live Traffic)
 - 🚗 **Personalisierte Fahrzeiten**: Berechnung von Ihrem Standort (via TomTom Matrix API)
 - 🧭 **Direkte Navigation**: One-Click Google Maps Routing zu Talstationen
+- 🎯 **Smart Radius**: 150km Radius-Filter (Standard) für kosteneffiziente API-Nutzung.
 
 ### Wetter & Bedingungen
 - 🌤️ **Wetter & Schnee Kombi**: 3-Tage Vorhersage und detaillierte Schneehöhen (Berg/Tal)
 - ❄️ **Daten-Fallback**: Automatische Wetter-API Daten wenn Skigebiet-Infos fehlen
-- 📷 **Webcams**: Direktlinks zu Live-Webcams
+- 📷 **Webcams**: Direktlinks zu Live-Webcams & Health Monitoring.
 
 ### Visualisierung & UI
 - 🗺️ **Interaktive Karte**: Leaflet-basierte Visualisierung aller Skigebiete
 - 📈 **Trend-Charts**: Chart.js Visualisierung der historischen Daten
 - 📱 **Mobile Responsive**: Optimiert für alle Geräte (iOS/Android)
 - 🎯 **Smart Scoring**: Intelligentes Ranking basierend auf Distanz, Pisten, Liften und Preis
-- 📊 **System Status Dashboard**: Live-Monitoring aller Komponenten (Database, APIs, Scheduler, Sentry)
+- 📊 **Admin Dashboard**: Zentrale Steuerung (Logs, Cache, Webcams) unter `/admin/dashboard.html`
 - 🎥 **Sentry Replay**: Session-Aufzeichnung zur Fehleranalyse (Privacy-konform)
 
 ## 🛠️ Tech Stack & Versionen
