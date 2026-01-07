@@ -264,3 +264,34 @@ export async function getSingleResortLive(resortId) {
         };
     }
 }
+
+// -- Force Refresh --
+export async function forceRefreshResort(resortId) {
+    const resort = getResortConfig(resortId);
+    if (!resort) throw new Error("Resort not found");
+
+    const parser = PARSERS[resortId];
+    if (!parser) throw new Error("No parser for this resort");
+
+    try {
+        logger.scraper.info(`🔄 Force refreshing ${resortId}...`);
+        const rawData = await fetchWithTimeout((opts) => parser(opts), 10000);
+        const validation = ResortDataSchema.safeParse(rawData);
+
+        if (!validation.success) {
+            throw new Error("Validation failed: " + JSON.stringify(validation.error.format()));
+        }
+
+        const data = validation.data;
+        parserCache.set(resort.id, data);
+
+        logger.scraper.info(`✅ Forced update success for ${resort.id}`);
+        return { success: true, data };
+    } catch (err) {
+        logger.scraper.error(`Force refresh failed for ${resort.id}: ${err.message}`);
+        // Remove bad data from cache? No, keep stale if available? Or clear?
+        // Let's clear so we see the error state.
+        parserCache.cache.delete(resort.id);
+        throw err;
+    }
+}

@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.6.3] - 2026-01-07
+
+### Fixes & Backlog Cleanups
+
+### Corrected
+- **Webcams**: Fixed faulty webcam URL for **Ski Juwel Alpbachtal**.
+- **Resort Manager**: Improved "Force Update" logic for better error handling.
+
+### Confirmed (Backlog Audit)
+- **Multi-City Traffic**: Verified backend implementation (collecting data for 8 cities).
+- **Traffic Analysis**: Verified background service implementation.
+- **Resort Status**: Update Implementation Status to 34 implemented / 26 pending.
+
 ## [1.6.2] - 2026-01-07
 
 ### Admin Dashboard Extended
