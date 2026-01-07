@@ -17,7 +17,7 @@ import('winston-transport').then(async (TransportModule) => {
 });
 
 // Custom Sentry Transport
-class SentryTransport extends winston.transport {
+class SentryTransport extends winston.Transport {
     constructor(opts) {
         super(opts);
         this.sentryLoaded = false;
