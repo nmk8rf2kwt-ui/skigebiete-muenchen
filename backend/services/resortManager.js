@@ -205,8 +205,10 @@ export async function getAllResortsLive() {
     const errorCount = results.filter(r => r.status === 'error').length;
     if (errorCount > 0) {
         statusLogger.log('warn', 'scraper', `Batch update finished with ${errorCount} errors.`);
+        statusLogger.updateComponentStatus('scraper', 'degraded');
     } else {
         statusLogger.log('success', 'scraper', `All ${resorts.length} resorts updated successfully.`);
+        statusLogger.updateComponentStatus('scraper', 'healthy');
     }
 
     return results;

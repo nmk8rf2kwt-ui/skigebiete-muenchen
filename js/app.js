@@ -680,6 +680,34 @@ function renderStatusDashboard(data) {
   dbEl.style.color = dbOk ? "green" : "red";
   if (!dbOk) dbEl.title = data.database?.message || "Unknown error";
 
+  // Scraper
+  const scraperEl = document.getElementById("statusScraper");
+  const scraperStatus = data.components?.scraper || 'unknown';
+  if (scraperStatus === 'healthy') {
+    scraperEl.textContent = "🟢 Active";
+    scraperEl.style.color = "green";
+  } else if (scraperStatus === 'degraded') {
+    scraperEl.textContent = "🟡 Degraded";
+    scraperEl.style.color = "orange";
+  } else {
+    scraperEl.textContent = "⚪ Checking...";
+    scraperEl.style.color = "gray";
+  }
+
+  // Weather API
+  const weatherEl = document.getElementById("statusWeather");
+  const weatherStatus = data.components?.weather || 'unknown';
+  if (weatherStatus === 'healthy') {
+    weatherEl.textContent = "🟢 Active";
+    weatherEl.style.color = "green";
+  } else if (weatherStatus === 'degraded') {
+    weatherEl.textContent = "🟡 Degraded";
+    weatherEl.style.color = "orange";
+  } else {
+    weatherEl.textContent = "⚪ Checking...";
+    weatherEl.style.color = "gray";
+  }
+
   // Uptime
   const uptime = Math.floor(data.uptime || 0);
   const hours = Math.floor(uptime / 3600);
