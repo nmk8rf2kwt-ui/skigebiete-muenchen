@@ -11,8 +11,16 @@ This project follows a clean, layered architecture designed to separate stable c
 - **Key Files**:
     - `index.html`: Structure (Tabs, Modals).
     - `js/render.js`: Pure functions for HTML generation (View Components).
+    - `js/render.js`: Pure functions for HTML generation (View Components).
     - `js/app.js`: Application State, Event Listeners, API Client (Controller).
     - `js/weatherChart.js`: Visualization Logic.
+
+### 1.5. Monitoring & Error Handling
+- **Role**: System observability and health tracking.
+- **Key Components**:
+    - **Frontend**: Detailed error diagnostics for Network/CORS failures.
+    - **Sentry Integration**: Exception tracking (Concept).
+    - **Smoke Tests**: Automated production API validation via GitHub Actions.
 
 ### 2. Backend API (Routes)
 - **Role**: Routing, Request Validation, HTTP Response Handling.

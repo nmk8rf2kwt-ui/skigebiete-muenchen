@@ -2,9 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.4.0] - 2026-01-06
+## [1.4.0] - 2026-01-07
+
+### Infrastructure & Monitoring Update
 
 ### Added
+- **Traffic Analysis**: Congestion forecasting based on historical data.
+- **Database Health**: Automated monitoring and cleanup of Supabase storage.
+- **Improved Logging**: Unified Winston logger replacing legacy file logging.
+- **Smoke Tests**: Automated GitHub Action for production API verification.
+- **Frontend Diagnostics**: Detailed error messages for Rate Limit and CORS issues.
+
+### Changed
+- **Rate Limit**: Increased to 1000 req/15min for better user experience.
+- **CORS**: Stabilized configuration for GitHub Pages integration.
+- **Logging**: Refactored all services to use structured logging.
+
+### Previous 1.4.0 Updates (2026-01-06)
 - **Historical Weather Integration**: 
   - Backend service `historicalWeather.js` integrating Open-Meteo Archive API.
   - Automated one-time backfill of 30 days history on startup.
