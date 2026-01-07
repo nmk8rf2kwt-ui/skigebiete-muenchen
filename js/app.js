@@ -383,7 +383,7 @@ async function handleAddressSearch() {
   btn.disabled = true;
 
   try {
-    const res = await fetch(`${API_BASE_URL}/traffic/geocode?q=${encodeURIComponent(query)}`);
+    const res = await fetch(`${API_BASE_URL}/locating/geocode?q=${encodeURIComponent(query)}`);
 
     if (!res.ok) {
       if (res.status === 404 || res.status === 400) {

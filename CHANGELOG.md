@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [1.6.6] - 2026-01-07
 
+### Security & Hardening (ISO 25010 Audit)
+- **Security**: Closed broken access control on `/api/db-health` by adding Basic Auth protection.
+- **Security**: Hardened static file serving via explicit whitelist to prevent source code exposure.
+- **Performance**: Refactored `usageTracker` to use non-blocking buffered Async I/O for better responsiveness.
+- **Architecture**: Decoupled routing into `lifts.js`, `resorts.js`, `traffic.js`, and `locating.js` (SRP).
+- **Geocoding**: Reverted geocoding to **OpenRouteService (ORS)** to protect TomTom quota as requested.
+- **Testing**: Enable root `npm test` for unified CI/CD workflow.
+
 ### Fixed
 - **package.json**: Updated repository username from `YOUR_USERNAME` to `nmk8rf2kwt-ui`.
 - **package.json**: Corrected entry point from `eslint.config.js` to `eslint.config.mjs`.
