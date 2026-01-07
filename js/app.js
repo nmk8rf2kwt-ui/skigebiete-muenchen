@@ -170,7 +170,6 @@ async function load() {
 
     // 3. Calculate initial traffic/distance from Munich
     showLoading("Berechne Verkehr...");
-    logToUI(`Berechne Fahrzeiten ab ${MUNICH_DEFAULT.name} (OpenRouteService)...`);
     await fetchTrafficForLocation(MUNICH_DEFAULT.latitude, MUNICH_DEFAULT.longitude, MUNICH_DEFAULT.name);
 
     hideLoading();
@@ -192,7 +191,7 @@ async function load() {
 
 
 async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
-  logToUI(`Berechne Fahrzeiten von ${locationName}...`);
+  logToUI(`🚗 Berechne Anfahrt & Verkehr von ${locationName} (TomTom)...`);
 
   // 1. Show loading state for all resorts
   const currentResorts = store.get().resorts;
