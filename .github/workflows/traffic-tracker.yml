@@ -12,10 +12,10 @@ jobs:
     
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v4
     
     - name: Setup Node.js
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v4
       with:
         node-version: '20'
         
@@ -27,14 +27,15 @@ jobs:
     - name: Run Traffic Tracker
       env:
         TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       run: |
-        cd backend
-        node ../scripts/traffic_tracker.mjs
+        node scripts/update_travel_times.mjs
         
-    - name: Commit and Push Changes
+    - name: Commit and Push resorts.json changes
       run: |
         git config --global user.name 'Traffic Bot'
         git config --global user.email 'bot@skigebiete-muenchen.de'
-        git add backend/data/traffic/*.csv
+        git add backend/resorts.json
         # Only commit if there are changes
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Data: Update traffic history [skip ci]" && git push)
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Data: Update base travel times in resorts.json [skip ci]" && git push)
