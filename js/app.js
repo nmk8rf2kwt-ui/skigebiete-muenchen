@@ -125,7 +125,7 @@ async function load() {
   try {
     showLoading("Lade Live-Status...");
     logToUI("🔄 Starte Daten-Synchronisation...", "loading");
-    logToUI("📡 Frage Live-Status ab (Intermaps, Websites)", "info");
+    logToUI("📡 Frage Lift- & Pistenstatus ab (Intermaps, Micado, Quellwebsites der Resorts)", "info");
     logToUI("🌤️ Aktualisiere Wetterdaten (OpenMeteo)", "info");
     const liveRes = await fetch(`${API_BASE_URL}/resorts`);
 
