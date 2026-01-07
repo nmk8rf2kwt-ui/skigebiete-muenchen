@@ -174,39 +174,7 @@ async function load() {
 }
 
 // Export CSV
-function exportToCsv() {
-  const allResorts = store.get().resorts;
-  if (!allResorts.length) return;
 
-  const headers = ["Name", "Reisezeit (min)", "Pisten (km)", "Lifte (Offen/Total)", "Preis (€)", "Typ", "Schnee", "Wetter", "Score"];
-  const rows = allResorts.map(r => {
-    // Re-calculate or use raw data. Note: renderTable calculates score but doesn't persist it to allResorts unless we mutate.
-    const liftStatus = r.liftsTotal ? `${r.liftsOpen || 0}/${r.liftsTotal}` : "-";
-    return [
-      `"${r.name}"`,
-      r.distance || 0,
-      r.piste_km || 0,
-      `"${liftStatus}"`,
-      r.price || 0,
-      `"${r.classification || ''}"`,
-      `"${r.snow || ''}"`,
-      `"${r.weather || ''}"`,
-      r.score || 0
-    ].join(",");
-  });
-
-  const csvContent = "data:text/csv;charset=utf-8,"
-    + headers.join(",") + "\n"
-    + rows.join("\n");
-
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `skigebiete_ranking_${new Date().toISOString().slice(0, 10)}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
 
 async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
   logToUI(`Berechne Fahrzeiten von ${locationName}...`);
@@ -457,7 +425,7 @@ document.addEventListener("DOMContentLoaded", () => {
     store.setState({ filter: nextFilter }, render);
   });
 
-  document.getElementById("exportCsv").addEventListener("click", exportToCsv);
+
 
   // Sort Headers
   document.querySelectorAll("th[data-sort]").forEach(th => {
@@ -620,13 +588,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // CSV Export button handler
-  document.getElementById("exportCsvBtn").addEventListener("click", () => {
-    if (currentResortId) {
-      const days = 30; // Export 30 days by default
-      window.location.href = `${API_BASE_URL}/api/export/${currentResortId}?days=${days}`;
-    }
-  });
 
   // Status Modal Handlers
   const statusModal = document.getElementById("statusModal");

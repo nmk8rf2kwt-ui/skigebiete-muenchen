@@ -33,17 +33,6 @@ router.get("/traffic/:cityId/:resortId", async (req, res) => {
     }
 });
 
-// GET /api/history/export - Export all history as CSV (Admin/Debug)
-// Kept for backward compatibility or future valid usage
-router.get("/export", async (req, res) => {
-    try {
-        // Implementation for CSV export from DB if needed
-        // For now, return empty or not implemented
-        res.status(501).json({ error: "Not implemented in Supabase version yet" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
 
 // GET /api/history/:resortId - Get history for a resort
 router.get("/:resortId", async (req, res) => {

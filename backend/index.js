@@ -105,7 +105,7 @@ app.use("/api/weather", weatherRouter);
 app.use("/api/traffic", trafficRouter);
 app.use("/api/historical-weather", historicalWeatherRouter);
 app.use("/api/status", statusRouter); // Must be before /api (history) to avoid /:resortId match
-app.use("/api", historyRouter); // mounts /history, /trends, /export
+app.use("/api", historyRouter); // mounts /history, /trends
 
 // Initialize Scheduler (Weather & History)
 initScheduler();

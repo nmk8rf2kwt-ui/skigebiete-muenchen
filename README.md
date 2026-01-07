@@ -39,7 +39,7 @@ Live-Ranking der besten Skigebiete rund um München mit Echtzeit-Daten und detai
 - 🔒 **Rate Limiting**: Schutz vor API-Missbrauch
 - 📱 **Mobile Responsive**: Optimiert für alle Geräte
 - 🎯 **Smart Scoring**: Intelligentes Ranking basierend auf Distanz, Pisten, Liften und Preis
-- 📡 **Status Logging**: Detailliertes Update-Log im Frontend
+- 📊 **System Status Dashboard**: Live-Monitoring aller Komponenten (Database, APIs, Scheduler)
 
 ## 📊 Daten-Abdeckung
 

@@ -11,13 +11,20 @@ Returns the current health status of the system components and recent logs.
 {
   "components": {
     "database": "healthy",
-    "scraper": "unknown",
+    "scraper": "healthy",
     "weather": "healthy",
-    "scheduler": "unknown"
+    "traffic": "healthy",
+    "geocoding": "unknown",
+    "scheduler": "healthy"
   },
   "database": {
     "connected": true,
     "message": "Connected"
+  },
+  "cache": {
+    "parser": { "valid": 0, "expired": 0, "total": 0 },
+    "weather": { "valid": 60, "expired": 0, "total": 60 },
+    "traffic": { "valid": 0, "expired": 0, "total": 0 }
   },
   "logs": [
     {
