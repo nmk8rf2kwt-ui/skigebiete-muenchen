@@ -2,9 +2,9 @@ import express from "express";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getUsageStats } from "../services/usageTracker.js";
-import { webcamMonitor } from "../services/webcamMonitor.js";
-import { getAllResortsLive, forceRefreshResort } from "../services/resortManager.js";
+import { getUsageStats } from "../services/system/usage.js";
+import { webcamMonitor } from "../services/system/monitoring.js";
+import { getAllResortsLive, forceRefreshResort } from "../services/resorts/service.js";
 import { parserCache, weatherCache, trafficCache } from "../services/cache.js";
 
 const __filename = fileURLToPath(import.meta.url);
