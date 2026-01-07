@@ -12,7 +12,12 @@ class StatusLogger {
             weather: 'unknown',
             traffic: 'unknown',
             geocoding: 'unknown',
-            scheduler: 'unknown'
+            scheduler: 'unknown',
+            traffic_analysis: 'unknown' // Traffic data collection monitoring
+        };
+        this.metrics = {
+            traffic_data_points: 0,
+            traffic_last_update: null
         };
     }
 
@@ -70,6 +75,16 @@ class StatusLogger {
 
     getStatus() {
         return this.components;
+    }
+
+    getMetrics() {
+        return this.metrics;
+    }
+
+    updateMetric(key, value) {
+        if (this.metrics.hasOwnProperty(key)) {
+            this.metrics[key] = value;
+        }
     }
 }
 

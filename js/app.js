@@ -711,6 +711,36 @@ function renderStatusDashboard(data) {
     geocodingEl.style.color = "gray";
   }
 
+  // Traffic Analysis (Data Collection)
+  const trafficAnalysisEl = document.getElementById("statusTrafficAnalysis");
+  const trafficMetricsEl = document.getElementById("statusTrafficMetrics");
+  const trafficAnalysisStatus = data.components?.traffic_analysis || 'unknown';
+
+  if (trafficAnalysisStatus === 'healthy') {
+    trafficAnalysisEl.textContent = "🟢 Collecting";
+    trafficAnalysisEl.style.color = "green";
+
+    // Show metrics if available
+    if (data.metrics) {
+      const dataPoints = data.metrics.traffic_data_points || 0;
+      const lastUpdate = data.metrics.traffic_last_update
+        ? new Date(data.metrics.traffic_last_update).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+        : 'N/A';
+      trafficMetricsEl.textContent = `${dataPoints} Einträge | ${lastUpdate}`;
+      trafficMetricsEl.style.color = "#27ae60";
+    }
+  } else if (trafficAnalysisStatus === 'degraded') {
+    trafficAnalysisEl.textContent = "🟡 Issues";
+    trafficAnalysisEl.style.color = "orange";
+    trafficMetricsEl.textContent = "Datensammlung unterbrochen";
+    trafficMetricsEl.style.color = "#f39c12";
+  } else {
+    trafficAnalysisEl.textContent = "⚪ Initializing";
+    trafficAnalysisEl.style.color = "gray";
+    trafficMetricsEl.textContent = "Warte auf erste Daten...";
+    trafficMetricsEl.style.color = "#95a5a6";
+  }
+
   // Uptime
   const uptime = Math.floor(data.uptime || 0);
   const hours = Math.floor(uptime / 3600);

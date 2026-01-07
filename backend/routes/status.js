@@ -32,6 +32,7 @@ router.get("/", async (req, res) => {
             message: dbStatus.message
         },
         cache: cacheStats,
+        metrics: statusLogger.getMetrics(),
         logs: statusLogger.getLogs(),
         uptime: process.uptime()
     };

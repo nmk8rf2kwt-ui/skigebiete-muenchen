@@ -184,9 +184,16 @@ export async function updateTrafficMatrix() {
         statusLogger.updateComponentStatus('traffic', 'healthy');
         statusLogger.log('success', 'traffic', `Traffic matrix updated successfully (${logCount} entries).`);
 
+        // Update traffic analysis metrics
+        statusLogger.updateMetric('traffic_data_points', logCount);
+        statusLogger.updateMetric('traffic_last_update', new Date().toISOString());
+        statusLogger.updateComponentStatus('traffic_analysis', logCount > 0 ? 'healthy' : 'degraded');
+        statusLogger.log('info', 'traffic_analysis', `Collected ${logCount} traffic data points for analysis.`);
+
     } catch (error) {
         console.error("Error in updateTrafficMatrix:", error);
         statusLogger.updateComponentStatus('traffic', 'degraded');
+        statusLogger.updateComponentStatus('traffic_analysis', 'degraded');
         statusLogger.log('error', 'traffic', `Traffic Matrix update failed: ${error.message}`);
     }
 }
