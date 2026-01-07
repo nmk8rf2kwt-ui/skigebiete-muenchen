@@ -4,9 +4,9 @@ import { fileURLToPath } from "url";
 import pLimit from "p-limit";
 import { PARSERS } from "../parsers/index.js";
 import { parserCache, weatherCache, trafficCache } from "./cache.js";
-import { logFetch } from "../logger.js";
+import { logFetch } from "./fileLogger.js";
 import { statusLogger } from "./statusLogger.js"; // New status logger
-import { ResortDataSchema } from "../schema.js";
+import { ResortDataSchema } from "../utils/schema.js";
 
 // -- PATH CONFIG --
 const __filename = fileURLToPath(import.meta.url);

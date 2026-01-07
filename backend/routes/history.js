@@ -1,5 +1,5 @@
 import express from "express";
-import { getCityTrafficHistory, getResortTrafficHistory, getHistory, getTrends } from "../history.js";
+import { getCityTrafficHistory, getResortTrafficHistory, getHistory, getTrends } from "../services/history.js";
 
 const router = express.Router();
 

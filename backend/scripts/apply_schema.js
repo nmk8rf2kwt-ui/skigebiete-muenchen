@@ -1,5 +1,5 @@
 
-import { supabase } from './db.js';
+import { supabase } from '../services/db.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

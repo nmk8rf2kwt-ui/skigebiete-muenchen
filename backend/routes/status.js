@@ -1,7 +1,7 @@
 import express from "express";
 import { statusLogger } from "../services/statusLogger.js";
 import { parserCache, weatherCache, trafficCache } from "../services/cache.js";
-import { checkConnection } from "../db.js";
+import { checkConnection } from "../services/db.js";
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 import express from 'express';
-import { getWeatherHistory } from '../history.js';
+import { getWeatherHistory } from '../services/history.js';
 import { getStaticResorts } from '../services/resortManager.js';
 
 const router = express.Router();
