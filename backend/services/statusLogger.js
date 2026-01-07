@@ -10,6 +10,7 @@ class StatusLogger {
             scraper: 'unknown',
             weather: 'unknown',
             traffic: 'unknown',
+            geocoding: 'unknown',
             scheduler: 'unknown'
         };
     }

@@ -736,6 +736,20 @@ function renderStatusDashboard(data) {
     trafficEl.style.color = "gray";
   }
 
+  // Geocoding (OpenRouteService)
+  const geocodingEl = document.getElementById("statusGeocoding");
+  const geocodingStatus = data.components?.geocoding || 'unknown';
+  if (geocodingStatus === 'healthy') {
+    geocodingEl.textContent = "🟢 Active";
+    geocodingEl.style.color = "green";
+  } else if (geocodingStatus === 'degraded') {
+    geocodingEl.textContent = "🟡 Degraded";
+    geocodingEl.style.color = "orange";
+  } else {
+    geocodingEl.textContent = "⚪ On-Demand";
+    geocodingEl.style.color = "gray";
+  }
+
   // Uptime
   const uptime = Math.floor(data.uptime || 0);
   const hours = Math.floor(uptime / 3600);
