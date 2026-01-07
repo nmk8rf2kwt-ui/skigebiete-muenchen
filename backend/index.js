@@ -152,6 +152,11 @@ app.use("/api", historyRouter); // mounts /history, /trends
 // Initialize Scheduler (Weather & History)
 initScheduler();
 
+// Initialize Webcam Monitoring (check every 6 hours)
+import('./services/webcamMonitor.js').then(({ initWebcamMonitoring }) => {
+  initWebcamMonitoring(6); // Check every 6 hours
+});
+
 // Sentry Error Handler (v10 API)
 if (process.env.SENTRY_DSN) {
   Sentry.setupExpressErrorHandler(app);

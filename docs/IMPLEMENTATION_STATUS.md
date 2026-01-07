@@ -5,12 +5,12 @@
 ## 📊 Overall Progress
 
 - **Target:** 51 candidate resorts identified
-- **Implemented:** 26 resorts (50.9%)
-- **Remaining:** 25 resorts (49.1%)
+- **Implemented:** 28 resorts (54.9%)
+- **Remaining:** 23 resorts (45.1%)
 
 ---
 
-## ✅ Implemented Resorts (26)
+## ✅ Implemented Resorts (28)
 
 ### 🇩🇪 Germany (11)
 1. ✅ Balderschwang ⭐ *NEW*
@@ -24,8 +24,9 @@
 9. ✅ Spitzingsee - Tegernsee
 10. ✅ Sudelfeld - Bayrischzell
 11. ✅ Zugspitze
+12. ✅ Wendelstein
 
-### 🇦🇹 Austria (14)
+### 🇦🇹 Austria (17)
 1. ✅ Berwang
 2. ✅ Bolsterlang
 3. ✅ Ehrwalder Almbahn

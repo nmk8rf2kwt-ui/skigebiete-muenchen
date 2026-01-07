@@ -10,7 +10,7 @@
         "website": "https://www.alpenbahnen-spitzingsee.de",
         "latitude": 47.6667,
         "longitude": 11.8833,
-        "webcam": "https://www.alpenbahnen-spitzingsee.de/aktuelles/webcams/",
+        "webcam": "https://www.alpenbahnen-spitzingsee.de/webcams",
         "priceDetail": {
             "adult": 51,
             "youth": 44,
@@ -30,7 +30,7 @@
         "website": "https://www.brauneck-bergbahn.de",
         "latitude": 47.65,
         "longitude": 11.5667,
-        "webcam": "https://www.brauneck-bergbahn.de/aktuelles/webcams/",
+        "webcam": "https://www.brauneck-bergbahn.de/webcams",
         "priceDetail": {
             "adult": 53,
             "youth": 46,
@@ -127,7 +127,7 @@
         "website": "https://www.sudelfeld.de",
         "latitude": 47.6833,
         "longitude": 12.0833,
-        "webcam": "https://www.sudelfeld.de/skigebiet/webcams-wetter",
+        "webcam": "https://www.sudelfeld.de/webcams",
         "priceDetail": {
             "adult": 52,
             "youth": 42,
@@ -168,7 +168,7 @@
         "website": "https://www.skiwelt.at",
         "latitude": 47.45,
         "longitude": 12.1833,
-        "webcam": "https://www.skiwelt.at/de/webcams-skiwelt-wilder-kaiser-brixental.html",
+        "webcam": "https://www.skiwelt.at/de/webcams.html",
         "priceDetail": {
             "adult": 76.00,
             "youth": 57.00,
@@ -246,7 +246,7 @@
         "website": "https://www.winklmoosalm.de",
         "latitude": 47.6667,
         "longitude": 12.5167,
-        "webcam": "https://www.winklmoosalm.de/webcam.html",
+        "webcam": "https://www.reitimwinkl.de/webcams",
         "priceDetail": {
             "adult": 63,
             "youth": 47.5,
@@ -266,7 +266,7 @@
         "website": "https://www.steinplatte.tirol",
         "latitude": 47.6316,
         "longitude": 12.5621,
-        "webcam": "https://www.steinplatte.tirol/de/webcams-steinplatte.html",
+        "webcam": "https://www.steinplatte.tirol/de/winter/livecams-steinplatte.html",
         "priceDetail": {
             "adult": 63,
             "youth": 47.5,
@@ -347,7 +347,7 @@
         "website": "https://www.kitzbueheler-alpen.com/de/stjo/aktuelles/geoeffnete-lifte.html",
         "latitude": 47.5233,
         "longitude": 12.4232,
-        "webcam": "https://www.kitzbueheler-alpen.com/de/stjo/aktuelles/webcams-wetter.html",
+        "webcam": "https://www.kitzbueheler-alpen.com/de/stjo/aktuelles/webcams.html",
         "priceDetail": {
             "adult": 62,
             "youth": 50,
@@ -367,7 +367,7 @@
         "website": "https://www.skijuwel.com/de/winter/lifte-und-pisten",
         "latitude": 47.3815,
         "longitude": 11.9789,
-        "webcam": "https://www.skijuwel.com/de/winter/webcams",
+        "webcam": "https://www.skijuwel.com/de/winter/webcams.html",
         "priceDetail": {
             "adult": 68.5,
             "youth": 55,
@@ -425,7 +425,7 @@
         "website": "https://www.kitzski.at",
         "latitude": 47.4464,
         "longitude": 12.3922,
-        "webcam": "https://www.kitzski.at/de/service-info/webcams-wetter/webcams.html",
+        "webcam": "https://www.kitzski.at/de/service-info/webcams.html",
         "priceDetail": {
             "adult": 79.5,
             "youth": 59.5,
@@ -547,7 +547,7 @@
         "website": "https://www.bergwelt-hahnenkamm.at",
         "latitude": 47.4833,
         "longitude": 10.7167,
-        "webcam": "https://www.bergwelt-hahnenkamm.at/service-info/wetter-webcams/",
+        "webcam": "https://www.bergwelt-hahnenkamm.at/service-info/webcams/",
         "priceDetail": {
             "adult": 52,
             "youth": 36,
@@ -567,7 +567,7 @@
         "website": "https://www.skialm-lofer.com",
         "latitude": 47.58,
         "longitude": 12.68,
-        "webcam": "https://www.skialm-lofer.com/de/service/webcams",
+        "webcam": "https://www.skialm-lofer.com/de/webcams",
         "priceDetail": {
             "adult": 62,
             "youth": 49.5,
@@ -607,7 +607,7 @@
         "website": "https://www.hoernerbahn.de",
         "latitude": 47.4666,
         "longitude": 10.2333,
-        "webcam": "https://www.hoernerbahn.de/webcam/",
+        "webcam": "https://www.hoernerbahn.de/webcams/",
         "priceDetail": {
             "adult": 54.5,
             "youth": 41.5,
@@ -627,7 +627,7 @@
         "website": "https://www.hocheck.com",
         "latitude": 47.6461,
         "longitude": 12.1764,
-        "webcam": "https://www.hocheck.com/wetter-webcams/",
+        "webcam": "https://www.hocheck.com/webcams/",
         "priceDetail": {
             "adult": 38,
             "youth": 34,
@@ -647,7 +647,7 @@
         "website": "https://www.kampenwand.de",
         "latitude": 47.7644,
         "longitude": 12.3551,
-        "webcam": "https://www.kampenwand.de/webcams",
+        "webcam": "https://www.kampenwand.de/webcam",
         "priceDetail": {
             "adult": 32,
             "youth": null,
@@ -727,7 +727,7 @@
         "website": "https://www.skiliftkarussell.de",
         "latitude": 51.196,
         "longitude": 8.526,
-        "webcam": "https://www.skiliftkarussell.de/aktuelles/webcams/",
+        "webcam": "https://www.skiliftkarussell.de/webcams/",
         "priceDetail": {
             "adult": 48,
             "currency": "€",
@@ -745,7 +745,7 @@
         "website": "https://www.feldberg-erlebnis.de",
         "latitude": 47.859,
         "longitude": 8.005,
-        "webcam": "https://www.feldberg-erlebnis.de/wetter-webcams",
+        "webcam": "https://www.feldberg.de/webcams",
         "priceDetail": {
             "adult": 47,
             "currency": "€",
@@ -763,7 +763,7 @@
         "website": "https://www.skilifte-todtnauberg.de",
         "latitude": 47.848,
         "longitude": 7.945,
-        "webcam": "https://www.skilifte-todtnauberg.de/webcam/",
+        "webcam": "https://www.skilifte-todtnauberg.de/webcams/",
         "priceDetail": {
             "adult": 38,
             "currency": "€",
@@ -799,7 +799,7 @@
         "website": "https://fichtelberg-ski.de",
         "latitude": 50.428,
         "longitude": 12.969,
-        "webcam": "https://fichtelberg-ski.de/wetter-webcams/",
+        "webcam": "https://fichtelberg-ski.de/webcams/",
         "priceDetail": {
             "adult": 39.00,
             "currency": "€",

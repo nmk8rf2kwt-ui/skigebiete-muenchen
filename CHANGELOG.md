@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - **Traffic Precision**: Switched traffic duration and delay handling to seconds (TomTom source) for 100% accuracy.
+- **Sentry Session Replay**: Integrated Session Replay for enhanced error debugging with user interaction recordings.
+  - Privacy-first configuration with automatic input masking
+  - Test button in System Status modal for verification
+  - Comprehensive GDPR-compliant documentation
 - **Sentry Monitoring**: Integrated Sentry status check into the frontend System Dashboard.
 - **Release Guard**: Implemented CI pipeline check (`verify-release.js`) to enforce versioning and changelog updates.
 - **Dependabot**: Automated security updates for dependencies.

@@ -13,6 +13,7 @@
 
   <!-- Sentry Error Tracking -->
   <script src="https://js-de.sentry-cdn.com/98d563b2786c52b90b69b86e93237434.min.js" crossorigin="anonymous"></script>
+  <script type="module" src="js/sentry-config.js"></script>
 </head>
 
 <body>
@@ -238,6 +239,19 @@
         </div>
       </div>
 
+      <h3>🧪 Sentry Session Replay Test</h3>
+      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <p style="margin: 0 0 10px 0; color: #666; font-size: 0.9em;">
+          Testen Sie die Session Replay Funktion. Ein Test-Fehler wird an Sentry gesendet und die aktuelle Session wird
+          aufgezeichnet.
+        </p>
+        <button id="testSentryBtn"
+          style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+          🎬 Session Replay testen
+        </button>
+        <div id="sentryTestResult" style="margin-top: 10px; font-size: 0.85em;"></div>
+      </div>
+
       <h3>Live Logs</h3>
       <div id="systemLogs" class="system-logs">
         <div class="log-entry">Loading logs...</div>
@@ -248,6 +262,26 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script type="module" src="js/weatherChart.js"></script>
   <script type="module" src="js/app.js"></script>
+
+  <!-- Footer -->
+  <footer
+    style="margin-top: 60px; padding: 30px 20px; background: #f8f9fa; border-top: 1px solid #e0e0e0; text-align: center;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <p style="margin: 0 0 15px 0; color: #666; font-size: 0.9em;">
+        © 2026 Skigebiet-Finder
+      </p>
+      <div style="margin: 15px 0;">
+        <a href="impressum.html"
+          style="color: #3498db; text-decoration: none; margin: 0 15px; font-weight: 500;">Impressum</a>
+        <span style="color: #ccc;">|</span>
+        <a href="datenschutz.html"
+          style="color: #3498db; text-decoration: none; margin: 0 15px; font-weight: 500;">Datenschutzerklärung</a>
+      </div>
+      <p style="margin: 15px 0 0 0; color: #999; font-size: 0.85em;">
+        Datenquellen: Open-Meteo, TomTom, OpenStreetMap, Skigebiets-Websites
+      </p>
+    </div>
+  </footer>
 </body>
 
 </html>

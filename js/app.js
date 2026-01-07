@@ -635,6 +635,54 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+
+  // Sentry Session Replay Test Button
+  document.getElementById("testSentryBtn")?.addEventListener("click", async () => {
+    const resultDiv = document.getElementById("sentryTestResult");
+    const btn = document.getElementById("testSentryBtn");
+
+    if (!window.Sentry) {
+      resultDiv.innerHTML = '<span style="color: #e74c3c;">❌ Sentry ist nicht geladen</span>';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "⏳ Sende Test...";
+    resultDiv.innerHTML = '<span style="color: #3498db;">📡 Sende Test-Fehler an Sentry...</span>';
+
+    try {
+      // Send test message
+      window.Sentry.captureMessage('Test: Session Replay Verification', 'info');
+
+      // Trigger test error after short delay
+      setTimeout(() => {
+        try {
+          throw new Error('🧪 Test Error: Session Replay Verification - ' + new Date().toISOString());
+        } catch (error) {
+          window.Sentry.captureException(error);
+
+          resultDiv.innerHTML = `
+            <div style="color: #27ae60; background: #d4edda; padding: 10px; border-radius: 4px; border-left: 4px solid #27ae60;">
+              <strong>✅ Test erfolgreich!</strong><br>
+              <small>
+                • Fehler wurde an Sentry gesendet<br>
+                • Session Replay wurde aufgezeichnet<br>
+                • Überprüfen Sie Ihr Sentry Dashboard in ~30 Sekunden
+              </small>
+            </div>
+          `;
+
+          btn.disabled = false;
+          btn.textContent = "🎬 Session Replay testen";
+        }
+      }, 1000);
+
+    } catch (error) {
+      resultDiv.innerHTML = '<span style="color: #e74c3c;">❌ Fehler beim Test: ' + error.message + '</span>';
+      btn.disabled = false;
+      btn.textContent = "🎬 Session Replay testen";
+    }
+  });
 });
 
 async function fetchSystemStatus() {

@@ -1,0 +1,20 @@
+# robots.txt - Suchmaschinen-Steuerung
+
+# Hauptseite erlauben
+User-agent: *
+Allow: /index.html
+Allow: /css/
+Allow: /js/
+
+# Rechtliche Seiten von Indexierung ausschließen
+Disallow: /impressum.html
+Disallow: /datenschutz.html
+
+# Dokumentation und interne Dateien ausschließen
+Disallow: /docs/
+Disallow: /backend/
+Disallow: /*.md$
+Disallow: /*.json$
+
+# Sitemap (optional, falls später hinzugefügt)
+# Sitemap: https://nmk8rf2kwt-ui.github.io/skigebiete-muenchen/sitemap.xml

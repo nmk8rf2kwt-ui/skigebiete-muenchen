@@ -2,8 +2,8 @@
 
 Dieses Dokument enthält alle geplanten Features, Verbesserungen und Ideen für die Weiterentwicklung des Skigebiet-Finders.
 
-> **Letzte Aktualisierung:** 2026-01-06  
-> **Version:** 1.0
+> **Letzte Aktualisierung:** 2026-01-07  
+> **Version:** 1.1
 
 ---
 
@@ -19,6 +19,33 @@ Dieses Dokument enthält alle geplanten Features, Verbesserungen und Ideen für 
 ## 📋 Backlog Items
 
 ### 🟢 v1.2 (Planned)
+
+#### FIX-002: Parser Reparatur (29 Failing Parsers) 🚨
+**Status**: 🔴 Critical  
+**Priority**: P0  
+**Added**: 2026-01-07  
+**Problem**: 29 Parser schlagen aktuell fehl und liefern keine Daten. Websites haben HTML-Struktur geändert.
+
+**Betroffene Resorts:**
+- Ehrwald, Brauneck/Lenggries, Berwang, Kitzbühel, Lofer
+- Hahnenkamm, Seefeld, Steinplatte, Balderschwang, Wendelstein
+- Oberstdorf, Bolsterlang, Ofterschwang, und weitere
+
+**Kurzfristige Lösung (✅ Implementiert):**
+- Parser crashen nicht mehr, sondern degradieren gracefully
+- Validation-Fehler werden als Sentry Warnings geloggt
+- System Status zeigt "degraded" bei Parser-Fehlern
+
+**Langfristige Lösung (🔴 Pending):**
+- Für jeden Parser: Website neu analysieren
+- CSS-Selektoren aktualisieren
+- Fallback-Strategien implementieren (siehe BACK-019)
+- Tests schreiben für Parser-Health-Monitoring
+
+**Aufwand:** 2-3 Tage  
+**Dateien:** `backend/parsers/*.js`, `backend/services/resortManager.js`
+
+---
 
 #### FIX-001: Steinplatte Parser Fix
 **Status**: 🟡 In Progress
