@@ -1,5 +1,5 @@
 import { parse } from '../parsers/sudelfeld.js';
-import { ResortDataSchema } from '../schema.js';
+import { ResortDataSchema } from '../utils/schema.js';
 
 async function verify() {
     console.log("Running Sudelfeld parser verification...");
