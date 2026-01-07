@@ -57,7 +57,7 @@ app.use(helmet({
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 1000 // limit each IP to 1000 requests per windowMs
 });
 app.use(limiter);
 
@@ -71,17 +71,22 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    if (IS_PROD) {
-      if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith(".github.io")) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    } else {
+
+    // In development, allow everything
+    if (!IS_PROD) return callback(null, true);
+
+    // In production, check allowed origins
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith(".github.io") || origin.includes("skigebiete-muenchen")) {
       callback(null, true);
+    } else {
+      // Log failed CORS attempts for debugging instead of crashing
+      console.warn(`CORS blocked origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
     }
-  }
+  },
+  credentials: true
 }));
 
 // Serve Static Frontend Files
