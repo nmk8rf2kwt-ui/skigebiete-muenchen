@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 import { parserCache } from "./services/cache.js";
 import { getStaticResorts } from "./services/resortManager.js";
 import { initScheduler } from "./services/scheduler.js";
+import logger from "./services/logger.js";
 
 // Routes
 import resortsRouter, { liftsRouter } from "./routes/resorts.js";
@@ -21,6 +22,11 @@ import statusRouter from "./routes/status.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const app = express();
+const PORT = process.env.PORT || 10000;
+
+logger.info('Starting Skigebiete Backend Server...', { port: PORT, env: process.env.NODE_ENV });
+
 // Environment Safety
 const IS_PROD = process.env.NODE_ENV === 'production';
 if (!IS_PROD) {
@@ -29,7 +35,6 @@ if (!IS_PROD) {
   console.log("🔒 Running in PRODUCTION mode");
 }
 
-const app = express();
 
 // Security Middleware
 app.use(helmet({
@@ -80,7 +85,7 @@ app.use(cors({
 // Serve Static Frontend Files
 app.use(express.static(path.join(__dirname, '../')));
 
-const PORT = process.env.PORT || 10000;
+
 
 // -- ROUTES --
 

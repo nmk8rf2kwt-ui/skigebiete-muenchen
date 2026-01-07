@@ -1,5 +1,6 @@
 // Simple in-memory logger for system status events
 // Keeps the last N events for display in the frontend dashboard
+import logger from './logger.js';
 
 class StatusLogger {
     constructor(limit = 50) {
@@ -51,6 +52,10 @@ class StatusLogger {
         // Console output for dev
         const icon = level === 'error' ? '❌' : (level === 'warn' ? '⚠️' : (level === 'success' ? '✅' : 'ℹ️'));
         console.log(`${icon} [${component.toUpperCase()}] ${message}`);
+
+        // Also log to Winston for persistent storage
+        const logLevel = level === 'success' ? 'info' : level;
+        logger.log(logLevel, message, { component, icon });
     }
 
     updateComponentStatus(component, status) {
