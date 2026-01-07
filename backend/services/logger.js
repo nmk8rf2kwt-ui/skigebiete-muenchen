@@ -9,6 +9,46 @@ const __dirname = path.dirname(__filename);
 // Log directory
 const LOG_DIR = path.join(__dirname, '../logs');
 
+// Optional Sentry Import (Dynamic)
+let Sentry;
+import('winston-transport').then(async (TransportModule) => {
+    // We only need Transport if we implement a custom one, but winston exports it.
+    // Actually, simpler: define class extending winston.transport (which is exposed via winston.transports if we look closely or just from the base)
+});
+
+// Custom Sentry Transport
+class SentryTransport extends winston.transport {
+    constructor(opts) {
+        super(opts);
+        this.sentryLoaded = false;
+        this.silent = opts && opts.silent || false;
+
+        import('@sentry/node').then(m => {
+            Sentry = m;
+            this.sentryLoaded = true;
+            // Init if DSN present and not already init? Usually init in index.js
+        }).catch(() => {
+            // Sentry not installed, ignore
+        });
+    }
+
+    log(info, callback) {
+        setImmediate(() => {
+            this.emit('logged', info);
+        });
+
+        if (this.sentryLoaded && process.env.SENTRY_DSN && !this.silent) {
+            if (info.level === 'error' || info.level === 'warn') {
+                Sentry.captureMessage(info.message, {
+                    level: info.level,
+                    extra: info
+                });
+            }
+        }
+        callback();
+    }
+}
+
 // Custom format for console output
 const consoleFormat = winston.format.combine(
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
@@ -59,6 +99,11 @@ const logger = winston.createLogger({
             level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
             handleExceptions: true,
             handleRejections: true
+        }),
+
+        // Sentry Transport (Alerting)
+        new SentryTransport({
+            level: 'warn'
         })
     ],
     exitOnError: false // Do not exit on handled exceptions
