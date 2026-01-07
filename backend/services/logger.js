@@ -53,11 +53,15 @@ const logger = winston.createLogger({
         }),
 
         // Console output (only in development)
+        // Console output
         new winston.transports.Console({
-            format: consoleFormat,
-            level: process.env.NODE_ENV === 'production' ? 'warn' : 'debug'
+            format: process.env.NODE_ENV === 'production' ? fileFormat : consoleFormat,
+            level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+            handleExceptions: true,
+            handleRejections: true
         })
-    ]
+    ],
+    exitOnError: false // Do not exit on handled exceptions
 });
 
 // Add specialized transports for specific components
@@ -118,6 +122,13 @@ export const schedulerLogger = {
 // Add component-specific transports
 logger.add(scraperTransport);
 logger.add(trafficTransport);
+
+// Attach component loggers to the main logger instance
+logger.scraper = scraperLogger;
+logger.traffic = trafficLogger;
+logger.weather = weatherLogger;
+logger.db = dbLogger;
+logger.scheduler = schedulerLogger;
 
 // Export the main logger
 export default logger;

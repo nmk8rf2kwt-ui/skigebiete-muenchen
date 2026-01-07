@@ -27,7 +27,14 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-logger.info('Starting Skigebiete Backend Server...', { port: PORT, env: process.env.NODE_ENV });
+// System Info Logging
+logger.info('🚀 Starting Skigebiete Backend Server...', {
+  port: PORT,
+  env: process.env.NODE_ENV,
+  nodeVersion: process.version,
+  memory: process.memoryUsage(),
+  platform: process.platform
+});
 
 // Environment Safety
 const IS_PROD = process.env.NODE_ENV === 'production';
