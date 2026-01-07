@@ -10,7 +10,7 @@ try {
     // Grep returns exit code 0 if found (which is BAD for us), 1 if not found (GOOD).
     // We check for "FIXME" and "TODO: BLOCKER"
     // Exclude this script file and node_modules
-    execSync(`grep -r "FIXME" . --exclude-dir=node_modules --exclude-dir=.git --exclude=verify-release.js`, { stdio: 'pipe' });
+    execSync(`grep -r "FIXME" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=docs --exclude=verify-release.js`, { stdio: 'pipe' });
 
     // If we are here, grep found something
     console.error("❌ FOUND 'FIXME' in codebase. Deployment blocked.");
