@@ -193,6 +193,10 @@ let lastSnapshotDate = null;
 export function initScheduler() {
     console.log("⏰ Scheduler initialized");
 
+    // Mark scheduler as healthy on startup
+    statusLogger.updateComponentStatus('scheduler', 'healthy');
+    statusLogger.log('info', 'scheduler', 'Scheduler initialized successfully');
+
     // A. Weather Loop (1 hour)
     setInterval(refreshWeather, 60 * 60 * 1000);
 

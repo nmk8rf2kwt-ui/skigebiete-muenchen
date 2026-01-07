@@ -708,6 +708,20 @@ function renderStatusDashboard(data) {
     weatherEl.style.color = "gray";
   }
 
+  // Scheduler
+  const schedulerEl = document.getElementById("statusScheduler");
+  const schedulerStatus = data.components?.scheduler || 'unknown';
+  if (schedulerStatus === 'healthy') {
+    schedulerEl.textContent = "🟢 Running";
+    schedulerEl.style.color = "green";
+  } else if (schedulerStatus === 'degraded') {
+    schedulerEl.textContent = "🟡 Degraded";
+    schedulerEl.style.color = "orange";
+  } else {
+    schedulerEl.textContent = "⚪ Checking...";
+    schedulerEl.style.color = "gray";
+  }
+
   // Uptime
   const uptime = Math.floor(data.uptime || 0);
   const hours = Math.floor(uptime / 3600);
