@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2026-01-07
+
+### Traffic & UI Overhaul
+
+### Added
+- **Traffic Precision**: Switched traffic duration and delay handling to seconds (TomTom source) for 100% accuracy.
+- **Sentry Monitoring**: Integrated Sentry status check into the frontend System Dashboard.
+- **Release Guard**: Implemented CI pipeline check (`verify-release.js`) to enforce versioning and changelog updates.
+- **Dependabot**: Automated security updates for dependencies.
+- **New Columns**: Separate columns for "Weather", "Snow", "Webcam", and "Traffic Delay" (sortable).
+
+### Changed
+- **UI Layout**: Reordered table groups (Resort -> Data -> Journey -> Conditions).
+- **Difficulty Display**: Moved difficulty classification to the start of the "Resort Data" section.
+- **Linting**: Fixed 50+ ESLint issues in frontend and backend code to ensure clean builds.
+- **Status Messages**: Deduped and refined loading/traffic status messages for better UX.
+- **Scrolling**: Fixed horizontal scrolling issue for wide tables on desktop.
+
 ## [1.4.0] - 2026-01-07
 
 ### Infrastructure & Monitoring Update
