@@ -6,6 +6,14 @@
 ## 1. Overview
 We use real-time traffic data from **TomTom Matrix API** to provide accurate travel times and congestion delays for all ski resorts.
 
+### 1.1 Data Sources & APIs
+- **Traffic & Duration & Distance**: **TomTom Matrix API**.
+  - We use the actual driving distance calculated by TomTom, not "as the crow flies".
+  - This ensures that the distance matches the route used for traffic calculation.
+- **Geocoding (Address Search)**: **OpenRouteService (ORS)**.
+  - Used to convert user input (e.g., "Munich Marienplatz") into coordinates.
+  - ORS is cost-effective for geocoding, while TomTom is superior for live traffic.
+
 ## 2. Calculation Logic
 Consistency is key. To ensure "Time with Traffic" is always >= "Time without Traffic", we derive both values from the same live source.
 
