@@ -33,7 +33,7 @@ import resortsRouter from "./routes/resorts.js";
 import liftsRouter from "./routes/lifts.js";
 import weatherRouter from "./routes/weather.js";
 import historyRouter from "./routes/history.js";
-import trafficRouter from "./routes/traffic.js";
+import routingRouter from "./routes/routing.js";
 import locatingRouter from "./routes/locating.js";
 import trafficAnalysisRouter from "./routes/trafficAnalysis.js";
 import historicalWeatherRouter from "./routes/historicalWeather.js";
@@ -161,7 +161,7 @@ app.use(express.json()); // Enable JSON body parsing for POST
 app.use("/api/resorts", resortsRouter);
 app.use("/api/lifts", liftsRouter);
 app.use("/api/weather", weatherRouter);
-app.use("/api/traffic", trafficRouter);
+app.use("/api/routing", routingRouter);
 app.use("/api/locating", locatingRouter);
 app.use("/api/traffic-analysis", trafficAnalysisRouter);
 app.use("/api/historical-weather", historicalWeatherRouter);

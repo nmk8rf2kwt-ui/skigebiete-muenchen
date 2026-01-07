@@ -210,28 +210,3 @@ export async function fetchTrafficMatrix(origins, destinations) {
 }
 
 
-export async function geocodeAddress(query) {
-    if (!TOMTOM_API_KEY) throw new Error("Missing TomTom Key");
-
-    const url = `https://api.tomtom.com/search/2/search/${encodeURIComponent(query)}.json?key=${TOMTOM_API_KEY}&limit=1`;
-
-    try {
-        trackApiUsage('geocode');
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Geocode failed: ${res.status}`);
-
-        const data = await res.json();
-        if (!data.results || data.results.length === 0) return null;
-
-        const result = data.results[0];
-
-        return {
-            name: result.address?.freeformAddress || result.poi?.name || query,
-            latitude: result.position.lat,
-            longitude: result.position.lon
-        };
-    } catch (error) {
-        console.error("TomTom Geocode error:", error.message);
-        return null;
-    }
-}

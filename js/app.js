@@ -248,7 +248,7 @@ async function fetchTrafficForLocation(lat, lon, locationName = "custom location
   const targetIds = resortsInRange.map(r => r.id);
 
   try {
-    const res = await fetch(`${API_BASE_URL}/traffic/calculate`, {
+    const res = await fetch(`${API_BASE_URL}/routing/calculate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

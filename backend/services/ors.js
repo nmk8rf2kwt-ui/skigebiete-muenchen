@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import { statusLogger } from "./statusLogger.js";
+import { trackApiUsage } from "./usageTracker.js";
 
 const ORS_API_KEY = process.env.ORS_API_KEY;
 
@@ -13,6 +14,7 @@ export async function geocodeAddress(query) {
     const url = `https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${encodeURIComponent(query)}&size=1`;
 
     try {
+        trackApiUsage('ors_geocode');
         const res = await fetch(url);
         if (!res.ok) throw new Error(`ORS Geocode failed: ${res.status}`);
 
