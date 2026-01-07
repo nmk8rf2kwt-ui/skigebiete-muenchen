@@ -53,9 +53,14 @@ jobs:
     if: github.ref == 'refs/heads/main'
     
     steps:
-    - name: Deployment Check
+    - name: Trigger Render Deployment
+      if: github.ref == 'refs/heads/main'
       run: |
-        echo "✅ All tests passed!"
-        echo "🚀 Ready for deployment to production"
-        echo "Backend will auto-deploy on Render"
-        echo "Frontend will auto-deploy on GitHub Pages"
+        echo "✅ All tests passed! Triggering Render Deployment..."
+        if [ -n "${{ secrets.RENDER_DEPLOY_HOOK }}" ]; then
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+          echo "🚀 Deployment triggered successfully!"
+        else
+          echo "⚠️ No RENDER_DEPLOY_HOOK secret found. Skipping auto-deployment."
+          echo "Please configure the secret in GitHub Settings to enable CD."
+        fi
