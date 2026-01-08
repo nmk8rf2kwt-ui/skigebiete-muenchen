@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.7.11] - 2026-01-08
+
+### 💄 UI Improvements
+- **Typography**: Increased font size of main table headers ("Skigebiet", "Daten", "Anreise") for better readability.
+
 ## [1.7.10] - 2026-01-08
 
 ### ⚡ Performance
