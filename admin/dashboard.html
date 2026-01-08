@@ -253,7 +253,12 @@
 
             <!-- Parser Status -->
             <div class="card">
-                <h3>🕷️ Scrapers</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>🕷️ Active Parsers</h3>
+                    <span
+                        title="Tracks resorts with functioning live-data connections (Intermaps, Sitour, etc.) vs. total tracked resorts."
+                        style="cursor: help; font-size: 1.2em;">ℹ️</span>
+                </div>
                 <span class="metric" id="scraperCount">-</span>
                 <div id="scraperSummary" style="margin-top:auto;">Wait...</div>
             </div>
@@ -274,7 +279,7 @@
         <div class="grid" style="grid-template-columns: 2fr 1fr;">
             <!-- Main Content: Parsers Table -->
             <div class="card" style="height: 500px;">
-                <h3>🚡 Resort Scraper Status</h3>
+                <h3>🚡 Live Data Status</h3>
                 <div style="overflow-y: auto; flex:1;">
                     <table id="parserTable">
                         <thead>

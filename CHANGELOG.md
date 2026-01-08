@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.7.20] - 2026-01-08
+## [1.7.21] - 2026-01-08
+
+### 💄 UI Improvements
+- **Admin Dashboard**: Renamed "Scrapers" to "Active Parsers" and added tooltips to clarify that this metric tracks active live-data connections versus static fallback data.
 
 ### 🩹 Debugging
 - **Admin Dashboard**: Added explicit error reporting to the "System & Cache" widget to identify why it fails to load (e.g., Auth vs Network error).
