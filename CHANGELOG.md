@@ -1,6 +1,10 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## [1.7.7] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Radius Filter**: Fixed issue where the distance slider was not applied on initial load.
+- **Performance**: Optimized radius filtering to happen purely client-side without triggering redundant API calls.
 
 ## [1.7.6] - 2026-01-08
 
