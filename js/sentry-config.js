@@ -12,15 +12,25 @@
 function initializeSentry() {
   console.log('✅ Sentry SDK fully loaded');
 
+  // Defensive check: Ensure Sentry object is fully populated
+  // Sometimes the loader script might trigger onLoad before the full SDK exposes all methods
+
   // Set user context (optional - helps identify sessions)
-  // We don't collect personal data, just a session ID
-  window.Sentry.setUser({
-    id: generateSessionId()
-  });
+  if (window.Sentry && typeof window.Sentry.setUser === 'function') {
+    window.Sentry.setUser({
+      id: generateSessionId()
+    });
+  } else {
+    console.warn('⚠️ Sentry.setUser is not available. Available keys:', window.Sentry ? Object.keys(window.Sentry) : 'Sentry is undefined');
+  }
 
   // Add custom tags for better filtering
-  window.Sentry.setTag('app_version', '1.7.3');
-  window.Sentry.setTag('environment', window.location.hostname.includes('localhost') ? 'development' : 'production');
+  if (window.Sentry && typeof window.Sentry.setTag === 'function') {
+    window.Sentry.setTag('app_version', '1.7.12'); // synced with index.html
+    window.Sentry.setTag('environment', window.location.hostname.includes('localhost') ? 'development' : 'production');
+  } else {
+    console.warn('⚠️ Sentry.setTag is not available.');
+  }
 }
 
 // Use the Sentry loader's onLoad callback if available

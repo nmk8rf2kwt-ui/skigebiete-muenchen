@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.7.12] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Sentry Initialization**: Fixed `TypeError: window.Sentry.setUser is not a function` by adding defensive checks for Sentry methods.
+
 ## [1.7.11] - 2026-01-08
 
 ### 💄 UI Improvements
