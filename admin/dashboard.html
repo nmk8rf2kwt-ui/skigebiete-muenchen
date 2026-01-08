@@ -284,10 +284,11 @@
                     <table id="parserTable">
                         <thead>
                             <tr style="position:sticky; top:0; z-index:10;">
-                                <th>Resort</th>
+                                <th onclick="sortTable(0)" style="cursor:pointer">Resort ↕</th>
+                                <th onclick="sortTable(1)" style="cursor:pointer">Country ↕</th>
                                 <th>Status</th>
-                                <th>Data</th>
-                                <th>Cache</th>
+                                <th>Lifts (Diff)</th>
+                                <th>Schedule (Last/Next)</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -474,11 +475,37 @@
                 if (r.status === 'error') badgeClass = 'badge-error';
                 if (r.status === 'pending') badgeClass = 'badge-missing';
 
+                // Country Flag
+                const flag = r.country === 'AT' ? '🇦🇹' : '🇩🇪';
+
+                // Lifts Diff
+                let liftDisplay = `${r.liftsOpen !== null ? r.liftsOpen : '-'} / ${r.liftsTotal !== null ? r.liftsTotal : '-'}`;
+                if (r.liftsDiff && r.liftsDiff !== 0) {
+                    const color = r.liftsDiff > 0 ? '#2ea043' : '#f85149';
+                    const sign = r.liftsDiff > 0 ? '+' : '';
+                    liftDisplay += ` <span style="color:${color}; font-weight:bold; font-size:0.9em;">(${sign}${r.liftsDiff})</span>`;
+                }
+
+                // Schedule
+                let schedule = '';
+                if (r.lastUpdated) {
+                    const last = new Date(r.lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    schedule += `✅ ${last}<br>`;
+                } else {
+                    schedule += `<span style="color:#6e7681">-</span><br>`;
+                }
+
+                if (r.nextRun) {
+                    const next = new Date(r.nextRun).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    schedule += `⏳ ${next}`;
+                }
+
                 tr.innerHTML = `
                     <td><strong>${r.name}</strong></td>
+                    <td>${flag} ${r.country}</td>
                     <td><span class="badge ${badgeClass}">${r.status}</span></td>
-                    <td>${r.lifts}</td>
-                    <td><small>${r.lastUpdated}</small></td>
+                    <td>${liftDisplay}</td>
+                    <td style="font-size:0.85em; line-height:1.4;">${schedule}</td>
                     <td>
                         <button class="btn-sm" onclick="refreshResort('${r.id}', this)">🔄</button>
                     </td>
@@ -652,6 +679,40 @@
             } catch (e) {
                 viewer.innerText = "Error loading logs (Auth required?)";
                 console.error(e);
+            }
+        }
+
+        // --- Sorting ---
+        let sortDirection = 1;
+        function sortTable(n) {
+            const table = document.getElementById("parserTable");
+            let rows, switching, i, x, y, shouldSwitch;
+            switching = true;
+            sortDirection *= -1; // Toggle direction
+
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                // Loop through all table rows (except the first, which contains table headers)
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+
+                    let xVal = x.textContent.toLowerCase();
+                    let yVal = y.textContent.toLowerCase();
+
+                    // Check direction
+                    if (sortDirection === 1) {
+                        if (xVal > yVal) { shouldSwitch = true; break; }
+                    } else {
+                        if (xVal < yVal) { shouldSwitch = true; break; }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
             }
         }
     </script>

@@ -1,6 +1,13 @@
 # Changelog
 
-## [1.7.21] - 2026-01-08
+## [1.7.22] - 2026-01-08
+
+### 🚀 Features
+- **Admin Dashboard**: Enhanced "Live Data Status" table with:
+    - **Country Column**: Automatically inferred (🇩🇪/🇦🇹) and sortable.
+    - **Lift Diff Tracking**: Shows difference in open lifts compared to previous run (e.g., `(+1)` or `(-2)`).
+    - **Schedule Info**: Displays "Last Run" timestamp and calculated "Next Run".
+- **Backend**: Implemented basic in-memory tracking for lift count history to support diff calculation.
 
 ### 💄 UI Improvements
 - **Admin Dashboard**: Renamed "Scrapers" to "Active Parsers" and added tooltips to clarify that this metric tracks active live-data connections versus static fallback data.

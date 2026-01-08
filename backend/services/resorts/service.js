@@ -17,6 +17,35 @@ const RESORTS_FILE = path.join(__dirname, "../../resorts.json");
 
 // -- STATE --
 let STATIC_RESORTS = [];
+const previousLiftCounts = new Map(); // Store last lift count for diff calculation
+
+// -- HELPERS --
+
+function getCountry(resort) {
+    if (resort.address && resort.address.includes("Österreich")) return "AT";
+    if (resort.website && resort.website.endsWith(".at")) return "AT";
+    if (resort.latitude < 47.6 && resort.longitude > 10.5 && resort.longitude < 13.0) return "AT"; // Rough heuristic for Tyrol border if undefined
+    return "DE"; // Default to DE
+}
+
+function getNextScheduledRun() {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const schedule = [7, 11, 15, 19];
+
+    // Find next hour today
+    let nextHour = schedule.find(h => h > currentHour);
+    let nextDate = new Date(now);
+
+    if (nextHour === undefined) {
+        // Next run is tomorrow at 07:00
+        nextHour = 7;
+        nextDate.setDate(nextDate.getDate() + 1);
+    }
+
+    nextDate.setHours(nextHour, 0, 0, 0);
+    return nextDate.toISOString();
+}
 
 // -- INITIALIZATION --
 function loadResorts() {
@@ -79,11 +108,14 @@ export function getResortsStatus() {
         return {
             id: resort.id,
             name: resort.name,
+            country: getCountry(resort),
             status: cached ? 'live' : 'pending', // 'pending' means not in cache yet
             hasParser: !!PARSERS[resort.id],
             liftsOpen: cached ? cached.liftsOpen : null,
             liftsTotal: cached ? cached.liftsTotal : null,
-            lastUpdated: cached ? 'Used Cache' : 'Not Cached',
+            liftsDiff: cached ? (cached.liftsDiff || 0) : 0,
+            lastUpdated: cached ? new Date(cached.timestamp).toISOString() : null,
+            nextRun: getNextScheduledRun(),
             trafficDelay: traffic ? traffic.delay_min : null
         };
     });
@@ -122,6 +154,8 @@ export async function getAllResortsLive() {
                         // NO FETCH - Background Scheduler Only
                         liveData.status = "static_only"; // Or "pending"
                     }
+                } else {
+                    liveData.status = "static_only";
                 }
 
                 // Inject Fallback Weather/Snow from Weather Service if missing
@@ -244,6 +278,14 @@ export async function forceRefreshResort(resortId) {
         }
 
         const data = validation.data;
+
+        // Calculate Lift Diff
+        if (typeof data.liftsOpen === 'number') {
+            const previous = previousLiftCounts.get(resort.id) || data.liftsOpen;
+            data.liftsDiff = data.liftsOpen - previous;
+            previousLiftCounts.set(resort.id, data.liftsOpen);
+        }
+
         parserCache.set(resort.id, data);
 
         logger.scraper.info(`✅ Forced update success for ${resort.id}`);
