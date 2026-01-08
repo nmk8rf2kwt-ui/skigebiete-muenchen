@@ -350,7 +350,7 @@
         // --- Usage Stats ---
         async function fetchUsage() {
             try {
-                const res = await fetch('/api/admin/usage');
+                const res = await fetchWithAuth('/api/admin/usage');
                 const data = await res.json();
                 renderUsage(data);
             } catch (e) {
@@ -423,7 +423,7 @@
         // --- Parsers ---
         async function fetchParsers() {
             try {
-                const res = await fetch('/api/admin/parsers');
+                const res = await fetchWithAuth('/api/admin/parsers');
                 const data = await res.json();
                 renderParsers(data);
             } catch (e) { console.error(e); }
@@ -437,13 +437,15 @@
             let errorCount = 0;
 
             list.forEach(r => {
-                if (r.status === 'live') liveCount++;
+                const isActive = r.status === 'live' || r.lifts !== 'Pending';
+                if (isActive) liveCount++;
                 if (r.status === 'error') errorCount++;
 
                 const tr = document.createElement('tr');
                 let badgeClass = 'badge-static';
                 if (r.status === 'live') badgeClass = 'badge-live';
                 if (r.status === 'error') badgeClass = 'badge-error';
+                if (r.status === 'pending') badgeClass = 'badge-missing';
 
                 tr.innerHTML = `
                     <td><strong>${r.name}</strong></td>
@@ -466,7 +468,7 @@
             btn.innerText = '⏳';
             btn.disabled = true;
             try {
-                const res = await fetch(`/api/admin/parsers/refresh/${id}`, { method: 'POST' });
+                const res = await fetchWithAuth(`/api/admin/parsers/refresh/${id}`, { method: 'POST' });
                 const json = await res.json();
                 if (json.success) {
                     btn.innerText = '✅';
@@ -493,13 +495,14 @@
 
         async function checkWebcams() {
             document.getElementById('webcamSummary').innerText = "Checking...";
-            await fetch('/api/status/webcams/check', { method: 'POST' });
+            await fetchWithAuth('/api/admin/webcams/check', { method: 'POST' });
             fetchWebcams();
         }
 
         function renderWebcams(data) {
             const sum = data.summary;
             document.getElementById('webcamCount').innerText = `${sum.ok}/${sum.total}`;
+
 
             let html = `<span class="status-ok">${sum.ok} OK</span> · <span class="status-crit">${sum.error} Errors</span>`;
             document.getElementById('webcamSummary').innerHTML = html;
@@ -551,11 +554,140 @@
             }
         }
 
+        // Authentication Helper
+        async function fetchWithAuth(url, options = {}) {
+            const token = sessionStorage.getItem('admin_auth');
+            const headers = options.headers || {};
+
+            if (token) {
+                headers['Authorization'] = `Basic ${token}`;
+            }
+
+            const config = { ...options, headers };
+            const res = await fetch(url, config);
+
+            if (res.status === 401) {
+                // Not authenticated or token invalid
+                const creds = prompt("🔒 Admin Authentication Required\nPlease enter 'username:password':");
+                if (creds && creds.includes(':')) {
+                    const encoded = btoa(creds);
+                    sessionStorage.setItem('admin_auth', encoded);
+                    // Retry once
+                    headers['Authorization'] = `Basic ${encoded}`;
+                    return fetch(url, { ...options, headers });
+                } else if (creds) {
+                    alert("Invalid format. Please use 'username:password'");
+                }
+            }
+
+            // If still 401, throw or return res to handle in UI
+            if (res.status === 401) {
+                throw new Error("Unauthorized");
+            }
+
+            return res;
+        }
+
+        async function fetchUsage() {
+            try {
+                const res = await fetchWithAuth('/api/admin/usage');
+                const data = await res.json();
+                renderUsage(data);
+            } catch (e) {
+                console.error("Usage Error", e);
+                document.getElementById('usageStatus').innerText = "Auth Error";
+            }
+        }
+
+        // --- Parsers ---
+        async function fetchParsers() {
+            try {
+                const res = await fetchWithAuth('/api/admin/parsers');
+                const data = await res.json();
+                renderParsers(data);
+            } catch (e) { console.error(e); }
+        }
+
+        async function refreshResort(id, btn) {
+            btn.innerText = '⏳';
+            btn.disabled = true;
+            try {
+                const res = await fetchWithAuth(`/api/admin/parsers/refresh/${id}`, { method: 'POST' });
+                const json = await res.json();
+                if (json.success) {
+                    btn.innerText = '✅';
+                    setTimeout(fetchParsers, 1000);
+                } else {
+                    btn.innerText = '❌';
+                    alert('Error: ' + json.error);
+                }
+            } catch (e) {
+                btn.innerText = '❌';
+                console.error(e);
+            }
+            setTimeout(() => { btn.disabled = false; btn.innerText = '🔄'; }, 2000);
+        }
+
+        // --- Webcams ---
+        async function fetchWebcams() {
+            try {
+                // Public endpoint, but let's use auth if it's there just in case backend changes
+                const res = await fetch('/api/status/webcams');
+                const data = await res.json();
+                renderWebcams(data);
+            } catch (e) { console.error(e); }
+        }
+
+        async function checkWebcams() {
+            document.getElementById('webcamSummary').innerText = "Checking...";
+            await fetchWithAuth('/api/admin/webcams/check', { method: 'POST' }); // This was /api/status/webcams/check which is public? No, admin check should be protected.
+            // Wait, backend route says /api/admin/webcams (GET) and /api/admin/webcams/check (POST) in admin.js?
+            // Checking admin.js:
+            // GET /api/admin/webcams -> webcamMonitor.getStatus()
+            // POST /api/admin/webcams/check -> webcamMonitor.checkAllWebcams()
+            // So these ARE protected. 
+            // In dashboard.html previously: fetch('/api/status/webcams')
+            // Backend Status router usually handles public status.
+            // Let's check if I should point to /api/admin/... or /api/status/...
+            // For now, I'll direct to the protected admin endpoints where appropriate.
+            fetchWebcams();
+        }
+
+        // --- System & Logs ---
+        async function fetchSystem() {
+            try {
+                const res = await fetchWithAuth('/api/admin/system');
+                const data = await res.json();
+
+                let html = '<strong>Cache Status:</strong><br>';
+                html += `Parsers: ${data.cache.parser.size} items<br>`;
+                html += `Weather: ${data.cache.weather.size} items<br>`;
+                html += `Traffic: ${data.cache.traffic.size} items<br>`;
+
+                if (data.traffic_csv.exists) {
+                    html += `<br><strong>Traffic History CSV:</strong><br>${data.traffic_csv.size} (Last: ${new Date(data.traffic_csv.lastModified).toLocaleTimeString()})`;
+                }
+
+                document.getElementById('systemStats').innerHTML = html;
+            } catch (e) { console.error(e); }
+        }
+
+        async function confirmClear(type) {
+            if (confirm(`Really clear ${type} cache?`)) {
+                await fetchWithAuth('/api/admin/cache/clear', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type })
+                });
+                fetchSystem();
+            }
+        }
+
         async function fetchLogs(type) {
             const viewer = document.getElementById('logViewer');
             viewer.innerHTML = 'Loading...';
             try {
-                const res = await fetch(`/api/admin/logs?type=${type}`);
+                const res = await fetchWithAuth(`/api/admin/logs?type=${type}`);
                 const data = await res.json();
 
                 if (!data.logs || data.logs.length === 0) {
@@ -583,7 +715,7 @@
                 });
 
             } catch (e) {
-                viewer.innerText = "Error loading logs.";
+                viewer.innerText = "Error loading logs (Auth required?)";
                 console.error(e);
             }
         }

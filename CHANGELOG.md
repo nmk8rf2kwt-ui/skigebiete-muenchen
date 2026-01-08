@@ -1,6 +1,12 @@
 # Changelog
 
-## [1.7.12] - 2026-01-08
+## [1.7.13] - 2026-01-08
+
+### ⚡ Performance
+- **Admin Dashboard**: Optimized initial load by replacing the full-scrape status check with a fast cache-lookup mechanism. This eliminates the 20-30s delay on startup.
+
+### 🩹 Bug Fixes
+- **Authentication**: Fixed "empty dashboard" issue on GitHub Pages by implementing client-side Basic Auth handling. The dashboard now correctly prompts for credentials when accessing the protected backend APIs.
 
 ### 🩹 Bug Fixes
 - **Sentry Initialization**: Fixed `TypeError: window.Sentry.setUser is not a function` by adding defensive checks for Sentry methods.

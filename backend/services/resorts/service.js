@@ -44,19 +44,6 @@ async function fetchWithTimeout(promiseFactory, timeoutMs) {
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-        // Pass signal to the factory function if it accepts options, 
-        // OR we assume the factory returns a promise that listens to it?
-        // Actually, our parsers don't accept signals yet without refactoring ALL of them.
-        // BUT, for the ones using fetchWithHeaders (which we just updated), we CAN pass the signal.
-        // However, the current signature `parser()` takes no args.
-        // We need to modify how parsers are called to pass options.
-
-        // For now, since we haven't refactored all parsers to accept options, 
-        // we keep the Promise.race logic BUT we add the controller logic for future proofs
-        // and for the ones we ARE refactoring.
-        // Wait, to truly fix the leak, parsers MUST accept a signal.
-
-        // Let's change the pattern: pass signal to parser(options)
         const result = await Promise.race([
             promiseFactory({ signal: controller.signal }),
             new Promise((_, reject) => {
@@ -78,6 +65,30 @@ export function getStaticResorts() {
 export function getResortConfig(id) {
     return STATIC_RESORTS.find((r) => r.id === id);
 }
+
+/**
+ * Fast status check for Admin Dashboard
+ * Returns current cache state without triggering scrapes
+ */
+export function getResortsStatus() {
+    const resorts = getStaticResorts();
+    return resorts.map(resort => {
+        const cached = parserCache.get(resort.id);
+        const traffic = trafficCache.get(resort.id);
+
+        return {
+            id: resort.id,
+            name: resort.name,
+            status: cached ? 'live' : 'pending', // 'pending' means not in cache yet
+            hasParser: !!PARSERS[resort.id],
+            liftsOpen: cached ? cached.liftsOpen : null,
+            liftsTotal: cached ? cached.liftsTotal : null,
+            lastUpdated: cached ? 'Used Cache' : 'Not Cached',
+            trafficDelay: traffic ? traffic.delay_min : null
+        };
+    });
+}
+
 
 // Concurrency Limit
 const limit = pLimit(5);

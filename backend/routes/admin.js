@@ -109,13 +109,16 @@ router.post("/webcams/check", async (req, res) => {
 // GET /api/admin/parsers
 router.get("/parsers", async (req, res) => {
     try {
-        const resorts = await getAllResortsLive();
+        // Use fast status check instead of potentially triggering scrapes
+        const { getResortsStatus } = await import("../services/resorts/service.js");
+        const resorts = getResortsStatus();
+
         const summary = resorts.map(r => ({
             id: r.id,
             name: r.name,
             status: r.status,
-            lifts: r.liftsOpen !== undefined && r.liftsTotal ? `${r.liftsOpen}/${r.liftsTotal}` : '-',
-            lastUpdated: r.cached ? 'Used Cache' : 'Fresh',
+            lifts: r.liftsOpen !== null && r.liftsTotal ? `${r.liftsOpen}/${r.liftsTotal}` : (r.hasParser ? 'Pending' : 'No Parser'),
+            lastUpdated: r.lastUpdated,
             error: r.status === 'error' ? 'Error' : null
         }));
         res.json(summary);
