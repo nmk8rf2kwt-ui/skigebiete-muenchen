@@ -549,7 +549,7 @@
         // --- System & Logs ---
         async function fetchSystem() {
             try {
-                const res = await fetch(`${API_BASE_URL}/admin/system`);
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/system`);
                 const data = await res.json();
 
                 let html = '<strong>Cache Status:</strong><br>';
@@ -567,7 +567,7 @@
 
         async function confirmClear(type) {
             if (confirm(`Really clear ${type} cache?`)) {
-                await fetch(`${API_BASE_URL}/admin/cache/clear`, {
+                await fetchWithAuth(`${API_BASE_URL}/admin/cache/clear`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type })

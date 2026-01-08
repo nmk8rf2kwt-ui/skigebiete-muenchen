@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.7.18] - 2026-01-08
+## [1.7.19] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Admin Dashboard**: Fixed authentication issue where "System & Cache" widget failed to load on startup. Now correctly uses authenticated requests.
 
 ### 🩹 Bug Fixes
 - **Admin Dashboard**: Fixed layout issue where the "30-Day API Trend" chart expanded infinitely vertically. Constrained height to 250px.
