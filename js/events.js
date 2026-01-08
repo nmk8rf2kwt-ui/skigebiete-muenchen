@@ -38,16 +38,18 @@ export function initEventListeners(handlers) {
     // Radius Slider
     const radiusSlider = document.getElementById("radiusSlider");
     const radiusValue = document.getElementById("radiusValue");
-    if (radiusSlider && radiusValue) {
-        radiusSlider.addEventListener("input", () => {
-            radiusValue.textContent = `${radiusSlider.value} km`;
-        });
 
-        radiusSlider.addEventListener("change", () => {
-            const currentSearchLocation = getCurrentSearchLocation();
-            if (currentSearchLocation && currentSearchLocation.latitude) {
-                fetchTrafficForLocation(currentSearchLocation.latitude, currentSearchLocation.longitude, currentSearchLocation.name);
-            }
+    // Sync initial state from DOM (browser might cache input value on reload)
+    if (radiusSlider) {
+        store.setState({ radius: parseInt(radiusSlider.value, 10) });
+        if (radiusValue) radiusValue.textContent = `${radiusSlider.value} km`;
+    }
+    if (radiusSlider && radiusValue) {
+        // Update UI and Filter immediately on slide
+        radiusSlider.addEventListener("input", () => {
+            const val = parseInt(radiusSlider.value, 10);
+            radiusValue.textContent = `${val} km`;
+            store.setState({ radius: val }, render);
         });
     }
 

@@ -10,6 +10,7 @@ export const store = {
         sortKey: 'score',
         sortDirection: 'desc',
         viewMode: 'list', // 'list', 'map'
+        radius: 150, // Default radius in km
         lastUpdated: null
     },
 
@@ -33,7 +34,17 @@ export const store = {
     getProcessedResorts() {
         let data = [...this.state.resorts];
 
-        // Filter
+        // Filter by Radius
+        // Use driving distance (distance_km) if available, otherwise linear distance (distance)
+        const maxRadius = this.state.radius || 1500;
+        data = data.filter(r => {
+            const dist = r.distance_km || r.distance;
+            // If we have no distance data yet, keep it (safe default)
+            if (dist === undefined || dist === null) return true;
+            return dist <= maxRadius;
+        });
+
+        // Filter by Type
         if (this.state.filter === 'top3') {
             // Sort by score first
             data.sort((a, b) => (b.score || 0) - (a.score || 0));
@@ -42,13 +53,6 @@ export const store = {
             data = data.filter(r => r.liftsOpen > 0);
         }
 
-        // Filter by Radius (if property exists and is false)
-        data = data.filter(r => r.inRadius !== false);
-
-        // Sort (if not top3, or refine sort)
-        // Note: renderTable also does verify sort, but doing it here is cleaner
-        // We'll leave the complex sort logic in render.js for now or move it here later.
-        // For now, we return data that might need sorting in the view.
         return data;
     }
 };
