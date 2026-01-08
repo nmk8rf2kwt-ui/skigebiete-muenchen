@@ -26,7 +26,7 @@ function initializeSentry() {
 
   // Add custom tags for better filtering
   if (window.Sentry && typeof window.Sentry.setTag === 'function') {
-    window.Sentry.setTag('app_version', '1.7.13'); // synced with index.html
+    window.Sentry.setTag('app_version', '1.7.14'); // synced with index.html
     window.Sentry.setTag('environment', window.location.hostname.includes('localhost') ? 'development' : 'production');
   } else {
     console.warn('⚠️ Sentry.setTag is not available.');

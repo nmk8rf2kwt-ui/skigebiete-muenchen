@@ -186,8 +186,8 @@ export async function fetchTrafficMatrix(origins, destinations) {
                         const trafficDelay = routeData.routeSummary.trafficDelayInSeconds; // delay
 
                         results[origin.id][dest.id] = {
-                            duration: Math.round(travelTime / 60),
-                            delay: Math.round(trafficDelay / 60)
+                            duration: travelTime, // seconds
+                            delay: trafficDelay // seconds
                         };
                     } else {
                         results[origin.id][dest.id] = null;

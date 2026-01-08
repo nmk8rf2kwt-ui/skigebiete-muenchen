@@ -1,6 +1,10 @@
 # Changelog
 
-## [1.7.13] - 2026-01-08
+## [1.7.14] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Traffic Display**: Fixed an issue where distance and travel time were not displayed (or displayed incorrectly) due to a unit mismatch (seconds vs minutes) and property name mismatch in the API response.
+- **Backend Logging**: Standardized traffic logging to database in minutes while keeping frontend cache in seconds for precision.
 
 ### ⚡ Performance
 - **Admin Dashboard**: Optimized initial load by replacing the full-scrape status check with a fast cache-lookup mechanism. This eliminates the 20-30s delay on startup.

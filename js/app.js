@@ -182,10 +182,16 @@ export async function fetchTrafficForLocation(lat, lon, locationName = "custom l
       if (trafficData) {
         return {
           ...resort,
-          distance_km: trafficData.distance_km,
-          traffic_duration: trafficData.traffic_duration,
-          live_duration: trafficData.live_duration,
-          delay_min: trafficData.delay_min,
+          // Structure for render.js (expects seconds)
+          traffic: {
+            duration: trafficData.duration,      // seconds
+            delay: trafficData.delay,            // seconds
+            distanceKm: trafficData.distanceKm   // string or number
+          },
+          // Helper props if needed for sorting logic that uses root props?
+          // render.js uses data.traffic.distanceKm or data.distanceKm
+          distanceKm: trafficData.distanceKm,
+
           inRadius: trafficData.inRadius
         };
       }

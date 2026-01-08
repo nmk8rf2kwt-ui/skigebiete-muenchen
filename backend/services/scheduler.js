@@ -149,7 +149,8 @@ export async function updateTrafficMatrix() {
                     if (resort) {
                         const standard = resort.distance || 0;
                         // UPDATED: Await async save
-                        await saveTrafficLog(resortId, standard, data.duration);
+                        // Log in minutes for DB
+                        await saveTrafficLog(resortId, standard, Math.round(data.duration / 60));
                     }
                 }
             }
@@ -166,13 +167,13 @@ export async function updateTrafficMatrix() {
                 for (const resort of resorts) {
                     const data = cityData[resort.id];
                     if (data) {
-                        // UPDATED: Await async save
+                        // UPDATED: Log in MINUTES for consistency with history
                         await saveMatrixTrafficLog(
                             city.id,
                             city.name,
                             resort.id,
-                            data.duration,
-                            data.delay
+                            Math.round(data.duration / 60),
+                            Math.round(data.delay / 60)
                         );
                         logCount++;
                     }
