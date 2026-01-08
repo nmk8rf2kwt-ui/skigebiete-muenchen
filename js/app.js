@@ -242,7 +242,7 @@ export async function handleAddressSearch() {
 
   showLoading(`Suche Standort: ${input}...`);
   try {
-    const res = await fetch(`${API_BASE_URL}/locating/geocode?query=${input}`);
+    const res = await fetch(`${API_BASE_URL}/locating/geocode?q=${input}`);
     if (!res.ok) throw new Error("Geocoding failed");
 
     const data = await res.json();

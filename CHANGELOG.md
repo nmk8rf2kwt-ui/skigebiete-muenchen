@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.26] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Geocoding**: Fixed a parameter mismatch where the frontend sent `query` but the backend expected `q`. Geocoding now works correctly for searches like "Stuttgart".
+- **Backend Robustness**: Updated geocoding endpoint to accept both `q` and `query` parameters to prevent future regressions.
+
 ## [1.7.25] - 2026-01-08
 
 ### 📡 System Fixes (Hotfix)

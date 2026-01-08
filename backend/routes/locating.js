@@ -13,8 +13,8 @@ const geocodeLimiter = rateLimit({
 
 // GET /api/locating/geocode?q=Address
 router.get("/geocode", geocodeLimiter, async (req, res) => {
-    const { q } = req.query;
-    if (!q) return res.status(400).json({ error: "Missing query" });
+    const q = req.query.q || req.query.query;
+    if (!q) return res.status(400).json({ error: "Missing query parameter (q or query)" });
 
     try {
         const result = await geocodeORS(q);
