@@ -15,11 +15,7 @@ export async function fetchTravelTimes(destinations, origin = null) {
         return null;
     }
 
-    // TomTom Matrix Routing API (Sync)
-    // Limits: 2500 requests/day, but batch size is strictly limited?
-    // Matrix Routing V2 allows POST with body.
-    // Origins: [Munich], Destinations: [All Resorts]
-
+    // TomTom Matrix Routing API v2 (Sync)
     const startPoint = origin
         ? { "latitude": origin.lat, "longitude": origin.lon }
         : { "latitude": MUNICH_COORDS.lat, "longitude": MUNICH_COORDS.lon };
@@ -44,20 +40,16 @@ export async function fetchTravelTimes(destinations, origin = null) {
 
     if (destPoints.length === 0) return {};
 
-    // TomTom Batch Limit: Matrix synchronous is limited to 100 cells (1 origin * 100 dests). 
-    // We have ~60 resorts, so 1 batch is fine.
-
-    const url = `https://api.tomtom.com/routing/1/matrix/sync/json?key=${TOMTOM_API_KEY}`;
+    // Matrix v2 Endpoint
+    const url = `https://api.tomtom.com/routing/matrix/2?key=${TOMTOM_API_KEY}`;
 
     const body = {
         origins: origins,
         destinations: destPoints
-        // Note: Traffic is included by default in Matrix API
-        // No 'options' parameter needed - it causes 400 errors
     };
 
     try {
-        trackApiUsage('routing_sync');
+        trackApiUsage('routing_sync_v2');
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -74,29 +66,27 @@ export async function fetchTravelTimes(destinations, origin = null) {
         const data = await response.json();
         const results = {};
 
-        // data.matrix is 2D array [originIndex][destIndex]
-        // data.matrix[0] -> Array of results for Munich to All Dests
+        // v2 Response format: { data: [ { routeSummary: ... }, ... ] }
+        // The array is flattened: origins * destinations
+        // We have 1 origin, so data.data[i] corresponds to destination[i]
 
-        if (!data.matrix || !data.matrix[0]) return {};
+        if (!data.data) return {};
 
-        data.matrix[0].forEach((result, index) => {
+        data.data.forEach((result, index) => {
             const resortId = mapIndexToResortId[index];
             if (!resortId) return;
 
-            if (result.statusCode !== 200) {
-                console.warn(`Routing failed for ${resortId}`);
-                return;
-            }
-
-            const summary = result.routeSummary || result.response?.routeSummary;
-            // Structure: { lengthInMeters: 123, travelTimeInSeconds: 123, trafficDelayInSeconds: 0, ... }
+            // Check for success via routeSummary presence or lack of error
+            const summary = result.routeSummary;
 
             if (summary) {
                 results[resortId] = {
-                    duration: summary.travelTimeInSeconds, // Store in seconds!
+                    duration: summary.travelTimeInSeconds, // Seconds
                     distanceKm: (summary.lengthInMeters / 1000).toFixed(1),
-                    delay: summary.trafficDelayInSeconds   // Store in seconds!
+                    delay: summary.trafficDelayInSeconds   // Seconds
                 };
+            } else {
+                console.warn(`Routing failed for ${resortId}:`, result);
             }
         });
 
