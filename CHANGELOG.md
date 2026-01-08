@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.7.5] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Frontend Sorting**: Fixed a regression where sorting parameters (key, direction) were not passed to the rendering function, causing the table to reset on every click.
+- **Mobile Layout**: Corrected misalignment in responsive card view where labels (e.g., "Distanz") were showing data from incorrect columns like "Schwierigkeit".
+
+### 🧹 Refactoring
+- **CSS Architecture**: Major cleanup of `style.css`. Introduced CSS variables for colors and spacing, consolidated media queries, and removed legacy/unused CSS classes.
+- **Loading UI**: Added explicit styling for the loading banner and spinner.
+
+## [1.7.4] - 2026-01-08
+
+
+### 🔒 Security
+- **CRITICAL**: Added HTTP Basic Authentication to all `/api/admin/*` endpoints
+- **CRITICAL**: Removed hardcoded default credentials from source code
+- Fixed admin dashboard link in frontend (now uses correct relative path for GitHub Pages)
+- Enhanced security warnings and error handling for missing credentials
+- Created comprehensive admin dashboard documentation
+- Application now requires `ADMIN_USER` and `ADMIN_PASS` environment variables to be set
+
+### 📝 Documentation
+- Added `docs/ADMIN_DASHBOARD.md` with complete admin dashboard guide
+- Updated `DEPLOYMENT.md` with admin credentials setup instructions
+- Documented authentication mechanism and security best practices
+- Removed all references to default credentials
+
+### ⚠️ Breaking Changes
+- Admin dashboard now requires authentication (username/password prompt)
+- **Action Required**: Set `ADMIN_USER` and `ADMIN_PASS` environment variables in Render.com and local `.env`
+- Application will not start in production without these environment variables set
+
+---
 
 ## [1.7.3] - 2026-01-08
 

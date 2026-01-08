@@ -154,3 +154,85 @@ Manually trigger database cleanup to remove old records.
     "snapshotDays": 90
   }
   ```
+
+---
+
+## 🔒 Admin Endpoints
+
+**Authentication Required**: All `/api/admin/*` endpoints require HTTP Basic Authentication.
+
+**Dashboard URL**: `https://nmk8rf2kwt-ui.github.io/skigebiete-muenchen/admin/dashboard.html`
+
+### Admin Dashboard Features
+
+The admin dashboard provides:
+- **API Usage Monitor**: Daily request count and 30-day trend visualization
+- **Webcam Monitor**: Health tracking of all resort webcam links
+- **Parser Status**: Live monitoring of all ski resort data scrapers
+- **System & Cache**: Cache statistics and management
+- **Server Logs**: Real-time log viewer with filtering
+
+### Usage Statistics
+Returns daily and historical API usage statistics.
+
+- **URL**: `/admin/usage`
+- **Method**: `GET`
+- **Auth**: Required
+
+### System Status
+Returns cache statistics and traffic CSV information.
+
+- **URL**: `/admin/system`
+- **Method**: `GET`
+- **Auth**: Required
+
+### Parser Status
+Returns status of all resort parsers.
+
+- **URL**: `/admin/parsers`
+- **Method**: `GET`
+- **Auth**: Required
+- **Response**: Array of parser status objects with lift counts and cache status
+
+### Refresh Single Parser
+Forces a refresh of a specific resort parser.
+
+- **URL**: `/admin/parsers/refresh/:id`
+- **Method**: `POST`
+- **Auth**: Required
+- **Path Params**:
+  - `resortId` (string, required): Resort ID (e.g., `zugspitze`)
+
+### Clear Cache
+Clears specified cache type.
+
+- **URL**: `/admin/cache/clear`
+- **Method**: `POST`
+- **Auth**: Required
+- **Body**:
+  ```json
+  {
+    "type": "parser" | "weather" | "traffic" | "all"
+  }
+  ```
+
+### Server Logs
+Returns recent server logs.
+
+- **URL**: `/admin/logs`
+- **Method**: `GET`
+- **Auth**: Required
+- **Query Params**:
+  - `type` (string, optional): `combined` or `error` (default: `combined`)
+
+### Webcam Status
+Returns webcam monitoring status (public endpoint).
+
+- **URL**: `/status/webcams`
+- **Method**: `GET`
+
+### Check All Webcams
+Triggers a manual check of all webcam URLs (public endpoint).
+
+- **URL**: `/status/webcams/check`
+- **Method**: `POST`

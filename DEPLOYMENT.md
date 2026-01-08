@@ -58,6 +58,10 @@ In Render dashboard, add:
 - `SUPABASE_URL` = `https://your-project.supabase.co`
 - `SUPABASE_KEY` = `your-anon-key` (Public/Anon)
 - `SUPABASE_ADMIN_KEY` = `your-service-role-key` (Secret - Required for Writing Data)
+- `ADMIN_USER` = `your_admin_username` (for Admin Dashboard)
+- `ADMIN_PASS` = `your_secure_password_min_16_chars` (for Admin Dashboard)
+
+**⚠️ Security Note**: Never use default credentials (`admin` / `skigebiete2026`) in production!
 
 ### 1.4 Deploy
 Click "Create Web Service". Render will:
@@ -147,7 +151,83 @@ Free tier sleeps after 15min inactivity. First request may take 30s to wake up.
 
 ---
 
+## Admin Dashboard
+
+The admin dashboard is protected with HTTP Basic Authentication and provides real-time monitoring and management capabilities.
+
+**Dashboard URL**: `https://nmk8rf2kwt-ui.github.io/skigebiete-muenchen/admin/dashboard.html`
+
+### Authentication Setup
+
+> [!IMPORTANT]
+> **Required**: `ADMIN_USER` and `ADMIN_PASS` must be set as environment variables.
+
+#### Local Development
+
+1. Create or edit `backend/.env` file:
+   ```
+   ADMIN_USER=your_username
+   ADMIN_PASS=your_secure_password
+   ```
+
+2. Restart the backend server
+
+#### Production (Render.com)
+
+1. Go to Render.com → Your Service → Environment
+2. Set `ADMIN_USER` and `ADMIN_PASS` environment variables
+3. Use a strong password (minimum 16 characters)
+4. Click "Save Changes" to redeploy
+
+**Password Requirements**:
+- Minimum 16 characters
+- Mix of uppercase, lowercase, numbers, and symbols
+- No dictionary words
+- Unique to this application
+
+### Dashboard Features
+
+- **API Usage Monitor**: Daily request count and 30-day trend chart
+- **Webcam Monitor**: Health tracking of all resort webcam links
+- **Parser Status**: Live monitoring of all ski resort data scrapers
+- **System & Cache**: Cache statistics and management (clear parsers, weather, traffic)
+- **Server Logs**: Real-time log viewer with error filtering
+
+### Troubleshooting
+
+#### 401 Unauthorized Error
+
+**Cause**: Incorrect credentials or credentials not set.
+
+**Solution**:
+1. Verify `ADMIN_USER` and `ADMIN_PASS` are set in Render.com
+2. Check for typos in username/password
+3. Ensure backend has redeployed after changing environment variables
+
+#### Dashboard Loads But Shows No Data
+
+**Cause**: Backend is sleeping (Render free tier) or CORS issues.
+
+**Solution**:
+1. Wait 30-60 seconds for Render to wake up the backend
+2. Refresh the dashboard
+3. Check browser DevTools console for errors
+
+### Security Best Practices
+
+1. **Use Strong Credentials**: Always use strong, unique passwords
+2. **HTTPS Only**: Backend on Render.com automatically uses HTTPS
+3. **Rotate Credentials**: Change admin password every 3-6 months
+4. **Monitor Access**: Review server logs for unauthorized access attempts
+5. **Limit Access**: Only share credentials with trusted team members
+6. **Password Manager**: Store credentials securely in a password manager
+
+For API endpoint details, see [docs/API.md](docs/API.md#-admin-endpoints).
+
+---
+
 ## Monitoring
 
 - **Render Logs**: Dashboard → Logs
 - **GitHub Pages**: Settings → Pages (deployment status)
+- **Admin Dashboard**: `https://nmk8rf2kwt-ui.github.io/skigebiete-muenchen/admin/dashboard.html`

@@ -230,6 +230,26 @@ async function runDatabaseHealthCheck() {
     }
 }
 
+// -- PARSER REFRESH --
+
+/**
+ * Proactive refresh of all resort parsers to populate cache.
+ * Helps prevent slow response times for users when cache expires.
+ */
+export async function refreshParsers() {
+    console.log("🔄 Starting proactive parser refresh...");
+    statusLogger.log('info', 'scraper', 'Starting proactive parser refresh...');
+    try {
+        const { getAllResortsLive } = await import("./resorts/service.js");
+        // This function already iterates through all resorts and updates cache
+        await getAllResortsLive();
+        console.log("✅ Proactive parser refresh complete.");
+    } catch (error) {
+        console.error("❌ Proactive parser refresh failed:", error.message);
+        statusLogger.log('error', 'scraper', `Proactive refresh failed: ${error.message}`);
+    }
+}
+
 // -- SCHEDULER --
 
 let lastSnapshotDate = null;
@@ -244,9 +264,9 @@ export function initScheduler() {
     // A. Weather Loop (1 hour)
     setInterval(refreshWeather, 60 * 60 * 1000);
 
-    // B. Traffic Matrix Loop (15 minutes) - High frequency for detailed analysis
+    // B. Traffic Matrix Loop (30 minutes) - Optimized frequency
     setTimeout(() => {
-        setInterval(updateTrafficMatrix, 15 * 60 * 1000); // Every 15 minutes
+        setInterval(updateTrafficMatrix, 30 * 60 * 1000); // Every 30 minutes
         updateTrafficMatrix(); // Initial run
     }, 5000);
 
@@ -272,13 +292,21 @@ export function initScheduler() {
         }
     }, 60 * 60 * 1000);
 
-    // Initial Snapshot Check (Start of server)
-    const now = new Date();
-    if (now.getHours() === 0) {
-        lastSnapshotDate = now.toISOString().split('T')[0];
-    }
+    // F. Parser Refresh Loop (4x Daily: 07:00, 11:00, 15:00, 19:00)
+    let lastParserRefreshHour = null;
+    setInterval(() => {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentDate = now.toISOString().split('T')[0];
+        const refreshKey = `${currentDate}-${currentHour}`;
 
-    // F. Database Health Check (Daily at 03:00)
+        if ([7, 11, 15, 19].includes(currentHour) && lastParserRefreshHour !== refreshKey) {
+            lastParserRefreshHour = refreshKey;
+            refreshParsers();
+        }
+    }, 5 * 60 * 1000); // Check every 5 minutes
+
+    // G. Database Health Check (Daily at 03:00)
     setInterval(() => {
         const currentHour = new Date().getHours();
         if (currentHour === 3) {
@@ -290,7 +318,7 @@ export function initScheduler() {
     setTimeout(runDatabaseHealthCheck, 10000); // 10 seconds after startup
 
 
-    // E. History Cleanup (Daily)
+    // H. History Cleanup (Daily)
     setInterval(cleanupHistory, 24 * 60 * 60 * 1000);
 
     // F. One-time Weather Backfill (First Start Only)

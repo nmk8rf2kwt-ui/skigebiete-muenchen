@@ -111,7 +111,7 @@ app.use("/api/routing", routingRouter);
 app.use("/api/locating", locatingRouter);
 app.use("/api/status", statusRouter);
 app.use("/api/db-health", basicAuth, dbHealthRouter);
-app.use("/api/admin", adminRouter);
+app.use("/api/admin", basicAuth, adminRouter);
 app.use("/api", historyRouter);
 
 // Initialize Services

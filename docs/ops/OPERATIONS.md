@@ -434,7 +434,8 @@ pg_dump -h [host] -U [user] -d [db] > backup.sql
 
 ### Daily Tasks
 - ✅ Automated: Weather refresh (hourly)
-- ✅ Automated: Traffic matrix update (every 15 min, 06:00-22:00)
+- ✅ Automated: Traffic matrix update (every 30 min, 06:00-22:00)
+- ✅ Automated: Proactive parser refresh (4x daily: 07:00, 11:00, 15:00, 19:00)
 - ✅ Automated: Database health check (03:00)
 
 ### Weekly Tasks
@@ -479,4 +480,4 @@ pg_dump -h [host] -U [user] -d [db] > backup.sql
 
 - [ARCHITECTURE.md](../ARCHITECTURE.md) - System design and data flow
 - [API.md](../API.md) - API endpoint reference
-- [ADMIN_DASHBOARD.md](./ADMIN_DASHBOARD.md) - Admin interface guide
+- [DEPLOYMENT.md](../../DEPLOYMENT.md) - Deployment & Admin Guide

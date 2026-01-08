@@ -181,7 +181,7 @@ export function render() {
   if (state.viewMode === "list") {
     document.getElementById("skiTable").style.display = "table";
     document.getElementById("map-view").style.display = "none";
-    renderTable(resorts);
+    renderTable(resorts, state.sortKey, state.filter, state.sortDirection);
   } else {
     document.getElementById("skiTable").style.display = "none";
     document.getElementById("map-view").style.display = "block";
