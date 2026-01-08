@@ -385,15 +385,26 @@
             bar.style.width = percent + '%';
 
             let statusText = '';
-            if (percent > 90) {
+
+            // Priority Check: Backend reported actual limit reached (e.g. 403 Forbidden)
+            if (dailyData.limitReached) {
+                bar.style.width = '100%';
                 bar.style.backgroundColor = 'var(--danger-color)';
-                statusText = '<span class="status-crit">CRITICAL - Limit Reached</span>';
-            } else if (percent > 75) {
-                bar.style.backgroundColor = 'var(--warning-color)';
-                statusText = '<span class="status-warn">WARNING - High Usage</span>';
+                // Force critical display
+                statusText = `<span class="status-crit">🚨 CRITICAL - Limit Reached (Blocked by API)</span>`;
+                if (dailyData.limitReachedBy) statusText += `<br><span style="font-size:0.8em; color:var(--muted-color);">(Triggered by ${dailyData.limitReachedBy})</span>`;
             } else {
-                bar.style.backgroundColor = 'var(--success-color)';
-                statusText = '<span class="status-ok">Normal Usage</span>';
+                // Standard Count-based Check
+                if (percent > 90) {
+                    bar.style.backgroundColor = 'var(--danger-color)';
+                    statusText = '<span class="status-crit">CRITICAL - Limit Reached</span>';
+                } else if (percent > 75) {
+                    bar.style.backgroundColor = 'var(--warning-color)';
+                    statusText = '<span class="status-warn">WARNING - High Usage</span>';
+                } else {
+                    bar.style.backgroundColor = 'var(--success-color)';
+                    statusText = '<span class="status-ok">Normal Usage</span>';
+                }
             }
 
             // Breakdown Display

@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.28] - 2026-01-08
+
+### 🛡️ Features
+- **API Limit Monitoring**: Enhanced backend to explicitly detect "Quota Exceeded" (403) errors from TomTom.
+- **Admin Dashboard**: The "API Usage" widget now displays a **CRITICAL** alert if the API reports it is blocked, regardless of the local request counter. This prevents false "Normal Usage" reports when limits are hit unexpectedly.
+
 ## [1.7.27] - 2026-01-08
 
 ### 🩹 Bug Fixes

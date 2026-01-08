@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import { statusLogger } from './monitoring.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -50,6 +52,27 @@ export function getUsageStats() {
     return statsCache;
 }
 
+// Mark that the API limit has been reached (regardless of count)
+export function markLimitReached(apiName = 'tomtom') {
+    ensureStatsLoaded();
+    const stats = statsCache;
+    const today = new Date().toISOString().split('T')[0];
+
+    // Ensure daily entry exists
+    if (!stats.daily[today]) {
+        stats.daily[today] = { requests: 0, breakdown: {}, limitReached: false };
+    }
+
+    // Mark as reached
+    if (!stats.daily[today].limitReached) {
+        stats.daily[today].limitReached = true;
+        stats.daily[today].limitReachedBy = apiName;
+        saveStats(); // Save immediately
+
+        statusLogger.log('error', 'traffic', `🚨 API Limit Reached (${apiName}). Traffic data halted.`);
+    }
+}
+
 // Track a request (Updates cache, schedules async save)
 export function trackApiUsage(apiName = 'tomtom', count = 1) {
     ensureStatsLoaded();
@@ -60,7 +83,8 @@ export function trackApiUsage(apiName = 'tomtom', count = 1) {
     if (!stats.daily[today]) {
         stats.daily[today] = {
             requests: 0,
-            breakdown: {}
+            breakdown: {},
+            limitReached: false
         };
     }
 
@@ -105,9 +129,11 @@ function checkLimits(dailyCount) {
     const LIMIT = 2500;
     const WARNING_THRESHOLD = 2000; // 80%
 
+    // Only log if we crossed a threshold exactly to avoid spam
     if (dailyCount === WARNING_THRESHOLD) {
-        console.warn(`⚠️ WARNING: API Usage reached 80% (${dailyCount}/${LIMIT}) for today!`);
-    } else if (dailyCount >= LIMIT) {
-        console.error(`🚨 CRITICAL: API Usage limit reached (${dailyCount}/${LIMIT})!`);
+        statusLogger.log('warn', 'traffic', `API Usage reached 80% (${dailyCount}/${LIMIT}) for today!`);
+    } else if (dailyCount === LIMIT) {
+        statusLogger.log('error', 'traffic', `API Usage limit hit (${dailyCount}/${LIMIT})!`);
+        // We could auto-call markLimitReached here, but sometimes the API is more lenient or strict than our count.
     }
 }

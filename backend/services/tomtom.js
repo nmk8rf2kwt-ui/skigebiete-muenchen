@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const TOMTOM_API_KEY = process.env.TOMTOM_API_KEY;
-import { trackApiUsage } from './system/usage.js';
+import { trackApiUsage, markLimitReached } from './system/usage.js';
 // Munich Center (Marienplatz approx)
 const MUNICH_COORDS = { lat: 48.1351, lon: 11.5820 };
 
@@ -59,7 +59,18 @@ export async function fetchTravelTimes(destinations, origin = null) {
         });
 
         if (!response.ok) {
+            // Check for Quota Limit (403 or specific error text)
+            if (response.status === 403) {
+                // Ensure we mark it even if error text parsing fails
+                markLimitReached('tomtom');
+            }
+
             const err = await response.text();
+
+            if (err.includes('OVER_TRANSACTION_LIMIT') || response.status === 403) {
+                markLimitReached('tomtom');
+            }
+
             throw new Error(`TomTom API Error: ${response.status} ${err}`);
         }
 
@@ -154,7 +165,11 @@ export async function fetchTrafficMatrix(origins, destinations) {
             });
 
             if (!response.ok) {
+                if (response.status === 403) markLimitReached('matrix_batch');
                 const errText = await response.text();
+
+                if (errText.includes('OVER_TRANSACTION_LIMIT')) markLimitReached('matrix_batch');
+
                 throw new Error(`TomTom Matrix Error: ${response.status} ${errText}`);
             }
 
