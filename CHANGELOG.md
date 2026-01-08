@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.7.17] - 2026-01-08
+## [1.7.18] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Admin Dashboard**: Fixed layout issue where the "30-Day API Trend" chart expanded infinitely vertically. Constrained height to 250px.
 
 ### 🩹 Bug Fixes
 - **Frontend**: Fixed "Distanz" column displaying as "-" when traffic data is unavailable. It now correctly falls back to linear distance.
