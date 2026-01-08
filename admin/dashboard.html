@@ -562,7 +562,10 @@
                 }
 
                 document.getElementById('systemStats').innerHTML = html;
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('systemStats').innerHTML = `<span class="status-crit">Error: ${e.message}</span>`;
+            }
         }
 
         async function confirmClear(type) {

@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.7.19] - 2026-01-08
+## [1.7.20] - 2026-01-08
+
+### 🩹 Debugging
+- **Admin Dashboard**: Added explicit error reporting to the "System & Cache" widget to identify why it fails to load (e.g., Auth vs Network error).
 
 ### 🩹 Bug Fixes
 - **Admin Dashboard**: Fixed authentication issue where "System & Cache" widget failed to load on startup. Now correctly uses authenticated requests.
