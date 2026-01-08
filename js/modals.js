@@ -566,11 +566,14 @@ export function displayResortDetails(resort) {
 
 
 
+        // Create Flex Container for Layout
+        html += `<div style="display: flex; flex-wrap: wrap; gap: 20px;">`;
+
         // Lifts Section
         if (resort.lifts && resort.lifts.length > 0) {
-            html += `<div class="details-section">
+            html += `<div class="details-section" style="flex: 1; min-width: 300px;">
       <h3>🚡 Lifte (${resort.liftsOpen || 0}/${resort.liftsTotal || resort.lifts.length})</h3>
-      <div class="facilities-list">`;
+      <div class="facilities-list" style="max-height: 400px; overflow-y: auto;">`;
 
             resort.lifts.forEach(lift => {
                 const statusClass = lift.status === "open" ? "status-open" :
@@ -606,9 +609,9 @@ export function displayResortDetails(resort) {
         // Slopes Section
         if (resort.slopes && resort.slopes.length > 0) {
             const slopesOpen = resort.slopes.filter(s => s.status === "open").length;
-            html += `<div class="details-section">
+            html += `<div class="details-section" style="flex: 1; min-width: 300px;">
       <h3>⛷️ Pisten (${slopesOpen}/${resort.slopes.length})</h3>
-      <div class="facilities-list">`;
+      <div class="facilities-list" style="max-height: 400px; overflow-y: auto;">`;
 
             resort.slopes.forEach(slope => {
                 const statusClass = slope.status === "open" ? "status-open" :
@@ -646,6 +649,8 @@ export function displayResortDetails(resort) {
 
             html += `</div></div>`;
         }
+
+        html += `</div>`; // End Flex Container
 
         container.innerHTML = html;
     }, 100);
