@@ -119,58 +119,8 @@ export async function getAllResortsLive() {
                             cached: true,
                         };
                     } else {
-                        // Fetch fresh
-                        try {
-                            const rawData = await fetchWithTimeout((opts) => parser(opts), 8000); // 8s timeout
-
-                            // VALIDATION
-                            // Parse (strict) or safeParse (soft)
-                            const validation = ResortDataSchema.safeParse(rawData);
-
-                            if (!validation.success) {
-                                console.error(`❌ Validation failed for ${resort.id}:`, validation.error.format());
-
-                                // Log to Sentry as warning (not error) so we track it but don't crash
-                                if (typeof Sentry !== 'undefined' && Sentry.captureMessage) {
-                                    Sentry.captureMessage(`Parser validation failed for ${resort.id}`, {
-                                        level: 'warning',
-                                        extra: {
-                                            resortId: resort.id,
-                                            resortName: resort.name,
-                                            validationErrors: validation.error.format(),
-                                            rawData: rawData
-                                        }
-                                    });
-                                }
-
-                                // Don't throw - gracefully degrade
-                                logger.scraper.warn(`Parser validation failed for ${resort.id}, using fallback`);
-                                liveData.status = "error";
-                                statusLogger.log('warning', 'scraper', `Parser validation failed for ${resort.name}`);
-                                statusLogger.updateComponentStatus('scraper', 'degraded'); // Mark scraper as degraded
-                            } else {
-                                const data = validation.data;
-
-                                liveData = {
-                                    ...liveData,
-                                    ...data,
-                                    status: "live",
-                                    cached: false,
-                                };
-                                // Store in cache
-                                parserCache.set(resort.id, data);
-                                logger.scraper.info(`Updated ${resort.id}`, {
-                                    source: data.source || resort.website,
-                                    lifts: `${data.liftsOpen}/${data.liftsTotal}`
-
-                                });
-                            }
-                        } catch (error) {
-                            logger.scraper.error(`Parser error for ${resort.id}: ${error.message}`);
-                            liveData.status = "error";
-                            // Log error to system status
-                            statusLogger.log('error', 'scraper', `Failed to update ${resort.name}: ${error.message}`);
-                        }
+                        // NO FETCH - Background Scheduler Only
+                        liveData.status = "static_only"; // Or "pending"
                     }
                 }
 

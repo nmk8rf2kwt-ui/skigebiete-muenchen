@@ -267,7 +267,7 @@ export function initScheduler() {
 
     // B. Traffic Matrix Loop (30 minutes) - Optimized frequency
     setTimeout(() => {
-        setInterval(updateTrafficMatrix, 30 * 60 * 1000); // Every 30 minutes
+        setInterval(updateTrafficMatrix, 15 * 60 * 1000); // Every 15 minutes
         updateTrafficMatrix(); // Initial run
     }, 5000);
 
