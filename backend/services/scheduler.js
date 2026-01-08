@@ -307,6 +307,13 @@ export function initScheduler() {
         }
     }, 5 * 60 * 1000); // Check every 5 minutes
 
+    // F2. Initial Parser Refresh (delayed) to ensure cache population on restart
+    // This resolves the "Unknown" status on cold starts and populates logs
+    setTimeout(() => {
+        console.log("🚀 Triggering initial parser refresh on startup...");
+        refreshParsers();
+    }, 15000);
+
     // G. Database Health Check (Daily at 03:00)
     setInterval(() => {
         const currentHour = new Date().getHours();
