@@ -1,4 +1,4 @@
-# 🏔️ Skigebiet-Finder v1.7.9
+# 🏔️ Skigebiet-Finder v1.7.10
 
 ![CI/CD Pipeline](https://github.com/nmk8rf2kwt-ui/skigebiete-muenchen/actions/workflows/ci.yml/badge.svg)
 

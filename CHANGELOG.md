@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.7.10] - 2026-01-08
+
+### ⚡ Performance
+- **Instant Loading**: Implemented "Stale-While-Revalidate" caching. The app now loads cached data instantly while fetching fresh updates in the background, eliminating the initial blank table.
+
 ## [1.7.9] - 2026-01-08
 
 ### 🩹 Bug Fixes

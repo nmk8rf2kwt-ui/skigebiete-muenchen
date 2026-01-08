@@ -87,24 +87,15 @@ export function hideLoading() {
  * Load Data from Backend
  */
 export async function load() {
-  showLoading();
-  try {
-    const res = await fetch(`${API_BASE_URL}/resorts`);
-    if (!res.ok) throw new Error("Failed to fetch resort data");
-
-    let resorts = await res.json();
-    const timestamp = new Date().toLocaleTimeString();
-    document.getElementById("timestamp").textContent = timestamp;
-
-    // Calculate score for each resort
-    resorts = resorts.map(resort => ({
+  // Helper to process raw API data (scores, distances)
+  const processData = (rawData) => {
+    let processed = rawData.map(resort => ({
       ...resort,
       score: calculateScore(resort)
     }));
 
-    // Re-calculate distances if we have a search location
     if (currentSearchLocation.latitude) {
-      resorts = resorts.map(resort => {
+      processed = processed.map(resort => {
         if (resort.latitude && resort.longitude) {
           const dist = getDistanceFromLatLonInKm(
             currentSearchLocation.latitude,
@@ -117,9 +108,47 @@ export async function load() {
         return resort;
       });
     }
+    return processed;
+  };
 
-    store.setState({ resorts, lastUpdated: new Date() }, render);
-    logToUI(`Successfully loaded ${resorts.length} resorts`, "success");
+  showLoading();
+
+  // 1. Cache Strategy (Stale-While-Revalidate)
+  // Instantly show old data if available
+  try {
+    const cached = localStorage.getItem('skigebiete_cache_v1');
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached);
+      const processed = processData(data);
+      store.setState({ resorts: processed, lastUpdated: new Date(timestamp) }, render);
+      // Ensure initMap is called if needed (render does it, but timing matters?)
+      // render() calls initMap if view is map.
+      console.log("⚡ Loaded from Cache");
+    }
+  } catch (e) {
+    console.warn("Cache read failed", e);
+  }
+
+  // 2. Network Strategy (Fresh Data)
+  try {
+    const res = await fetch(`${API_BASE_URL}/resorts`);
+    if (!res.ok) throw new Error("Failed to fetch resort data");
+
+    let rawResorts = await res.json();
+
+    // Update Cache
+    localStorage.setItem('skigebiete_cache_v1', JSON.stringify({
+      data: rawResorts,
+      timestamp: new Date().getTime()
+    }));
+
+    const timestamp = new Date().toLocaleTimeString();
+    document.getElementById("timestamp").textContent = timestamp;
+
+    const finalResorts = processData(rawResorts);
+
+    store.setState({ resorts: finalResorts, lastUpdated: new Date() }, render);
+    logToUI(`Successfully loaded ${finalResorts.length} resorts`, "success");
   } catch (err) {
     showError(`Load Error: ${err.message}`);
     logToUI(`Load Error: ${err.message}`, "error");
