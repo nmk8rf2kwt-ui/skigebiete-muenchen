@@ -357,7 +357,7 @@ export function renderRow(row, data) {
 
   // History button (Dedicated Column)
   const historyDisplay = (data.latitude && data.longitude)
-    ? `<button class="history-btn" data-resort-id="${data.id}" data-resort-name="${safeName}" title="7-Tage Verlauf anzeigen">📊</button>`
+    ? `<button class="history-btn" data-resort-id="${data.id}" data-resort-name="${safeName}" title="Historie anzeigen">📊</button>`
     : '<span title="Keine Verlaufsdaten verfügbar">-</span>';
 
   // Score

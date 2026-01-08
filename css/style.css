@@ -529,7 +529,12 @@ tr.unavailable {
   .sort-mobile {
     display: flex;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 24px;
+    align-items: center;
+    overflow-x: auto;
+    /* Allow scrolling if controls don't fit */
+    padding-bottom: 4px;
+    /* Space for scrollbar if needed */
   }
 
   .sort-mobile button {

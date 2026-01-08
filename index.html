@@ -21,7 +21,7 @@
   <h1>🏔️ Skigebiet-Finder – Live-Ranking</h1>
 
   <div class="meta">
-    Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten · <span style="color: #999;">v1.7.7</span> · <a
+    Stand: <span id="timestamp">–</span> · Auto-Refresh alle 30 Minuten · <span style="color: #999;">v1.7.8</span> · <a
       href="#" id="openStatusBtn" style="color: #999; text-decoration: none;">System Status</a>
     <a href="admin/dashboard.html" target="_blank" title="Admin Dashboard"
       style="text-decoration: none; margin-left: 8px; opacity: 0.5;">⚙️</a>
@@ -72,11 +72,12 @@
       </div>
 
       <button id="searchBtn" title="Fahrzeiten von dieser Adresse berechnen">🔍 Suchen</button>
+      <button id="locateBtn" title="Meinen aktuellen Standort verwenden" style="margin-left: 8px;">📍 Mein
+        Standort</button>
     </div>
 
-    <!-- Row 2: Actions (My Location, Map, CSV, Top 3) -->
+    <!-- Row 2: Actions (Map, Top 3) -->
     <div class="actions-group" style="flex-wrap: wrap;">
-      <button id="locateBtn" title="Meinen aktuellen Standort verwenden">📍 Mein Standort</button>
       <button id="viewToggle" title="Zwischen Listen- und Kartenansicht wechseln">🗺️ Karte anzeigen</button>
 
       <button id="top3" title="Nur die Top 3 Skigebiete von heute anzeigen">🏆 Nur Top-3 heute</button>
@@ -86,6 +87,8 @@
 
   <!-- Mobile Sort Buttons -->
   <div class="sort-mobile">
+    <span
+      style="font-size: 0.75em; color: #666; font-weight: bold; margin-right: 4px; white-space: nowrap;">SORTIEREN</span>
     <button data-sort="score">🏆 Score</button>
     <button data-sort="snow">❄️ Schnee</button>
     <button data-sort="distance_km">📍 Nähe</button>
@@ -176,7 +179,7 @@
   <div id="historyModal" class="modal">
     <div class="modal-content">
       <span class="close-history">&times;</span>
-      <h2 id="historyResortName">Resort History</h2>
+      <h2 id="historyResortName">Resort Historie</h2>
 
       <!-- Tab Navigation -->
       <div class="history-tabs">

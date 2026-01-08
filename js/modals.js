@@ -564,12 +564,7 @@ export function displayResortDetails(resort) {
 
         let html = "";
 
-        // Historical Chart Section
-        html += `<div class="details-section">
-      <h3>📊 7-Tage Verlauf</h3>
-      <canvas id="detailsHistoryChart" style="max-height: 200px;"></canvas>
-      <p id="detailsHistoryStatus" style="text-align: center; color: #666; font-size: 0.9em;">Lade Verlaufsdaten...</p>
-    </div>`;
+
 
         // Lifts Section
         if (resort.lifts && resort.lifts.length > 0) {
@@ -653,7 +648,6 @@ export function displayResortDetails(resort) {
         }
 
         container.innerHTML = html;
-        fetchDetailsHistory(resort.id);
     }, 100);
 }
 

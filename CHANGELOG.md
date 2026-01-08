@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.8] - 2026-01-08
+
+### 💄 UI/UX Improvements
+- **Mobile Layout**: Added "SORTIEREN" label to sorting buttons and increased spacing below them.
+- **Desktop Layout**: Moved "Mein Standort" button next to "Suchen" for better accessibility.
+- **Terminology**: Renamed "History" to "Historie" for consistency.
+- **Details Modal**: Removed redundant "7-Tage Verlauf" chart from the details view (it remains available in the dedicated Historie view).
+
 ## [1.7.7] - 2026-01-08
 
 ### 🩹 Bug Fixes
