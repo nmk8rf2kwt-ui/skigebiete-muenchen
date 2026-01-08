@@ -16,6 +16,16 @@ export async function getResortCongestionAnalysis(resortId, days = 7) {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
 
+        // Guard for missing Supabase client
+        if (!supabase) {
+            return {
+                hasData: false,
+                minDataPoints: 100,
+                currentDataPoints: 0,
+                message: 'Database not connected (local dev)'
+            };
+        }
+
         // Query: Get all traffic data for this resort from all cities
         const { data, error } = await supabase
             .from('traffic_logs')
@@ -140,6 +150,8 @@ export async function getResortCongestionAnalysis(resortId, days = 7) {
  */
 export async function getAllResortsCongestionAnalysis(days = 7) {
     try {
+        if (!supabase) return {};
+
         // Get unique resort IDs from traffic logs
         const { data: resorts, error } = await supabase
             .from('traffic_logs')
@@ -179,6 +191,8 @@ function getWeekdayName(day) {
  */
 export async function checkDataAvailability(resortId) {
     try {
+        if (!supabase) return { resortId, dataPoints: 0, hasEnoughData: false, progress: 0 };
+
         const { count, error } = await supabase
             .from('traffic_logs')
             .select('*', { count: 'exact', head: true })

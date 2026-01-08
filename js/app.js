@@ -134,14 +134,22 @@ export async function load() {
 export async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
   showLoading(`Berechne Fahrzeiten von ${locationName}...`);
   try {
-    const res = await fetch(`${API_BASE_URL}/routing/matrix?lat=${lat}&lon=${lon}`);
-    if (!res.ok) throw new Error("Matrix API failed");
+    const res = await fetch(`${API_BASE_URL}/routing/calculate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ latitude: lat, longitude: lon })
+    });
+    if (!res.ok) throw new Error("Traffic API failed");
 
     const matrix = await res.json();
     const resorts = store.get().resorts;
 
     const updatedResorts = resorts.map(resort => {
-      const trafficData = matrix.resorts?.[resort.id];
+      // Backend returns either direct map { id: data } or null if API key missing
+      // Old structure might have been { resorts: ... }, new is just the object.
+      // We check both for robustness.
+      const trafficData = matrix ? (matrix[resort.id] || matrix.resorts?.[resort.id]) : null;
+
       if (trafficData) {
         return {
           ...resort,
