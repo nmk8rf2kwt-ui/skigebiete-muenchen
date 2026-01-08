@@ -9,6 +9,20 @@
     - **Schedule Info**: Displays "Last Run" timestamp and calculated "Next Run".
 - **Backend**: Implemented basic in-memory tracking for lift count history to support diff calculation.
 
+## [1.7.23] - 2026-01-08
+### 🚦 API Usage Tracking
+- **Explicit Differentiation**: Dashboard now clearly separates API usage by provider:
+    - **TomTom Matrix**: Traffic background checks.
+    - **TomTom Routing**: Direct routing requests.
+    - **OpenRouteService**: Geocoding and directions.
+    - **Zero Usage**: Providers with 0 requests are now explicitly shown as 0 instead of hidden.
+
+### 🎨 UI Improvements
+- **Dashboard Layout**: Reorganized to group related metrics:
+    - **Usage Group**: API Usage + 30-Day Trend Chart.
+    - **Webcam Group**: Webcam Counter + Broken Webcams List.
+    - **Parser Group**: Main table + Server Logs on the left.
+
 ### 💄 UI Improvements
 - **Admin Dashboard**: Renamed "Scrapers" to "Active Parsers" and added tooltips to clarify that this metric tracks active live-data connections versus static fallback data.
 
