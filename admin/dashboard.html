@@ -234,6 +234,22 @@
             <!-- Left Column: Parsers & Logs -->
             <div style="display:flex; flex-direction:column; gap:20px;">
 
+                <!-- Logs Section -->
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <h3>📜 Server Logs (Live Tail)</h3>
+                        <div>
+                            <button class="btn-sm" onclick="fetchLogs('combined')">All Logs</button>
+                            <button class="btn-sm" onclick="fetchLogs('error')"
+                                style="background:#da3633; border-color:#b52a27;">Errors Only</button>
+                        </div>
+                    </div>
+                    <div id="logViewer"
+                        style="background:#0d1117; padding:10px; height:200px; overflow-y:scroll; font-size:0.85em; border:1px solid #30363d; border-radius:4px;">
+                        Click 'All Logs' to load...
+                    </div>
+                </div>
+
                 <!-- Main Content: Parsers Table -->
                 <div class="card" style="min-height: 600px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -265,26 +281,21 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Logs Section -->
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                        <h3>📜 Server Logs (Live Tail)</h3>
-                        <div>
-                            <button class="btn-sm" onclick="fetchLogs('combined')">All Logs</button>
-                            <button class="btn-sm" onclick="fetchLogs('error')"
-                                style="background:#da3633; border-color:#b52a27;">Errors Only</button>
-                        </div>
-                    </div>
-                    <div id="logViewer"
-                        style="background:#0d1117; padding:10px; height:200px; overflow-y:scroll; font-size:0.85em; border:1px solid #30363d; border-radius:4px;">
-                        Click 'All Logs' to load...
-                    </div>
-                </div>
             </div>
 
             <!-- Right Column: Usage, Webcams, System -->
             <div style="display:flex; flex-direction:column; gap: 20px;">
+
+                <!-- 3. SYSTEM GROUP -->
+                <div class="card">
+                    <h3>⚙️ System & Cache</h3>
+                    <div id="systemStats" style="font-size:0.9em; line-height:1.6;">Loading...</div>
+                    <div style="margin-top:20px; display:flex; gap:5px; flex-wrap:wrap;">
+                        <button class="btn-sm" onclick="confirmClear('parser')">Clear Parsers</button>
+                        <button class="btn-sm" onclick="confirmClear('weather')">Clear Weather</button>
+                        <button class="btn-sm" onclick="confirmClear('traffic')">Clear Traffic</button>
+                    </div>
+                </div>
 
                 <!-- 1. API USAGE GROUP -->
                 <div class="card">
@@ -319,17 +330,6 @@
                     <table id="webcamErrorTable">
                         <tbody id="webcamErrorBody"></tbody>
                     </table>
-                </div>
-
-                <!-- 3. SYSTEM GROUP -->
-                <div class="card">
-                    <h3>⚙️ System & Cache</h3>
-                    <div id="systemStats" style="font-size:0.9em; line-height:1.6;">Loading...</div>
-                    <div style="margin-top:20px; display:flex; gap:5px; flex-wrap:wrap;">
-                        <button class="btn-sm" onclick="confirmClear('parser')">Clear Parsers</button>
-                        <button class="btn-sm" onclick="confirmClear('weather')">Clear Weather</button>
-                        <button class="btn-sm" onclick="confirmClear('traffic')">Clear Traffic</button>
-                    </div>
                 </div>
 
             </div>

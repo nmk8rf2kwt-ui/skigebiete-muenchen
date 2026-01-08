@@ -113,15 +113,8 @@ router.get("/parsers", async (req, res) => {
         const { getResortsStatus } = await import("../services/resorts/service.js");
         const resorts = getResortsStatus();
 
-        const summary = resorts.map(r => ({
-            id: r.id,
-            name: r.name,
-            status: r.status,
-            lifts: r.liftsOpen !== null && r.liftsTotal ? `${r.liftsOpen}/${r.liftsTotal}` : (r.hasParser ? 'Pending' : 'No Parser'),
-            lastUpdated: r.lastUpdated,
-            error: r.status === 'error' ? 'Error' : null
-        }));
-        res.json(summary);
+        // Pass full data object to frontend, as it perfectly matches dashboard needs
+        res.json(resorts);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

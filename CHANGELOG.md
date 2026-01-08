@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.7.25] - 2026-01-08
+
+### 📡 System Fixes (Hotfix)
+- **TomTom Usage Tracking**: Fixed a critical bug in usage accounting. The system now correctly counts **transactions** (Destinations × Origins) instead of single requests. This ensures the dashboard accurately reflects consumption against the 2500 credit limit.
+- **Dashboard Layout**: 
+    - Moved "Server Logs" section to the top left.
+    - Moved "System & Cache" section to the top right.
+
+## [1.7.23] - 2026-01-08
+
+### 🚦 API Usage Tracking
+- **Explicit Differentiation**: Dashboard now clearly separates API usage by provider:
+    - **TomTom Matrix**: Traffic background checks.
+    - **TomTom Routing**: Direct routing requests.
+    - **OpenRouteService**: Geocoding and directions.
+    - **Zero Usage**: Providers with 0 requests are now explicitly shown as 0 instead of hidden.
+
 ## [1.7.22] - 2026-01-08
 
 ### 🚀 Features
@@ -8,14 +25,6 @@
     - **Lift Diff Tracking**: Shows difference in open lifts compared to previous run (e.g., `(+1)` or `(-2)`).
     - **Schedule Info**: Displays "Last Run" timestamp and calculated "Next Run".
 - **Backend**: Implemented basic in-memory tracking for lift count history to support diff calculation.
-
-## [1.7.23] - 2026-01-08
-### 🚦 API Usage Tracking
-- **Explicit Differentiation**: Dashboard now clearly separates API usage by provider:
-    - **TomTom Matrix**: Traffic background checks.
-    - **TomTom Routing**: Direct routing requests.
-    - **OpenRouteService**: Geocoding and directions.
-    - **Zero Usage**: Providers with 0 requests are now explicitly shown as 0 instead of hidden.
 
 ### 🎨 UI Improvements
 - **Dashboard Layout**: Reorganized to group related metrics:
@@ -64,6 +73,12 @@
 
 ### 🩹 Bug Fixes
 - **Sentry Initialization**: Fixed `TypeError: window.Sentry.setUser is not a function` by adding defensive checks for Sentry methods.
+
+## [1.7.17] - 2026-01-08
+
+### 📡 System Fixes
+- **Accurate API Accounting**: Fixed TomTom API usage tracking to count **transactions** (Destinations × Origins) instead of single requests. This ensures the usage counter accurately reflects the consumption against the daily quota (2500 transactions).
+- **Dashboard**: Breakdown panel will populate as soon as new traffic data is collected.
 
 ## [1.7.16] - 2026-01-08
 
