@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.7.6] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Traffic API**: Fixed critical "Matrix API failed" error by updating frontend to use correct POST `/api/routing/calculate` endpoint.
+- **Backend Stability**: Fixed potential crash in traffic analysis when Supabase credentials are missing (Local Dev).
+- **Frontend Robustness**: Added null checks for traffic data processing.
+
 ## [1.7.5] - 2026-01-08
 
 ### 🩹 Bug Fixes
