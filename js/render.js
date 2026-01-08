@@ -182,8 +182,8 @@ export function renderRow(row, data) {
   // Check if we have live traffic data (duration & delay in seconds from backend)
   if (data.traffic?.loading) {
     trafficDisplay = '<span class="loading-spinner-small"></span>';
-    // Fallback to static distance for standard display while loading
-    if (data.distance) standardMins = data.distance;
+    // Use fallback if available
+    if (data.staticDuration) standardMins = data.staticDuration;
   } else if (data.traffic && data.traffic.duration) {
     // Backend delivers seconds since v1.4.1 fix
     const durationSecs = data.traffic.duration;
@@ -210,9 +210,9 @@ export function renderRow(row, data) {
     // 3. Independent Delay Display
     const formattedDelay = formatDuration(delayMins);
     delayDisplay = `<span style="${style}">${formattedDelay}</span>`;
-  } else if (data.distance) {
-    // Fallback to static data (resorts.json) if no traffic API
-    standardMins = data.distance;
+  } else if (data.staticDuration) {
+    // Fallback to static Munich data ONLY if we are in Munich (determined by app.js)
+    standardMins = data.staticDuration;
     if (data.status === "live") {
       trafficDisplay = `<span title="Keine Verkehrsdaten" style="color: #bdc3c7;">n.a.</span>`;
     }
@@ -223,12 +223,20 @@ export function renderRow(row, data) {
     const timeText = formatDuration(standardMins);
     if (data.latitude && data.longitude) {
       const destQuery = data.address ? encodeURIComponent(data.address) : `${data.latitude},${data.longitude}`;
+      // Note: If we use static time, we might still want to link to directions from current location?
+      // Yes, current location is in data? No.
+      // Directions link usually assumes "current user location" or specific origin.
+      // Google Maps "dir" without origin uses user's current location.
       const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destQuery}&travelmode=driving`;
-      standardDisplay = `<a href="${mapsUrl}" target="_blank" title="Route planen (Google Maps - Basis: ${standardMins} min)" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${timeText}</a>`;
+      const title = data.traffic ? `Fahrzeit ohne Verkehr (Live-Basis: ${standardMins} min)` : `Fahrzeit ab München (Statisch: ${standardMins} min)`;
+      standardDisplay = `<a href="${mapsUrl}" target="_blank" title="${title}" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${timeText}</a>`;
     } else {
       standardDisplay = timeText;
     }
   }
+
+  // ... (Snow Display logic starts) ...
+
 
   // Snow Display - use forecast data if available
   let snowDisplay = "-";
@@ -431,14 +439,26 @@ export function renderRow(row, data) {
     ? `<a href="${safeWebcam}" target="_blank" title="Webcam öffnen" style="text-decoration: none;">📷</a>`
     : '<span title="Keine Webcam verfügbar">-</span>';
 
-  // Distance (in km) - separate from travel time
+  // Distance (in km) - priority: Traffic API -> Air Distance
   let distanceDisplay = "-";
 
   if (data.traffic?.loading) {
     distanceDisplay = '<span class="loading-spinner-small"></span>';
   } else {
-    const distanceKm = data.traffic?.distanceKm || data.distanceKm || null;
-    distanceDisplay = distanceKm !== null ? `${distanceKm} km` : (data.distance !== null ? `${data.distance} km` : "-");
+    // Priority 1: Road distance from Traffic API
+    const roadKm = data.traffic?.distanceKm || data.distanceKm; // handle both structures
+
+    // Priority 2: Calculated linear distance (Air)
+    const airKm = data.linearDistance;
+
+    if (roadKm) {
+      distanceDisplay = `${roadKm} km`;
+    } else if (airKm) {
+      // Show air distance with indication
+      distanceDisplay = `<span title="Luftlinie (Keine Routendaten verfügbar)" style="cursor: help; border-bottom: 1px dotted #999;">${airKm} km ✈️</span>`;
+    } else {
+      distanceDisplay = "-";
+    }
   }
 
   // Combined Weather & Snow Display

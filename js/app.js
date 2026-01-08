@@ -89,9 +89,20 @@ export function hideLoading() {
 export async function load() {
   // Helper to process raw API data (scores, distances)
   const processData = (rawData) => {
+    // Check if we are using the default Munich location
+    const distToMunich = getDistanceFromLatLonInKm(
+      currentSearchLocation.latitude,
+      currentSearchLocation.longitude,
+      MUNICH_DEFAULT.latitude,
+      MUNICH_DEFAULT.longitude
+    );
+    const isMunich = distToMunich < 2; // Within 2km of Marienplatz
+
     let processed = rawData.map(resort => ({
       ...resort,
-      score: calculateScore(resort)
+      score: calculateScore(resort),
+      // Preserve static duration only if we are in Munich
+      staticDuration: isMunich ? resort.distance : null
     }));
 
     if (currentSearchLocation.latitude) {
@@ -103,7 +114,8 @@ export async function load() {
             resort.latitude,
             resort.longitude
           );
-          return { ...resort, distance: Math.round(dist) };
+          // NEW: Use linearDistance property, do NOT overwrite 'distance' (which is time in mins)
+          return { ...resort, linearDistance: Math.round(dist) };
         }
         return resort;
       });
@@ -174,14 +186,23 @@ export async function fetchTrafficForLocation(lat, lon, locationName = "custom l
     const resorts = store.get().resorts;
 
     const updatedResorts = resorts.map(resort => {
-      // Backend returns either direct map { id: data } or null if API key missing
-      // Old structure might have been { resorts: ... }, new is just the object.
-      // We check both for robustness.
+      // Recalculate linear distance for the new location
+      let linearDist = resort.linearDistance;
+      if (resort.latitude && resort.longitude) {
+        linearDist = Math.round(getDistanceFromLatLonInKm(lat, lon, resort.latitude, resort.longitude));
+      }
+
+      // Determine if we are near Munich for this search (fallback logic)
+      const distToMunich = getDistanceFromLatLonInKm(lat, lon, MUNICH_DEFAULT.latitude, MUNICH_DEFAULT.longitude);
+      const isMunich = distToMunich < 2;
+
       const trafficData = matrix ? (matrix[resort.id] || matrix.resorts?.[resort.id]) : null;
 
       if (trafficData) {
         return {
           ...resort,
+          linearDistance: linearDist,
+          staticDuration: isMunich ? resort.distance : null, // Reset static fallback based on new location
           // Structure for render.js (expects seconds)
           traffic: {
             duration: trafficData.duration,      // seconds
@@ -195,7 +216,13 @@ export async function fetchTrafficForLocation(lat, lon, locationName = "custom l
           inRadius: trafficData.inRadius
         };
       }
-      return resort;
+
+      // Update linear distance and static fallback even if no traffic data
+      return {
+        ...resort,
+        linearDistance: linearDist,
+        staticDuration: isMunich ? resort.distance : null
+      };
     });
 
     store.setState({ resorts: updatedResorts }, render);

@@ -1,5 +1,13 @@
 {
-  "daily": {},
-  "total_requests": 0,
-  "last_updated": null
+  "daily": {
+    "2026-01-08": {
+      "requests": 60,
+      "breakdown": {
+        "tomtom": 60
+      },
+      "last_updated": "2026-01-08T09:08:10.117Z"
+    }
+  },
+  "total_requests": 60,
+  "last_updated": "2026-01-08T09:08:10.117Z"
 }

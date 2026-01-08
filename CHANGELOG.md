@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.27] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Traffic Data Display**: Fixed an issue where "Air Distance" (km) was overwriting "Travel Time" (min) data when the Traffic API failed.
+- **Smart Fallbacks**:
+    - **Distance**: Now gracefully falls back to "Luftlinie" (Air Distance) with a unique icon (✈️) if road data is unavailable.
+    - **Time**: Static Munich travel times are now strictly hidden when searching from other locations (e.g. Stuttgart) to prevent misleading data.
+
 ## [1.7.26] - 2026-01-08
 
 ### 🩹 Bug Fixes
