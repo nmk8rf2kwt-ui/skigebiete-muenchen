@@ -325,7 +325,7 @@ export function renderRow(row, data) {
       const tooltip = `${dateStr}: ${safeDesc ? safeDesc + ', ' : ''}${tempStr}`;
 
       // Short Date: "26.1."
-      const shortDate = dateObj.toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' }) + ".";
+      const shortDate = dateObj.toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' });
 
       return `
         <div style="display: flex; flex-direction: column; align-items: center; margin-right: 8px;" title="${escapeHtml(tooltip)}">
