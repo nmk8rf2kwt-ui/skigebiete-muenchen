@@ -1,6 +1,11 @@
 # Changelog
 
-# Changelog
+## [1.7.16] - 2026-01-08
+
+### 📡 System & Admin
+- **API Usage Tracking**: Fixed backend counting logic and standardized provider keys ('tomtom', 'ors').
+- **Dashboard**: Added granular breakdown of API requests (TomTom vs ORS) to the Admin Dashboard.
+- **Data Persistence**: Verified storage path for usage stats.
 
 ## [1.7.15] - 2026-01-08
 
