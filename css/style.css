@@ -70,8 +70,7 @@ body {
 }
 
 h1 {
-  position: sticky;
-  top: var(--sticky-h1);
+  /* position: sticky; REMOVED */
   background-color: var(--bg-color);
   margin: 0;
   padding: 16px 0;
@@ -104,8 +103,7 @@ a:hover {
   align-items: center;
   background-color: var(--bg-color);
   padding-bottom: 12px;
-  position: sticky;
-  top: var(--sticky-toolbar);
+  /* position: sticky; REMOVED */
   z-index: 900;
 }
 
@@ -134,12 +132,20 @@ a:hover {
 .radius-slider-group {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 12px;
-  border-left: 1px solid var(--border-color);
-  height: 40px;
+  gap: 8px;
+  padding: 8px 12px; /* Match button padding */
+  border: 1px solid var(--border-color); /* Full border */
   background: #fff;
   border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.filter-label {
+    font-size: 0.9em; 
+    font-weight: bold; 
+    color: #555; 
+    margin-right: 8px;
+    align-self: center;
 }
 
 .actions-group {
@@ -266,9 +272,7 @@ th {
 
 /* Sticky Header Logic */
 .header-group-row th {
-  position: sticky;
-  top: var(--sticky-header-groups);
-  z-index: 801;
+  /* position: sticky; REMOVED */
   text-align: center;
   border-bottom: 2px solid #ccc;
   text-transform: uppercase;
@@ -278,7 +282,7 @@ th {
 
 .header-col-row th {
   position: sticky;
-  top: var(--sticky-header-cols);
+  top: 0; /* Stick to top */
   z-index: 800;
   background-color: var(--bg-color);
 }
