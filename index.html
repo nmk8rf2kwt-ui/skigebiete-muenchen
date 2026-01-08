@@ -56,34 +56,39 @@
   </p>
   <div class="toolbar-container" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
 
-    <!-- Row 1: Search -->
-    <div class="search-group" style="width: 100%; justify-content: flex-start;">
+    <!-- Row 1: Search & View -->
+    <div class="search-group" style="width: 100%; justify-content: flex-start; align-items: center;">
       <input type="text" id="addressInput" placeholder="München, Marienplatz"
         title="Geben Sie einen Ort oder eine Adresse ein (mind. 3 Zeichen)"
         style="width: 250px; flex: none; max-width: 100%;" />
 
-      <!-- Radius Slider -->
-      <div class="radius-slider-group"
-        style="display: flex; align-items: center; gap: 10px; padding: 0 10px; border-left: 1px solid #ddd; height: 38px;">
+      <button id="searchBtn" title="Fahrzeiten von dieser Adresse berechnen">🔍 Suchen</button>
+      <button id="locateBtn" title="Meinen aktuellen Standort verwenden">📍 Mein Standort</button>
+
+      <!-- Moved View Toggle Here -->
+      <button id="viewToggle" title="Zwischen Listen- und Kartenansicht wechseln" style="margin-left: auto;">🗺️
+        Kartenansicht</button>
+    </div>
+
+    <!-- Row 2: Filters -->
+    <div class="actions-group" style="flex-wrap: wrap; align-items: center; width: 100%;">
+      <span class="filter-label">FILTERN</span>
+
+      <!-- Moved Radius Slider Here -->
+      <div class="radius-slider-group">
         <label for="radiusSlider" style="font-size: 0.9em; color: #555;">Radius:</label>
-        <input type="range" id="radiusSlider" min="50" max="500" value="150" step="10" style="width: 120px;"
+        <input type="range" id="radiusSlider" min="50" max="500" value="150" step="10" style="width: 100px;"
           title="Suchradius bestimmt die max. Entfernung für Routing-Berechnungen">
         <span id="radiusValue" style="font-size: 0.9em; font-weight: bold; width: 50px;">150 km</span>
       </div>
-
-      <button id="searchBtn" title="Fahrzeiten von dieser Adresse berechnen">🔍 Suchen</button>
-      <button id="locateBtn" title="Meinen aktuellen Standort verwenden" style="margin-left: 8px;">📍 Mein
-        Standort</button>
-    </div>
-
-    <!-- Row 2: Actions (Map, Top 3) -->
-    <div class="actions-group" style="flex-wrap: wrap;">
-      <button id="viewToggle" title="Zwischen Listen- und Kartenansicht wechseln">🗺️ Karte anzeigen</button>
 
       <button id="top3" title="Nur die Top 3 Skigebiete von heute anzeigen">🏆 Nur Top-3 heute</button>
     </div>
 
   </div>
+
+  <!-- Spacer between filters and table -->
+  <div style="height: 10px;"></div>
 
   <!-- Mobile Sort Buttons -->
   <div class="sort-mobile">

@@ -56,7 +56,7 @@ export function initEventListeners(handlers) {
     // View & Filter Buttons
     document.getElementById("viewToggle").addEventListener("click", () => {
         const nextMode = store.get().viewMode === "list" ? "map" : "list";
-        document.getElementById("viewToggle").textContent = nextMode === "list" ? "🗺️ Karte anzeigen" : "📋 Liste anzeigen";
+        document.getElementById("viewToggle").textContent = nextMode === "list" ? "🗺️ Kartenansicht" : "📄 Listenansicht";
         store.setState({ viewMode: nextMode }, render);
     });
 
