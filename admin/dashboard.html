@@ -334,6 +334,12 @@
         const API_LIMIT = 2500;
         let chartInstance = null;
 
+        // Config: Replicated from js/config.js to avoid module complexity with inline event handlers
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const API_BASE_URL = isLocalhost
+            ? 'http://localhost:3000/api'
+            : 'https://skigebiete-muenchen-backend.onrender.com/api';
+
         document.addEventListener('DOMContentLoaded', fetchAll);
 
         function fetchAll() {
@@ -350,7 +356,7 @@
         // --- Usage Stats ---
         async function fetchUsage() {
             try {
-                const res = await fetchWithAuth('/api/admin/usage');
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/usage`);
                 const data = await res.json();
                 renderUsage(data);
             } catch (e) {
@@ -369,16 +375,30 @@
             const status = document.getElementById('usageStatus');
 
             bar.style.width = percent + '%';
+
+            let statusText = '';
             if (percent > 90) {
                 bar.style.backgroundColor = 'var(--danger-color)';
-                status.innerHTML = '<span class="status-crit">CRITICAL</span>';
+                statusText = '<span class="status-crit">CRITICAL - Limit Reached</span>';
             } else if (percent > 75) {
                 bar.style.backgroundColor = 'var(--warning-color)';
-                status.innerHTML = '<span class="status-warn">WARNING</span>';
+                statusText = '<span class="status-warn">WARNING - High Usage</span>';
             } else {
                 bar.style.backgroundColor = 'var(--success-color)';
-                status.innerHTML = '<span class="status-ok">Simple requests</span>';
+                statusText = '<span class="status-ok">Normal Usage</span>';
             }
+
+            // Breakdown Display
+            const bd = dailyData.breakdown || {};
+            if (Object.keys(bd).length > 0) {
+                statusText += '<div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">';
+                for (const [key, val] of Object.entries(bd)) {
+                    statusText += `<span style="background:#30363d; padding:2px 6px; border-radius:4px; font-size:0.8em; color:#c9d1d9;">${key}: <strong>${val}</strong></span>`;
+                }
+                statusText += '</div>';
+            }
+
+            status.innerHTML = statusText;
 
             renderChart(data.daily);
         }
@@ -423,7 +443,7 @@
         // --- Parsers ---
         async function fetchParsers() {
             try {
-                const res = await fetchWithAuth('/api/admin/parsers');
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/parsers`);
                 const data = await res.json();
                 renderParsers(data);
             } catch (e) { console.error(e); }
@@ -468,7 +488,7 @@
             btn.innerText = '⏳';
             btn.disabled = true;
             try {
-                const res = await fetchWithAuth(`/api/admin/parsers/refresh/${id}`, { method: 'POST' });
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/parsers/refresh/${id}`, { method: 'POST' });
                 const json = await res.json();
                 if (json.success) {
                     btn.innerText = '✅';
@@ -487,7 +507,7 @@
         // --- Webcams ---
         async function fetchWebcams() {
             try {
-                const res = await fetch('/api/status/webcams');
+                const res = await fetch(`${API_BASE_URL}/status/webcams`);
                 const data = await res.json();
                 renderWebcams(data);
             } catch (e) { console.error(e); }
@@ -495,7 +515,7 @@
 
         async function checkWebcams() {
             document.getElementById('webcamSummary').innerText = "Checking...";
-            await fetchWithAuth('/api/admin/webcams/check', { method: 'POST' });
+            await fetchWithAuth(`${API_BASE_URL}/admin/webcams/check`, { method: 'POST' });
             fetchWebcams();
         }
 
@@ -527,7 +547,7 @@
         // --- System & Logs ---
         async function fetchSystem() {
             try {
-                const res = await fetch('/api/admin/system');
+                const res = await fetch(`${API_BASE_URL}/admin/system`);
                 const data = await res.json();
 
                 let html = '<strong>Cache Status:</strong><br>';
@@ -545,7 +565,7 @@
 
         async function confirmClear(type) {
             if (confirm(`Really clear ${type} cache?`)) {
-                await fetch('/api/admin/cache/clear', {
+                await fetch(`${API_BASE_URL}/admin/cache/clear`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type })
@@ -588,106 +608,11 @@
             return res;
         }
 
-        async function fetchUsage() {
-            try {
-                const res = await fetchWithAuth('/api/admin/usage');
-                const data = await res.json();
-                renderUsage(data);
-            } catch (e) {
-                console.error("Usage Error", e);
-                document.getElementById('usageStatus').innerText = "Auth Error";
-            }
-        }
-
-        // --- Parsers ---
-        async function fetchParsers() {
-            try {
-                const res = await fetchWithAuth('/api/admin/parsers');
-                const data = await res.json();
-                renderParsers(data);
-            } catch (e) { console.error(e); }
-        }
-
-        async function refreshResort(id, btn) {
-            btn.innerText = '⏳';
-            btn.disabled = true;
-            try {
-                const res = await fetchWithAuth(`/api/admin/parsers/refresh/${id}`, { method: 'POST' });
-                const json = await res.json();
-                if (json.success) {
-                    btn.innerText = '✅';
-                    setTimeout(fetchParsers, 1000);
-                } else {
-                    btn.innerText = '❌';
-                    alert('Error: ' + json.error);
-                }
-            } catch (e) {
-                btn.innerText = '❌';
-                console.error(e);
-            }
-            setTimeout(() => { btn.disabled = false; btn.innerText = '🔄'; }, 2000);
-        }
-
-        // --- Webcams ---
-        async function fetchWebcams() {
-            try {
-                // Public endpoint, but let's use auth if it's there just in case backend changes
-                const res = await fetch('/api/status/webcams');
-                const data = await res.json();
-                renderWebcams(data);
-            } catch (e) { console.error(e); }
-        }
-
-        async function checkWebcams() {
-            document.getElementById('webcamSummary').innerText = "Checking...";
-            await fetchWithAuth('/api/admin/webcams/check', { method: 'POST' }); // This was /api/status/webcams/check which is public? No, admin check should be protected.
-            // Wait, backend route says /api/admin/webcams (GET) and /api/admin/webcams/check (POST) in admin.js?
-            // Checking admin.js:
-            // GET /api/admin/webcams -> webcamMonitor.getStatus()
-            // POST /api/admin/webcams/check -> webcamMonitor.checkAllWebcams()
-            // So these ARE protected. 
-            // In dashboard.html previously: fetch('/api/status/webcams')
-            // Backend Status router usually handles public status.
-            // Let's check if I should point to /api/admin/... or /api/status/...
-            // For now, I'll direct to the protected admin endpoints where appropriate.
-            fetchWebcams();
-        }
-
-        // --- System & Logs ---
-        async function fetchSystem() {
-            try {
-                const res = await fetchWithAuth('/api/admin/system');
-                const data = await res.json();
-
-                let html = '<strong>Cache Status:</strong><br>';
-                html += `Parsers: ${data.cache.parser.size} items<br>`;
-                html += `Weather: ${data.cache.weather.size} items<br>`;
-                html += `Traffic: ${data.cache.traffic.size} items<br>`;
-
-                if (data.traffic_csv.exists) {
-                    html += `<br><strong>Traffic History CSV:</strong><br>${data.traffic_csv.size} (Last: ${new Date(data.traffic_csv.lastModified).toLocaleTimeString()})`;
-                }
-
-                document.getElementById('systemStats').innerHTML = html;
-            } catch (e) { console.error(e); }
-        }
-
-        async function confirmClear(type) {
-            if (confirm(`Really clear ${type} cache?`)) {
-                await fetchWithAuth('/api/admin/cache/clear', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type })
-                });
-                fetchSystem();
-            }
-        }
-
         async function fetchLogs(type) {
             const viewer = document.getElementById('logViewer');
             viewer.innerHTML = 'Loading...';
             try {
-                const res = await fetchWithAuth(`/api/admin/logs?type=${type}`);
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/logs?type=${type}`);
                 const data = await res.json();
 
                 if (!data.logs || data.logs.length === 0) {
