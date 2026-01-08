@@ -438,7 +438,7 @@ export function renderRow(row, data) {
     distanceDisplay = '<span class="loading-spinner-small"></span>';
   } else {
     const distanceKm = data.traffic?.distanceKm || data.distanceKm || null;
-    distanceDisplay = distanceKm !== null ? `${distanceKm} km` : (data.distance === null ? '<span class="loading-spinner-small"></span>' : "-");
+    distanceDisplay = distanceKm !== null ? `${distanceKm} km` : (data.distance !== null ? `${data.distance} km` : "-");
   }
 
   // Combined Weather & Snow Display

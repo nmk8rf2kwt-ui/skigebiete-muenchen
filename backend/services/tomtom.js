@@ -49,7 +49,7 @@ export async function fetchTravelTimes(destinations, origin = null) {
     };
 
     try {
-        trackApiUsage('tomtom');
+        trackApiUsage('tomtom', destPoints.length);
         const response = await fetch(url, {
             method: 'POST',
             headers: {

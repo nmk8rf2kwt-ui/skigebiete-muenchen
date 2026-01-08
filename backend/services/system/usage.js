@@ -51,7 +51,7 @@ export function getUsageStats() {
 }
 
 // Track a request (Updates cache, schedules async save)
-export function trackApiUsage(apiName = 'tomtom') {
+export function trackApiUsage(apiName = 'tomtom', count = 1) {
     ensureStatsLoaded();
     const stats = statsCache;
     const today = new Date().toISOString().split('T')[0];
@@ -65,17 +65,17 @@ export function trackApiUsage(apiName = 'tomtom') {
     }
 
     // Increment global
-    stats.total_requests++;
+    stats.total_requests += count;
 
     // Increment daily
-    stats.daily[today].requests++;
+    stats.daily[today].requests += count;
     stats.daily[today].last_updated = new Date().toISOString();
 
     // Increment breakdown
     if (!stats.daily[today].breakdown[apiName]) {
         stats.daily[today].breakdown[apiName] = 0;
     }
-    stats.daily[today].breakdown[apiName]++;
+    stats.daily[today].breakdown[apiName] += count;
 
     stats.last_updated = new Date().toISOString();
 

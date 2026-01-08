@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.7.16] - 2026-01-08
+## [1.7.17] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Frontend**: Fixed "Distanz" column displaying as "-" when traffic data is unavailable. It now correctly falls back to linear distance.
 
 ### 📡 System & Admin
 - **API Usage Tracking**: Fixed backend counting logic and standardized provider keys ('tomtom', 'ors').
