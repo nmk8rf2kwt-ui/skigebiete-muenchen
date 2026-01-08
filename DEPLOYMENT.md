@@ -1,4 +1,4 @@
-# Deployment Guide - Skigebiete-Finder v1.3
+# Deployment Guide - Skigebiete-Finder v1.7.5
 
 ## Architecture
 
@@ -79,8 +79,8 @@ Click "Create Web Service". Render will:
 Edit `js/config.js`:
 ```javascript
 export const API_BASE_URL = isLocalhost 
-    ? 'http://localhost:10000/api'
-    : 'https://YOUR_RENDER_URL.onrender.com/api';  // Replace with your actual Render URL
+    ? 'http://localhost:3000/api'  // Note: Local dev now uses port 3000 for backend
+    : 'https://YOUR_RENDER_URL.onrender.com/api';
 ```
 
 ### 2.2 Commit Changes
@@ -126,11 +126,10 @@ GitHub will automatically deploy. Check:
 
 ```bash
 # Backend
-cd backend
-npm start
+PORT=3000 node backend/index.js
 
 # Frontend
-# Open index.html in browser or use Live Server
+npx serve -l 10000 .
 ```
 
 The app auto-detects localhost and uses local backend.

@@ -1,4 +1,4 @@
-# 🏔️ Skigebiet-Finder v1.7.1
+# 🏔️ Skigebiet-Finder v1.7.5
 
 ![CI/CD Pipeline](https://github.com/nmk8rf2kwt-ui/skigebiete-muenchen/actions/workflows/ci.yml/badge.svg)
 
@@ -78,8 +78,8 @@ Eine vollständige Übersicht aller verwendeten Komponenten und Versionen finden
 4. Copy `.env.example` to `.env` and fill in your keys.
 
 ### Running
-- **Backend**: `npm run dev` (Runs on port 10000)
-- **Frontend**: Open `index.html` via Live Server (VS Code Extension) or serve localy on port 5500.
+- **Backend**: `PORT=3000 node backend/index.js` (Runs on port 3000 to avoid conflicts)
+- **Frontend**: `npx serve -l 10000 .` (Runs on port 10000)
 
 ## 🧪 Testing
 Run backend tests:
