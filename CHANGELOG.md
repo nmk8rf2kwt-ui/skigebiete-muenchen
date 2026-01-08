@@ -1,5 +1,14 @@
 # Changelog
 
+# Changelog
+
+## [1.7.15] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Admin Dashboard**: Fixed connectivity issues on GitHub Pages by injecting environment-aware `API_BASE_URL`.
+- **Authentication**: Verified and fixed admin authentication flow; dashboard now correctly challenges for credentials.
+- **Bug Fix**: Fixed relative API paths causing 404 errors in production context.
+
 ## [1.7.14] - 2026-01-08
 
 ### 🩹 Bug Fixes
@@ -14,6 +23,13 @@
 
 ### 🩹 Bug Fixes
 - **Sentry Initialization**: Fixed `TypeError: window.Sentry.setUser is not a function` by adding defensive checks for Sentry methods.
+
+## [1.7.16] - 2026-01-08
+
+### 📡 System & Admin
+- **API Usage Tracking**: Fixed backend counting logic and standardized provider keys ('tomtom', 'ors').
+- **Dashboard**: Added granular breakdown of API requests (TomTom vs ORS) to the Admin Dashboard.
+- **Data Persistence**: Verified storage path for usage stats.
 
 ## [1.7.11] - 2026-01-08
 

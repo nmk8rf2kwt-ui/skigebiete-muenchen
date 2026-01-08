@@ -14,7 +14,7 @@ export async function geocodeAddress(query) {
     const url = `https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${encodeURIComponent(query)}&size=1`;
 
     try {
-        trackApiUsage('ors_geocode');
+        trackApiUsage('ors');
         const res = await fetch(url);
         if (!res.ok) throw new Error(`ORS Geocode failed: ${res.status}`);
 
