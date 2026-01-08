@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.9] - 2026-01-08
+
+### 🩹 Bug Fixes
+- **Map View**: Fixed critical issue where the map was not initializing (black/gray screen) when switching to map mode.
+- **Rendering**: Improved map container resizing behavior when toggling views.
+
 ## [1.7.8] - 2026-01-08
 
 ### 💄 UI/UX Improvements

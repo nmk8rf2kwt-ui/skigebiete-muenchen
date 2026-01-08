@@ -193,6 +193,7 @@ export function render() {
   } else {
     document.getElementById("skiTable").style.display = "none";
     document.getElementById("map-view").style.display = "block";
+    initMap(resorts);
     updateMap(resorts);
   }
 }

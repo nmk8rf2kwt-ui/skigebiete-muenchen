@@ -40,6 +40,7 @@ export function showUserLocation(lat, lng) {
 
 export function updateMap(resorts) {
     if (!map) return;
+    map.invalidateSize();
 
     // Clear existing markers
     markers.forEach(m => map.removeLayer(m));
