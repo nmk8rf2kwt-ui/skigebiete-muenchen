@@ -450,6 +450,8 @@
 
             // Priority Check: Backend reported actual limit reached (e.g. 403 Forbidden)
             if (dailyData.limitReached) {
+                // Show the limit value when blocked, not our local counter
+                document.getElementById('todayRequests').innerText = API_LIMIT;
                 bar.style.width = '100%';
                 bar.style.backgroundColor = 'var(--danger-color)';
                 statusText = `<span class="status-crit">🚨 CRITICAL - Limit Reached (Blocked by API)</span>`;
