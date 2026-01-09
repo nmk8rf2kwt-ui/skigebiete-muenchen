@@ -338,9 +338,9 @@ export function renderRow(row, data) {
 
       return `
         <div style="display: flex; flex-direction: column; align-items: center; margin-right: 8px;" title="${escapeHtml(tooltip)}">
+          <span style="font-size: 0.7em; font-weight: bold; color: #444; margin-bottom: 2px;">${Math.round(f.tempMax)}°/${Math.round(f.tempMin)}°</span>
           <span style="font-size: 1.2em; cursor: help;">${icon}</span>
           <span style="font-size: 0.7em; color: #666; margin-top: -2px;">${shortDate}</span>
-          <span style="font-size: 0.7em; font-weight: bold; color: #444; margin-top: 2px;">${Math.round(f.tempMax)}°/${Math.round(f.tempMin)}°</span>
         </div>
       `;
     }).join("");
