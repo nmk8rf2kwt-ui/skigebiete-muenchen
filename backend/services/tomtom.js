@@ -122,10 +122,20 @@ export async function fetchTrafficMatrix(origins, destinations) {
     }
 
     // TomTom Matrix API Limit: 100 cells max (origins * destinations <= 100)
-    // We have 5 cities and 60 resorts = 300 cells → Need to batch!
-    // Strategy: Split destinations into batches of 20 (5 origins * 20 dests = 100 cells)
+    // Dynamic batch size calculation
+    const MAX_CELLS = 100;
+    const numOrigins = origins.length;
+    if (numOrigins === 0) return {};
 
-    const BATCH_SIZE = 20; // 5 origins * 20 destinations = 100 cells
+    // Calculate max destinations per batch
+    const BATCH_SIZE = Math.floor(MAX_CELLS / numOrigins);
+
+    // Safety check
+    if (BATCH_SIZE === 0) {
+        console.error("Too many origins for Matrix API limit.");
+        return null; // Or handle split origins
+    }
+
     const results = {};
 
     // Initialize results structure
@@ -137,7 +147,7 @@ export async function fetchTrafficMatrix(origins, destinations) {
     for (let i = 0; i < destinations.length; i += BATCH_SIZE) {
         const destBatch = destinations.slice(i, i + BATCH_SIZE);
 
-        console.log(`Fetching traffic matrix batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(destinations.length / BATCH_SIZE)} (${destBatch.length} destinations)...`);
+        console.log(`Fetching traffic matrix batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(destinations.length / BATCH_SIZE)} (${destBatch.length} destinations, ${numOrigins} origins)...`);
 
         // Prepare origins
         const originCoords = origins.map(o => ({

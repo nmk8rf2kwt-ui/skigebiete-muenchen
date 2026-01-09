@@ -97,7 +97,7 @@ export async function saveDailySnapshots() {
     statusLogger.log('success', 'db', `Daily snapshots complete (${count} saved).`);
 }
 
-// 3. Unified Traffic Matrix Job (Hourly 06-22)
+// 3. Unified Traffic Matrix Job (Every 30 min 06-22)
 // Replaces refreshTraffic and trackCityTraffic
 export async function updateTrafficMatrix() {
     const now = new Date();
@@ -109,18 +109,20 @@ export async function updateTrafficMatrix() {
         return;
     }
 
-    console.log("🚦 Updating Traffic Matrix (8 Cities × 60 Resorts)...");
+    console.log("🚦 Updating Traffic Matrix...");
 
     try {
         // 1. Load Data
         const resorts = getStaticResorts().filter(r => r.latitude && r.longitude);
+
         const citiesPath = path.join(__dirname, '../data/reference_cities.json');
 
         if (!fs.existsSync(citiesPath)) {
             console.warn("City reference file missing. Aborting matrix update.");
             return;
         }
-        const cities = JSON.parse(fs.readFileSync(citiesPath, 'utf-8'));
+        const cities = JSON.parse(fs.readFileSync(citiesPath, 'utf-8'))
+            .filter(c => c.id === 'muenchen'); // ⚠️ LIMIT: Only Munich to save API quota
 
         // 2. Fetch Matrix (Cities x Resorts)
         const trafficMatrix = await fetchTrafficMatrix(cities, resorts);
@@ -267,7 +269,7 @@ export function initScheduler() {
 
     // B. Traffic Matrix Loop (30 minutes) - Optimized frequency
     setTimeout(() => {
-        setInterval(updateTrafficMatrix, 15 * 60 * 1000); // Every 15 minutes
+        setInterval(updateTrafficMatrix, 30 * 60 * 1000); // Every 30 minutes (Limit API usage)
         updateTrafficMatrix(); // Initial run
     }, 5000);
 
