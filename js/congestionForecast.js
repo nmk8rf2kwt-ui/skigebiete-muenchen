@@ -85,8 +85,8 @@ async function loadCongestionForecast(resortId, cellId) {
   cell.innerHTML = `
     <!-- Added history-btn class and data-resort-id for modal trigger -->
     <div class="congestion-forecast history-btn" data-resort-id="${resortId}" style="position: relative; cursor: pointer; display: inline-block;">
-      <span style="font-size: 1.2em;">${icon}</span>
-      <span style="font-size: 0.9em; color: ${color}; font-weight: 500;">${avgDelay} min</span>
+      <span style="font-size: 1.0em;">${icon}</span>
+      <span style="font-size: 0.85em; color: ${color}; font-weight: 500;">${avgDelay} min</span>
       
       <div class="congestion-tooltip" style="
         display: none;

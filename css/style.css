@@ -718,11 +718,12 @@ tr.unavailable {
   }
 
   td:nth-child(16)::before {
-    content: "📊 History";
-    color: var(--text-light);
+    content: "🏆 Score";
+    color: var(--text-main);
+    font-weight: bold;
   }
 
-  td:nth-child(17) {
+  td:nth-child(16) {
     background-color: rgba(0, 0, 0, 0.02);
     font-weight: bold;
     margin-top: 10px;
@@ -731,9 +732,9 @@ tr.unavailable {
     border-radius: var(--radius-sm);
   }
 
-  td:nth-child(17)::before {
-    content: "🏆 Score";
-    color: var(--text-main);
+  /* Disable striping on mobile */
+  tr:nth-child(even):not(.good):not(.ok):not(.bad):not(.rank1):not(.unavailable) {
+    background-color: #fff !important;
   }
 }
 

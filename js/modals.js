@@ -518,11 +518,16 @@ export function displayResortDetails(resort) {
                 if (lift.type) metadata.push(`Typ: ${escapeHtml(lift.type)}`);
                 if (lift.length) metadata.push(`Länge: ${lift.length}m`);
                 if (lift.altitudeStart) metadata.push(`Höhe: ${lift.altitudeStart}m`);
-                if (lift.operatingHours) metadata.push(`⏰ ${escapeHtml(lift.operatingHours)}`);
+
+                let hoursHtml = "";
+                if (lift.operatingHours) {
+                    hoursHtml = `<div style="margin-top:2px; font-size:0.9em; color:#666;">⏰ ${escapeHtml(lift.operatingHours)}</div>`;
+                }
 
                 if (metadata.length > 0) {
                     html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
                 }
+                html += hoursHtml;
 
                 html += `</div>`;
             });
@@ -543,30 +548,54 @@ export function displayResortDetails(resort) {
                 const statusIcon = slope.status === "open" ? "🟢" :
                     slope.status === "closed" ? "🔴" : "⚪";
 
-                const difficultyIcon = slope.difficulty === "blue" ? "🔵" :
-                    slope.difficulty === "red" ? "🔴" :
-                        slope.difficulty === "black" ? "⚫" :
-                            slope.difficulty === "freeride" ? "🟠" : "";
+                // Map difficulty to text/badge, NOT circle
+                let diffBadge = "";
+                let diffClass = "";
+                switch (slope.difficulty) {
+                    case "blue": diffBadge = "Blau"; diffClass = "badge-blue"; break;
+                    case "red": diffBadge = "Rot"; diffClass = "badge-red"; break;
+                    case "black": diffBadge = "Schwarz"; diffClass = "badge-black"; break;
+                    case "freeride": diffBadge = "Freeride"; diffClass = "badge-warning"; break;
+                    default: diffBadge = "";
+                }
+
+                // Inline badge style for simplicity (or add to CSS)
+                const badgeStyle = `
+                  font-size: 0.75em; 
+                  padding: 2px 6px; 
+                  border-radius: 4px; 
+                  margin-right: 6px; 
+                  font-weight: bold;
+                  color: white;
+                  background-color: ${slope.difficulty === 'blue' ? '#3498db' :
+                        slope.difficulty === 'red' ? '#e74c3c' :
+                            slope.difficulty === 'black' ? '#2c3e50' : '#f39c12'
+                    };
+                `;
 
                 const safeSlopeName = escapeHtml(slope.name);
 
                 html += `<div class="facility-item">
         <div class="facility-header">
-          <span class="facility-status ${statusClass}">${statusIcon}</span>
-          ${difficultyIcon ? `<span class="difficulty-badge">${difficultyIcon}</span>` : ''}
+          <span class="facility-status ${statusClass}" title="${slope.status === 'open' ? 'Geöffnet' : 'Geschlossen'}">${statusIcon}</span>
+          ${diffBadge ? `<span style="${badgeStyle}" title="Schwierigkeit: ${diffBadge}">${diffBadge}</span>` : ''}
           <span class="facility-name">${safeSlopeName}</span>
         </div>`;
 
                 // Metadata
                 const metadata = [];
-                if (slope.difficulty) metadata.push(`Schwierigkeit: ${escapeHtml(slope.difficulty)}`);
                 if (slope.length) metadata.push(`Länge: ${slope.length}m`);
                 if (slope.altitudeStart) metadata.push(`Höhe: ${slope.altitudeStart}m`);
-                if (slope.operatingHours) metadata.push(`⏰ ${escapeHtml(slope.operatingHours)}`);
+                // Operating hours with line break if other metadata exists, or just alone
+                let hoursHtml = "";
+                if (slope.operatingHours) {
+                    hoursHtml = `<div style="margin-top:2px; font-size:0.9em; color:#666;">⏰ ${escapeHtml(slope.operatingHours)}</div>`;
+                }
 
                 if (metadata.length > 0) {
                     html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
                 }
+                html += hoursHtml;
 
                 html += `</div>`;
             });
