@@ -94,17 +94,17 @@ async function loadCongestionForecast(resortId, cellId) {
         background: white;
         border: 1px solid #ddd;
         border-radius: 8px;
-        padding: 12px;
+        padding: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
-        min-width: 280px;
+        z-index: 9999;
+        min-width: 240px;
         left: 50%;
         transform: translateX(-50%);
         bottom: 100%;
         margin-bottom: 8px;
         cursor: auto; 
       ">
-        <div style="font-weight: bold; margin-bottom: 8px; color: #2c3e50;">
+        <div style="font-weight: bold; margin-bottom: 6px; color: #2c3e50; font-size: 0.9em;">
           🚦 Top 5 Stauzeiten (Ø ${avgDelay} min)
         </div>
         ${tooltipLines}

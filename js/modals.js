@@ -286,7 +286,7 @@ export async function loadResortTrafficHistory(resortId) {
     const nearestCity = findNearestCity(userLat, userLon);
 
     try {
-        const res = await fetch(`${API_BASE_URL}/api/history/traffic/${nearestCity}/${resortId}`);
+        const res = await fetch(`${API_BASE_URL}/traffic/${nearestCity}/${resortId}`);
         if (!res.ok) throw new Error('Failed to fetch traffic history');
 
         const response = await res.json();
