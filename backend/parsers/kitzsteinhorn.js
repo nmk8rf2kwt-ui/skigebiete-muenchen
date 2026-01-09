@@ -8,6 +8,13 @@ export const details = {
     district: "Zell am See",
 };
 
+// Parser metadata for SmartScore data source attribution
+export const parserMeta = {
+    type: 'INTERMAPS_API',
+    sourceUrl: 'https://winter.intermaps.com/kitzsteinhorn',
+    sourceName: 'Intermaps'
+};
+
 export async function parse(options = {}) {
     const apiUrl = "https://winter.intermaps.com/kitzsteinhorn/data?lang=de";
 

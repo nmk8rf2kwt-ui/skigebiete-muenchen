@@ -371,27 +371,42 @@ export function renderRow(row, data) {
   // Score
   const score = data.score ?? "-";
 
-  // Traffic light status indicator with tooltips
-  let statusIcon = '<span title="Status unbekannt">⚪</span>';
-  if (data.status === "live") {
-    statusIcon = '<span title="Live-Daten verfügbar - Aktuelle Informationen vom Skigebiet">🟢</span>';
-  } else if (data.status === "static_only") {
-    statusIcon = '<span title="Nur Basisdaten - Live-Daten werden geladen">🟡</span>';
-  } else if (data.status === "error") {
-    statusIcon = '<span title="Fehler beim Laden - Daten möglicherweise veraltet">🔴</span>';
-  }
+  // Data Freshness Display (replaces old traffic light)
+  // Format time helper
+  const formatFreshnessTime = (isoString) => {
+    if (!isoString) return '-';
+    const d = new Date(isoString);
+    return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  };
 
-  // Format timestamp (e.g. "14:30")
-  let timeStr = "-";
-  if (data.lastUpdated) {
-    const d = new Date(data.lastUpdated);
-    timeStr = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-  }
+  // Get freshness class
+  const getFreshnessClass = (state) => {
+    if (!state) return '';
+    return state.toLowerCase(); // fresh, degraded, stale, expired
+  };
 
-  const statusIndicator = `
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-      <div style="font-size: 1.2em;">${statusIcon}</div>
-      <div style="font-size: 0.75em; color: #888; margin-top: 2px;">${timeStr}</div>
+  // Build data freshness display
+  const dataSources = data.dataSources || {};
+
+  const liftsInfo = dataSources.lifts || {};
+  const weatherInfo = dataSources.weather || {};
+  const snowInfo = dataSources.snow || {};
+  const trafficInfo = dataSources.traffic || {};
+
+  const dataFreshnessDisplay = `
+    <div class="data-freshness">
+      <div class="freshness-item ${getFreshnessClass(liftsInfo.freshness)}" title="${liftsInfo.source || 'Unknown'} (${liftsInfo.type || 'N/A'})${liftsInfo.sourceUrl ? '\n' + liftsInfo.sourceUrl : ''}">
+        🚠 <span class="freshness-time">${formatFreshnessTime(liftsInfo.lastUpdated)}</span>
+      </div>
+      <div class="freshness-item ${getFreshnessClass(weatherInfo.freshness)}" title="${weatherInfo.source || 'Unknown'}${weatherInfo.sourceUrl ? '\n' + weatherInfo.sourceUrl : ''}">
+        🌤️ <span class="freshness-time">${formatFreshnessTime(weatherInfo.lastUpdated)}</span>
+      </div>
+      <div class="freshness-item ${getFreshnessClass(snowInfo.freshness)}" title="${snowInfo.source || 'Unknown'}${snowInfo.sourceUrl ? '\n' + snowInfo.sourceUrl : ''}">
+        ❄️ <span class="freshness-time">${formatFreshnessTime(snowInfo.lastUpdated)}</span>
+      </div>
+      <div class="freshness-item ${getFreshnessClass(trafficInfo.freshness)}" title="${trafficInfo.source || 'Unknown'}${trafficInfo.sourceUrl ? '\n' + trafficInfo.sourceUrl : ''}">
+        🚗 <span class="freshness-time">${formatFreshnessTime(trafficInfo.lastUpdated)}</span>
+      </div>
     </div>
   `;
 
@@ -464,8 +479,14 @@ export function renderRow(row, data) {
   // Combined Weather & Snow Display
   // Combined Weather & Snow Display (Removed)
 
+  // SmartScore display (use new smartScore from backend, fallback to old score)
+  const smartScore = data.smartScore ?? score;
+  const smartScoreDisplay = smartScore !== '-' && smartScore !== null
+    ? `<strong title="SmartScore: ${smartScore}/100">${smartScore}</strong>`
+    : '<span style="color: #999;">-</span>';
+
   row.innerHTML = `
-    <td style="text-align: center;">${statusIndicator}</td>
+    <td>${dataFreshnessDisplay}</td>
     <td><a href="${safeWebsite}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${safeName}</a></td>
     <td>${typeDisplay}</td>
     <td>${data.piste_km ?? "-"} km</td>
@@ -487,6 +508,6 @@ export function renderRow(row, data) {
     <td>${webcamDisplay}</td>
     <td>${detailsDisplay}</td>
     <td>${historyDisplay}</td>
-    <td><strong>${score}</strong></td>
+    <td>${smartScoreDisplay}</td>
   `;
 }

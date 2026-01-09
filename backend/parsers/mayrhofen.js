@@ -8,6 +8,13 @@ export const details = {
     district: "Zillertal",
 };
 
+// Parser metadata for SmartScore data source attribution
+export const parserMeta = {
+    type: 'INTERMAPS_API',
+    sourceUrl: 'https://winter.intermaps.com/mayrhofen',
+    sourceName: 'Intermaps'
+};
+
 export async function parse(options = {}) {
     // Use Intermaps JSON API
     const apiUrl = "https://winter.intermaps.com/mayrhofen/data?lang=de";

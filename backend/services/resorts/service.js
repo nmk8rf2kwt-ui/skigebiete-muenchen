@@ -8,6 +8,7 @@ import logger from "../logger.js";
 import { statusLogger } from "../system/monitoring.js"; // Unified monitoring service
 import { ResortDataSchema } from "../../utils/schema.js";
 import * as Sentry from "@sentry/node";
+import { calculateSmartScore } from "../smartscore.js";
 
 // -- PATH CONFIG --
 const __filename = fileURLToPath(import.meta.url);
@@ -140,16 +141,33 @@ export async function getAllResortsLive() {
                     status: "static_only",
                 };
 
+                // Track timestamps for freshness calculation
+                let parserTimestamp = null;
+                let parserMeta = null;
+
                 if (parser) {
                     // Check cache first
-                    const cached = parserCache.get(resort.id);
-                    if (cached) {
+                    const cachedItem = parserCache.cache.get(resort.id);
+                    if (cachedItem && cachedItem.data) {
+                        const cached = cachedItem.data;
+                        parserTimestamp = cachedItem.timestamp;
                         liveData = {
                             ...liveData,
                             ...cached,
                             status: "live",
                             cached: true,
                         };
+                        // Try to get parser metadata
+                        try {
+                            const parserModule = await import(`../../parsers/${resort.id}.js`);
+                            parserMeta = parserModule.parserMeta || {
+                                type: 'UNKNOWN',
+                                sourceUrl: resort.website,
+                                sourceName: 'Website'
+                            };
+                        } catch {
+                            parserMeta = { type: 'UNKNOWN', sourceUrl: resort.website, sourceName: 'Website' };
+                        }
                     } else {
                         // NO FETCH - Background Scheduler Only
                         liveData.status = "static_only"; // Or "pending"
@@ -159,7 +177,10 @@ export async function getAllResortsLive() {
                 }
 
                 // Inject Fallback Weather/Snow from Weather Service if missing
-                const weatherData = weatherCache.get(resort.id);
+                const weatherCacheItem = weatherCache.cache.get(resort.id);
+                const weatherData = weatherCacheItem?.data;
+                const weatherTimestamp = weatherCacheItem?.timestamp || null;
+
                 if (weatherData) {
                     if (!liveData.weather && weatherData.current) {
                         liveData.weather =
@@ -192,18 +213,107 @@ export async function getAllResortsLive() {
                 }
 
                 // Inject Traffic Data
-                const traffic = trafficCache.get(resort.id);
+                const trafficCacheItem = trafficCache.cache.get(resort.id);
+                const traffic = trafficCacheItem?.data;
+                const trafficTimestamp = trafficCacheItem?.timestamp || null;
+
                 if (traffic) {
                     // Overwrite static distance with live duration - DISABLED to allow comparison
                     // resort.distance = traffic.duration; 
                     liveData.traffic = traffic; // Pass full object if frontend needs distance km
                 }
 
+                // ============ SMARTSCORE CALCULATION ============
+
+                // Extract snow depth (handle both object and string formats)
+                let snowDepthCm = null;
+                if (liveData.snow) {
+                    if (typeof liveData.snow === 'object') {
+                        // Try mountain first, then valley
+                        snowDepthCm = liveData.snow.mountain ?? liveData.snow.valley ?? null;
+                        if (snowDepthCm !== null) {
+                            snowDepthCm = parseInt(snowDepthCm) || null;
+                        }
+                    } else if (typeof liveData.snow === 'string') {
+                        const match = liveData.snow.match(/(\d+)/);
+                        snowDepthCm = match ? parseInt(match[1]) : null;
+                    }
+                }
+                // Fallback: try to get snow depth from forecast if not available
+                if (snowDepthCm === null && weatherData?.forecast?.forecast?.[0]?.snowDepth) {
+                    snowDepthCm = weatherData.forecast.forecast[0].snowDepth;
+                }
+
+                // Get weather conditions for comfort calculation
+                const currentConditions = weatherData?.forecast?.currentConditions || {};
+
+                // Get ETA (travel time with traffic) - convert from seconds to minutes
+                const etaMinutes = traffic?.duration ? Math.round(traffic.duration / 60) : null;
+
+                // Get price
+                const priceEur = resort.priceDetail?.adult || resort.price || null;
+
+                // Calculate SmartScore
+                const smartScoreResult = calculateSmartScore({
+                    liftsOpen: liveData.liftsOpen,
+                    liftsTotal: liveData.liftsTotal || resort.lifts,
+                    etaMinutes,
+                    snowDepthCm,
+                    tempC: currentConditions.temp,
+                    precipMm: currentConditions.precipitationNext3h,
+                    windKmh: currentConditions.windSpeed,
+                    priceEur,
+                    timestamps: {
+                        lifts: parserTimestamp,
+                        weather: weatherTimestamp,
+                        traffic: trafficTimestamp,
+                        snow: weatherTimestamp,  // Snow comes from weather API
+                        price: Date.now()        // Static data, always fresh
+                    }
+                });
+
+                // Build data sources metadata for frontend
+                const dataSources = {
+                    lifts: {
+                        lastUpdated: parserTimestamp ? new Date(parserTimestamp).toISOString() : null,
+                        source: parserMeta?.sourceName || 'Unknown',
+                        sourceUrl: parserMeta?.sourceUrl || null,
+                        type: parserMeta?.type || 'UNKNOWN',
+                        freshness: smartScoreResult.freshness.lifts
+                    },
+                    weather: {
+                        lastUpdated: weatherTimestamp ? new Date(weatherTimestamp).toISOString() : null,
+                        source: 'Open-Meteo',
+                        sourceUrl: 'https://open-meteo.com',
+                        type: 'API',
+                        freshness: smartScoreResult.freshness.weather
+                    },
+                    snow: {
+                        lastUpdated: weatherTimestamp ? new Date(weatherTimestamp).toISOString() : null,
+                        source: 'Open-Meteo',
+                        sourceUrl: 'https://open-meteo.com',
+                        type: 'API',
+                        freshness: smartScoreResult.freshness.snow
+                    },
+                    traffic: {
+                        lastUpdated: trafficTimestamp ? new Date(trafficTimestamp).toISOString() : null,
+                        source: 'TomTom',
+                        sourceUrl: 'https://developer.tomtom.com',
+                        type: 'API',
+                        freshness: smartScoreResult.freshness.traffic
+                    }
+                };
+
                 return {
                     ...resort,
                     ...liveData,
                     id: resort.id,
                     name: resort.name,
+                    // SmartScore data
+                    smartScore: smartScoreResult.total,
+                    smartScoreComponents: smartScoreResult.components,
+                    smartScoreResult: smartScoreResult,
+                    dataSources
                 };
             })
         )
@@ -221,6 +331,7 @@ export async function getAllResortsLive() {
 
     return results;
 }
+
 
 // Single Resort Fetch (with cache check)
 export async function getSingleResortLive(resortId) {

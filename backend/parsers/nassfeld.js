@@ -8,6 +8,13 @@ export const details = {
     district: "Kärnten",
 };
 
+// Parser metadata for SmartScore data source attribution
+export const parserMeta = {
+    type: 'INTERMAPS_API',
+    sourceUrl: 'https://winter.intermaps.com/nassfeld',
+    sourceName: 'Intermaps'
+};
+
 export async function parse(options = {}) {
     const apiUrl = "https://winter.intermaps.com/nassfeld/data?lang=de";
 

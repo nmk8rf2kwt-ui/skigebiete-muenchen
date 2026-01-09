@@ -1,6 +1,7 @@
 // Weather service using Open-Meteo API (free, no key required)
 export async function getWeatherForecast(latitude, longitude) {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,weathercode,snowfall_sum&hourly=snow_depth&timezone=Europe/Berlin&forecast_days=3`;
+    // Extended query: added precipitation and wind_speed_10m for SmartScore Comfort calculation
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,weathercode,snowfall_sum&hourly=snow_depth,precipitation,wind_speed_10m&timezone=Europe/Berlin&forecast_days=3`;
 
     try {
         const res = await fetch(url);
@@ -82,7 +83,33 @@ export async function getWeatherForecast(latitude, longitude) {
             }
         }
 
-        return { forecast, lastSnowfall };
+        // Extract current conditions for SmartScore Comfort calculation
+        const currentHour = new Date().getHours();
+
+        // Current wind speed (km/h)
+        const currentWindSpeed = data.hourly?.wind_speed_10m?.[currentHour] ?? null;
+
+        // Precipitation sum for next 3 hours (mm)
+        let precipitationNext3h = 0;
+        if (data.hourly?.precipitation) {
+            for (let h = currentHour; h < Math.min(currentHour + 3, data.hourly.precipitation.length); h++) {
+                precipitationNext3h += data.hourly.precipitation[h] || 0;
+            }
+        }
+
+        // Current temperature (use average of today's max/min as approximation, or first forecast)
+        const currentTemp = forecast[0] ? Math.round((forecast[0].tempMax + forecast[0].tempMin) / 2) : null;
+
+        return {
+            forecast,
+            lastSnowfall,
+            // SmartScore Comfort inputs
+            currentConditions: {
+                temp: currentTemp,
+                precipitationNext3h: Math.round(precipitationNext3h * 10) / 10,  // mm, 1 decimal
+                windSpeed: currentWindSpeed ? Math.round(currentWindSpeed) : null  // km/h
+            }
+        };
     } catch (error) {
         console.error("Weather fetch error:", error);
         return null;

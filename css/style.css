@@ -332,6 +332,46 @@ tr.unavailable {
   font-weight: bold;
 }
 
+/* ================= DATA FRESHNESS DISPLAY ================= */
+
+.data-freshness {
+  font-size: 0.72em;
+  line-height: 1.5;
+  white-space: nowrap;
+  padding: 4px 6px !important;
+}
+
+.freshness-item {
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.freshness-item.fresh {
+  color: var(--color-good-border);
+}
+
+.freshness-item.degraded {
+  color: var(--color-ok-border);
+}
+
+.freshness-item.stale {
+  color: #e67e22;
+  font-style: italic;
+}
+
+.freshness-item.expired {
+  color: var(--color-bad-border);
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.freshness-time {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.95em;
+}
+
 .weather {
   white-space: nowrap;
 }

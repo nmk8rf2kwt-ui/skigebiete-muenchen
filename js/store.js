@@ -7,7 +7,7 @@ export const store = {
     state: {
         resorts: [],
         filter: 'all',  // 'all', 'top3', 'open'
-        sortKey: 'score',
+        sortKey: 'smartScore',  // Default to SmartScore
         sortDirection: 'desc',
         viewMode: 'list', // 'list', 'map'
         radius: 150, // Default radius in km
@@ -46,8 +46,8 @@ export const store = {
 
         // Filter by Type
         if (this.state.filter === 'top3') {
-            // Sort by score first
-            data.sort((a, b) => (b.score || 0) - (a.score || 0));
+            // Sort by smartScore first (descending)
+            data.sort((a, b) => (b.smartScore || b.score || 0) - (a.smartScore || a.score || 0));
             data = data.slice(0, 3);
         } else if (this.state.filter === 'open') {
             data = data.filter(r => r.liftsOpen > 0);

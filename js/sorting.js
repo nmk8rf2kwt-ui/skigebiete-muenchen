@@ -43,7 +43,7 @@ export function sortResorts(data, sortKey, sortDirection = 'desc') {
         const multiplier = sortDirection === "asc" ? 1 : -1;
 
         // Start with special keys that REQUIRE numeric parsing from potential strings
-        if (['snow', 'distance', 'piste_km', 'price', 'score', 'distance_km', 'traffic_duration', 'traffic_delay', 'liftsOpen'].includes(sortKey)) {
+        if (['snow', 'distance', 'piste_km', 'price', 'score', 'smartScore', 'distance_km', 'traffic_duration', 'traffic_delay', 'liftsOpen'].includes(sortKey)) {
             return (getNumericValue(valA) - getNumericValue(valB)) * multiplier;
         }
 
