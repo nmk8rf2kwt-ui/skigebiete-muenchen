@@ -367,7 +367,7 @@
         "website": "https://www.skijuwel.com/de/winter/lifte-und-pisten",
         "latitude": 47.3815,
         "longitude": 11.9789,
-        "webcam": "https://www.skijuwel.com/de/winter/webcams",
+        "webcam": "https://www.skijuwel.com/de/webcams",
         "priceDetail": {
             "adult": 68.5,
             "youth": 55,
@@ -607,7 +607,7 @@
         "website": "https://www.hoernerbahn.de",
         "latitude": 47.4666,
         "longitude": 10.2333,
-        "webcam": "https://www.hoernerbahn.de/webcams/",
+        "webcam": "https://www.hoernerbahn.de/webcam.html",
         "priceDetail": {
             "adult": 54.5,
             "youth": 41.5,
@@ -727,7 +727,7 @@
         "website": "https://www.skiliftkarussell.de",
         "latitude": 51.196,
         "longitude": 8.526,
-        "webcam": "https://www.skiliftkarussell.de/aktuelles/webcams/",
+        "webcam": "https://www.skiliftkarussell.de/webcams/",
         "priceDetail": {
             "adult": 48,
             "currency": "€",
@@ -745,7 +745,7 @@
         "website": "https://www.feldberg-erlebnis.de",
         "latitude": 47.859,
         "longitude": 8.005,
-        "webcam": "https://www.feldberg-erlebnis.de/webcams",
+        "webcam": "https://www.hochschwarzwald.de/erleben/winter/skifahren/skilifte/feldbergbahnen/webcams",
         "priceDetail": {
             "adult": 47,
             "currency": "€",
@@ -799,7 +799,7 @@
         "website": "https://fichtelberg-ski.de",
         "latitude": 50.428,
         "longitude": 12.969,
-        "webcam": "https://fichtelberg-ski.de/wetter-webcams/",
+        "webcam": "https://fichtelberg-ski.de/webcam/",
         "priceDetail": {
             "adult": 39,
             "currency": "€",
@@ -1071,7 +1071,7 @@
             "adult": 76,
             "info": "Tageskarte"
         },
-        "webcam": "https://www.kitzsteinhorn.at/de/service/webcams"
+        "webcam": "https://www.kitzsteinhorn.at/de/webcams"
     },
     {
         "id": "nassfeld",
@@ -1105,7 +1105,7 @@
             "adult": 73,
             "info": "Tageskarte"
         },
-        "webcam": "https://www.gurgl.com/de/live-information/livecams"
+        "webcam": "https://www.gurgl.com/de/webcams"
     },
     {
         "id": "axamer_lizum",
@@ -1156,7 +1156,7 @@
             "adult": 66,
             "info": "Tageskarte"
         },
-        "webcam": "https://www.stubaier-gletscher.com/de/service/webcams"
+        "webcam": "https://www.stubaier-gletscher.com/de/webcams"
     },
     {
         "id": "snow_space_salzburg",
@@ -1207,7 +1207,7 @@
             "adult": 74,
             "info": "Tageskarte"
         },
-        "webcam": "https://www.silvretta-montafon.at/de/service/webcams"
+        "webcam": "https://www.silvretta-montafon.at/de/webcams"
     },
     {
         "id": "damuels_mellau",
@@ -1258,7 +1258,7 @@
             "adult": 62,
             "info": "Tageskarte"
         },
-        "webcam": "https://www.badkleinkirchheim.com/de/webcams/"
+        "webcam": "https://www.badkleinkirchheim.com/de/webcams"
     },
     {
         "id": "kronplatz",
@@ -1275,7 +1275,7 @@
             "adult": 74,
             "info": "Tageskarte"
         },
-        "webcam": "https://www.kronplatz.com/de/service/webcams"
+        "webcam": "https://www.kronplatz.com/de/webcams"
     },
     {
         "id": "dolomitisuperski",
@@ -1309,6 +1309,6 @@
             "adult": 80,
             "info": "Tageskarte"
         },
-        "webcam": "https://www.valgardena.it/de/webcams/"
+        "webcam": "https://www.valgardena.it/de/webcams"
     }
 ]
