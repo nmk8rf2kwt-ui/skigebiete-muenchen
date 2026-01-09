@@ -22,7 +22,7 @@ export async function fetchIntermaps(url) {
                 lifts.push({
                     name: name.trim(),
                     status,
-                    type: lift.type || undefined
+                    type: lift.type ? String(lift.type) : undefined
                 });
             });
         }
