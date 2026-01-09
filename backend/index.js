@@ -41,6 +41,9 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 const IS_PROD = process.env.NODE_ENV === 'production';
 
+// Trust proxy for Render.com (fixes rate-limit X-Forwarded-For warning)
+app.set('trust proxy', 1);
+
 // Security Middleware
 app.use(helmet({
   contentSecurityPolicy: {

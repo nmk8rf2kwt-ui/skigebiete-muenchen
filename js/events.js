@@ -1,6 +1,7 @@
 import { store } from "./store.js";
 import { API_BASE_URL } from "./config.js";
-displayWeather,
+import {
+    displayWeather,
     displayResortDetails,
     switchHistoryTab,
     fetchSystemStatus,
