@@ -64,10 +64,11 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
   }));
 
   // 2. Filter
-  if (filter === 'top3') {
-    // Sort by score first to find top 3
+  if (filter.startsWith('top')) {
+    const topN = parseInt(filter.replace('top', ''), 10) || 3;
+    // Sort by score first to find top N
     enrichedData.sort((a, b) => b.score - a.score);
-    enrichedData = enrichedData.slice(0, 3);
+    enrichedData = enrichedData.slice(0, topN);
   } else if (filter === 'open') {
     enrichedData = enrichedData.filter(r => r.liftsOpen > 0);
   }
@@ -339,6 +340,7 @@ export function renderRow(row, data) {
         <div style="display: flex; flex-direction: column; align-items: center; margin-right: 8px;" title="${escapeHtml(tooltip)}">
           <span style="font-size: 1.2em; cursor: help;">${icon}</span>
           <span style="font-size: 0.7em; color: #666; margin-top: -2px;">${shortDate}</span>
+          <span style="font-size: 0.7em; font-weight: bold; color: #444; margin-top: 2px;">${Math.round(f.tempMax)}°/${Math.round(f.tempMin)}°</span>
         </div>
       `;
     }).join("");
@@ -358,15 +360,22 @@ export function renderRow(row, data) {
 
 
   // Details button (for resorts with lift/slope data)
-  const hasDetails = (data.lifts && data.lifts.length > 0) || (data.slopes && data.slopes.length > 0);
+  const hasLifts = Array.isArray(data.lifts) && data.lifts.length > 0;
+  const hasSlopes = Array.isArray(data.slopes) && data.slopes.length > 0;
+
+  if (data.status === 'live' && !hasLifts && !hasSlopes) {
+    // Debug log to trace why button might be missing for live resorts
+    // console.debug(`[Render] Resort ${data.id} is live but has no details arrays. Lifts: ${typeof data.lifts}, Slopes: ${typeof data.slopes}`);
+  }
+
+  const hasDetails = hasLifts || hasSlopes;
   const detailsDisplay = hasDetails
     ? `<button class="details-btn" data-resort-id="${data.id}" data-resort-name="${safeName}" title="Lifte & Pisten Details anzeigen">📋</button>`
     : '<span title="Keine Details verfügbar">-</span>';
 
-  // History button (Dedicated Column)
-  const historyDisplay = (data.latitude && data.longitude)
-    ? `<button class="history-btn" data-resort-id="${data.id}" data-resort-name="${safeName}" title="Historie anzeigen">📊</button>`
-    : '<span title="Keine Verlaufsdaten verfügbar">-</span>';
+  // History button - REMOVED
+  // Traffic Analysis is now triggered via the Traffic Trend column
+  const historyDisplay = "";
 
   // Score
   const score = data.score ?? "-";
@@ -507,7 +516,7 @@ export function renderRow(row, data) {
     </td>
     <td>${webcamDisplay}</td>
     <td>${detailsDisplay}</td>
-    <td>${historyDisplay}</td>
+    <!-- History Column Removed -->
     <td>${smartScoreDisplay}</td>
   `;
 }

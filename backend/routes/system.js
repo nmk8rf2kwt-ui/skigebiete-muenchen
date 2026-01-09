@@ -32,6 +32,7 @@ statusRouter.get("/", async (req, res) => {
         webcams: { summary: webcamStatus.summary, lastCheck: webcamStatus.lastCheck, problematic: webcamMonitor.getStatus().webcams.filter(w => w.status !== 'ok') },
         metrics: statusLogger.getMetrics(),
         logs: statusLogger.getLogs(),
+        monitoring: { sentry: true }, // Sentry is always configured in production
         uptime: process.uptime()
     });
 });

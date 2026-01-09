@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.7.29] - 2026-01-09
+
+### 🗑️ Removed
+- **History Feature**: Removed the "History" column and modal tabs (Lifts/Weather history) from the frontend. The feature was collecting data but rarely used.
+- **Backend Cleanup**: Disabled daily snapshot jobs and weather backfill in the scheduler.
+
+### 🚀 Features
+- **Traffic Analysis Access**: The congestion trend cell (🟢 5 min) in the "Stau-Trend" column is now **clickable** and opens the Traffic Histogram directly.
+- **Parser Type Tooltip**: Hovering over the 🚠 lift icon in the first column now shows which parser type is used (Intermaps JSON, Micado, Bayern-API, etc.).
+- **Parser Refresh Fix**: Fixed critical bug where scheduled parser refreshes were passive (read-only). Implemented `refreshAllResorts()` for active data fetching.
+
+### 🎨 UI Improvements
+- **Headline**: Simplified to "Skigebiets-Finder" (removed " - Live Ranking").
+- **Meta Line**: Removed "Auto-Refresh alle 30 min", replaced "System Status" with 📊 icon.
+- **Filter Controls**: Replaced single "Top 3" button with **Top 3 / Top 5 / Top 10** buttons, added "ODER" label, compact radius slider.
+- **Sort Controls**: Added dedicated sort row with Score, Schnee, Nähe, Offen, Pisten buttons.
+- **Spacing**: Increased gap between controls and table.
+
+### 🛡️ Admin Dashboard
+- **Auth Visibility**: Dashboard content is now hidden until authentication succeeds (fixes content showing behind login prompt).
+- **API Boxes**: Separated TomTom (with limit tracking) and ORS Geocoding into distinct monitoring cards.
+- **Sentry Status**: Fixed missing `monitoring.sentry` field in `/api/status` response.
+
+### 🗂️ New Files
+- `backend/parsers/parserTypes.js`: Mapping of resort IDs to parser implementation types.
+
 ## [1.7.28] - 2026-01-08
 
 ### 🛡️ Features

@@ -215,11 +215,37 @@
         .log-lvl.info {
             color: #58a6ff;
         }
+
+        /* Hide dashboard content until authenticated */
+        .container {
+            display: none;
+        }
+
+        .container.authenticated {
+            display: block;
+        }
+
+        .auth-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: var(--muted-color);
+        }
+
+        .auth-overlay h2 {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="auth-overlay" id="authOverlay">
+        <h2>🔒 Admin Dashboard</h2>
+        <p>Authentication required...</p>
+    </div>
+    <div class="container" id="mainContainer">
         <header>
             <h1>📡 Admin Dashboard</h1>
             <div style="display:flex; gap:10px;">
@@ -297,15 +323,25 @@
                     </div>
                 </div>
 
-                <!-- 1. API USAGE GROUP -->
+                <!-- 1. API USAGE GROUP: TomTom -->
                 <div class="card">
-                    <h3>🚦 API Usage</h3>
+                    <h3>🚦 TomTom API Usage</h3>
                     <span class="metric" id="todayRequests">0</span>
                     <span class="label">von 2500 heute</span>
                     <div class="progress-bar">
                         <div class="progress-fill" id="todayProgress" style="width: 0%"></div>
                     </div>
                     <div style="margin-top: 10px; font-size: 0.9em;" id="usageStatus">...</div>
+                </div>
+
+                <!-- ORS Geocoding API -->
+                <div class="card">
+                    <h3>🌍 ORS Geocoding API</h3>
+                    <span class="metric" id="orsRequests">0</span>
+                    <span class="label">heute (unlimited)</span>
+                    <div style="margin-top: 10px; font-size: 0.9em;" id="orsStatus">
+                        <span class="status-ok">Normal</span>
+                    </div>
                 </div>
 
                 <div class="card">
@@ -348,7 +384,27 @@
             ? 'http://localhost:3000/api'
             : 'https://skigebiete-muenchen-backend.onrender.com/api';
 
-        document.addEventListener('DOMContentLoaded', fetchAll);
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+        async function initDashboard() {
+            // Check auth before showing content
+            try {
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/system`);
+                if (res.ok) {
+                    // Authenticated - show dashboard
+                    document.getElementById('authOverlay').style.display = 'none';
+                    document.getElementById('mainContainer').classList.add('authenticated');
+                    fetchAll();
+                }
+            } catch (e) {
+                // Auth failed or cancelled
+                document.getElementById('authOverlay').innerHTML = `
+                    <h2>🔒 Admin Dashboard</h2>
+                    <p style="color: var(--danger-color);">Authentication failed or cancelled.</p>
+                    <button class="btn" onclick="location.reload()">Retry</button>
+                `;
+            }
+        }
 
         function fetchAll() {
             const now = new Date().toLocaleTimeString();
@@ -375,10 +431,16 @@
         function renderUsage(data) {
             const today = new Date().toISOString().split('T')[0];
             const dailyData = data.daily[today] || { requests: 0 };
-            const count = dailyData.requests;
-            const percent = Math.min((count / API_LIMIT) * 100, 100);
+            const bd = dailyData.breakdown || {};
 
-            document.getElementById('todayRequests').innerText = count;
+            // Calculate TomTom-only count
+            const tomtomCount = (bd['matrix_batch'] || 0) + (bd['tomtom'] || 0);
+            const orsCount = (bd['ors'] || 0) + (bd['ors_directions'] || 0) + (bd['geocoding'] || 0);
+            const totalCount = dailyData.requests;
+
+            // TomTom Box
+            const percent = Math.min((tomtomCount / API_LIMIT) * 100, 100);
+            document.getElementById('todayRequests').innerText = tomtomCount;
             const bar = document.getElementById('todayProgress');
             const status = document.getElementById('usageStatus');
 
@@ -390,7 +452,6 @@
             if (dailyData.limitReached) {
                 bar.style.width = '100%';
                 bar.style.backgroundColor = 'var(--danger-color)';
-                // Force critical display
                 statusText = `<span class="status-crit">🚨 CRITICAL - Limit Reached (Blocked by API)</span>`;
                 if (dailyData.limitReachedBy) statusText += `<br><span style="font-size:0.8em; color:var(--muted-color);">(Triggered by ${dailyData.limitReachedBy})</span>`;
             } else {
@@ -407,41 +468,22 @@
                 }
             }
 
-            // Breakdown Display
-            const bd = dailyData.breakdown || {};
-            const providerNames = {
-                'matrix_batch': 'TomTom Matrix',
-                'tomtom': 'TomTom Routing',
-                'ors': 'OpenRouteService',
-                'ors_directions': 'OpenRouteService', // legacy/alt key
-                'geocoding': 'ORS Geocoding'
-            };
-
-            // Ensure we at least show 0 for main providers if not present
-            const providersToShow = ['matrix_batch', 'tomtom', 'ors'];
-
-            // Merge actual data keys with default keys to ensure visibility
-            const allKeys = new Set([...Object.keys(bd), ...providersToShow]);
-
+            // TomTom Breakdown
             statusText += '<div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">';
-
-            // Sort to keep consistent order (TomTom first, then ORS)
-            const sortedKeys = Array.from(allKeys).sort();
-
-            for (const key of sortedKeys) {
-                const val = bd[key] || 0;
-                const name = providerNames[key] || key; // Fallback to raw key
-
-                // Color coding
-                let color = '#c9d1d9'; // Default white/grey
-                if (key.includes('tomtom') || key.includes('matrix')) color = '#58a6ff'; // Blue
-                if (key.includes('ors') || key.includes('geo')) color = '#d29922'; // Orange
-
-                statusText += `<span style="background:#30363d; padding:2px 6px; border-radius:4px; font-size:0.8em; color:${color}; border: 1px solid #30363d;">${name}: <strong>${val}</strong></span>`;
-            }
+            statusText += `<span style="background:#30363d; padding:2px 6px; border-radius:4px; font-size:0.8em; color:#58a6ff;">Matrix: <strong>${bd['matrix_batch'] || 0}</strong></span>`;
+            statusText += `<span style="background:#30363d; padding:2px 6px; border-radius:4px; font-size:0.8em; color:#58a6ff;">Routing: <strong>${bd['tomtom'] || 0}</strong></span>`;
             statusText += '</div>';
 
             status.innerHTML = statusText;
+
+            // ORS Box
+            document.getElementById('orsRequests').innerText = orsCount;
+            let orsStatusHtml = '<span class="status-ok">Normal</span>';
+            orsStatusHtml += '<div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">';
+            orsStatusHtml += `<span style="background:#30363d; padding:2px 6px; border-radius:4px; font-size:0.8em; color:#d29922;">Geocoding: <strong>${bd['geocoding'] || 0}</strong></span>`;
+            orsStatusHtml += `<span style="background:#30363d; padding:2px 6px; border-radius:4px; font-size:0.8em; color:#d29922;">Directions: <strong>${bd['ors'] || 0}</strong></span>`;
+            orsStatusHtml += '</div>';
+            document.getElementById('orsStatus').innerHTML = orsStatusHtml;
 
             renderChart(data.daily);
         }

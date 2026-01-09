@@ -1,9 +1,7 @@
 import { store } from "./store.js";
 import { API_BASE_URL } from "./config.js";
-import {
-    displayWeather,
+displayWeather,
     displayResortDetails,
-    displayHistoryChart,
     switchHistoryTab,
     fetchSystemStatus,
     setCurrentResortId,
@@ -60,13 +58,27 @@ export function initEventListeners(handlers) {
         store.setState({ viewMode: nextMode }, render);
     });
 
-    document.getElementById("top3").addEventListener("click", () => {
-        const nextFilter = store.get().filter === "top3" ? "all" : "top3";
-        document.getElementById("top3").textContent = nextFilter === "top3" ? "❌ Alle anzeigen" : "🏆 Nur Top-3 heute";
-        store.setState({ filter: nextFilter }, render);
+    // Top N Filter Buttons (Top 3, Top 5, Top 10)
+    document.querySelectorAll(".top-filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const topN = parseInt(btn.dataset.top, 10);
+            const currentFilter = store.get().filter;
+
+            // Toggle: if already active, reset to "all"
+            if (currentFilter === `top${topN}`) {
+                store.setState({ filter: "all" }, render);
+                // Reset all button styles
+                document.querySelectorAll(".top-filter-btn").forEach(b => b.classList.remove("active"));
+            } else {
+                store.setState({ filter: `top${topN}` }, render);
+                // Highlight active button
+                document.querySelectorAll(".top-filter-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+            }
+        });
     });
 
-    // Sort Headers (Desktop)
+    // Sort Headers (Desktop Table Headers)
     document.querySelectorAll("th[data-sort]").forEach(th => {
         th.style.cursor = "pointer";
         th.addEventListener("click", () => {
@@ -85,10 +97,26 @@ export function initEventListeners(handlers) {
         });
     });
 
-    // Mobile Sort Buttons
-    document.querySelectorAll(".sort-mobile button").forEach(btn => {
+    // Sort Buttons (Toolbar)
+    document.querySelectorAll(".sort-btn").forEach(btn => {
         btn.addEventListener("click", () => {
-            store.setState({ sortKey: btn.dataset.sort }, render);
+            const newSort = btn.dataset.sort;
+            const state = store.get();
+            const currentSort = state.sortKey;
+            let sortDirection = state.sortDirection;
+
+            // Toggle direction if same sort, otherwise default direction
+            if (currentSort === newSort) {
+                sortDirection = sortDirection === "desc" ? "asc" : "desc";
+            } else {
+                sortDirection = ['distance', 'distance_km', 'traffic_duration', 'price'].includes(newSort) ? "asc" : "desc";
+            }
+
+            store.setState({ sortKey: newSort, sortDirection }, render);
+
+            // Highlight active sort button
+            document.querySelectorAll(".sort-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
         });
     });
 
@@ -156,11 +184,15 @@ export function initEventListeners(handlers) {
 
     // Delegated Clicks for Buttons in Dynamic Content (Table)
     document.addEventListener("click", async (event) => {
-        const target = event.target;
+        // Use closest to handle clicks on children (icons, text)
+        const weatherBtn = event.target.closest('.weather-btn');
+        const detailsBtn = event.target.closest('.details-btn');
+        const historyBtn = event.target.closest('.history-btn');
+        const tabBtn = event.target.closest('.tab-btn');
 
         // Weather Button
-        if (target.classList.contains("weather-btn")) {
-            const { resortId, resortName } = target.dataset;
+        if (weatherBtn) {
+            const { resortId, resortName } = weatherBtn.dataset;
             weatherModal.style.display = "block";
             document.getElementById("weatherResortName").textContent = `${resortName} - 3-Day Forecast`;
             document.getElementById("weatherForecast").innerHTML = "<p>Loading...</p>";
@@ -177,8 +209,8 @@ export function initEventListeners(handlers) {
         }
 
         // Details Button
-        if (target.classList.contains("details-btn")) {
-            const { resortId, resortName } = target.dataset;
+        if (detailsBtn) {
+            const { resortId, resortName } = detailsBtn.dataset;
             const resort = store.get().resorts.find(r => r.id === resortId);
 
             if (!resort) {
@@ -191,30 +223,34 @@ export function initEventListeners(handlers) {
             displayResortDetails(resort);
         }
 
-        // History Button
-        if (target.classList.contains("history-btn")) {
-            const { resortId, resortName } = target.dataset;
+        // Traffic Analysis (Legacy History Button / New Traffic Cell)
+        if (historyBtn) {
+            const { resortId } = historyBtn.dataset; // Name might be missing on div triggers
+            // Lookup name from store if missing
+            const resort = store.get().resorts.find(r => r.id === resortId);
+            const resortName = resort ? resort.name : (historyBtn.dataset.resortName || 'Resort');
+
             setCurrentResortId(resortId);
             resetModalStates();
-            switchHistoryTab('lifts');
 
             historyModal.style.display = "block";
-            document.getElementById("historyResortName").textContent = `${resortName} - History`;
+            document.getElementById("historyResortName").textContent = `${resortName} - Verkehrsprognose`;
 
-            try {
-                const res = await fetch(`${API_BASE_URL}/api/history/${resortId}?days=7`);
-                if (!res.ok) throw new Error("Failed to fetch history");
-                const data = await res.json();
-                displayHistoryChart(data.history);
-            } catch (error) {
-                console.error("History error:", error);
-                alert("History data not available yet. Data is collected daily.");
-            }
+            // Explicitly load the traffic chart
+            // We need to dynamically import or ensure this function is available. 
+            // It is exported from modals.js. We need to update imports first!
+            // However, switchHistoryTab('traffic') does exactly this logic internally if we kept it.
+            // But we wanted to simplify.
+            // Let's assume switchHistoryTab('traffic') is easiest path IF we keep the tab switching logic in modals.js purely for loading, 
+            // even if tabs are hidden.
+            // Actually, I'll update imports in next step to import loadResortTrafficHistory directly.
+            // TEMPORARY: using switchHistoryTab for compatibility if I haven't removed it yet.
+            switchHistoryTab('traffic');
         }
 
-        // Tab Switching in History Modal
-        if (target.classList.contains('tab-btn')) {
-            switchHistoryTab(target.dataset.tab);
+        // Tab Switching in History Modal (if any tabs left)
+        if (tabBtn) {
+            switchHistoryTab(tabBtn.dataset.tab);
         }
     });
 

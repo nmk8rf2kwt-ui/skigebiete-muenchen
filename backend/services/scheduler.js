@@ -243,9 +243,8 @@ export async function refreshParsers() {
     console.log("🔄 Starting proactive parser refresh...");
     statusLogger.log('info', 'scraper', 'Starting proactive parser refresh...');
     try {
-        const { getAllResortsLive } = await import("./resorts/service.js");
-        // This function already iterates through all resorts and updates cache
-        await getAllResortsLive();
+        const { refreshAllResorts } = await import("./resorts/service.js");
+        await refreshAllResorts();
         console.log("✅ Proactive parser refresh complete.");
     } catch (error) {
         console.error("❌ Proactive parser refresh failed:", error.message);
@@ -282,18 +281,18 @@ export function initScheduler() {
         syncResortsToDatabase(resorts);
     }, 5000);
 
-    // E. Snapshot Loop (Check every hour)
-    setInterval(() => {
-        const now = new Date();
-        const currentDate = now.toISOString().split('T')[0];
-        const currentHour = now.getHours();
-
-        // Run only if it's midnight hour (00:00 - 00:59) AND we haven't run today
-        if (currentHour === 0 && lastSnapshotDate !== currentDate) {
-            lastSnapshotDate = currentDate;
-            saveDailySnapshots();
-        }
-    }, 60 * 60 * 1000);
+    // E. Snapshot Loop (Check every hour) - DISABLED (Feature Removed)
+    // setInterval(() => {
+    //     const now = new Date();
+    //     const currentDate = now.toISOString().split('T')[0];
+    //     const currentHour = now.getHours();
+    //
+    //     // Run only if it's midnight hour (00:00 - 00:59) AND we haven't run today
+    //     if (currentHour === 0 && lastSnapshotDate !== currentDate) {
+    //         lastSnapshotDate = currentDate;
+    //         saveDailySnapshots();
+    //     }
+    // }, 60 * 60 * 1000);
 
     // F. Parser Refresh Loop (4x Daily: 07:00, 11:00, 15:00, 19:00)
     let lastParserRefreshHour = null;
@@ -331,8 +330,9 @@ export function initScheduler() {
     // H. History Cleanup (Daily)
     setInterval(cleanupHistory, 24 * 60 * 60 * 1000);
 
-    // F. One-time Weather Backfill (First Start Only)
+    // F. One-time Weather Backfill (First Start Only) - DISABLED (Feature Removed)
     // Wrapped in IIFE to handle async check
+    /*
     (async () => {
         try {
             const completed = await isBackfillCompleted();
@@ -371,4 +371,5 @@ export function initScheduler() {
             console.error("Error checking backfill status:", err);
         }
     })();
+    */
 }

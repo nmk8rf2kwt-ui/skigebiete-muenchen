@@ -133,19 +133,21 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px; /* Match button padding */
-  border: 1px solid var(--border-color); /* Full border */
+  padding: 8px 12px;
+  /* Match button padding */
+  border: 1px solid var(--border-color);
+  /* Full border */
   background: #fff;
   border-radius: var(--radius-sm);
   white-space: nowrap;
 }
 
 .filter-label {
-    font-size: 0.9em; 
-    font-weight: bold; 
-    color: #555; 
-    margin-right: 8px;
-    align-self: center;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #555;
+  margin-right: 8px;
+  align-self: center;
 }
 
 .actions-group {
@@ -282,7 +284,8 @@ th {
 
 .header-col-row th {
   position: sticky;
-  top: 0; /* Stick to top */
+  top: 0;
+  /* Stick to top */
   z-index: 800;
   background-color: var(--bg-color);
 }
@@ -732,4 +735,165 @@ tr.unavailable {
     content: "🏆 Score";
     color: var(--text-main);
   }
+}
+
+/* ================= CUSTOM MAP MARKERS ================= */
+
+.custom-map-marker {
+  background: none;
+  border: none;
+}
+
+.marker-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  background: #3498db;
+  position: absolute;
+  transform: rotate(-45deg);
+  left: 50%;
+  top: 50%;
+  margin: -15px 0 0 -15px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.custom-map-marker:hover .marker-pin {
+  transform: rotate(-45deg) scale(1.1);
+  z-index: 1000;
+}
+
+.marker-pin::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  margin: 5px 0 0 5px;
+  /* Compensate for rotation */
+  background: #fff;
+  position: absolute;
+  border-radius: 50%;
+}
+
+.marker-icon {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  transform: rotate(45deg);
+  /* Counter-rotate icon */
+  z-index: 2;
+  font-size: 14px;
+  text-align: center;
+  line-height: 16px;
+}
+
+/* Marker Colors */
+.marker-pin.is-live {
+  background: #2ecc71;
+  /* Green */
+}
+
+.marker-pin.is-static {
+  background: #f39c12;
+  /* Orange */
+}
+
+.marker-pin.is-error {
+  background: #e74c3c;
+  /* Red */
+}
+
+.marker-pin.is-closed {
+  background: #95a5a6;
+  /* Gray */
+}
+
+/* Pulse / Glow Animation for Live Markers */
+.marker-pin.is-live {
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+  }
+}
+
+/* ================= ENHANCED POPUPS ================= */
+
+.map-popup-content {
+  font-family: system-ui, -apple-system, sans-serif;
+  min-width: 200px;
+}
+
+.map-popup-header {
+  font-weight: 700;
+  font-size: 1.1em;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 6px;
+  color: #2c3e50;
+}
+
+.map-popup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+}
+
+.map-popup-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #555;
+}
+
+.map-popup-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.map-btn {
+  flex: 1;
+  padding: 6px;
+  text-align: center;
+  border-radius: 4px;
+  font-size: 0.85em;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.map-btn-primary {
+  background: #3498db;
+  color: white !important;
+}
+
+.map-btn-primary:hover {
+  background: #2980b9;
+  text-decoration: none;
+}
+
+.map-btn-secondary {
+  background: #f8f9fa;
+  color: #333 !important;
+  border: 1px solid #ddd;
+}
+
+.map-btn-secondary:hover {
+  background: #e9ecef;
+  text-decoration: none;
 }

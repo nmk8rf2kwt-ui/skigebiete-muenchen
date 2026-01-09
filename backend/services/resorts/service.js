@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import pLimit from "p-limit";
 import { PARSERS } from "../../parsers/index.js";
+import { getParserType } from "../../parsers/parserTypes.js";
 import { parserCache, weatherCache, trafficCache } from "../cache.js";
 import logger from "../logger.js";
 import { statusLogger } from "../system/monitoring.js"; // Unified monitoring service
@@ -278,7 +279,7 @@ export async function getAllResortsLive() {
                         lastUpdated: parserTimestamp ? new Date(parserTimestamp).toISOString() : null,
                         source: parserMeta?.sourceName || 'Unknown',
                         sourceUrl: parserMeta?.sourceUrl || null,
-                        type: parserMeta?.type || 'UNKNOWN',
+                        type: getParserType(resort.id),
                         freshness: smartScoreResult.freshness.lifts
                     },
                     weather: {
@@ -304,17 +305,34 @@ export async function getAllResortsLive() {
                     }
                 };
 
-                return {
+
+                // Explicitly Construct Return Object
+                // Prevent `resort.lifts` (number) from overwriting `liveData.lifts` (array)
+                // If liveData.lifts is an array, we keep it. If it's missing, we DO NOT put the static number in its place.
+
+                const finalResort = {
                     ...resort,
                     ...liveData,
                     id: resort.id,
                     name: resort.name,
+
+                    // Critical Fix for Details Column:
+                    // Ensure 'lifts' and 'slopes' are arrays or undefined/null, NEVER numbers.
+                    lifts: Array.isArray(liveData.lifts) ? liveData.lifts : undefined,
+                    slopes: Array.isArray(liveData.slopes) ? liveData.slopes : undefined,
+
+                    // Static data usually has 'lifts' as a number (total count).
+                    // We map this to 'liftsTotal' if not already present from liveData.
+                    liftsTotal: liveData.liftsTotal ?? resort.lifts,
+
                     // SmartScore data
                     smartScore: smartScoreResult.total,
                     smartScoreComponents: smartScoreResult.components,
                     smartScoreResult: smartScoreResult,
                     dataSources
                 };
+
+                return finalResort;
             })
         )
     );
@@ -408,4 +426,43 @@ export async function forceRefreshResort(resortId) {
         parserCache.cache.delete(resort.id);
         throw err;
     }
+}
+
+/**
+ * STRICT Refresh of all parsers.
+ * Unlike getAllResortsLive (which is passive/cached), this FORCES a fetch for every resort.
+ * Used by the Scheduler.
+ */
+export async function refreshAllResorts() {
+    const resorts = getStaticResorts();
+    logger.scraper.info(`🔄 Starting active batch refresh for ${resorts.length} resorts...`);
+
+    const results = await Promise.all(
+        resorts.map(resort => limit(async () => {
+            const parser = PARSERS[resort.id];
+            if (!parser) return { id: resort.id, status: 'skipped' };
+
+            try {
+                // Reuse forceRefreshResort (handles fetch, validate, cache, logging)
+                await forceRefreshResort(resort.id);
+                return { id: resort.id, status: 'success' };
+            } catch (err) {
+                // Error is already logged in forceRefreshResort, but we return status for summary
+                return { id: resort.id, status: 'error', error: err.message };
+            }
+        }))
+    );
+
+    const errorCount = results.filter(r => r.status === 'error').length;
+    const successCount = results.filter(r => r.status === 'success').length;
+
+    if (errorCount > 0) {
+        statusLogger.log('warn', 'scraper', `Batch refresh finished with ${errorCount} errors (${successCount} success).`);
+        statusLogger.updateComponentStatus('scraper', 'degraded');
+    } else {
+        statusLogger.log('success', 'scraper', `Batch refresh success: ${successCount} resorts updated.`);
+        statusLogger.updateComponentStatus('scraper', 'healthy');
+    }
+
+    return results;
 }

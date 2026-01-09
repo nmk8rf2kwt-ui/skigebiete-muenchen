@@ -49,40 +49,69 @@ export function updateMap(resorts) {
     resorts.forEach(resort => {
         if (!resort.latitude || !resort.longitude) return;
 
-        // Determine Color based on status (matching table column 1)
-        let color = 'gray'; // Default
+        // Determine Status Class
+        let statusClass = 'is-closed'; // Default
         if (resort.status === 'live' || resort.status === 'ok') {
-            color = 'green'; // 🟢 Live data
+            statusClass = 'is-live';
         } else if (resort.status === 'static_only') {
-            color = 'orange'; // 🟡 Static only
+            statusClass = 'is-static';
         } else if (resort.status === 'error') {
-            color = 'red'; // 🔴 Error
+            statusClass = 'is-error';
         }
 
-        // Custom Icon (Circle Marker with white border)
-        const marker = L.circleMarker([resort.latitude, resort.longitude], {
-            color: 'white',
-            fillColor: color,
-            fillOpacity: 0.9,
-            radius: 8,
-            weight: 2
-        }).addTo(map);
+        // Custom Marker Icon
+        const icon = L.divIcon({
+            className: 'custom-map-marker',
+            html: `
+                <div class="marker-pin ${statusClass}"></div>
+                <div class="marker-icon">⛷️</div>
+            `,
+            iconSize: [30, 42],
+            iconAnchor: [15, 42],
+            popupAnchor: [0, -35]
+        });
 
-        // Popup Content
+        const marker = L.marker([resort.latitude, resort.longitude], { icon: icon }).addTo(map);
+
+        // Enhanced Popup Content
         const trafficInfo = resort.traffic
-            ? `<br>🚗 Traffic: ${resort.traffic.duration} min`
-            : (resort.distance ? `<br>🚗 Dist: ${resort.distance} min` : '');
+            ? `${resort.traffic.duration} min`
+            : (resort.distance ? `${resort.distance} min` : 'N/A');
 
-        const snowInfo = resort.snow ? `<br>❄️ Snow: ${resort.snow}` : '';
-        const liftsInfo = resort.liftsTotal ? `<br>🚡 Lifts: ${resort.liftsOpen || 0}/${resort.liftsTotal}` : '';
+        const snowInfo = resort.snow || 'N/A';
+        const liftsInfo = resort.liftsTotal ? `${resort.liftsOpen || 0}/${resort.liftsTotal}` : 'N/A';
+        const weatherInfo = resort.weather || 'Unknown';
 
         const popupContent = `
-      <strong>${resort.name}</strong>
-      ${liftsInfo}
-      ${snowInfo}
-      ${trafficInfo}
-      <br><a href="${resort.website}" target="_blank">Website</a>
-    `;
+            <div class="map-popup-content">
+                <div class="map-popup-header">${resort.name}</div>
+                
+                <div class="map-popup-grid">
+                    <div class="map-popup-item" title="Geöffnete Lifte">
+                        <span>🚡</span> <strong>${liftsInfo}</strong>
+                    </div>
+                    <div class="map-popup-item" title="Schneehöhe">
+                        <span>❄️</span> <strong>${snowInfo}</strong>
+                    </div>
+                    <div class="map-popup-item" title="Anreisezeit">
+                        <span>🚗</span> <strong>${trafficInfo}</strong>
+                    </div>
+                    <div class="map-popup-item" title="Wetter">
+                        <span>🌤️</span> <strong>${weatherInfo}</strong>
+                    </div>
+                </div>
+
+                <div class="map-popup-actions">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${resort.latitude},${resort.longitude}" 
+                       target="_blank" class="map-btn map-btn-primary">
+                       Google Maps
+                    </a>
+                    <a href="${resort.website}" target="_blank" class="map-btn map-btn-secondary">
+                        Website
+                    </a>
+                </div>
+            </div>
+        `;
 
         marker.bindPopup(popupContent);
         markers.push(marker);

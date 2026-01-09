@@ -256,83 +256,7 @@ export function renderStatusDashboard(data) {
 /**
  * History Modal
  */
-export function displayHistoryChart(history) {
-    const ctx = document.getElementById("historyChart");
-    if (!ctx) return;
-
-    if (!history || history.length === 0) {
-        ctx.parentElement.innerHTML = "<p>No historical data available yet. Data is collected daily starting from today.</p>";
-        return;
-    }
-
-    // Destroy previous chart if exists
-    if (historyChart) {
-        historyChart.destroy();
-    }
-
-    const dates = history.map(h => {
-        const date = new Date(h.date);
-        return date.toLocaleDateString('de-DE', { month: 'short', day: 'numeric' });
-    });
-
-    const snowData = history.map(h => parseInt(h.snow) || null);
-    const liftsData = history.map(h => h.liftsOpen || null);
-
-    historyChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: dates,
-            datasets: [
-                {
-                    label: 'Snow Depth (cm)',
-                    data: snowData,
-                    borderColor: '#1976d2',
-                    backgroundColor: 'rgba(25, 118, 210, 0.1)',
-                    yAxisID: 'y',
-                    tension: 0.3
-                },
-                {
-                    label: 'Lifts Open',
-                    data: liftsData,
-                    borderColor: '#2e7d32',
-                    backgroundColor: 'rgba(46, 125, 50, 0.1)',
-                    yAxisID: 'y1',
-                    tension: 0.3
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            scales: {
-                y: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'Snow Depth (cm)'
-                    }
-                },
-                y1: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    title: {
-                        display: true,
-                        text: 'Lifts Open'
-                    },
-                    grid: {
-                        drawOnChartArea: false,
-                    },
-                },
-            }
-        }
-    });
-}
+// History Chart removed
 
 export async function switchHistoryTab(tab) {
     // Toggle active classes
@@ -656,74 +580,10 @@ export function displayResortDetails(resort) {
     }, 100);
 }
 
-export async function fetchDetailsHistory(resortId) {
-    const statusEl = document.getElementById("detailsHistoryStatus");
-    if (!statusEl) return;
 
-    try {
-        const res = await fetch(`${API_BASE_URL}/api/history/${resortId}?days=7`);
-        if (!res.ok) throw new Error("Failed to fetch history");
+// History Functions Removed (refactoring)
+// Traffic Modal Logic handled by loadResortTrafficHistory
 
-        const data = await res.json();
-
-        if (!data.history || data.history.length === 0) {
-            statusEl.textContent = "Keine Verlaufsdaten verfügbar (Daten werden täglich gesammelt)";
-            return;
-        }
-
-        // Destroy previous chart
-        if (detailsHistoryChart) {
-            detailsHistoryChart.destroy();
-        }
-
-        const ctx = document.getElementById("detailsHistoryChart");
-        if (!ctx) return;
-
-        const dates = data.history.map(h => {
-            const date = new Date(h.date);
-            return date.toLocaleDateString('de-DE', { month: 'short', day: 'numeric' });
-        });
-
-        const liftsData = data.history.map(h => h.liftsOpen || null);
-
-        detailsHistoryChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    label: 'Geöffnete Lifte',
-                    data: liftsData,
-                    borderColor: '#2e7d32',
-                    backgroundColor: 'rgba(46, 125, 50, 0.1)',
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
-        });
-
-        statusEl.style.display = "none";
-    } catch (error) {
-        console.error("History error:", error);
-        statusEl.textContent = "Verlaufsdaten noch nicht verfügbar";
-    }
-}
 
 export function resetModalStates() {
     currentTrafficChartLoaded = false;
