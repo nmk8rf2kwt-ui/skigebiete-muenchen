@@ -74,7 +74,6 @@ const PRICE_MAX = 85;
 export function getSeasonPhase(date = new Date()) {
     const month = date.getMonth() + 1; // 1-12
     const day = date.getDate();
-    const mmdd = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
     // PRE: Dec 1-19
     if (month === 12 && day >= 1 && day <= 19) return 'PRE';
