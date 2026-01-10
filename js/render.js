@@ -290,7 +290,10 @@ export function renderRow(row, data) {
   if (lastSnowfallDate) {
     const snowDate = new Date(lastSnowfallDate);
     const today = new Date();
-    const diffDays = Math.floor((today - snowDate) / (1000 * 60 * 60 * 24));
+    // Fix: Handle future dates (e.g. from different timezones or forecast data) by clamping to 0
+    const diffTime = today - snowDate;
+    let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays < 0) diffDays = 0;
 
     if (diffDays === 0) {
       lastSnowfallDisplay = "heute";

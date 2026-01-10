@@ -1,8 +1,0 @@
-dolomiti_superski.js
-hintertux.js
-ischgl.js
-saalbach.js
-schladming.js
-sella_ronda.js
-serfaus_fiss_ladis.js
-st_anton.js
