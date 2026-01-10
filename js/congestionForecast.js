@@ -78,16 +78,20 @@ async function loadCongestionForecast(resortId, cellId) {
 
 
   // 2. Build compact tooltip content (Top 5 only)
-  const tooltipLines = top5.map((slot, index) => {
-    // Shorten weekday: "Montag" -> "Mo"
-    const shortDay = slot.weekdayName.substring(0, 2);
-    return `
-        <div class="tooltip-row">
-          <span>${shortDay} ${slot.hourRange}</span>
-          <span style="font-weight:bold;">${slot.avgDelay} min</span>
-        </div>
-      `;
-  }).join('');
+  let tooltipLines = '';
+  if (top5.length > 0) {
+    tooltipLines = top5.map((slot, index) => {
+      const shortDay = slot.weekdayName.substring(0, 2);
+      return `
+            <div class="tooltip-row">
+            <span>${shortDay} ${slot.hourRange}</span>
+            <span style="font-weight:bold;">${slot.avgDelay} min</span>
+            </div>
+        `;
+    }).join('');
+  } else {
+    tooltipLines = `<div class="tooltip-row" style="color: #ccc; font-style: italic;">Keine nennenswerten Staus (< 5 min)</div>`;
+  }
 
   cell.innerHTML = `
     <!-- Container for pills -->
