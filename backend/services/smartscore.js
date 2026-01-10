@@ -29,19 +29,19 @@ const FRESHNESS_MULTIPLIERS = {
 // Thresholds in milliseconds
 const FRESHNESS_THRESHOLDS = {
     lifts: {
-        fresh: 30 * 60 * 1000,      // 30 min
-        degraded: 2 * 60 * 60 * 1000, // 2 hours
-        stale: 6 * 60 * 60 * 1000     // 6 hours
+        fresh: 4.5 * 60 * 60 * 1000,    // 4.5 hours (Match 4h schedule + buffer)
+        degraded: 8 * 60 * 60 * 1000,   // 8 hours
+        stale: 24 * 60 * 60 * 1000      // 24 hours
     },
     weather: {
-        fresh: 60 * 60 * 1000,       // 1 hour
-        degraded: 3 * 60 * 60 * 1000, // 3 hours
-        stale: 6 * 60 * 60 * 1000     // 6 hours
+        fresh: 4.5 * 60 * 60 * 1000,    // 4.5 hours
+        degraded: 6 * 60 * 60 * 1000,   // 6 hours
+        stale: 12 * 60 * 60 * 1000      // 12 hours
     },
     traffic: {
-        fresh: 15 * 60 * 1000,       // 15 min
-        degraded: 30 * 60 * 1000,     // 30 min
-        stale: 60 * 60 * 1000         // 1 hour
+        fresh: 60 * 60 * 1000,          // 1 hour
+        degraded: 2.5 * 60 * 60 * 1000, // 2.5 hours
+        stale: 4 * 60 * 60 * 1000       // 4 hours
     },
     snow: {
         fresh: 60 * 60 * 1000,       // 1 hour (same as weather)

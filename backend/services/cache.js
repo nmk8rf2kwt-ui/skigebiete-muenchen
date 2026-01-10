@@ -1,8 +1,23 @@
-// Simple in-memory cache with TTL (Time To Live)
+// Simple in-memory cache with TTL (Time To Live) and Disk Persistence
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DATA_DIR = path.join(__dirname, '../../data');
+const CACHE_FILE = path.join(DATA_DIR, 'cache_dump.json');
+
+// Ensure data directory exists
+if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
 class Cache {
-    constructor(ttlMs = 5 * 60 * 1000) { // Default 5 minutes
+    constructor(ttlMs = 5 * 60 * 1000, name = 'default') { // Added name for logging
         this.cache = new Map();
         this.ttl = ttlMs;
+        this.name = name;
     }
 
     set(key, value) {
@@ -10,6 +25,10 @@ class Cache {
             data: value,
             timestamp: Date.now()
         });
+        // Auto-save on set? Maybe too frequent. Let's rely on interval or manual trigger?
+        // Actually, for parser data (low frequency), saving on set is fine.
+        // For traffic (high frequency), maybe not.
+        // Let's implement a global save function instead of per-set.
     }
 
     get(key) {
@@ -66,12 +85,57 @@ class Cache {
             }
         }
     }
+
+    // Export state for persistence
+    toJSON() {
+        return Array.from(this.cache.entries());
+    }
+
+    // Import state from persistence
+    fromJSON(entries) {
+        this.cache = new Map(entries);
+    }
 }
 
 // Create cache instances
-export const parserCache = new Cache(24 * 60 * 60 * 1000); // 24 hours for parser data
-export const weatherCache = new Cache(30 * 60 * 1000); // 30 minutes for weather data
-export const trafficCache = new Cache(30 * 60 * 1000); // 30 minutes for traffic data
+export const parserCache = new Cache(24 * 60 * 60 * 1000, 'parser'); // 24 hours for parser data
+export const weatherCache = new Cache(5 * 60 * 60 * 1000, 'weather'); // 5 hours (matching 4h schedule + buffer)
+export const trafficCache = new Cache(2 * 60 * 60 * 1000, 'traffic'); // 2 hours for traffic
+
+// Persistence Helpers
+export function saveAllCaches() {
+    try {
+        const dump = {
+            parser: parserCache.toJSON(),
+            weather: weatherCache.toJSON(),
+            traffic: trafficCache.toJSON(),
+            timestamp: Date.now()
+        };
+        fs.writeFileSync(CACHE_FILE, JSON.stringify(dump));
+        console.log(`[Cache] 💾 Saved cache state to disk (${parserCache.size()} parsers, ${trafficCache.size()} traffic)`);
+    } catch (err) {
+        console.error('[Cache] Failed to save cache:', err);
+    }
+}
+
+export function loadAllCaches() {
+    try {
+        if (!fs.existsSync(CACHE_FILE)) {
+            console.log('[Cache] No cache file found. Starting empty.');
+            return;
+        }
+        const data = fs.readFileSync(CACHE_FILE, 'utf8');
+        const dump = JSON.parse(data);
+
+        if (dump.parser) parserCache.fromJSON(dump.parser);
+        if (dump.weather) weatherCache.fromJSON(dump.weather);
+        if (dump.traffic) trafficCache.fromJSON(dump.traffic);
+
+        console.log(`[Cache] 📂 Loaded cache state from disk (${parserCache.size()} parsers, ${trafficCache.size()} traffic)`);
+    } catch (err) {
+        console.error('[Cache] Failed to load cache:', err);
+    }
+}
 
 // Cleanup expired entries every minute
 const cleanupInterval = setInterval(() => {
@@ -80,7 +144,18 @@ const cleanupInterval = setInterval(() => {
     trafficCache.cleanup();
 }, 60 * 1000);
 
+// Save cache periodically (every 10 minutes)
+const saveInterval = setInterval(() => {
+    saveAllCaches();
+}, 10 * 60 * 1000);
+
+// Load on startup
+loadAllCaches();
+
 // Allow Node to exit even if this interval is running
-if (cleanupInterval.unref) {
-    cleanupInterval.unref();
-}
+if (cleanupInterval.unref) cleanupInterval.unref();
+if (saveInterval.unref) saveInterval.unref();
+
+// Save on exit
+process.on('SIGINT', () => { saveAllCaches(); process.exit(); });
+process.on('SIGTERM', () => { saveAllCaches(); process.exit(); });
