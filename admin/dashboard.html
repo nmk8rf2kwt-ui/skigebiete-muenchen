@@ -254,22 +254,18 @@
             </div>
         </header>
 
-        <!-- Sentry Widget -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
-            <h2 class="text-lg font-semibold mb-4 flex items-center">
-                <span class="mr-2">🚨</span> Recent Sentry Issues
-                <span class="ml-auto text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded">Live from Sentry
-                    API</span>
-            </h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="text-sm text-gray-500 border-b">
+        <!-- SENTRY WIDGET -->
+        <div class="card" style="grid-column: span 1;">
+            <h2>🚨 Recent Sentry Issues</h2>
+            <div style="overflow-x: auto;">
+                <table class="w-full text-left border-collapse" style="width: 100%; font-size: 0.9em;">
+                    <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                        <tr style="border-bottom: 2px solid #eee;">
                             <th class="py-2">Error</th>
-                            <th class="py-2">Location</th>
-                            <th class="py-2 text-right">Count</th>
-                            <th class="py-2 text-right">Last Seen</th>
-                            <th class="py-2 text-right">Action</th>
+                            <th class="py-2">Loc</th>
+                            <th class="py-2 text-right">#</th>
+                            <th class="py-2 text-right">Time</th>
+                            <th class="py-2 text-right">Link</th>
                         </tr>
                     </thead>
                     <tbody id="sentry-table-body" class="text-sm">
@@ -278,6 +274,14 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- GITHUB CI/CD WIDGET -->
+        <div class="card" style="grid-column: span 1;">
+            <h2>🚀 CI/CD Pipeline (Live)</h2>
+            <div id="github-widget-body" style="padding: 10px;">
+                Loading status...
             </div>
         </div>
 
@@ -449,7 +453,66 @@
             fetchParsers();
             fetchSystem();
             fetchLogs('combined');
-            loadSentryData(); // Added Sentry fetch
+            loadSentryData();
+            fetchGitHubStatus();
+        }
+
+        // --- GitHub Status ---
+        async function fetchGitHubStatus() {
+            try {
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/github/status`);
+                const data = await res.json();
+                const container = document.getElementById('github-widget-body');
+
+                if (data.error) {
+                    container.innerHTML = `<div class="status-crit">Error: ${data.error}</div>`;
+                    return;
+                }
+
+                if (!data) {
+                    container.innerHTML = `<div class="status-warn">No runs found</div>`;
+                    return;
+                }
+
+                // Status mapping
+                let statusClass = 'status-warn';
+                let statusIcon = '⏳';
+                if (data.status === 'completed') {
+                    if (data.conclusion === 'success') {
+                        statusClass = 'status-ok';
+                        statusIcon = '✅';
+                    } else if (data.conclusion === 'failure') {
+                        statusClass = 'status-crit';
+                        statusIcon = '❌';
+                    }
+                } else if (data.status === 'in_progress') {
+                    statusClass = 'status-info'; // You might need to define this class or use a blue color style
+                    statusIcon = '🔄';
+                }
+
+                // In-line style for info if class missing
+                const style = data.status === 'in_progress' ? 'color: #3498db; font-weight: bold;' : '';
+
+                const date = new Date(data.created_at).toLocaleString();
+
+                container.innerHTML = `
+                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span class="${statusClass}" style="font-size: 1.1em; ${style}">
+                            ${statusIcon} ${data.status} (${data.conclusion || 'running'})
+                        </span>
+                        <a href="${data.html_url}" target="_blank" class="btn-sm" style="text-decoration:none;">View Logs ↗</a>
+                   </div>
+                   <div style="font-size: 0.9em; color: #666;">
+                        <strong>Run:</strong> ${data.name} <br>
+                        <strong>Time:</strong> ${date} <br>
+                        <strong>User:</strong> ${data.actor}
+                   </div>
+                `;
+
+            } catch (e) {
+                console.error("GitHub Fetch Error", e);
+                document.getElementById('github-widget-body').innerHTML = `<div class="status-crit">Fetch Failed</div>`;
+            }
         }
 
         // --- Usage Stats ---
