@@ -18,6 +18,11 @@
 -   **English Code, German Data**: Code (Vars, Functions, Comments, Commits) is **Strictly English**. User-facing text and Data (Resort Names) are **German**. No Denglisch!
 -   **Atomic Parsers**: Parsers must be pure funtions (fetching -> returning data). They MUST NOT have side effects (DB writes, Global State mutation).
 
+### 🔒 Privacy by Design (GDPR)
+-   **No User Tracking**: We do not store User IPs or location data in Supabase.
+-   **Masked Replays**: Sentry Session Replay tracking is configured with strict privacy masks (Text/Images hidden).
+-   **Proxy Principle**: External API calls (Third-party Webcams) should be routed or validated through the Backend where possible to prevent leaking User IP addresses to third-party providers directly.
+
 ---
 
 ## 🏗 System Architecture
