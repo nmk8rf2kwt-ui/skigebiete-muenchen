@@ -1,8 +1,8 @@
 import { spitzingsee } from "./spitzingsee.js";
 import { brauneck } from "./brauneck.js";
 import { parse as sudelfeld } from "./sudelfeld.js";
-import { garmisch } from "./garmisch.js";
-import { zugspitze } from "./zugspitze.js";
+import { parse as garmisch } from "./garmisch.js";
+import { parse as zugspitze } from "./zugspitze.js";
 import { parse as wilderKaiser } from "./wilder-kaiser.js";
 import { steinplatte } from "./steinplatte.js";
 import { parse as kitzbuehel } from "./kitzbuehel.js";

@@ -1,12 +1,18 @@
-import { createResult } from "../utils/parserUtils.js";
+import { fetchIntermaps } from './intermaps.js';
+import { createResult } from '../utils/parserUtils.js';
 
 export const details = {
     id: "damuels_mellau",
     name: "Damüls Mellau",
     url: "https://www.damuels-mellau.at",
-    district: "Vorarlberg",
+    apiUrl: "https://winter.intermaps.com/damuels_mellau_faschina/data?lang=de",
+    district: "Bregenzerwald"
 };
 
-export async function parse(_options = {}) {
-    return createResult(details.id, { liftsOpen: 0, liftsTotal: 0, lifts: [], slopes: [] }, "damuels-mellau.at (Placeholder)");
+export async function parse(options = {}) {
+    const data = await fetchIntermaps(details.apiUrl);
+    if (!data) {
+        throw new Error('Failed to fetch Damüls Mellau Intermaps data');
+    }
+    return createResult(details.id, data, 'intermaps.com (Damüls-Mellau)');
 }

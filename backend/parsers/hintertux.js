@@ -1,22 +1,18 @@
-import { createResult } from "../utils/parserUtils.js";
+import { fetchIntermaps } from './intermaps.js';
+import { createResult } from '../utils/parserUtils.js';
 
 export const details = {
     id: "hintertux",
     name: "Hintertuxer Gletscher",
-    url: "https://www.hintertuxergletscher.at/de/skigebiet/live-infos",
-    district: "Zillertal",
+    url: "https://www.hintertuxergletscher.at",
+    apiUrl: "https://winter.intermaps.com/tux_finkenberg/data?lang=de",
+    district: "Zillertal"
 };
 
-export async function parse(_options = {}) {
-    // Placeholder parser as direct data source is currently unavailable/protected
-    // TODO: Implement advanced scraping or find valid API
-
-    console.warn("Hintertux: No valid data source found yet. Returning empty status.");
-
-    return createResult(details.id, {
-        liftsOpen: 0,
-        liftsTotal: 0,
-        lifts: [],
-        slopes: []
-    }, "hintertuxergletscher.at (Placeholder)");
+export async function parse(options = {}) {
+    const data = await fetchIntermaps(details.apiUrl);
+    if (!data) {
+        throw new Error('Failed to fetch Hintertux (Tux-Finkenberg) Intermaps data');
+    }
+    return createResult(details.id, data, 'intermaps.com (Tux-Finkenberg)');
 }
