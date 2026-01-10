@@ -58,80 +58,59 @@ async function loadCongestionForecast(resortId, cellId) {
 
   // Has data - render forecast
   const top5 = analysis.top5Congestion;
+  const forecast = analysis.forecast || []; // Should be present from backend
   const avgDelay = analysis.summary.avgDelayTop5;
 
-  // Icon based on average delay
-  let icon, color;
-  if (avgDelay > 30) {
-    icon = '🔴';
-    color = '#e74c3c';
-  } else if (avgDelay > 15) {
-    icon = '🟡';
-    color = '#f39c12';
-  } else {
-    icon = '🟢';
-    color = '#27ae60';
-  }
+  // 1. Render Forecast Pills (Now, +1h, +2h)
+  const pillsHtml = forecast.map((slot, index) => {
+    // Label: "Jetzt", "+1h", "+2h" or "14:00"
+    let label = slot.timeLabel;
+    if (index === 0) label = "Jetzt";
 
-  // Build tooltip content
-  const tooltipLines = top5.map((slot, index) => `
-    <div style="padding: 4px 0; border-bottom: ${index < 4 ? '1px solid #eee' : 'none'};">
-      <strong>${slot.weekdayName}</strong> ${slot.hourRange}<br>
-      <span style="color: ${color};">Ø ${slot.avgDelay} min Stau</span>
-      <span style="color: #7f8c8d; font-size: 0.85em;"> (${slot.occurrences}x gemessen)</span>
-    </div>
-  `).join('');
+    // Icon/Color logic
+    return `
+      <div class="traffic-pill" style="border-left: 3px solid ${slot.color};" title="${slot.timeLabel}: Ø ${slot.avgDelay} min Stau">
+         <span class="time">${label}</span>
+         <span class="delay" style="color: ${slot.color}">${slot.avgDelay}'</span>
+      </div>
+    `;
+  }).join('');
+
+
+  // 2. Build compact tooltip content (Top 5 only)
+  const tooltipLines = top5.map((slot, index) => {
+    // Shorten weekday: "Montag" -> "Mo"
+    const shortDay = slot.weekdayName.substring(0, 2);
+    return `
+        <div class="tooltip-row">
+          <span>${shortDay} ${slot.hourRange}</span>
+          <span style="font-weight:bold;">${slot.avgDelay} min</span>
+        </div>
+      `;
+  }).join('');
 
   cell.innerHTML = `
-    <!-- Added history-btn class and data-resort-id for modal trigger -->
-    <div class="congestion-forecast history-btn" data-resort-id="${resortId}" style="position: relative; cursor: pointer; display: inline-block;">
-      <span style="font-size: 1.0em;">${icon}</span>
-      <span style="font-size: 0.85em; color: ${color}; font-weight: 500;">${avgDelay} min</span>
+    <!-- Container for pills -->
+    <div class="congestion-cell-content" style="position: relative; display: inline-block;">
+        <div class="traffic-forecast-container">
+            ${pillsHtml}
+             <!-- Info Icon for Tooltip trigger -->
+             <span class="info-icon" style="font-size: 0.8em; color: #95a5a6; cursor: help; margin-left: 2px;">ℹ️</span>
+        </div>
       
-      <div class="congestion-tooltip" style="
-        display: none;
-        position: absolute;
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 9999;
-        min-width: 240px;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 100%;
-        margin-bottom: 8px;
-        cursor: auto; 
-      ">
-        <div style="font-weight: bold; margin-bottom: 6px; color: #2c3e50; font-size: 0.9em;">
-          🚦 Top 5 Stauzeiten (Ø ${avgDelay} min)
+        <!-- Tooltip -->
+        <div class="congestion-tooltip">
+            <div class="tooltip-header">
+            📈 Top 5 Stauzeiten (Ø ${avgDelay}')
+            </div>
+            ${tooltipLines}
+            <div class="tooltip-footer">
+            Datenbasis: ${analysis.dataPoints} Messungen (${analysis.analyzedDays} d)
+            </div>
         </div>
-        ${tooltipLines}
-        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 0.85em; color: #7f8c8d;">
-          Basierend auf ${analysis.dataPoints} Messungen über ${analysis.analyzedDays} Tage
-          <br><strong>(Klicken für detailliertes Diagramm)</strong>
-        </div>
-      </div>
     </div>
   `;
 
-  // Add hover listeners
-  const forecast = cell.querySelector('.congestion-forecast');
-  const tooltip = cell.querySelector('.congestion-tooltip');
-
-  if (forecast && tooltip) {
-    forecast.addEventListener('mouseenter', () => {
-      tooltip.style.display = 'block';
-    });
-
-    forecast.addEventListener('mouseleave', () => {
-      tooltip.style.display = 'none';
-    });
-
-    // Prevent click on tooltip from triggering modal if it overlaps (though styling puts it distinct)
-    tooltip.addEventListener('click', (e) => {
-      e.stopPropagation();
-    });
-  }
+  // Add hover listeners (Delegated to CSS mostly, but ensuring touch support or fallback)
+  // The CSS .congestion-cell:hover .congestion-tooltip handles it for desktop.
 }

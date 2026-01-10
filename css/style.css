@@ -891,4 +891,93 @@ tr.unavailable {
 .map-btn-secondary:hover {
   background: #e9ecef;
   text-decoration: none;
+}.traffic-forecast-container {
+    display: flex;
+    gap: 4px;
+    align-items: center;
 }
+
+.traffic-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 4px;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    border: 1px solid #eee;
+    min-width: 35px;
+}
+
+.traffic-pill .time {
+    font-size: 0.7em;
+    color: #7f8c8d;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+
+.traffic-pill .delay {
+    font-size: 0.85em;
+    font-weight: bold;
+    line-height: 1;
+}
+
+/* Compact Tooltip */
+.congestion-tooltip {
+    display: none;
+    position: absolute;
+    background: white;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 8px;
+    box-shadow: 0 8px 24px rgba(140,149,159,0.2);
+    z-index: 1000;
+    width: max-content;
+    max-width: 200px; /* Limit width as requested */
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 100%;
+    margin-bottom: 8px;
+    text-align: left;
+    font-size: 0.75rem; /* Smaller font */
+    line-height: 1.4;
+    white-space: normal;
+}
+
+.congestion-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+}
+
+.congestion-cell:hover .congestion-tooltip {
+    display: block;
+}
+
+.tooltip-header {
+    font-weight: 600;
+    color: #24292f;
+    margin-bottom: 6px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 4px;
+}
+
+.tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+}
+
+.tooltip-footer {
+    margin-top: 6px;
+    padding-top: 4px;
+    border-top: 1px solid #eee;
+    color: #57606a;
+    font-size: 0.7em;
+}
+

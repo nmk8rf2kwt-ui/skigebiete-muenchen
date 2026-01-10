@@ -119,16 +119,61 @@ export async function getResortCongestionAnalysis(resortId, days = 7) {
             .sort((a, b) => b.avgDelay - a.avgDelay)
             .slice(0, 5);
 
-        // Calculate overall statistics
-        const overallAvgDelay = top5.length > 0
-            ? Math.round(top5.reduce((sum, slot) => sum + slot.avgDelay, 0) / top5.length)
-            : 0;
+        // Calculate Forecast for Now, +1h, +2h
+        const currentTimestamp = new Date();
+        // Convert to Munich time/local time if needed, but assuming server time is acceptable for now or UTC matching
+        // Actually, we should match the "weekday" and "hour" of the resort's timezone (Europe/Berlin)
+        const formatter = new Intl.DateTimeFormat('de-DE', {
+            timeZone: 'Europe/Berlin',
+            hour: 'numeric',
+            weekday: 'short' // Mo, Di, ...
+        });
+        
+        // Helper to get day index like getDay() but for specific timezone
+        const getBerlinDayHour = (offsetHours = 0) => {
+            const date = new Date();
+            date.setHours(date.getHours() + offsetHours);
+            const iso = date.toLocaleString('en-US', { timeZone: 'Europe/Berlin' });
+            const d = new Date(iso);
+            return { day: d.getDay(), hour: d.getHours() };
+        };
+
+        const forecast = [];
+        for (let i = 0; i < 3; i++) {
+            const { day, hour } = getBerlinDayHour(i);
+            
+            // Find stats for this slot
+            // We need to re-scan data or use the congestionByTime map
+            // Note: congestionByTime uses keys "weekday-hour"
+            const key = `${day}-${hour}`;
+            const slot = congestionByTime[key];
+            
+            let avg = 0;
+            if (slot) {
+                // Recalculate avg from raw delays (congestionByTime was constructed above)
+                avg = Math.round(slot.delays.reduce((a, b) => a + b, 0) / slot.delays.length);
+            }
+            
+            // Determine color
+            let color = '#27ae60'; // Green
+            if (avg > 30) color = '#e74c3c';
+            else if (avg > 15) color = '#f39c12';
+
+            forecast.push({
+                offset: i,
+                hour: hour,
+                timeLabel: `${hour}:00`,
+                avgDelay: avg,
+                color: color
+            });
+        }
 
         return {
             hasData: true,
             resortId,
             analyzedDays: days,
             dataPoints: data.length,
+            forecast: forecast,
             top5Congestion: top5,
             summary: {
                 avgDelayTop5: overallAvgDelay,
