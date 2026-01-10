@@ -75,7 +75,7 @@ export function updateMap(resorts) {
 
         // Enhanced Popup Content
         const trafficInfo = resort.traffic
-            ? `${resort.traffic.duration} min`
+            ? `${resort.traffic.duration_min || Math.round(resort.traffic.duration / 60)} min`
             : (resort.distance ? `${resort.distance} min` : 'N/A');
 
         const snowInfo = resort.snow || 'N/A';
