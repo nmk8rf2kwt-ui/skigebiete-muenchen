@@ -77,6 +77,23 @@ Before submitting a PR, ensure:
 -   [ ] **Parser Check**: If modifying parsers, run `node backend/scripts/debug_parsers.js [resortId]` to verify output.
 -   [ ] **Mobile View**: Check UI responsiveness in DevTools mobile emulation.
 
+## 🤝 Contribution Standards
+
+### 1. Semantic Commits
+We follow the Conventional Commits specification to keep history readable.
+-   **Format**: `type(scope): subject`
+-   **Types**: `feat` (New feature), `fix` (Bug fix), `docs` (Documentation), `chore` (Maintenance), `refactor` (Code change without logic change).
+-   **Examples**:
+    -   `feat(parser): add ischgl implementation`
+    -   `fix(ci): repair build pipeline`
+    -   `docs: update readme architecture section`
+
+### 2. Secret Safety (Zero Tolerance)
+-   **Never** commit API keys, passwords, or credentials.
+-   Use `.env` for local development (git-ignored).
+-   Use GitHub Secrets / Render Env Vars for production.
+-   If a secret leaks into git history, it must be revoked immediately.
+
 ## 🛠️ Tooling
 
 ### GitHub CLI (`gh`)
