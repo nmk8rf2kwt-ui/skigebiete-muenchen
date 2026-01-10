@@ -46,7 +46,6 @@ This document tracks the technical implementation details of all ski resort pars
 | **Stubaier Gletscher** | `stubaier_gletscher.js` | `winter.intermaps.com/stubaier_gletscher` |
 | **Sudelfeld** | `sudelfeld.js` | `winter.intermaps.com/sudelfeld` |
 | **Zillertal Arena** | `zillertal_arena.js` | `winter.intermaps.com/zillertal_arena` |
-| **Zugspitze** | `zugspitze.js` | `winter.intermaps.com/zugspitzbahn_garmisch` |
 | **Brauneck** | `brauneck.js` | `brauneck-bergbahn.de` |
 | **Steinplatte** | `steinplatte.js` | `steinplatte.tirol` |
 | **Winklmoos** | `winklmoos.js` | `winklmoosalm.de` |
@@ -72,7 +71,6 @@ This document tracks the technical implementation details of all ski resort pars
 | **Seefeld** | `seefeld.js` | `seefeld.com` |
 | **Ski Juwel** | `skijuwel.js` | `skijuwel.com` |
 | **Wendelstein** | `wendelstein.js` | `wendelsteinbahn.de` |
-| **Zugspitze** | `zugspitze.js` | `zugspitze.de` |
 
 ---
 
@@ -81,6 +79,7 @@ This document tracks the technical implementation details of all ski resort pars
 
 | Priority | Resort | Parser File | Target API / Strategy |
 |:---------|:-------|:------------|:----------------------|
+| **1 (High)** | **Zugspitze** | `zugspitze.js` | Locate new Scraping URL |
 | **4** | **Sella Ronda** | `sella_ronda.js` | Dolomiti Superski API |
 | **5** | **Dolomiti Superski** | `dolomiti_superski.js` | Dolomiti Superski API |
 | - | Bad Kleinkirchheim | `bad_kleinkirchheim.js` | - |
