@@ -10,6 +10,8 @@ import { statusLogger } from "../system/monitoring.js"; // Unified monitoring se
 import { ResortDataSchema } from "../../validation/schemas.js";
 import * as Sentry from "@sentry/node";
 import { calculateSmartScore } from "../smartscore.js";
+import { fetchTravelTimes } from "../tomtom.js";
+
 
 // -- PATH CONFIG --
 const __filename = fileURLToPath(import.meta.url);
@@ -66,6 +68,18 @@ function loadResorts() {
 
 // Load immediately on import
 loadResorts();
+
+// -- SCHEDULER --
+// Update traffic every hour
+setInterval(async () => {
+    logger.info("🚦 Scheduled Traffic Update started...");
+    await updateTrafficData();
+}, 60 * 60 * 1000);
+
+// Initial Traffic Update (delayed by 10s to allow server start)
+setTimeout(() => {
+    updateTrafficData();
+}, 10000);
 
 // -- HELPERS --
 
@@ -465,4 +479,40 @@ export async function refreshAllResorts() {
     }
 
     return results;
+}
+return results;
+}
+
+/**
+ * Validates and updates traffic data for all resorts
+ */
+export async function updateTrafficData() {
+    const resorts = getStaticResorts();
+    const destinations = resorts.map(r => ({
+        id: r.id,
+        latitude: r.latitude,
+        longitude: r.longitude
+    }));
+
+    try {
+        const results = await fetchTravelTimes(destinations);
+
+        if (results) {
+            let updateCount = 0;
+            for (const [resortId, data] of Object.entries(results)) {
+                if (data) {
+                    // Update Cache
+                    trafficCache.set(resortId, {
+                        ...data,
+                        delay_min: Math.round(data.delay / 60),
+                        duration_min: Math.round(data.duration / 60)
+                    });
+                    updateCount++;
+                }
+            }
+            logger.info(`✅ Traffic updated for ${updateCount} resorts.`);
+        }
+    } catch (err) {
+        logger.error("❌ Failed to update traffic data:", err);
+    }
 }
