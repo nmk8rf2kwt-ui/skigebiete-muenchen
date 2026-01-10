@@ -38,6 +38,7 @@ This document tracks the technical implementation details of all ski resort pars
 | **St. Anton** | `st_anton.js` | `winter.intermaps.com/skiarlberg` |
 | **Sölden** | `soelden.js` | `winter.intermaps.com/soelden` |
 | **Spitzingsee** | `spitzingsee.js` | `winter.intermaps.com/alpenbahnen_spitzingsee` |
+| **Stubaier Gletscher** | `stubaier_gletscher.js` | `winter.intermaps.com/stubaier_gletscher` |
 | **Sudelfeld** | `sudelfeld.js` | `winter.intermaps.com/sudelfeld` |
 | **Zillertal Arena** | `zillertal_arena.js` | `winter.intermaps.com/zillertal_arena` |
 
@@ -74,7 +75,6 @@ This document tracks the technical implementation details of all ski resort pars
 
 | Priority | Resort | Parser File | Target API / Strategy |
 |:---------|:-------|:------------|:----------------------|
-| **2** | **Stubaier Gletscher** | `stubaier_gletscher.js` | Likely Intermaps or Sitour |
 | **3** | **Hintertux** | `hintertux.js` | Likely Intermaps |
 | **4** | **Sella Ronda** | `sella_ronda.js` | Dolomiti Superski API |
 | **5** | **Dolomiti Superski** | `dolomiti_superski.js` | Dolomiti Superski API |

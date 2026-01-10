@@ -1,12 +1,18 @@
-import { createResult } from "../utils/parserUtils.js";
+import { fetchIntermaps } from './intermaps.js';
+import { createResult } from '../utils/parserUtils.js';
 
 export const details = {
     id: "stubaier_gletscher",
     name: "Stubaier Gletscher",
     url: "https://www.stubaier-gletscher.com",
-    district: "Stubaital",
+    apiUrl: "https://winter.intermaps.com/stubaier_gletscher/data?lang=de",
+    district: "Innsbruck-Land"
 };
 
 export async function parse(options = {}) {
-    return createResult(details.id, { liftsOpen: 0, liftsTotal: 0, lifts: [], slopes: [] }, "stubaier-gletscher.com (Placeholder)");
+    const data = await fetchIntermaps(details.apiUrl);
+    if (!data) {
+        throw new Error('Failed to fetch Stubaier Gletscher Intermaps data');
+    }
+    return createResult(details.id, data, 'intermaps.com (Stubai)');
 }
