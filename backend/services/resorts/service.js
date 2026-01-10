@@ -70,16 +70,18 @@ function loadResorts() {
 loadResorts();
 
 // -- SCHEDULER --
-// Update traffic every hour
-setInterval(async () => {
-    logger.info("🚦 Scheduled Traffic Update started...");
-    await updateTrafficData();
-}, 60 * 60 * 1000);
+if (process.env.NODE_ENV !== 'test') {
+    // Update traffic every hour
+    setInterval(async () => {
+        logger.info("🚦 Scheduled Traffic Update started...");
+        await updateTrafficData();
+    }, 60 * 60 * 1000);
 
-// Initial Traffic Update (delayed by 10s to allow server start)
-setTimeout(() => {
-    updateTrafficData();
-}, 10000);
+    // Initial Traffic Update (delayed by 10s to allow server start)
+    setTimeout(() => {
+        updateTrafficData();
+    }, 10000);
+}
 
 // -- HELPERS --
 
