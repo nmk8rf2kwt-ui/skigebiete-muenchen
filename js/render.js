@@ -215,7 +215,8 @@ export function renderRow(row, data) {
     // Fallback to static Munich data ONLY if we are in Munich (determined by app.js)
     standardMins = data.staticDuration;
     if (data.status === "live") {
-      trafficDisplay = `<span title="Keine Verkehrsdaten" style="color: #bdc3c7;">n.a.</span>`;
+      // Improved error visibility for live resorts missing traffic data
+      trafficDisplay = `<span title="Verkehrsdaten konnten nicht geladen werden" style="color: #e67e22; font-weight: bold; cursor: help;">⚠️ n.a.</span>`;
     }
   }
 

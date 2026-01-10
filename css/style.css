@@ -178,7 +178,6 @@ button:active {
 
 /* ================= SYSTEM STATUS & ERRORS ================= */
 
-.status-console,
 .error-container {
   display: none;
   /* Controlled by JS */
@@ -190,7 +189,6 @@ button:active {
   box-shadow: var(--shadow-sm);
 }
 
-.status-header,
 .error-header {
   padding: 10px 16px;
   font-weight: bold;
@@ -201,17 +199,13 @@ button:active {
   user-select: none;
 }
 
-.status-header {
-  background: var(--group-journey-bg);
-  color: var(--group-journey-text);
-}
+
 
 .error-header {
   background: #fcc;
   color: #a00;
 }
 
-.status-content,
 .error-content {
   padding: 12px;
   max-height: 180px;

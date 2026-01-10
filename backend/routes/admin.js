@@ -5,7 +5,9 @@ import { fileURLToPath } from "url";
 import { getUsageStats } from "../services/system/usage.js";
 import { webcamMonitor } from "../services/system/monitoring.js";
 import { getAllResortsLive, forceRefreshResort } from "../services/resorts/service.js";
+import { fetchTravelTimes } from "../services/tomtom.js"; // Import TomTom service
 import { parserCache, weatherCache, trafficCache } from "../services/cache.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -127,6 +129,28 @@ router.post("/parsers/refresh/:id", async (req, res) => {
         res.json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+// POST /api/admin/traffic/test
+router.post("/traffic/test", async (req, res) => {
+    try {
+        console.log("🚦 Testing TomTom API connection...");
+        // Test Munich to Zugspitze (Resort ID: zugspitze)
+        const testDestination = [{ id: 'test-zugspitze', latitude: 47.4211, longitude: 10.9854 }];
+
+        // This function tracks usage internally, so it will show up in usage stats
+        const result = await fetchTravelTimes(testDestination);
+
+        // Check if result is empty (common failure mode)
+        if (!result || Object.keys(result).length === 0) {
+            return res.json({ success: false, error: "API returned empty result (Check API Key or Quota)" });
+        }
+
+        res.json({ success: true, data: result });
+    } catch (error) {
+        console.error("Traffic Test Failed:", error);
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 

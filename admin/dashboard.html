@@ -331,7 +331,13 @@
                     <div class="progress-bar">
                         <div class="progress-fill" id="todayProgress" style="width: 0%"></div>
                     </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="todayProgress" style="width: 0%"></div>
+                    </div>
                     <div style="margin-top: 10px; font-size: 0.9em;" id="usageStatus">...</div>
+                    <div style="margin-top: 15px; border-top: 1px solid #30363d; padding-top: 10px;">
+                        <button class="btn-sm" onclick="testTrafficAPI(this)" style="width: 100%;">🚦 Test Traffic API (Live)</button>
+                    </div>
                 </div>
 
                 <!-- ORS Geocoding API -->
@@ -793,6 +799,38 @@
                     switching = true;
                 }
             }
+        }
+        // --- Test Traffic API ---
+        async function testTrafficAPI(btn) {
+            btn.innerText = "🔄 Testing...";
+            btn.disabled = true;
+            try {
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/traffic/test`, { method: 'POST' });
+                const json = await res.json();
+                
+                if (json.success) {
+                    const data = json.data['test-zugspitze'];
+                    const duration = data ? Math.round(data.duration / 60) : '?';
+                    const delay = data ? Math.round(data.delay / 60) : '?';
+                    alert(`✅ API Success!\n\nRoute: Munich -> Zugspitze\nDuration: ${duration} min\nTraffic Delay: ${delay} min\n\nThe connection is working.`);
+                    btn.innerText = "✅ Success";
+                } else {
+                    alert(`❌ API Error:\n\n${json.error}\n\nPlease check TOMTOM_API_KEY in server environment.`);
+                    btn.innerText = "❌ Error";
+                    btn.style.borderColor = "var(--danger-color)";
+                    btn.style.color = "var(--danger-color)";
+                }
+            } catch (e) {
+                alert(`❌ Network/Server Error:\n\n${e.message}`);
+                btn.innerText = "❌ Failed";
+            }
+            
+            setTimeout(() => {
+                btn.disabled = false; 
+                btn.innerText = "🚦 Test Traffic API (Live)";
+                btn.style.borderColor = "var(--border-color)";
+                btn.style.color = "#c9d1d9";
+            }, 5000);
         }
     </script>
 </body>
