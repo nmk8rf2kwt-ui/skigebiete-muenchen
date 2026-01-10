@@ -480,8 +480,7 @@ export async function refreshAllResorts() {
 
     return results;
 }
-return results;
-}
+
 
 /**
  * Validates and updates traffic data for all resorts
