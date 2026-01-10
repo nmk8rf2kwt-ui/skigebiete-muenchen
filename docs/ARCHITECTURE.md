@@ -13,6 +13,11 @@
 -   **Offline-First / Zero-DB-Crash**: The Backend MUST start and function even if the Database (Supabase) is unreachable. Core features (`/resorts`) run from config/cache; only history features degrade gracefully.
 -   **Log-to-File Only**: Logs MUST exist only on the filesystem (Stdout/File). **Never** write logs to the Database (save the 500MB Free Tier for business data).
 
+### 📏 Coding & Data Standards
+-   **Config-Driven**: Adding a resort MUST only involve `resorts.json` and a parser file. Never hardcode resort-specific logic in Core (`app.js`, `index.html`).
+-   **English Code, German Data**: Code (Vars, Functions, Comments, Commits) is **Strictly English**. User-facing text and Data (Resort Names) are **German**. No Denglisch!
+-   **Atomic Parsers**: Parsers must be pure funtions (fetching -> returning data). They MUST NOT have side effects (DB writes, Global State mutation).
+
 ---
 
 ## 🏗 System Architecture
