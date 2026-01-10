@@ -19,272 +19,271 @@
 </head>
 
 <body>
+</body>
 
-  <h1>🏔️ Skigebiets-Finder</h1>
+<h1>🏔️ Skigebiets-Finder</h1>
 
-  <div class="meta">
-    Stand: <span id="timestamp">–</span> · <span style="color: #999;">v1.7.29</span> · <a href="#" id="openStatusBtn"
-      style="color: #999; text-decoration: none;" title="System Status">📊</a>
-    <a href="admin/dashboard.html" target="_blank" title="Admin Dashboard"
-      style="text-decoration: none; margin-left: 8px; opacity: 0.5;">⚙️</a>
+<div class="meta">
+  Stand: <span id="timestamp">–</span> · <span style="color: #999;">v1.7.29</span> · <a href="#" id="openStatusBtn"
+    style="color: #999; text-decoration: none;" title="System Status">📊</a>
+  <a href="admin/dashboard.html" target="_blank" title="Admin Dashboard"
+    style="text-decoration: none; margin-left: 8px; opacity: 0.5;">⚙️</a>
+</div>
+
+
+
+
+<div id="searchError" class="error-container">
+  <div class="error-header"
+    onclick="this.parentElement.querySelector('.error-content').style.display = this.parentElement.querySelector('.error-content').style.display === 'none' ? 'block' : 'none'">
+    <span>⚠️ Fehler & Warnungen</span>
+    <span class="error-toggle">▼</span>
+  </div>
+  <div class="error-content" id="errorContent"></div>
+</div>
+
+<!-- Main Toolbar -->
+<p style="margin: 0 0 5px 0; color: #666; font-size: 0.9em;">
+  Bitte geben Sie Ihren Standort ein, von wo Sie anreisen, oder geben Sie Ihren Standort über den Button frei.
+</p>
+<div class="toolbar-container" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+
+  <!-- Row 1: Search & View -->
+  <div class="search-group" style="width: 100%; justify-content: flex-start; align-items: center;">
+    <input type="text" id="addressInput" placeholder="München, Marienplatz"
+      title="Geben Sie einen Ort oder eine Adresse ein (mind. 3 Zeichen)"
+      style="width: 250px; flex: none; max-width: 100%;" />
+
+    <button id="searchBtn" title="Fahrzeiten von dieser Adresse berechnen">🔍 Suchen</button>
+    <button id="locateBtn" title="Meinen aktuellen Standort verwenden">📍 Mein Standort</button>
+
+    <!-- Moved View Toggle Here -->
+    <button id="viewToggle" title="Zwischen Listen- und Kartenansicht wechseln" style="margin-left: auto;">🗺️
+      Kartenansicht</button>
   </div>
 
+  <!-- Row 2: Filters (Top N + ODER + Radius) -->
+  <div class="actions-group" style="flex-wrap: wrap; align-items: center; width: 100%; gap: 8px;">
+    <span class="filter-label" style="font-size: 0.75em; font-weight: bold; color: #666;">FILTERN</span>
 
+    <button id="top3" class="top-filter-btn" data-top="3" title="Top 3 Skigebiete anzeigen">🏆 Top 3</button>
+    <button id="top5" class="top-filter-btn" data-top="5" title="Top 5 Skigebiete anzeigen">🥇 Top 5</button>
+    <button id="top10" class="top-filter-btn" data-top="10" title="Top 10 Skigebiete anzeigen">🔟 Top 10</button>
 
+    <span style="font-size: 0.75em; font-weight: bold; color: #666; margin: 0 8px;">ODER</span>
 
-  <div id="searchError" class="error-container">
-    <div class="error-header"
-      onclick="this.parentElement.querySelector('.error-content').style.display = this.parentElement.querySelector('.error-content').style.display === 'none' ? 'block' : 'none'">
-      <span>⚠️ Fehler & Warnungen</span>
-      <span class="error-toggle">▼</span>
-    </div>
-    <div class="error-content" id="errorContent"></div>
-  </div>
-
-  <!-- Main Toolbar -->
-  <p style="margin: 0 0 5px 0; color: #666; font-size: 0.9em;">
-    Bitte geben Sie Ihren Standort ein, von wo Sie anreisen, oder geben Sie Ihren Standort über den Button frei.
-  </p>
-  <div class="toolbar-container" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
-
-    <!-- Row 1: Search & View -->
-    <div class="search-group" style="width: 100%; justify-content: flex-start; align-items: center;">
-      <input type="text" id="addressInput" placeholder="München, Marienplatz"
-        title="Geben Sie einen Ort oder eine Adresse ein (mind. 3 Zeichen)"
-        style="width: 250px; flex: none; max-width: 100%;" />
-
-      <button id="searchBtn" title="Fahrzeiten von dieser Adresse berechnen">🔍 Suchen</button>
-      <button id="locateBtn" title="Meinen aktuellen Standort verwenden">📍 Mein Standort</button>
-
-      <!-- Moved View Toggle Here -->
-      <button id="viewToggle" title="Zwischen Listen- und Kartenansicht wechseln" style="margin-left: auto;">🗺️
-        Kartenansicht</button>
-    </div>
-
-    <!-- Row 2: Filters (Top N + ODER + Radius) -->
-    <div class="actions-group" style="flex-wrap: wrap; align-items: center; width: 100%; gap: 8px;">
-      <span class="filter-label" style="font-size: 0.75em; font-weight: bold; color: #666;">FILTERN</span>
-
-      <button id="top3" class="top-filter-btn" data-top="3" title="Top 3 Skigebiete anzeigen">🏆 Top 3</button>
-      <button id="top5" class="top-filter-btn" data-top="5" title="Top 5 Skigebiete anzeigen">🥇 Top 5</button>
-      <button id="top10" class="top-filter-btn" data-top="10" title="Top 10 Skigebiete anzeigen">🔟 Top 10</button>
-
-      <span style="font-size: 0.75em; font-weight: bold; color: #666; margin: 0 8px;">ODER</span>
-
-      <!-- Radius Slider (Compact) -->
-      <div class="radius-slider-group" style="display: flex; align-items: center; gap: 4px;">
-        <label for="radiusSlider" style="font-size: 0.8em; color: #555;">Radius:</label>
-        <input type="range" id="radiusSlider" min="50" max="500" value="150" step="10" style="width: 80px;"
-          title="Suchradius bestimmt die max. Entfernung für Routing-Berechnungen">
-        <span id="radiusValue" style="font-size: 0.8em; font-weight: bold; width: 45px;">150 km</span>
-      </div>
-    </div>
-
-    <!-- Row 3: Sort Controls -->
-    <div class="sort-row" style="display: flex; flex-wrap: wrap; align-items: center; width: 100%; gap: 8px;">
-      <span style="font-size: 0.75em; font-weight: bold; color: #666;">SORTIEREN</span>
-      <button class="sort-btn" data-sort="smartScore" title="Nach SmartScore sortieren">🏆 Score</button>
-      <button class="sort-btn" data-sort="snow" title="Nach Schneehöhe sortieren">❄️ Schnee</button>
-      <button class="sort-btn" data-sort="distance_km" title="Nach Entfernung sortieren">📍 Nähe</button>
-      <button class="sort-btn" data-sort="liftsOpen" title="Nach offenen Liften sortieren">🚠 Offen</button>
-      <button class="sort-btn" data-sort="piste_km" title="Nach Pistenkilometern sortieren">🎿 Pisten</button>
-    </div>
-
-  </div>
-
-  <!-- Spacer between controls and table -->
-  <div style="height: 20px;"></div>
-
-  <div id="map-view" style="display: none; height: 600px; width: 100%; margin: 20px 0; border-radius: 8px; z-index: 1;">
-  </div>
-
-  <table id="skiTable">
-    <thead>
-      <tr class="header-group-row">
-        <th colspan="2" class="group-header">Skigebiet</th>
-        <th colspan="4" class="group-header group-resort">🏔️ Daten zum Skigebiet</th>
-        <th colspan="5" class="group-header group-journey">🚗 Anreise & Verkehr</th>
-        <th colspan="3" class="group-header group-conditions">❄️ Bedingungen</th>
-        <th colspan="2" class="group-header group-extras">ℹ️ Extras</th>
-      </tr>
-      <tr class="header-col-row">
-        <th title="Letzte Aktualisierung der Datenquellen">Daten-Status</th>
-        <th>Name</th>
-        <th class="tooltip-container">
-          Schwierigkeit <span style="font-size: 0.8em; cursor: help;">ℹ️</span>
-          <div class="tooltip-content">
-            <strong>Legende:</strong><br>
-            🟢 Familie (Anfänger/Familien)<br>
-            🟡 Genuss (Landschaft/Entspannt)<br>
-            🔴 Sportlich (Fortgeschrittene)<br>
-            🔵 Große Pistenvielfalt<br>
-            ⚫ Gletscher (Hochalpin/Profi)
-          </div>
-        </th>
-        <th data-sort="piste_km" title="Gesamte Pistenkilometer - Klicken zum Sortieren" style="cursor: pointer;">
-          Größe (km) ↕️</th>
-        <th data-sort="liftsOpen" title="Anzahl geöffneter Lifte heute - Klicken zum Sortieren"
-          style="cursor: pointer;">
-          Lifte (Offen) ↕️</th>
-        <th data-sort="price" title="Tagesskipass-Preis - Klicken zum Sortieren" style="cursor: pointer;">Preis
-          (Tagesskipass) ↕️
-        </th>
-        <th data-sort="distance_km" title="Entfernung in Kilometern - Klicken zum Sortieren" style="cursor: pointer;">
-          Distanz ↕️</th>
-        <th data-sort="distance" title="Fahrzeit ohne Verkehr - Klicken zum Sortieren" style="cursor: pointer;">
-          Fahrzeit (ohne Verkehrslage) ↕️</th>
-        <th data-sort="traffic_delay" title="Verzögerung durch Verkehr - Klicken zum Sortieren"
-          style="cursor: pointer;">
-          Stauzeit ↕️</th>
-        <th data-sort="traffic_duration" title="Fahrzeit mit aktuellem Verkehr - Klicken zum Sortieren"
-          style="cursor: pointer;">Fahrzeit (mit Verkehrslage) ↕️</th>
-        <th title="Stauprognose basierend auf historischen Daten (aus München)">🚦 Prognose (aus M)</th>
-        <th title="Wettervorhersage (3 Tage) - Hover für Details">Wetterprognose</th>
-        <th data-sort="snow" title="Schneehöhen (Berg/Tal) & Letzter Schneefall - Klicken zum Sortieren"
-          style="cursor: pointer;">
-          Schneehöhen ↕️</th>
-        <th title="Link zur Webcam">Webcam</th>
-        <th title="Lifte & Pisten Details">Details</th>
-        <th data-sort="smartScore" title="SmartScore (0-100) - Klicken zum Sortieren" style="cursor: pointer;">Score ↕️
-        </th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <!-- Weather Modal -->
-  <div id="weatherModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2 id="weatherResortName">Weather Forecast</h2>
-      <div id="weatherForecast" class="weather-forecast">
-        <p>Loading...</p>
-      </div>
+    <!-- Radius Slider (Compact) -->
+    <div class="radius-slider-group" style="display: flex; align-items: center; gap: 4px;">
+      <label for="radiusSlider" style="font-size: 0.8em; color: #555;">Radius:</label>
+      <input type="range" id="radiusSlider" min="50" max="500" value="150" step="10" style="width: 80px;"
+        title="Suchradius bestimmt die max. Entfernung für Routing-Berechnungen">
+      <span id="radiusValue" style="font-size: 0.8em; font-weight: bold; width: 45px;">150 km</span>
     </div>
   </div>
 
-  <!-- Details Modal (Lifts & Slopes) -->
-  <div id="detailsModal" class="modal">
-    <div class="modal-content">
-      <span class="close-details">&times;</span>
-      <h2 id="detailsResortName">Resort Details</h2>
-      <div id="detailsContent" class="details-content">
-        <p>Loading...</p>
-      </div>
-    </div>
+  <!-- Row 3: Sort Controls -->
+  <div class="sort-row" style="display: flex; flex-wrap: wrap; align-items: center; width: 100%; gap: 8px;">
+    <span style="font-size: 0.75em; font-weight: bold; color: #666;">SORTIEREN</span>
+    <button class="sort-btn" data-sort="smartScore" title="Nach SmartScore sortieren">🏆 Score</button>
+    <button class="sort-btn" data-sort="snow" title="Nach Schneehöhe sortieren">❄️ Schnee</button>
+    <button class="sort-btn" data-sort="distance_km" title="Nach Entfernung sortieren">📍 Nähe</button>
+    <button class="sort-btn" data-sort="liftsOpen" title="Nach offenen Liften sortieren">🚠 Offen</button>
+    <button class="sort-btn" data-sort="piste_km" title="Nach Pistenkilometern sortieren">🎿 Pisten</button>
   </div>
 
-  <!-- TRAFFIC MODAL (Formerly History Modal) -->
-  <div id="historyModal" class="modal">
-    <div class="modal-content">
-      <span class="close-history">&times;</span>
-      <h2 id="historyResortName">Verkehrsprognose</h2>
+</div>
 
-      <!-- Content (No Tabs) -->
-      <div id="trafficTab" class="tab-content" style="display: block;">
-        <p class="info-text">
-          Durchschnittliche Verkehrsverzögerung pro Wochentag/Uhrzeit (gemittelt über letzten Monat)
-        </p>
-        <canvas id="trafficHistoryChart"></canvas>
-      </div>
+<!-- Spacer between controls and table -->
+<div style="height: 20px;"></div>
 
+<div id="map-view" style="display: none; height: 600px; width: 100%; margin: 20px 0; border-radius: 8px; z-index: 1;">
+</div>
+
+<table id="skiTable">
+  <thead>
+    <tr class="header-group-row">
+      <th colspan="2" class="group-header">Skigebiet</th>
+      <th colspan="4" class="group-header group-resort">🏔️ Daten zum Skigebiet</th>
+      <th colspan="5" class="group-header group-journey">🚗 Anreise & Verkehr</th>
+      <th colspan="3" class="group-header group-conditions">❄️ Bedingungen</th>
+      <th colspan="2" class="group-header group-extras">ℹ️ Extras</th>
+    </tr>
+    <tr class="header-col-row">
+      <th title="Letzte Aktualisierung der Datenquellen">Daten-Status</th>
+      <th>Name</th>
+      <th class="tooltip-container">
+        Schwierigkeit <span style="font-size: 0.8em; cursor: help;">ℹ️</span>
+        <div class="tooltip-content">
+          <strong>Legende:</strong><br>
+          🟢 Familie (Anfänger/Familien)<br>
+          🟡 Genuss (Landschaft/Entspannt)<br>
+          🔴 Sportlich (Fortgeschrittene)<br>
+          🔵 Große Pistenvielfalt<br>
+          ⚫ Gletscher (Hochalpin/Profi)
+        </div>
+      </th>
+      <th data-sort="piste_km" title="Gesamte Pistenkilometer - Klicken zum Sortieren" style="cursor: pointer;">
+        Größe (km) ↕️</th>
+      <th data-sort="liftsOpen" title="Anzahl geöffneter Lifte heute - Klicken zum Sortieren" style="cursor: pointer;">
+        Lifte (Offen) ↕️</th>
+      <th data-sort="price" title="Tagesskipass-Preis - Klicken zum Sortieren" style="cursor: pointer;">Preis
+        (Tagesskipass) ↕️
+      </th>
+      <th data-sort="distance_km" title="Entfernung in Kilometern - Klicken zum Sortieren" style="cursor: pointer;">
+        Distanz ↕️</th>
+      <th data-sort="distance" title="Fahrzeit ohne Verkehr - Klicken zum Sortieren" style="cursor: pointer;">
+        Fahrzeit (ohne Verkehrslage) ↕️</th>
+      <th data-sort="traffic_delay" title="Verzögerung durch Verkehr - Klicken zum Sortieren" style="cursor: pointer;">
+        Stauzeit ↕️</th>
+      <th data-sort="traffic_duration" title="Fahrzeit mit aktuellem Verkehr - Klicken zum Sortieren"
+        style="cursor: pointer;">Fahrzeit (mit Verkehrslage) ↕️</th>
+      <th title="Stauprognose basierend auf historischen Daten (aus München)">🚦 Prognose (aus M)</th>
+      <th title="Wettervorhersage (3 Tage) - Hover für Details">Wetterprognose</th>
+      <th data-sort="snow" title="Schneehöhen (Berg/Tal) & Letzter Schneefall - Klicken zum Sortieren"
+        style="cursor: pointer;">
+        Schneehöhen ↕️</th>
+      <th title="Link zur Webcam">Webcam</th>
+      <th title="Lifte & Pisten Details">Details</th>
+      <th data-sort="smartScore" title="SmartScore (0-100) - Klicken zum Sortieren" style="cursor: pointer;">Score ↕️
+      </th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<!-- Weather Modal -->
+<div id="weatherModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2 id="weatherResortName">Weather Forecast</h2>
+    <div id="weatherForecast" class="weather-forecast">
+      <p>Loading...</p>
     </div>
   </div>
+</div>
 
-  <!-- System Status Modal -->
-  <div id="statusModal" class="modal">
-    <div class="modal-content" style="max-width: 800px;">
-      <span class="close-status">&times;</span>
-      <h2>🖥️ System Status</h2>
-
-      <div class="status-grid">
-        <div class="status-card">
-          <h3>Database</h3>
-          <div id="statusDatabase" class="status-indicator">⚪ Checking...</div>
-          <div id="statusDatabaseSize" class="status-value" style="font-size: 0.85em; margin-top: 4px;">-</div>
-        </div>
-        <div class="status-card">
-          <h3>Scraper</h3>
-          <div id="statusScraper" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Weather API</h3>
-          <div id="statusWeather" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Scheduler</h3>
-          <div id="statusScheduler" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Traffic API</h3>
-          <div id="statusTraffic" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Geocoding</h3>
-          <div id="statusGeocoding" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Monitoring (Sentry)</h3>
-          <div id="statusMonitoring" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Webcams</h3>
-          <div id="statusWebcams" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Traffic Analysis</h3>
-          <div id="statusTrafficAnalysis" class="status-indicator">⚪ Checking...</div>
-          <div id="statusTrafficMetrics" class="status-value" style="font-size: 0.85em; margin-top: 4px;">-</div>
-        </div>
-        <div class="status-card">
-          <h3>Uptime</h3>
-          <div id="statusUptime" class="status-value">-</div>
-        </div>
-      </div>
-
-      <h3>🧪 Sentry Session Replay Test</h3>
-      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-        <p style="margin: 0 0 10px 0; color: #666; font-size: 0.9em;">
-          Testen Sie die Session Replay Funktion. Ein Test-Fehler wird an Sentry gesendet und die aktuelle Session wird
-          aufgezeichnet.
-        </p>
-        <button id="testSentryBtn"
-          style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
-          🎬 Session Replay testen
-        </button>
-        <div id="sentryTestResult" style="margin-top: 10px; font-size: 0.85em;"></div>
-      </div>
-
-      <h3>Live Logs</h3>
-      <div id="systemLogs" class="system-logs">
-        <div class="log-entry">Loading logs...</div>
-      </div>
+<!-- Details Modal (Lifts & Slopes) -->
+<div id="detailsModal" class="modal">
+  <div class="modal-content">
+    <span class="close-details">&times;</span>
+    <h2 id="detailsResortName">Resort Details</h2>
+    <div id="detailsContent" class="details-content">
+      <p>Loading...</p>
     </div>
   </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script type="module" src="js/weatherChart.js"></script>
-  <script type="module" src="js/app.js"></script>
+<!-- TRAFFIC MODAL (Formerly History Modal) -->
+<div id="historyModal" class="modal">
+  <div class="modal-content">
+    <span class="close-history">&times;</span>
+    <h2 id="historyResortName">Verkehrsprognose</h2>
 
-  <!-- Footer -->
-  <footer
-    style="margin-top: 60px; padding: 30px 20px; background: #f8f9fa; border-top: 1px solid #e0e0e0; text-align: center;">
-    <div style="max-width: 1200px; margin: 0 auto;">
-      <p style="margin: 0 0 15px 0; color: #666; font-size: 0.9em;">
-        © 2026 Skigebiet-Finder
+    <!-- Content (No Tabs) -->
+    <div id="trafficTab" class="tab-content" style="display: block;">
+      <p class="info-text">
+        Durchschnittliche Verkehrsverzögerung pro Wochentag/Uhrzeit (gemittelt über letzten Monat)
       </p>
-      <div style="margin: 15px 0;">
-        <a href="impressum.html"
-          style="color: #3498db; text-decoration: none; margin: 0 15px; font-weight: 500;">Impressum</a>
-        <span style="color: #ccc;">|</span>
-        <a href="datenschutz.html"
-          style="color: #3498db; text-decoration: none; margin: 0 15px; font-weight: 500;">Datenschutzerklärung</a>
-      </div>
-      <p style="margin: 15px 0 0 0; color: #999; font-size: 0.85em;">
-        Datenquellen: Open-Meteo, TomTom, OpenStreetMap, Skigebiets-Websites
-      </p>
+      <canvas id="trafficHistoryChart"></canvas>
     </div>
-  </footer>
+
+  </div>
+</div>
+
+<!-- System Status Modal -->
+<div id="statusModal" class="modal">
+  <div class="modal-content" style="max-width: 800px;">
+    <span class="close-status">&times;</span>
+    <h2>🖥️ System Status</h2>
+
+    <div class="status-grid">
+      <div class="status-card">
+        <h3>Database</h3>
+        <div id="statusDatabase" class="status-indicator">⚪ Checking...</div>
+        <div id="statusDatabaseSize" class="status-value" style="font-size: 0.85em; margin-top: 4px;">-</div>
+      </div>
+      <div class="status-card">
+        <h3>Scraper</h3>
+        <div id="statusScraper" class="status-indicator">⚪ Checking...</div>
+      </div>
+      <div class="status-card">
+        <h3>Weather API</h3>
+        <div id="statusWeather" class="status-indicator">⚪ Checking...</div>
+      </div>
+      <div class="status-card">
+        <h3>Scheduler</h3>
+        <div id="statusScheduler" class="status-indicator">⚪ Checking...</div>
+      </div>
+      <div class="status-card">
+        <h3>Traffic API</h3>
+        <div id="statusTraffic" class="status-indicator">⚪ Checking...</div>
+      </div>
+      <div class="status-card">
+        <h3>Geocoding</h3>
+        <div id="statusGeocoding" class="status-indicator">⚪ Checking...</div>
+      </div>
+      <div class="status-card">
+        <h3>Monitoring (Sentry)</h3>
+        <div id="statusMonitoring" class="status-indicator">⚪ Checking...</div>
+      </div>
+      <div class="status-card">
+        <h3>Webcams</h3>
+        <div id="statusWebcams" class="status-indicator">⚪ Checking...</div>
+      </div>
+      <div class="status-card">
+        <h3>Traffic Analysis</h3>
+        <div id="statusTrafficAnalysis" class="status-indicator">⚪ Checking...</div>
+        <div id="statusTrafficMetrics" class="status-value" style="font-size: 0.85em; margin-top: 4px;">-</div>
+      </div>
+      <div class="status-card">
+        <h3>Uptime</h3>
+        <div id="statusUptime" class="status-value">-</div>
+      </div>
+    </div>
+
+    <h3>🧪 Sentry Session Replay Test</h3>
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <p style="margin: 0 0 10px 0; color: #666; font-size: 0.9em;">
+        Testen Sie die Session Replay Funktion. Ein Test-Fehler wird an Sentry gesendet und die aktuelle Session wird
+        aufgezeichnet.
+      </p>
+      <button id="testSentryBtn"
+        style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+        🎬 Session Replay testen
+      </button>
+      <div id="sentryTestResult" style="margin-top: 10px; font-size: 0.85em;"></div>
+    </div>
+
+    <h3>Live Logs</h3>
+    <div id="systemLogs" class="system-logs">
+      <div class="log-entry">Loading logs...</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script type="module" src="js/weatherChart.js"></script>
+<script type="module" src="js/app.js"></script>
+
+<!-- Footer -->
+<footer
+  style="margin-top: 60px; padding: 30px 20px; background: #f8f9fa; border-top: 1px solid #e0e0e0; text-align: center;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <p style="margin: 0 0 15px 0; color: #666; font-size: 0.9em;">
+      © 2026 Skigebiet-Finder
+    </p>
+    <div style="margin: 15px 0;">
+      <a href="impressum.html"
+        style="color: #3498db; text-decoration: none; margin: 0 15px; font-weight: 500;">Impressum</a>
+      <span style="color: #ccc;">|</span>
+      <a href="datenschutz.html"
+        style="color: #3498db; text-decoration: none; margin: 0 15px; font-weight: 500;">Datenschutzerklärung</a>
+    </div>
+    <p style="margin: 15px 0 0 0; color: #999; font-size: 0.85em;">
+      Datenquellen: Open-Meteo, TomTom, OpenStreetMap, Skigebiets-Websites
+    </p>
+  </div>
+</footer>
 </body>
 
 </html>

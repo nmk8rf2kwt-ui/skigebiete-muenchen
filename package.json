@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "cd backend && npm test",
-    "lint": "eslint js backend"
+    "lint": "eslint js backend",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "@eslint/js": "^9.39.2",
     "@playwright/test": "^1.57.0",
     "eslint": "^9.39.2",
-    "globals": "^17.0.0"
+    "globals": "^17.0.0",
+    "husky": "^9.1.7"
   }
 }
