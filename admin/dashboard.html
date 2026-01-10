@@ -254,7 +254,34 @@
             </div>
         </header>
 
-        <!-- Main Layout Grid -->
+        <!-- Sentry Widget -->
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
+            <h2 class="text-lg font-semibold mb-4 flex items-center">
+                <span class="mr-2">🚨</span> Recent Sentry Issues
+                <span class="ml-auto text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded">Live from Sentry
+                    API</span>
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-sm text-gray-500 border-b">
+                            <th class="py-2">Error</th>
+                            <th class="py-2">Location</th>
+                            <th class="py-2 text-right">Count</th>
+                            <th class="py-2 text-right">Last Seen</th>
+                            <th class="py-2 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sentry-table-body" class="text-sm">
+                        <tr>
+                            <td colspan="5" class="py-4 text-center text-gray-400">Loading issues...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Traffic Status Grid -->
         <div class="grid" style="grid-template-columns: 3fr 1fr;"> <!-- Wider left col -->
 
             <!-- Left Column: Parsers & Logs -->
@@ -336,7 +363,8 @@
                     </div>
                     <div style="margin-top: 10px; font-size: 0.9em;" id="usageStatus">...</div>
                     <div style="margin-top: 15px; border-top: 1px solid #30363d; padding-top: 10px;">
-                        <button class="btn-sm" onclick="testTrafficAPI(this)" style="width: 100%;">🚦 Test Traffic API (Live)</button>
+                        <button class="btn-sm" onclick="testTrafficAPI(this)" style="width: 100%;">🚦 Test Traffic API
+                            (Live)</button>
                     </div>
                 </div>
 
@@ -431,6 +459,49 @@
                 renderUsage(data);
             } catch (e) {
                 console.error("Usage Error", e);
+            }
+        }
+
+        async function loadSentryData() {
+            try {
+                const response = await fetchWithAuth(`${API_BASE_URL}/admin/sentry/issues`);
+                const data = await response.json();
+                const tbody = document.getElementById('sentry-table-body');
+
+                if (data.error) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-red-500">Error: ${data.error}. Check SENTRY_AUTH_TOKEN.</td></tr>`;
+                    return;
+                }
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-green-500">No unresolved issues found! 🎉</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = data.map(issue => `
+                    <tr class="border-b last:border-0 hover:bg-gray-50">
+                        <td class="py-3 font-medium text-red-600 truncate max-w-xs" title="${issue.title}">
+                            ${issue.title}
+                        </td>
+                        <td class="py-3 text-gray-600 truncate max-w-xs" title="${issue.culprit}">
+                            ${issue.culprit}
+                        </td>
+                        <td class="py-3 text-right font-mono">${issue.count}</td>
+                        <td class="py-3 text-right text-gray-500 text-xs">
+                            ${new Date(issue.lastSeen).toLocaleString()}
+                        </td>
+                        <td class="py-3 text-right">
+                            <a href="${issue.permalink}" target="_blank" class="text-blue-500 hover:underline text-xs">
+                                View ↗
+                            </a>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error("Failed to load Sentry data", error);
+                document.getElementById('sentry-table-body').innerHTML =
+                    `<tr><td colspan="5" class="py-4 text-center text-red-400">Failed to fetch data</td></tr>`;
             }
         }
 
@@ -807,7 +878,7 @@
             try {
                 const res = await fetchWithAuth(`${API_BASE_URL}/admin/traffic/test`, { method: 'POST' });
                 const json = await res.json();
-                
+
                 if (json.success) {
                     const data = json.data['test-zugspitze'];
                     const duration = data ? Math.round(data.duration / 60) : '?';
@@ -824,9 +895,9 @@
                 alert(`❌ Network/Server Error:\n\n${e.message}`);
                 btn.innerText = "❌ Failed";
             }
-            
+
             setTimeout(() => {
-                btn.disabled = false; 
+                btn.disabled = false;
                 btn.innerText = "🚦 Test Traffic API (Live)";
                 btn.style.borderColor = "var(--border-color)";
                 btn.style.color = "#c9d1d9";

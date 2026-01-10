@@ -30,6 +30,8 @@ import resortsRouter from "./routes/resorts.js";
 import { weatherRouter, historicalWeatherRouter } from "./routes/weather.js";
 import { historyRouter, trafficAnalysisRouter } from "./routes/archive.js";
 import { statusRouter, dbHealthRouter } from "./routes/system.js";
+import { statusLogger, checkDatabaseHealth, webcamMonitor } from "./services/system/monitoring.js";
+import { sentryService } from "./services/integrations/sentry.js";
 import routingRouter from "./routes/routing.js";
 import locatingRouter from "./routes/locating.js";
 import adminRouter from "./routes/admin.js";
