@@ -123,14 +123,7 @@ export async function getResortCongestionAnalysis(resortId, days = 7) {
         const overallAvgDelay = top5.length > 0
             ? Math.round(top5.reduce((sum, slot) => sum + slot.avgDelay, 0) / top5.length)
             : 0;
-        const currentTimestamp = new Date();
-        // Convert to Munich time/local time if needed, but assuming server time is acceptable for now or UTC matching
-        // Actually, we should match the "weekday" and "hour" of the resort's timezone (Europe/Berlin)
-        const formatter = new Intl.DateTimeFormat('de-DE', {
-            timeZone: 'Europe/Berlin',
-            hour: 'numeric',
-            weekday: 'short' // Mo, Di, ...
-        });
+
 
         // Helper to get day index like getDay() but for specific timezone
         const getBerlinDayHour = (offsetHours = 0) => {

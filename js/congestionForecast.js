@@ -83,7 +83,7 @@ async function loadCongestionForecast(resortId, cellId) {
   // 2. Build compact tooltip content (Top 5 only)
   let tooltipLines = '';
   if (top5.length > 0) {
-    tooltipLines = top5.map((slot, index) => {
+    tooltipLines = top5.map((slot) => {
       const shortDay = slot.weekdayName.substring(0, 2);
       return `
             <div class="tooltip-row">
