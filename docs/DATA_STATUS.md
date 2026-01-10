@@ -21,9 +21,13 @@ This document tracks the technical implementation details of all ski resort pars
 | **Axamer Lizum** | `axamer_lizum.js` | `winter.intermaps.com/axamer_lizum` |
 | **Berwang** | `berwang.js` | `winter.intermaps.com/berwang` |
 | **Bolsterlang** | `bolsterlang.js` | `winter.intermaps.com/bolsterlang` |
+| **Brauneck** | `brauneck.js` | `winter.intermaps.com/brauneck` |
+| **Dachstein Krippenstein** | `salzkammergut.js` | `winter.intermaps.com/salzkammergut` |
 | **Damüls Mellau** | `damuels_mellau.js` | `winter.intermaps.com/damuels_mellau_faschina` |
 | **Feldberg** | `feldberg.js` | `liftverbund-feldberg.de` (Liftstars) |
+| **Feuerkogel** | `salzkammergut.js` | `winter.intermaps.com/salzkammergut` |
 | **Fichtelberg** | `fichtelberg.js` | `winter.intermaps.com/fichtelberg` |
+| **Gaissau-Hintersee** | `salzkammergut.js` | `winter.intermaps.com/salzkammergut` |
 | **Garmisch** | `garmisch.js` | `winter.intermaps.com/zugspitzbahn_garmisch` |
 | **Hintertux** | `hintertux.js` | `winter.intermaps.com/tux_finkenberg` |
 | **Hochzillertal** | `hochzillertal_hochfuegen.js` | `winter.intermaps.com/hochzillertal` |
@@ -32,6 +36,7 @@ This document tracks the technical implementation details of all ski resort pars
 | **Kitzsteinhorn** | `kitzsteinhorn.js` | `winter.intermaps.com/kitzsteinhorn` |
 | **Kronplatz** | `kronplatz.js` | `winter.intermaps.com/kronplatz` |
 | **Kühtai** | `kuehtai.js` | `winter.intermaps.com/innsbruck` (Filtered) |
+| **Loser** | `salzkammergut.js` | `winter.intermaps.com/salzkammergut` |
 | **Mayrhofen** | `mayrhofen.js` | `winter.intermaps.com/mayrhofen` |
 | **Nassfeld** | `nassfeld.js` | `winter.intermaps.com/nassfeld` |
 | **Obergurgl** | `obergurgl_hochgurgl.js` | `winter.intermaps.com/obergurgl_hochgurgl` |
@@ -46,7 +51,7 @@ This document tracks the technical implementation details of all ski resort pars
 | **Stubaier Gletscher** | `stubaier_gletscher.js` | `winter.intermaps.com/stubaier_gletscher` |
 | **Sudelfeld** | `sudelfeld.js` | `winter.intermaps.com/sudelfeld` |
 | **Zillertal Arena** | `zillertal_arena.js` | `winter.intermaps.com/zillertal_arena` |
-| **Brauneck** | `brauneck.js` | `brauneck-bergbahn.de` |
+| **Zwölferhorn** | `salzkammergut.js` | `winter.intermaps.com/salzkammergut` |
 | **Steinplatte** | `steinplatte.js` | `steinplatte.tirol` |
 | **Winklmoos** | `winklmoos.js` | `winklmoosalm.de` |
 

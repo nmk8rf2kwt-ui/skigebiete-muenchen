@@ -11,8 +11,8 @@ export async function fetchIntermaps(url) {
         const lifts = [];
         if (data.lifts && Array.isArray(data.lifts)) {
             data.lifts.forEach(lift => {
-                // Extract name from subtitle or searchdesc
-                const name = lift.subtitle || lift.searchdesc || lift.id || 'Unknown';
+                // Extract name from title, popup.title, subtitle or searchdesc
+                const name = lift.title || lift.popup?.title || lift.subtitle || lift.searchdesc || lift.id || 'Unknown';
 
                 // Map status
                 let status = 'unknown';
@@ -31,8 +31,8 @@ export async function fetchIntermaps(url) {
         const slopes = [];
         if (data.slopes && Array.isArray(data.slopes)) {
             data.slopes.forEach(slope => {
-                // Extract name from subtitle or searchdesc
-                const name = slope.subtitle || slope.searchdesc || slope.id || 'Unknown';
+                // Extract name from title, popup.title, subtitle or searchdesc
+                const name = slope.title || slope.popup?.title || slope.subtitle || slope.searchdesc || slope.id || 'Unknown';
 
                 // Map status
                 let status = 'unknown';

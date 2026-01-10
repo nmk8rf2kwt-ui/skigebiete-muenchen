@@ -1310,5 +1310,70 @@
             "info": "Tageskarte"
         },
         "webcam": "https://www.valgardena.it/de/webcams"
+    },
+    {
+        "id": "loser",
+        "name": "Loser - Altaussee",
+        "distance": 180,
+        "piste_km": 34,
+        "lifts": 8,
+        "price": 54,
+        "classification": "Familie",
+        "website": "https://www.loser.at",
+        "latitude": 47.66,
+        "longitude": 13.77,
+        "webcam": "https://www.loser.at/de/winter/wetter-webcams/"
+    },
+    {
+        "id": "feuerkogel",
+        "name": "Feuerkogel - Ebensee",
+        "distance": 170,
+        "piste_km": 10,
+        "lifts": 7,
+        "price": 52,
+        "classification": "Familie",
+        "website": "https://feuerkogel.net",
+        "latitude": 47.81,
+        "longitude": 13.72,
+        "webcam": "https://feuerkogel.net/de/aktuelles-service/webcams/"
+    },
+    {
+        "id": "dachstein_krippenstein",
+        "name": "Dachstein Krippenstein",
+        "distance": 190,
+        "piste_km": 30,
+        "lifts": 5,
+        "price": 56,
+        "classification": "Gletscher",
+        "website": "https://dachstein-krippenstein.com",
+        "latitude": 47.54,
+        "longitude": 13.69,
+        "webcam": "https://dachstein-krippenstein.com/de/aktuelles/webcams/"
+    },
+    {
+        "id": "zwoelferhorn",
+        "name": "Zwölferhorn - St. Gilgen",
+        "distance": 150,
+        "piste_km": 5,
+        "lifts": 1,
+        "price": 40,
+        "classification": "Genuss",
+        "website": "https://www.zwoelferhorn.at",
+        "latitude": 47.75,
+        "longitude": 13.36,
+        "webcam": "https://www.zwoelferhorn.at/webcam/"
+    },
+    {
+        "id": "gaissau_hintersee",
+        "name": "Gaissau-Hintersee",
+        "distance": 140,
+        "piste_km": 34,
+        "lifts": 9,
+        "price": 45,
+        "classification": "Familie",
+        "website": "https://gaissauhintersee.at",
+        "latitude": 47.74,
+        "longitude": 13.26,
+        "webcam": "https://gaissauhintersee.at/webcams/"
     }
 ]
