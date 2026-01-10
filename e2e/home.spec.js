@@ -16,14 +16,14 @@ test('Homepage loads and displays title', async ({ page }) => {
     await page.goto('https://nmk8rf2kwt-ui.github.io/skigebiete-muenchen/');
 
     // Expect a title "to contain" a substring.
-    await expect(page).toHaveTitle(/Skigebiete München/);
+    await expect(page).toHaveTitle(/Skigebiets-Finder/);
 });
 
 test('Resort table is populated', async ({ page }) => {
     await page.goto('https://nmk8rf2kwt-ui.github.io/skigebiete-muenchen/');
 
     // Wait for the table body to have rows
-    const tableRows = page.locator('#resort-table-body tr');
+    const tableRows = page.locator('#skiTable tbody tr');
 
     // We expect at least one row (the "Spitzingsee", "Sudelfeld" etc.)
     await expect(tableRows).not.toHaveCount(0);
@@ -37,6 +37,6 @@ test('No loading banner is visible', async ({ page }) => {
 
     // The banner ID we removed was "loading-banner" (or similar, checking clean state)
     // We can just check that the page looks "ready"
-    const table = page.locator('#resort-table-body');
+    const table = page.locator('#skiTable tbody');
     await expect(table).toBeVisible();
 });

@@ -4,7 +4,7 @@ test('Traffic data is displayed', async ({ page }) => {
     await page.goto('https://nmk8rf2kwt-ui.github.io/skigebiete-muenchen/');
 
     // Wait for the table to load
-    await page.locator('#resort-table-body tr').first().waitFor();
+    await page.locator('#skiTable tbody tr').first().waitFor();
 
     // Check if we have any execution for "Anfahrt" column (index depends on layout, but let's look for text)
     // We expect either minutes (e.g. "60 min") or "n.a." or similar.
