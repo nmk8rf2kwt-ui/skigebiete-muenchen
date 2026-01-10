@@ -94,6 +94,10 @@ We follow the Conventional Commits specification to keep history readable.
 -   Use GitHub Secrets / Render Env Vars for production.
 -   If a secret leaks into git history, it must be revoked immediately.
 
+### 3. Registry Maintenance
+-   When adding or modifying a parser, you **MUST** update `docs/DATA_STATUS.md`.
+-   Classify the new parser correctly (Type A/B/C) and add the source URL.
+
 ## 🛠️ Tooling
 
 ### GitHub CLI (`gh`)
