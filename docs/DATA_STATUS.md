@@ -20,7 +20,7 @@ These resorts fetch real-time data from external APIs (mostly Intermaps) or Webs
 -   **Mittelgebirge**: Arber, Feldberg, Fichtelberg, Willingen, Winterberg, Wurmberg.
 
 ### 🇦🇹 Austria
--   **Tyrol**: Berwang, Ehrwald, Hahnenkamm, Hochkössen, Hochzillertal, Kitzbühel, Lermoos, Saalbach, Seefeld, Sölden, St. Johann, Steinplatte, Zillertal Arena.
+-   **Tyrol**: Berwang, Ehrwald, Hahnenkamm, Hochkössen, Hochzillertal, Ischgl, Kitzbühel, Lermoos, Saalbach, Seefeld, Sölden, St. Johann, Steinplatte, Zillertal Arena.
 -   **Salzburg**: Lofer, Obertauern, Schladming (Planai).
 
 ### 🇮🇹 Italy
@@ -33,8 +33,7 @@ These resorts fetch real-time data from external APIs (mostly Intermaps) or Webs
 These resorts are configured in the system but currently return **static/empty data** ("0/0 Lifts"). Real parsers need to be implemented for these.
 
 **Priority for Implementation**:
-1.  **Ischgl / Samnaun** (`ischgl.js`)
-2.  **Stubaier Gletscher** (`stubaier_gletscher.js`)
+1.  **Stubaier Gletscher** (`stubaier_gletscher.js`)
 3.  **Hintertuxer Gletscher** (`hintertux.js`)
 4.  **St. Anton am Arlberg** (`st_anton.js`)
 

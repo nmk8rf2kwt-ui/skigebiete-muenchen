@@ -1,47 +1,5 @@
 
-import { spitzingsee } from "../parsers/spitzingsee.js";
-import { brauneck } from "../parsers/brauneck.js";
-import { parse as sudelfeld } from "../parsers/sudelfeld.js";
-import { garmisch } from "../parsers/garmisch.js";
-import { zugspitze } from "../parsers/zugspitze.js";
-import { parse as wilderKaiser } from "../parsers/wilder-kaiser.js";
-import { steinplatte } from "../parsers/steinplatte.js";
-import { parse as kitzbuehel } from "../parsers/kitzbuehel.js";
-import { parse as hochkoessen } from "../parsers/hochkoessen.js";
-import { winklmoos } from "../parsers/winklmoos.js";
-import { parse as ehrwalderAlmbahn } from "../parsers/ehrwald.js";
-import parseLermoos from "../parsers/lermoos.js";
-import parseStJohann from "../parsers/stjohann.js";
-import parseSkiJuwel from "../parsers/skijuwel.js";
-import { berwang } from "../parsers/berwang.js";
-import { hoernerbahn } from "../parsers/bolsterlang.js";
-import { ofterschwang } from "../parsers/ofterschwang.js";
-import { lofer } from "../parsers/lofer.js";
-import { seefeld } from "../parsers/seefeld.js";
-import { hahnenkamm } from "../parsers/hahnenkamm.js";
-
-const PARSERS = {
-    spitzingsee,
-    brauneck,
-    sudelfeld,
-    garmisch,
-    zugspitze,
-    "wilder-kaiser": wilderKaiser,
-    steinplatte,
-    kitzbuehel,
-    hochkoessen,
-    winklmoos,
-    ehrwald: ehrwalderAlmbahn,
-    lermoos: parseLermoos,
-    st_johann: parseStJohann,
-    ski_juwel: parseSkiJuwel,
-    berwang,
-    bolsterlang: hoernerbahn,
-    ofterschwang,
-    lofer,
-    seefeld,
-    hahnenkamm
-};
+import { PARSERS } from "../parsers/index.js";
 
 const target = process.argv[2];
 

@@ -1,13 +1,18 @@
-import { createResult } from "../utils/parserUtils.js";
+import { fetchIntermaps } from './intermaps.js';
+import { createResult } from '../utils/parserUtils.js';
 
 export const details = {
     id: "ischgl",
-    name: "Ischgl / Samnaun",
+    name: "Ischgl / Samnaun Silvretta Arena",
     url: "https://www.ischgl.com",
-    district: "Paznaun",
+    apiUrl: "https://winter.intermaps.com/silvretta_arena/data?lang=de",
+    district: "Paznaun"
 };
 
-export async function parse(_options = {}) {
-    // TODO: Implement parsing (API not found, HTML needs research) or find API
-    return createResult(details.id, { liftsOpen: 0, liftsTotal: 0, lifts: [], slopes: [] }, "ischgl.com (Placeholder)");
+export async function parse(options = {}) {
+    const data = await fetchIntermaps(details.apiUrl);
+    if (!data) {
+        throw new Error('Failed to fetch Ischgl Intermaps data');
+    }
+    return createResult(details.id, data, 'intermaps.com (Ischgl)');
 }
