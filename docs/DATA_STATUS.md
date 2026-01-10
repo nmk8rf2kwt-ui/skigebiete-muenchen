@@ -18,6 +18,7 @@ This document tracks the technical implementation details of all ski resort pars
 | Resort | Parser File | Source URL (Endpoint) |
 |:-------|:------------|:----------------------|
 | **Arber** | `arber.js` | `winter.intermaps.com/arber` |
+| **Axamer Lizum** | `axamer_lizum.js` | `winter.intermaps.com/axamer_lizum` |
 | **Berwang** | `berwang.js` | `winter.intermaps.com/berwang` |
 | **Bolsterlang** | `bolsterlang.js` | `winter.intermaps.com/bolsterlang` |
 | **Feldberg** | `feldberg.js` | `liftverbund-feldberg.de` (Liftstars) |
@@ -26,6 +27,7 @@ This document tracks the technical implementation details of all ski resort pars
 | **Hörnerbahn** | `hoerner.js` | `winter.intermaps.com/hoernerbahn` |
 | **Ischgl** | `ischgl.js` | `winter.intermaps.com/silvretta_arena` |
 | **Kitzsteinhorn** | `kitzsteinhorn.js` | `winter.intermaps.com/kitzsteinhorn` |
+| **Kühtai** | `kuehtai.js` | `winter.intermaps.com/innsbruck` (Filtered) |
 | **Kronplatz** | `kronplatz.js` | `winter.intermaps.com/kronplatz` |
 | **Mayrhofen** | `mayrhofen.js` | `winter.intermaps.com/mayrhofen` |
 | **Nassfeld** | `nassfeld.js` | `winter.intermaps.com/nassfeld` |
@@ -76,11 +78,9 @@ This document tracks the technical implementation details of all ski resort pars
 | **3** | **Hintertux** | `hintertux.js` | Likely Intermaps |
 | **4** | **Sella Ronda** | `sella_ronda.js` | Dolomiti Superski API |
 | **5** | **Dolomiti Superski** | `dolomiti_superski.js` | Dolomiti Superski API |
-| - | Axamer Lizum | `axamer_lizum.js` | - |
 | - | Bad Kleinkirchheim | `bad_kleinkirchheim.js` | - |
 | - | Damüls Mellau | `damuels_mellau.js` | - |
 | - | Hochkönig | `hochkoenig.js` | Ski Amade API? |
-| - | Kühtai | `kuehtai.js` | - |
 | - | Obergurgl | `obergurgl_hochgurgl.js` | - |
 | - | Serfaus-Fiss-Ladis | `serfaus_fiss_ladis.js` | - |
 | - | Silvretta Montafon | `silvretta_montafon.js` | - |
