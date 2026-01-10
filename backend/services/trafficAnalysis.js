@@ -159,7 +159,7 @@ export async function getResortCongestionAnalysis(resortId, days = 7) {
 
             // Determine color
             let color = '#27ae60'; // Green
-            if (avg > 30) color = '#e74c3c';
+            if (avg > 30) color = '#c0392b'; // Darker Red (WCAG AA)
             else if (avg > 15) color = '#f39c12';
 
             forecast.push({

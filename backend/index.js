@@ -32,7 +32,7 @@ import { historyRouter, trafficAnalysisRouter } from "./routes/archive.js";
 import { statusRouter, dbHealthRouter } from "./routes/system.js";
 import { statusLogger, checkDatabaseHealth, webcamMonitor } from "./services/system/monitoring.js";
 import { sentryService } from "./services/integrations/sentry.js";
-import { githubService } from "./services/integrations/github.js"; // Added githubService import
+import githubService from "./services/integrations/github.js"; // Added githubService import
 import routingRouter from "./routes/routing.js";
 import locatingRouter from "./routes/locating.js";
 import adminRouter from "./routes/admin.js";

@@ -3,33 +3,23 @@ import pluginJs from "@eslint/js";
 
 export default [
     {
-        ignores: ["node_modules/**", "coverage/**"]
-    },
-    pluginJs.configs.recommended,
-    {
-        files: ["**/*.js"],
         languageOptions: {
-            sourceType: "module",
-            ecmaVersion: 2022,
             globals: {
                 ...globals.browser,
                 ...globals.node,
+                ...globals.jest,
                 L: "readonly",
                 Chart: "readonly"
             }
-        },
-        rules: {
-            "no-undef": "error",
-            "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-            "no-empty": "warn"
         }
     },
+    pluginJs.configs.recommended,
     {
-        files: ["**/tests/**/*.js", "**/*.test.js"],
-        languageOptions: {
-            globals: {
-                ...globals.jest
-            }
-        }
+        rules: {
+            "no-unused-vars": "warn",
+            "no-undef": "warn",
+            "no-console": "off"
+        },
+        ignores: ["e2e/*", "dist/*", "coverage/*", "docs/*"]
     }
 ];

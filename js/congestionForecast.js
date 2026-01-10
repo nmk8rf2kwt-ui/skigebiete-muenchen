@@ -68,10 +68,13 @@ async function loadCongestionForecast(resortId, cellId) {
     if (index === 0) label = "Jetzt";
 
     // Icon/Color logic
+    let color = slot.color;
+    if (color === '#e74c3c') color = '#c0392b'; // Darken red for contrast
+
     return `
-      <div class="traffic-pill" style="border-left: 3px solid ${slot.color};" title="${slot.timeLabel}: Ø ${slot.avgDelay} min Stau">
+      <div class="traffic-pill" style="border-left: 3px solid ${color};" title="${slot.timeLabel}: Ø ${slot.avgDelay} min Stau">
          <span class="time">${label}</span>
-         <span class="delay" style="color: ${slot.color}">${slot.avgDelay}'</span>
+         <span class="delay" style="color: ${color}">${slot.avgDelay}'</span>
       </div>
     `;
   }).join('');

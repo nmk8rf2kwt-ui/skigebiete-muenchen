@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const TOMTOM_API_KEY = process.env.TOMTOM_API_KEY;
-import { trackApiUsage, markLimitReached } from './system/usage.js';
+import { trackApiUsage, markLimitReached, getUsageStats } from './system/usage.js';
 import { createBreaker } from './resilience/breaker.js';
 
 // Munich Center (Marienplatz approx)
@@ -34,6 +34,14 @@ export async function fetchTravelTimes(destinations, origin = null) {
     if (!TOMTOM_API_KEY) {
         console.warn("⚠️ TOMTOM_API_KEY not found. Traffic data will be skipped.");
         return null;
+    }
+
+    // CHECK USAGE LIMIT BEFORE CALLING
+    const stats = getUsageStats();
+    const today = new Date().toISOString().split('T')[0];
+    if (stats.daily[today] && stats.daily[today].limitReached) {
+        console.warn(`🛑 TomTom Limit Reached (Daily). Skipping Travel Times Fetch.`);
+        return {};
     }
 
     // TomTom Matrix Routing API v2 (Sync)
@@ -140,6 +148,14 @@ export async function fetchTrafficMatrix(origins, destinations) {
     if (!TOMTOM_API_KEY) {
         console.warn("⚠️ TOMTOM_API_KEY not found.");
         return null;
+    }
+
+    // CHECK USAGE LIMIT BEFORE CALLING
+    const stats = getUsageStats();
+    const today = new Date().toISOString().split('T')[0];
+    if (stats.daily[today] && stats.daily[today].limitReached) {
+        console.warn(`🛑 TomTom Limit Reached (Daily). Skipping Traffic Matrix Fetch.`);
+        return {}; // Return empty results (n.a.) logic handles this
     }
 
     // TomTom Matrix API Limit: 100 cells max (origins * destinations <= 100)

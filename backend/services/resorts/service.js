@@ -71,13 +71,18 @@ loadResorts();
 
 // -- SCHEDULER --
 if (process.env.NODE_ENV !== 'test') {
-    // Update traffic every hour
+    // Update traffic every hour, but ONLY between 06:00 and 20:00
     setInterval(async () => {
-        logger.info("🚦 Scheduled Traffic Update started...");
-        await updateTrafficData();
+        const hour = new Date().getHours();
+        if (hour >= 6 && hour <= 20) {
+            logger.info("🚦 Scheduled Traffic Update started...");
+            await updateTrafficData();
+        } else {
+            logger.info("💤 Traffic Update skipped (Night Mode)");
+        }
     }, 60 * 60 * 1000);
 
-    // Initial Traffic Update (delayed by 10s to allow server start)
+    // Initial Traffic Update (delayed)
     setTimeout(() => {
         updateTrafficData();
     }, 10000);

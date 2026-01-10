@@ -25,10 +25,33 @@ router.post("/calculate", routingCalculateLimiter, async (req, res) => {
         const resorts = getStaticResorts();
         let destinations = resorts.filter(r => r.latitude && r.longitude);
 
-        // OPTIMIZATION: If client provided specific resort IDs (e.g. via radius filter), 
-        // only calculate for those to save API calls/costs.
+
+        // OPTIMIZATION: 
+        // 1. If explicit IDs provided -> Use them.
+        // 2. If not -> Filter by linear distance from origin (max 300km) to save credits.
         if (resortIds && Array.isArray(resortIds) && resortIds.length > 0) {
             destinations = destinations.filter(r => resortIds.includes(r.id));
+        } else {
+            // Haversine / Linear check
+            const MAX_DIST_KM = 300;
+            const toRad = x => x * Math.PI / 180;
+            const R = 6371; // km
+
+            destinations = destinations.filter(r => {
+                if (!r.latitude || !r.longitude) return false;
+
+                const dLat = toRad(r.latitude - latitude);
+                const dLon = toRad(r.longitude - longitude);
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(toRad(latitude)) * Math.cos(toRad(r.latitude)) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                const d = R * c;
+
+                return d <= MAX_DIST_KM;
+            });
+
+            console.log(`[Traffic] Optimized: Fetching for ${destinations.length} resorts within ${MAX_DIST_KM}km of user.`);
         }
 
         // Usage: fetchTomTomTraffic(destinations, { lat, lon })

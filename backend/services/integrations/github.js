@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+
 
 class GitHubService {
     constructor() {
@@ -46,4 +46,4 @@ class GitHubService {
     }
 }
 
-module.exports = new GitHubService();
+export default new GitHubService();
