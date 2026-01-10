@@ -53,15 +53,15 @@ Eine vollständige Übersicht aller verwendeten Komponenten und Versionen finden
 - **Chart.js (v4.x)**: Datenvisualisierung.
 - **Bootstrap (v5.3)**: Styling & Grid System.
 
-## 📚 Documentation & Operations
+## 📚 Documentation
 
-- [**System Architecture**](./docs/ARCHITECTURE.md)
-- [**Tech Stack Details**](./docs/TECH_STACK.md)
-- [**Implementation Status**](./docs/IMPLEMENTATION_STATUS.md)
-- [**Operations & Monitoring**](./docs/ops/OPERATIONS.md)
-- [**Database Schema & Management**](./docs/DATABASE.md)
-- [**Features & UI Reference**](./docs/FEATURES_UI.md)
-- [**Admin Dashboard Guide**](./docs/ops/ADMIN_DASHBOARD.md)
+-   [**Development Guide**](./docs/DEVELOPMENT.md) - Setup, Testing, Tools.
+-   [**Architecture & Tech Stack**](./docs/ARCHITECTURE.md) - System design.
+-   [**API Reference**](./docs/API.md) - Endpoints and Auth.
+-   [**Operations & Monitoring**](./docs/OPERATIONS.md) - Logs, Alerts, Maintenance.
+-   [**Deployment**](./docs/DEPLOYMENT.md) - CI/CD and hosting.
+-   [**Data Status**](./docs/DATA_STATUS.md) - Supported resorts.
+
 
 ## 🚀 Quick Start (Local Development)
 

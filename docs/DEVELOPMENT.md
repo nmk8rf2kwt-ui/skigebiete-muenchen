@@ -83,3 +83,19 @@ Before submitting a PR, ensure:
 Use `gh` to inspect CI runs directly from your terminal:
 -   `gh run list`: See recent pipeline runs.
 -   `gh run view --log`: View logs of the latest run.
+
+---
+
+## 📝 Documentation Standard
+
+**Strict Rule: No New Files.**
+To maintain consistency, do **not** create new Markdown files in `docs/`. Instead, integrate information into the existing "Source of Truth" documents:
+
+1.  **`ARCHITECTURE.md`**: Principles, Tech Stack, Decisions.
+2.  **`DEVELOPMENT.md`**: Guide for Developers (Code, Tests, Tools).
+3.  **`DEPLOYMENT.md`**: Pipelines, Hosting, Config.
+4.  **`OPERATIONS.md`**: Running the system (Logs, Monitor).
+5.  **`API.md`**: Interfaces.
+6.  **`DATA_STATUS.md`**: Business Data coverage.
+
+Exceptions must be explicitly approved by specific user request.
