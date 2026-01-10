@@ -8,6 +8,11 @@
 2.  **Centralized Control**: Logic resides in the Backend Service Layer (`resortManager.js`, `scheduler.js`), not the Frontend.
 3.  **Visual Feedback**: The User Interface reflects system state immediately (e.g., traffic congestion, older data).
 
+### 🛡️ Architectural Policies (Strict)
+-   **No Client-Side Frameworks**: The Frontend MUST remain **Vanilla JS** + **Bootstrap**. Do not introduce React, Vue, Tailwind, or complex build tools (Webpack/Vite). The goal is separate concerns and instant loading (<100ms).
+-   **Offline-First / Zero-DB-Crash**: The Backend MUST start and function even if the Database (Supabase) is unreachable. Core features (`/resorts`) run from config/cache; only history features degrade gracefully.
+-   **Log-to-File Only**: Logs MUST exist only on the filesystem (Stdout/File). **Never** write logs to the Database (save the 500MB Free Tier for business data).
+
 ---
 
 ## 🏗 System Architecture
