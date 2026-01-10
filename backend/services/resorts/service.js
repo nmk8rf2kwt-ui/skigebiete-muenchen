@@ -7,7 +7,7 @@ import { getParserType } from "../../parsers/parserTypes.js";
 import { parserCache, weatherCache, trafficCache } from "../cache.js";
 import logger from "../logger.js";
 import { statusLogger } from "../system/monitoring.js"; // Unified monitoring service
-import { ResortDataSchema } from "../../utils/schema.js";
+import { ResortDataSchema } from "../../validation/schemas.js";
 import * as Sentry from "@sentry/node";
 import { calculateSmartScore } from "../smartscore.js";
 

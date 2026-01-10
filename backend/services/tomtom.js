@@ -3,8 +3,29 @@ dotenv.config();
 
 const TOMTOM_API_KEY = process.env.TOMTOM_API_KEY;
 import { trackApiUsage, markLimitReached } from './system/usage.js';
+import { createBreaker } from './resilience/breaker.js';
+
 // Munich Center (Marienplatz approx)
 const MUNICH_COORDS = { lat: 48.1351, lon: 11.5820 };
+
+// Define the raw fetch operation
+const rawTomTomFetch = async (url, body) => {
+    trackApiUsage('tomtom', body.destinations ? body.destinations.length : 1);
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    });
+    return response;
+};
+
+// Create the breaker
+const tomTomBreaker = createBreaker(rawTomTomFetch, 'TomTomAPI', {
+    timeout: 10000, // 10s timeout for API
+    errorThresholdPercentage: 50 // 50% failure opens circuit
+});
 
 export async function fetchTravelTimes(destinations, origin = null) {
     // destinations: [{ id, latitude, longitude }]
@@ -49,14 +70,14 @@ export async function fetchTravelTimes(destinations, origin = null) {
     };
 
     try {
-        trackApiUsage('tomtom', destPoints.length);
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        });
+        // Use the breaker
+        const response = await tomTomBreaker.fire(url, body);
+
+        // Breaker fallback returns null
+        if (!response) {
+            console.warn("TomTom Breaker Open or Fallback Triggered");
+            return {};
+        }
 
         if (!response.ok) {
             // Check for Quota Limit (403 or specific error text)
@@ -167,12 +188,13 @@ export async function fetchTrafficMatrix(origins, destinations) {
         const url = `https://api.tomtom.com/routing/matrix/2?key=${TOMTOM_API_KEY}`;
 
         try {
-            trackApiUsage('matrix_batch');
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
+            // Use the shared breaker
+            const response = await tomTomBreaker.fire(url, body);
+
+            if (!response) {
+                console.warn(`TomTom Breaker fallback for batch ${i}`);
+                continue; // Skip batch
+            }
 
             if (!response.ok) {
                 if (response.status === 403) markLimitReached('matrix_batch');
@@ -223,5 +245,3 @@ export async function fetchTrafficMatrix(origins, destinations) {
 
     return results;
 }
-
-

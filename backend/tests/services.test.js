@@ -1,6 +1,6 @@
 import { describe, test, expect } from '@jest/globals';
 import { getStaticResorts, getResortConfig } from '../services/resorts/service.js';
-import { ResortDataSchema } from '../utils/schema.js';
+import { ResortDataSchema } from '../validation/schemas.js';
 
 describe('Resort Manager', () => {
     test('should load static resorts', () => {
@@ -26,6 +26,8 @@ describe('Resort Manager', () => {
 describe('Data Schema Validation', () => {
     test('should validate correct resort data', () => {
         const validData = {
+            id: 'test-resort',
+            name: 'Test Resort',
             status: 'live',
             liftsOpen: 10,
             liftsTotal: 20,

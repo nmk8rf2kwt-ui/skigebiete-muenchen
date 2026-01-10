@@ -1,13 +1,30 @@
+import { createBreaker } from '../resilience/breaker.js';
+
+// Raw fetch wrapper
+const rawWeatherFetch = async (url) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Weather API Error: ${res.status}`);
+    return res.json();
+};
+
+// Create Breaker
+const weatherBreaker = createBreaker(rawWeatherFetch, 'WeatherAPI', {
+    timeout: 5000,
+    errorThresholdPercentage: 50
+});
+
 // Weather service using Open-Meteo API (free, no key required)
 export async function getWeatherForecast(latitude, longitude) {
     // Extended query: added precipitation and wind_speed_10m for SmartScore Comfort calculation
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,weathercode,snowfall_sum&hourly=snow_depth,precipitation,wind_speed_10m&timezone=Europe/Berlin&forecast_days=3`;
 
     try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to fetch weather");
+        // Use Breaker
+        const data = await weatherBreaker.fire(url);
 
-        const data = await res.json();
+        if (!data) return null; // Fallback happened
+
+        // const data = await res.json(); // handled in rawWeatherFetch
 
         // Map weather codes to simple descriptions and emojis
         const weatherCodeMap = {
