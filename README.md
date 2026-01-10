@@ -88,6 +88,11 @@ cd backend
 npm test
 ```
 
+## 🛠️ Development Tools
+- **GitHub CLI (`gh`)**: The project is configured to use the GitHub CLI for monitoring CI/CD pipelines and managing workflows directly from the terminal.
+  - Check CI Status: `gh run list` or `gh run view --log`
+  - Auth Status: `gh auth status`
+
 ## 🔒 Security & Performance
 - **Compliance**: Follows ISO 25010 for Security, Reliability, and Performance.
 - **Privacy**: Sentry Session Replay utilizes strict privacy masks (GDPR-ready).
