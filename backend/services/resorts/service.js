@@ -422,7 +422,15 @@ export async function forceRefreshResort(resortId) {
     try {
         logger.scraper.info(`🔄 Force refreshing ${resortId}...`);
         const rawData = await fetchWithTimeout((opts) => parser(opts), 10000);
-        const validation = ResortDataSchema.safeParse(rawData);
+
+        // Enrich with static metadata before validation to satisfy schema requirements
+        const dataToValidate = {
+            id: resort.id,
+            name: resort.name,
+            status: rawData.status || 'live',
+            ...rawData
+        };
+        const validation = ResortDataSchema.safeParse(dataToValidate);
 
         if (!validation.success) {
             throw new Error("Validation failed: " + JSON.stringify(validation.error.format()));
