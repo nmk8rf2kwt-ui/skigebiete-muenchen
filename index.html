@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Skigebiets-Finder</title>
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://js-de.sentry-cdn.com https://browser.sentry-cdn.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https:; connect-src 'self' http: https: ws:; worker-src 'self' blob:;">
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -115,6 +117,22 @@
         <button class="pref-btn" data-pref="fast">
           <span class="pref-icon">⚡</span>
           <span class="pref-label">Schnell dort</span>
+        </button>
+        <button class="pref-btn" data-pref="near">
+          <span class="pref-icon">📏</span>
+          <span class="pref-label">Möglichst nah</span>
+        </button>
+        <button class="pref-btn" data-pref="variety">
+          <span class="pref-icon">🎢</span>
+          <span class="pref-label">Viel Abwechslung</span>
+        </button>
+        <button class="pref-btn" data-pref="traffic">
+          <span class="pref-icon">🚦</span>
+          <span class="pref-label">Wenig Stau</span>
+        </button>
+        <button class="pref-btn" data-pref="family">
+          <span class="pref-icon">👨‍👩‍👧</span>
+          <span class="pref-label">Familie</span>
         </button>
         <button class="pref-btn" data-pref="open">
           <span class="pref-icon">🚠</span>
@@ -232,6 +250,15 @@
       <div id="weatherForecast" class="weather-forecast">
         <p>Loading...</p>
       </div>
+    </div>
+  </div>
+
+  <!-- Details Modal -->
+  <div id="detailsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-details">&times;</span>
+      <h2 id="detailsResortName">Details</h2>
+      <div id="detailsContent"></div>
     </div>
   </div>
 

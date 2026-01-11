@@ -12,6 +12,8 @@ const SCORE_WEIGHTS = {
   PRICE: -0.5,
   OPEN_LIFTS: 3,
   SNOW: 0.5,
+  TRAFFIC_DELAY: -2.0,
+  FAMILY_BONUS: 30,
   DEFAULT_DISTANCE: 100,
   DEFAULT_PRICE: 50
 };
@@ -25,31 +27,54 @@ export function calculateScore(resort) {
   const price = resort.price || SCORE_WEIGHTS.DEFAULT_PRICE;
   const openLifts = resort.liftsOpen || 0;
   const snow = resort.snow?.mountain ?? 0;
+  // Traffic delay in minutes
+  const trafficDelayMins = (resort.traffic?.delay || 0) / 60;
+
+  // Classification check
+  const cls = (resort.classification || "").toLowerCase();
+  const isFamily = cls.includes("familie") || cls.includes("family") || cls.includes("anfänger") || (piste > 0 && piste < 30);
 
   let weights = { ...SCORE_WEIGHTS };
 
   // Adjust weights based on preference
   if (pref === 'fast') {
-    weights.DISTANCE = -1.5;
+    weights.DISTANCE = -2.0;
+    weights.TRAFFIC_DELAY = -1.0;
+  } else if (pref === 'near') {
+    weights.DISTANCE = -3.0;
+    weights.TRAFFIC_DELAY = -0.5;
+  } else if (pref === 'traffic') {
+    weights.TRAFFIC_DELAY = -5.0;
+    weights.DISTANCE = -0.5;
+  } else if (pref === 'variety') {
+    weights.PISTE_KM = 4.0;
+    weights.OPEN_LIFTS = 5.0;
+  } else if (pref === 'family') {
+    weights.PRICE = -2.0;
+    weights.DISTANCE = -1.0;
   } else if (pref === 'snow') {
-    weights.SNOW = 2.0;
+    weights.SNOW = 3.0;
   } else if (pref === 'open') {
     weights.OPEN_LIFTS = 6.0;
   } else if (pref === 'price') {
-    weights.PRICE = -1.5;
+    weights.PRICE = -2.0;
   }
 
-  const score =
+  let score =
     (piste * weights.PISTE_KM) +
     (dist * weights.DISTANCE) +
     (price * weights.PRICE) +
     (openLifts * weights.OPEN_LIFTS) +
-    (snow * weights.SNOW);
+    (snow * weights.SNOW) +
+    (trafficDelayMins * weights.TRAFFIC_DELAY);
+
+  if (pref === 'family' && isFamily) {
+    score += weights.FAMILY_BONUS;
+  }
 
   return Math.round(score);
 }
 
-// Helper for weather icons
 // Helper for weather icons
 function getWeatherIcon(weatherText) {
   if (!weatherText) return "☁️";
@@ -81,6 +106,12 @@ export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirect
   const skiTable = document.getElementById("skiTable");
   const expandContainer = document.getElementById("expandContainer");
   const viewMode = store.get().viewMode || 'top3';
+
+  // Update Timestamp
+  const tsElement = document.getElementById("timestamp");
+  if (tsElement) {
+    tsElement.textContent = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  }
 
   // 1. Enrich data with Score if not present
   let enrichedData = data.map(r => ({
@@ -197,10 +228,10 @@ function renderTop3Cards(topData, isExpanded = false) {
       </div>
 
       <div class="top3-reasoning-collapsible" style="padding: 10px 15px; border-top: 1px dashed #eee;">
-        <div class="reasoning-summary" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #3498db; font-weight: bold; font-size: 0.9em;" onclick="this.nextElementSibling.classList.toggle('expanded'); this.querySelector('.toggle-icon').textContent = this.nextElementSibling.classList.contains('expanded') ? '▴' : '▾'">
-            <span>Warum diese Wahl?</span>
-            <span class="toggle-icon">▾</span>
-        </div>
+          <div class="reasoning-summary" data-action="toggle-reasoning" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #3498db; font-weight: bold; font-size: 0.9em;">
+              <span>Warum diese Wahl?</span>
+              <span class="toggle-icon">▾</span>
+          </div>
         <ul class="reasoning-list">
             ${reasons.map(reason => `
                 <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
@@ -212,11 +243,11 @@ function renderTop3Cards(topData, isExpanded = false) {
       </div>
 
       <div class="top3-outcomes" style="padding: 15px; background: #fdfdfd; border-top: 1px solid #eee; display: flex; flex-direction: column; gap: 10px;">
-        <button class="outcome-btn-main" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address || r.name)}', '_blank')" style="padding: 12px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s;">Anfahrt öffnen ➔</button>
+        <button class="outcome-btn-main" data-action="route" data-destination="${encodeURIComponent(r.address || r.name)}" style="padding: 12px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s;">Anfahrt öffnen ➔</button>
         <div style="display: flex; gap: 8px;">
-            <button onclick="navigator.share ? navigator.share({title: '${safeName}', url: window.location.href}) : alert('Share not supported')" style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Teilen 🔗</button>
-            <button style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Merken ⭐</button>
-            ${domainId === 'ski' ? `<button class="details-btn" data-resort-id="${r.id}" data-resort-name="${safeName}" style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Details 📋</button>` : ''}
+            <button data-action="share" data-title="${safeName}" data-url="${window.location.href}" style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Teilen 🔗</button>
+            <button data-action="save" style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Merken ⭐</button>
+            ${domainId === 'ski' ? `<button class="details-btn" data-action="details" data-resort-id="${r.id}" data-resort-name="${safeName}" style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Details 📋</button>` : ''}
         </div>
       </div>
     `;
@@ -531,7 +562,7 @@ export function renderRow(row, data) {
 
   const hasDetails = hasLifts || hasSlopes;
   const detailsDisplay = hasDetails
-    ? `<button class="details-btn" data-resort-id="${data.id}" data-resort-name="${safeName}" title="Lifte & Pisten Details anzeigen">📋</button>`
+    ? `<button class="details-btn" data-action="details" data-resort-id="${data.id}" data-resort-name="${safeName}" title="Lifte & Pisten Details anzeigen">📋</button>`
     : '<span title="Keine Details verfügbar">-</span>';
 
   // History button - REMOVED
@@ -679,7 +710,7 @@ export function renderRow(row, data) {
     <td>${webcamDisplay}</td>
     <td>
       <div style="display: flex; gap: 4px;">
-        <a href="${r.website || '#'}" target="_blank" onclick="import('./utils.js').then(u=>u.trackClick('${data.id}', 'ticket'))" title="Tickets buchen" style="text-decoration:none; font-size:1.1em;">🎟️</a>
+        <a href="${r.website || '#'}" target="_blank" data-action="ticket" data-id="${data.id}" title="Tickets buchen" style="text-decoration:none; font-size:1.1em;">🎟️</a>
         ${detailsDisplay}
       </div>
     </td>

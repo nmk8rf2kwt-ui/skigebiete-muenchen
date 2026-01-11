@@ -12,8 +12,13 @@ export const DOMAIN_CONFIGS = {
         ],
         prefs: [
             { id: 'fast', label: 'Schnell dort', icon: '⚡' },
+            { id: 'near', label: 'Möglichst nah', icon: '📏' },
+            { id: 'variety', label: 'Viel Abwechslung', icon: '🎢' },
+            { id: 'traffic', label: 'Wenig Stau', icon: '🚦' },
+            { id: 'family', label: 'Familie', icon: '👨‍👩‍👧' },
             { id: 'snow', label: 'Viel Schnee', icon: '❄️' },
-            { id: 'price', label: 'Günstig', icon: '💰' }
+            { id: 'price', label: 'Günstig', icon: '💰' },
+            { id: 'open', label: 'Viel offen', icon: '🚠' }
         ]
     },
     skitour: {

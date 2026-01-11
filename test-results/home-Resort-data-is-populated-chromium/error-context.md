@@ -7,24 +7,22 @@
     - text: "Stand: – · v1.7.29"
     - link "⚙️" [ref=e4] [cursor=pointer]:
       - /url: admin/dashboard.html
-  - generic [ref=e6]:
-    - generic [ref=e7]:
-      - generic [ref=e8]: Schritt 1 von 3
-      - heading "🏔️ Von wo startest du?" [level=2] [ref=e9]
-    - paragraph [ref=e10]: Gib deinen Standort ein, um präzise Fahrzeiten und Stauprognosen zu erhalten.
-    - generic [ref=e11]:
-      - generic [ref=e12]:
-        - textbox "München, Marienplatz" [ref=e13]
-        - button "📍" [ref=e14] [cursor=pointer]
-      - button "Weiter" [ref=e15] [cursor=pointer]
-  - contentinfo [ref=e16]:
-    - generic [ref=e17]:
-      - paragraph [ref=e18]: © 2026 Skigebiet-Finder
-      - generic [ref=e19]:
-        - link "Impressum" [ref=e20] [cursor=pointer]:
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - heading "Beste Wahl heute von München (Test)" [level=2] [ref=e7]
+      - generic [ref=e8]:
+        - button "Top 3" [ref=e9] [cursor=pointer]
+        - button "Karte" [ref=e10] [cursor=pointer]
+        - button "Tabelle" [ref=e11] [cursor=pointer]
+    - button "← Suche anpassen" [ref=e13] [cursor=pointer]
+  - contentinfo [ref=e14]:
+    - generic [ref=e15]:
+      - paragraph [ref=e16]: © 2026 Skigebiet-Finder
+      - generic [ref=e17]:
+        - link "Impressum" [ref=e18] [cursor=pointer]:
           - /url: impressum.html
         - text: "|"
-        - link "Datenschutzerklärung" [ref=e21] [cursor=pointer]:
+        - link "Datenschutzerklärung" [ref=e19] [cursor=pointer]:
           - /url: datenschutz.html
-      - paragraph [ref=e22]: "Datenquellen: APIs der Skigebiete (Intermaps/Feratel), Open-Meteo, TomTom, OpenStreetMap"
+      - paragraph [ref=e20]: "Datenquellen: APIs der Skigebiete (Intermaps/Feratel), Open-Meteo, TomTom, OpenStreetMap"
 ```

@@ -263,12 +263,67 @@ export function initEventListeners(handlers) {
         if (event.target === scoreModal) scoreModal.style.display = "none";
     });
 
+    // Unified Global Click Listener (Event Delegation)
     document.addEventListener("click", async (event) => {
+        // Modal logic for Weather, History, Tabs (can also be migrated to data-action but kept for compatibility)
         const weatherBtn = event.target.closest('.weather-btn');
-        const detailsBtn = event.target.closest('.details-btn');
         const historyBtn = event.target.closest('.history-btn');
         const tabBtn = event.target.closest('.tab-btn');
 
+        // NEW: Data Action Logic (replacing inline onclicks)
+        const actionBtn = event.target.closest('[data-action]');
+
+        if (actionBtn) {
+            const action = actionBtn.dataset.action;
+
+            if (action === 'route') {
+                const dest = actionBtn.dataset.destination;
+                window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}`, '_blank');
+            }
+            else if (action === 'share') {
+                const data = {
+                    title: actionBtn.dataset.title,
+                    url: actionBtn.dataset.url
+                };
+                if (navigator.share) {
+                    navigator.share(data).catch(console.error);
+                } else {
+                    alert('Teilen wird von deinem Browser nicht unterstützt.\nURL kopiert: ' + data.url);
+                    // Minimal fallback: copy to clipboard could be added here
+                }
+            }
+            else if (action === 'ticket') {
+                const id = actionBtn.dataset.id;
+                import('./utils.js').then(u => u.trackClick(id, 'ticket'));
+                // Note: The <a> tag logic continues naturally (opening link)
+                // We just intercepted to track.
+            }
+            else if (action === 'details') {
+                const { resortId, resortName } = actionBtn.dataset;
+                const resort = store.get().resorts.find(r => r.id === resortId);
+                if (resort) {
+                    detailsModal.style.display = "block";
+                    document.getElementById("detailsResortName").textContent = `${resortName} - Details`;
+                    displayResortDetails(resort);
+                }
+            }
+            else if (action === 'toggle-reasoning') {
+                const summary = actionBtn;
+                // Requires structure assumption: .reasoning-summary + .reasoning-list
+                const content = summary.nextElementSibling;
+                const icon = summary.querySelector('.toggle-icon');
+
+                if (content && icon) {
+                    content.classList.toggle('expanded');
+                    icon.textContent = content.classList.contains('expanded') ? '▴' : '▾';
+                }
+            }
+            else if (action === 'save') {
+                alert('Merkliste demnächst verfügbar! ⭐');
+            }
+        }
+
+        // Legacy/Other Modals handling (if not covered by data-action)
         if (weatherBtn) {
             const { resortId, resortName } = weatherBtn.dataset;
             weatherModal.style.display = "block";
@@ -280,16 +335,6 @@ export function initEventListeners(handlers) {
                 displayWeather(data.forecast);
             } catch (error) {
                 document.getElementById("weatherForecast").innerHTML = "<p>❌ Weather data unavailable</p>";
-            }
-        }
-
-        if (detailsBtn) {
-            const { resortId, resortName } = detailsBtn.dataset;
-            const resort = store.get().resorts.find(r => r.id === resortId);
-            if (resort) {
-                detailsModal.style.display = "block";
-                document.getElementById("detailsResortName").textContent = `${resortName} - Details`;
-                displayResortDetails(resort);
             }
         }
 
