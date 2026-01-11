@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.9.3-debug] - 2026-01-11
+
+### 🔍 Diagnostic
+- **Offensive Debugging**: Injected extensive logging into `load()` and `render()` pipelines to isolate the "blank screen" issue. Look for console groups starting with `🔍 DIAGNOSTIC`.
+
 ## [1.9.2] - 2026-01-11
 
 ### 🩹 Hotfix

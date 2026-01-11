@@ -1,6 +1,6 @@
 {
   "name": "skigebiete-muenchen-backend",
-  "version": "1.9.2",
+  "version": "1.9.3-debug",
   "type": "module",
   "main": "index.js",
   "scripts": {

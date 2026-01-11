@@ -94,9 +94,13 @@ async function load() {
 
     if (!response.ok) throw new Error("API-Verbindung fehlgeschlagen");
     const resorts = await response.json();
-    console.log(`[DEBUG] Received ${resorts ? resorts.length : 0} resorts from API`);
+    console.group("🔍 DIAGNOSTIC: Data Load");
+    console.log(`[API] Raw count: ${resorts ? resorts.length : 0}`);
+
     if (!resorts || resorts.length === 0) {
-      console.warn("[DEBUG] API returned empty list!");
+      console.warn("⚠️ API returned empty array!");
+      console.groupEnd();
+      return;
     }
 
     // Enrich with distance and scoring
@@ -111,6 +115,10 @@ async function load() {
       // Score remains ski-specific for now if it uses lifts, otherwise generalize
       const smartScore = calculateScore(resort, store.get().preference, domainId);
 
+      if (isNaN(smartScore)) {
+        console.warn(`⚠️ NaN Score for ${resort.name}`, resort);
+      }
+
       return {
         ...resort,
         domain: domainId,
@@ -119,9 +127,13 @@ async function load() {
       };
     });
 
+    console.log(`[Enriched] Count: ${enhancedResorts.length}`, enhancedResorts[0]);
+    console.groupEnd();
+
     store.setState({ resorts: enhancedResorts }, render);
     logToUI(`Daten für ${enhancedResorts.length} Ziele geladen`, "success");
   } catch (err) {
+    console.error("❌ LOAD ERROR:", err);
     showError(`Daten-Ladefehler: ${err.message}`);
     logToUI(err.message, "error");
   } finally {
@@ -134,8 +146,12 @@ async function load() {
  */
 function render() {
   const { resorts, viewMode, currentDomain } = store.get();
+  console.group("🎨 DIAGNOSTIC: Render Phase");
+  console.log(`State: Mode=${viewMode}, Domain=${currentDomain}, Resorts=${resorts?.length}`);
 
   if (!resorts || !resorts.length) {
+    console.warn("⚠️ Render called with empty resorts!");
+    console.groupEnd();
     return;
   }
 
@@ -145,14 +161,19 @@ function render() {
 
   // Filter and Sort based on current UI state
   const sortedResorts = [...resorts].sort((a, b) => b.smartScore - a.smartScore);
+  console.log(`Top Resort: ${sortedResorts[0].name} (Score: ${sortedResorts[0].smartScore})`);
 
   if (viewMode === 'top3') {
+    console.log("👉 Delegating to renderTop3Cards");
     import("./render.js").then(module => module.renderTop3Cards(sortedResorts.slice(0, 3)));
   } else if (viewMode === 'table') {
+    console.log("👉 Delegating to renderTable");
     renderTable(sortedResorts, undefined, 'all');
   } else if (viewMode === 'map') {
     updateMap(sortedResorts);
   }
+
+  console.groupEnd();
 
   // Update Map anyway if it's initialized
   updateMap(sortedResorts);

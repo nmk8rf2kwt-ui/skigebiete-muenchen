@@ -219,70 +219,88 @@ export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirect
 }
 
 export function renderTop3Cards(topData, isExpanded = false) {
+  console.group("🃏 DIAGNOSTIC: renderTop3Cards");
+  console.log(`Input: ${topData?.length} resorts`, topData[0]);
+
   const container = document.getElementById("top3Cards");
+
+  if (!container) {
+    console.error("❌ CRITICAL: #top3Cards container NOT FOUND in DOM!");
+    console.groupEnd();
+    return;
+  }
+
   const domainId = store.get().currentDomain || 'ski';
   const config = DOMAIN_CONFIGS[domainId];
-  const userPref = store.get().preference || config.prefs[0].id;
+  const userPref = store.get().preference || config.prefs[0].id; // Fallback to first pref
+
+  console.log(`Config: Domain=${domainId}, Pref=${userPref}`, config);
 
   if (!container) return;
   container.innerHTML = "";
 
   topData.forEach((r, i) => {
-    const card = document.createElement("div");
-    card.className = "top3-card";
-    const score = r.smartScore ?? r.score ?? 0;
+    try {
+      const card = document.createElement("div");
+      card.className = "top3-card";
+      const score = r.smartScore ?? r.score ?? 0;
 
-    // Generate Reasoning List (Simplified/Generalized)
-    const reasons = generateReasoning(r, userPref, domainId);
-    const safeName = escapeHtml(r.name);
+      // Generate Reasoning List (Simplified/Generalized)
+      const reasons = generateReasoning(r, userPref, domainId);
+      const safeName = escapeHtml(r.name);
 
-    // Metadata-driven Metrics
-    const metricsHtml = config.metrics.map(m => `
-      <div class="metric-box">
-          <span class="metric-icon">${m.icon}</span>
-          <strong class="metric-value">${m.formatter(r)}</strong>
-          <span class="metric-label">${m.label}</span>
-      </div>
-    `).join('');
-
-    card.innerHTML = `
-      <div class="top3-header-new">
-        <span class="top3-badge">
-            ${isExpanded ? '#' + (i + 1) : '🏆 # ' + (i + 1) + ' FÜR HEUTE'}
-        </span>
-        <h3 class="top3-resort-name">${safeName} <span class="text-sm text-gray">(${score})</span></h3>
-      </div>
-      
-      <div class="metrics-container">
-        ${metricsHtml}
-      </div>
-
-      <div class="reasoning-container">
-          <div class="reasoning-summary" data-action="toggle-reasoning">
-              <span>Warum diese Wahl?</span>
-              <span class="toggle-icon">▾</span>
-          </div>
-        <ul class="reasoning-list">
-            ${reasons.map(reason => `
-                <li class="reasoning-item">
-                    <span>${reason.icon}</span>
-                    <span>${reason.text}</span>
-                </li>
-            `).join('')}
-        </ul>
-      </div>
-
-      <div class="top3-outcomes outcomes-container">
-        <button class="outcome-btn-route" data-action="route" data-destination="${encodeURIComponent(r.address || r.name)}">Anfahrt öffnen ➔</button>
-        <div class="action-buttons-row">
-            <button class="action-btn" data-action="share" data-title="${safeName}" data-url="${window.location.href}">Teilen 🔗</button>
-            <button class="action-btn" data-action="save">Merken ⭐</button>
-            ${domainId === 'ski' ? `<button class="action-btn" data-action="details" data-resort-id="${r.id}" data-resort-name="${safeName}">Details 📋</button>` : ''}
+      // Metadata-driven Metrics
+      const metricsHtml = config.metrics.map(m => `
+        <div class="metric-box">
+            <span class="metric-icon">${m.icon}</span>
+            <strong class="metric-value">${m.formatter(r)}</strong>
+            <span class="metric-label">${m.label}</span>
         </div>
-      </div>
-    `;
-    container.appendChild(card);
+        `).join('');
+
+      card.innerHTML = `
+        <div class="top3-header-new">
+            <span class="top3-badge">
+                ${isExpanded ? '#' + (i + 1) : '🏆 # ' + (i + 1) + ' FÜR HEUTE'}
+            </span>
+            <h3 class="top3-resort-name">${safeName} <span class="text-sm text-gray">(${score})</span></h3>
+        </div>
+        
+        <div class="metrics-container">
+            ${metricsHtml}
+        </div>
+
+        <div class="reasoning-container">
+            <div class="reasoning-summary" data-action="toggle-reasoning">
+                <span>Warum diese Wahl?</span>
+                <span class="toggle-icon">▾</span>
+            </div>
+            <ul class="reasoning-list">
+                ${reasons.map(reason => `
+                    <li class="reasoning-item">
+                        <span>${reason.icon}</span>
+                        <span>${reason.text}</span>
+                    </li>
+                `).join('')}
+            </ul>
+        </div>
+
+        <div class="top3-outcomes outcomes-container">
+            <button class="outcome-btn-route" data-action="route" data-destination="${encodeURIComponent(r.address || r.name)}">Anfahrt öffnen ➔</button>
+            <div class="action-buttons-row">
+                <button class="action-btn" data-action="share" data-title="${safeName}" data-url="${window.location.href}">Teilen 🔗</button>
+                <button class="action-btn" data-action="save">Merken ⭐</button>
+                ${domainId === 'ski' ? `<button class="action-btn" data-action="details" data-resort-id="${r.id}" data-resort-name="${safeName}">Details 📋</button>` : ''}
+            </div>
+        </div>
+        `;
+      container.appendChild(card);
+      console.log(`✅ Card appended: ${safeName}`);
+    } catch (err) {
+      console.error("❌ Failed to render card", r, err);
+    }
   });
+  console.groupEnd();
 }
 
 function generateReasoning(resort, pref, domainId = 'ski') {
