@@ -72,6 +72,11 @@ export function calculateScore(resort) {
     score += weights.FAMILY_BONUS;
   }
 
+  // Sled specific overrides
+  if (resort.has_lift) score += 20;
+  if (resort.length > 5) score += 10;
+  if (resort.night_light && pref === 'variety') score += 15;
+
   return Math.round(score);
 }
 
@@ -273,8 +278,14 @@ function generateReasoning(resort, pref, domainId = 'ski') {
 
     if (eta < 90) reasons.push({ type: 'good', icon: '✅', text: `Schnelle Anfahrt (${eta} min)` });
     else if (eta > 150) reasons.push({ type: 'bad', icon: '⚠️', text: `Längere Anfahrt (${eta} min)` });
+  } else if (domainId === 'sled') {
+    // Sledding specific reasoning
+    if (resort.length > 3) reasons.push({ type: 'good', icon: '📏', text: `Extra lange Bahn (${resort.length} km)` });
+    if (resort.has_lift) reasons.push({ type: 'good', icon: '🚠', text: 'Aufstiegshilfe vorhanden' });
+    if (resort.night_light) reasons.push({ type: 'ok', icon: '🌙', text: 'Nachtrodeln möglich' });
+    if (resort.walk_min > 30 && !resort.has_lift) reasons.push({ type: 'bad', icon: '🥾', text: `${resort.walk_min} min Aufstieg` });
   } else {
-    // Basic reasons for placeholder domains
+    // Basic reasons for other placeholder domains
     reasons.push({ type: 'good', icon: '✅', text: 'Heute gute Bedingungen' });
     reasons.push({ type: 'ok', icon: '📍', text: 'Gut erreichbar' });
   }

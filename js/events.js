@@ -23,10 +23,15 @@ function setDomain(domainId) {
 
     updatePreferenceUI(config);
 
+    // Trigger data reload for new domain
+    if (appLoad) appLoad();
+
     // Transition to Preferences Step (Step 3)
     document.getElementById('step-activity').style.display = 'none';
     document.getElementById('step-prefs').style.display = 'block';
 }
+
+let appLoad = null;
 
 function updatePreferenceUI(config) {
     const prefGrid = document.querySelector('#step-prefs .pref-grid');
@@ -71,6 +76,9 @@ export function initEventListeners(handlers) {
         fetchTrafficForLocation,
         getCurrentSearchLocation
     } = handlers;
+
+    // Assign global load handler
+    appLoad = load;
 
     // Initial Load & Auto-refresh
     load();

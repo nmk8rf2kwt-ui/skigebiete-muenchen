@@ -267,13 +267,24 @@ document.addEventListener("DOMContentLoaded", () => {
     wizardContainer.style.display = "block";
     resultsView.style.display = "none";
 
-    // Show Step 1 (Location) and ensure others are hidden
+    // Restore Step Logic
+    const savedStep = localStorage.getItem('wizard_current_step');
     const stepLocation = document.getElementById('step-location');
     const stepActivity = document.getElementById('step-activity');
     const stepPrefs = document.getElementById('step-prefs');
-    if (stepLocation) stepLocation.style.display = 'block';
+
+    // Hide all first
+    if (stepLocation) stepLocation.style.display = 'none';
     if (stepActivity) stepActivity.style.display = 'none';
     if (stepPrefs) stepPrefs.style.display = 'none';
+
+    // Show saved or default
+    if (savedStep && document.getElementById(savedStep)) {
+      document.getElementById(savedStep).style.display = 'block';
+      // Ensure badges/headers are updated if needed (simplified here)
+    } else {
+      if (stepLocation) stepLocation.style.display = 'block';
+    }
   }
 
   initEventListeners({

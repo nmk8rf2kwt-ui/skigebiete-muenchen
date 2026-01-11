@@ -1,0 +1,50 @@
+[
+    {
+        "id": "obere-firstalm",
+        "name": "Obere Firstalm",
+        "address": "Spitzingsee, 83727 Schliersee",
+        "latitude": 47.6622,
+        "longitude": 11.8885,
+        "length": 2.5,
+        "level": "medium",
+        "walk_min": 45,
+        "has_rental": true,
+        "has_lift": false,
+        "night_light": true,
+        "price": 0,
+        "snow": 45,
+        "status": "open"
+    },
+    {
+        "id": "wallberg",
+        "name": "Wallberg Rodelbahn",
+        "address": "Wallbergstraße 26, 83700 Rottach-Egern",
+        "latitude": 47.6896,
+        "longitude": 11.7766,
+        "length": 6.5,
+        "level": "hard",
+        "walk_min": 0,
+        "has_rental": true,
+        "has_lift": true,
+        "night_light": false,
+        "price": 12.0,
+        "snow": 50,
+        "status": "open"
+    },
+    {
+        "id": "blomberg",
+        "name": "Blomberg",
+        "address": "Am Blomberg 2, 83646 Bad Tölz",
+        "latitude": 47.7490,
+        "longitude": 11.5303,
+        "length": 2.0,
+        "level": "easy",
+        "walk_min": 0,
+        "has_rental": true,
+        "has_lift": true,
+        "night_light": true,
+        "price": 8.0,
+        "snow": 20,
+        "status": "closed"
+    }
+]
