@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.5] - 2026-01-12
+### 🐛 Bug Fixes
+- **Static Deployment**: Fixed a duplicate variable declaration in `app.js`.
+
+## [1.9.4] - 2026-01-12
+### 🩹 Hotfix
+- **CSP & Fallback**: Added `unsafe-inline` for styles and implemented static JSON fallback for API failures (GitHub Pages support).
+
 ## [1.9.3-debug] - 2026-01-11
 
 ### 🔍 Diagnostic
