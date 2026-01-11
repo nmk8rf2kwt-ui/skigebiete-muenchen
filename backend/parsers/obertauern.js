@@ -9,10 +9,10 @@ export const details = {
     district: 'Salzburg'
 };
 
-export async function parse(options = {}) {
+export async function parse(_options = {}) {
     const data = await fetchIntermaps(details.apiUrl);
     if (!data) {
         throw new Error('Failed to fetch Obertauern Intermaps data');
     }
-    return createResult(details.id, data, 'intermaps.com (Obertauern)');
+    return createResult(details, data, 'intermaps.com (Obertauern)');
 }

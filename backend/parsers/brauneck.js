@@ -1,25 +1,21 @@
-import * as cheerio from "cheerio";
-import { fetchWithHeaders } from "../utils/fetcher.js";
+import { fetchHtml, createResult } from "../utils/parserUtils.js";
 
-export async function brauneck() {
-  const url = "https://www.brauneck-bergbahn.de/de/lift-pistenstatus.html";
+export const details = {
+  id: "brauneck",
+  name: "Brauneck-Wegscheid",
+  url: "https://www.brauneck-bergbahn.de/de/lift-pistenstatus.html",
+};
+
+export async function parse(_options = {}) {
   try {
-    const res = await fetchWithHeaders(url);
-    if (!res.ok) throw new Error("Status " + res.status);
-
-    const html = await res.text();
-    const $ = cheerio.load(html);
+    const $ = await fetchHtml(details.url);
 
     const lifts = [];
 
     // The container has a flat list of divs: 5 headers, then 5 divs per lift
-    // Structure: Status, Lift Name, Time, Length, Height
-    const $container = $("[class*='Content_list__']"); // Use wildcard for partial match if hash changes
+    const $container = $("[class*='Content_list__']");
     const $children = $container.children("div");
 
-    // The first few are headers. We can identify headers by class or just skip known count.
-    // Headers have class "Header_column__..."
-    // Let's iterate and skip headers dynamically
     let startIndex = 0;
     $children.each((i, el) => {
       if ($(el).attr("class")?.includes("Header_column__")) {
@@ -27,12 +23,6 @@ export async function brauneck() {
       }
     });
 
-    // Loop through the rest in chunks of 5
-    // 0: Status
-    // 1: Name
-    // 2: Time
-    // 3: Length
-    // 4: Height
     for (let i = startIndex; i < $children.length; i += 5) {
       const $statusDiv = $($children[i]);
       const $nameDiv = $($children[i + 1]);
@@ -61,26 +51,18 @@ export async function brauneck() {
     const liftsTotal = lifts.length;
 
     if (liftsTotal === 0) {
-      return {
-        liftsOpen: 0,
-        liftsTotal: 0,
-        status: "parse_error"
-      };
+      throw new Error("No lifts found for Brauneck");
     }
 
-    return {
+    return createResult(details, {
       liftsOpen,
       liftsTotal,
-      status: "open",
-      lifts: lifts
-    };
+      lifts: lifts,
+      slopes: []
+    }, "brauneck-bergbahn.de");
 
   } catch (e) {
     console.error("Brauneck parser error:", e);
-    return {
-      liftsOpen: 0,
-      liftsTotal: 0,
-      status: "error"
-    };
+    return null; // createResult fallback handled by service
   }
 }

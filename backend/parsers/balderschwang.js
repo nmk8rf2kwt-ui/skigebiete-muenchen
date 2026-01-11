@@ -1,10 +1,16 @@
 import * as cheerio from "cheerio";
 import { fetchWithHeaders } from "../utils/fetcher.js";
+import { createResult } from "../utils/parserUtils.js";
+
+export const details = {
+    id: "balderschwang",
+    name: "Balderschwang",
+    url: "https://www.skigebiet-balderschwang.de/lifte/",
+};
 
 export async function balderschwang() {
-    const url = "https://www.skigebiet-balderschwang.de/lifte/";
     try {
-        const res = await fetchWithHeaders(url);
+        const res = await fetchWithHeaders(details.url);
         if (!res.ok) throw new Error("Status " + res.status);
 
         const html = await res.text();
@@ -12,12 +18,8 @@ export async function balderschwang() {
 
         const lifts = [];
 
-        // Select table rows in the lift container
         $(".container-lifte table tbody tr").each((i, el) => {
             const $el = $(el);
-
-            // Extract status from the icon class
-            // <i class="fas fa-circle open"></i>
             const $icon = $el.find("i.fas");
             let status = "closed";
             if ($icon.hasClass("open")) {
@@ -26,10 +28,7 @@ export async function balderschwang() {
                 status = "closed";
             }
 
-            // Extract name
-            // <b><span class="text-dark-blue mr-1">(A)</span> Schelpenbahn</b>
             const $nameCell = $el.find("td").eq(1);
-            // Remove the span (letter code) to get clean name
             $nameCell.find("span").remove();
             let name = $nameCell.text().trim();
 
@@ -45,26 +44,20 @@ export async function balderschwang() {
         const liftsTotal = lifts.length;
 
         if (liftsTotal === 0) {
-            return {
-                liftsOpen: 0,
-                liftsTotal: 0,
-                status: "parse_error"
-            };
+            throw new Error("Balderschwang parsed zero lifts");
         }
 
-        return {
+        return createResult(details, {
             liftsOpen,
             liftsTotal,
-            status: "open", // Overall status
-            lifts: lifts
-        };
+            lifts: lifts,
+            slopes: []
+        }, "skigebiet-balderschwang.de");
 
     } catch (e) {
         console.error("Balderschwang parser error:", e);
-        return {
-            liftsOpen: 0,
-            liftsTotal: 0,
-            status: "error"
-        };
+        return null;
     }
 }
+
+export const parse = balderschwang;

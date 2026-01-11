@@ -1,69 +1,35 @@
-import * as cheerio from "cheerio";
-import { fetchWithHeaders } from "../utils/fetcher.js";
-import { createResult } from "../utils/parserUtils.js";
 
-export default async function parseLermoos() {
-    const url = "https://www.bergbahnen-langes.at/winter/anlagen-pisten/";
+import { fetchIntermaps } from './intermaps.js';
+import { createResult } from '../utils/parserUtils.js';
 
-    try {
-        const response = await fetchWithHeaders(url);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch Lermoos status: ${response.status}`);
-        }
-        const html = await response.text();
-        const $ = cheerio.load(html);
+export const details = {
+    id: "lermoos",
+    name: "Lermoos / Grubigstein",
+    url: "https://www.bergbahnen-langes.at",
+    apiUrl: "https://winter.intermaps.com/zugspitz_arena/data?lang=de",
+    district: "Zugspitz Arena"
+};
 
-        const lifts = [];
-        const slopes = [];
-
-        // Select rows in the table
-        $("section.ampelsystem table.pure-table, table.pure-table").find("tbody tr").each((i, el) => {
-            const tds = $(el).find("td");
-            if (tds.length >= 3) {
-                // Name is usually in the 2nd td (index 1)
-                const name = $(tds[1]).text().trim();
-
-                // Status is in the 3rd td (index 2) as an img
-                const img = $(tds[2]).find("img");
-                const imgSrc = img.attr("src") || "";
-                const imgTitle = img.attr("title") || "";
-
-                if (name) {
-                    // Determine status
-                    let status = "unknown";
-                    if (imgSrc.includes("on.svg") || imgTitle.toLowerCase().includes("offen")) {
-                        status = "open";
-                    } else if (imgSrc.includes("off.svg") || imgTitle.toLowerCase().includes("geschlossen")) {
-                        status = "closed";
-                    }
-
-                    // Determine if lift or slope
-                    const nameLower = name.toLowerCase();
-                    if (nameLower.includes("bahn") || nameLower.includes("lift") || nameLower.includes("sessellift")) {
-                        lifts.push({ name, status });
-                    } else if (nameLower.includes("piste") || nameLower.includes("abfahrt")) {
-                        slopes.push({ name, status });
-                    } else {
-                        // Default to lift
-                        lifts.push({ name, status });
-                    }
-                }
-            }
-        });
-
-        const liftsOpen = lifts.filter(l => l.status === "open").length;
-        const liftsTotal = lifts.length;
-
-        return createResult("lermoos", {
-            liftsOpen,
-            liftsTotal,
-            lifts,
-            slopes
-        }, "bergbahnen-langes.at");
-    } catch (error) {
-        console.error("Error parsing Lermoos:", error);
-        throw error;
+export async function parse(_options = {}) {
+    const data = await fetchIntermaps(details.apiUrl);
+    if (!data || !data.lifts) {
+        throw new Error('Failed to fetch Lermoos Intermaps data');
     }
-}
 
-export const parse = parseLermoos;
+    // Filter for Lermoos / Grubigstein
+    const keywords = ["Grubigstein", "Lermoos", "Hochmoos", "Gamsjet", "Familyjet"];
+
+    const lifts = data.lifts.filter(lift => {
+        const name = lift.title || lift.name || "";
+        return keywords.some(kw => name.toLowerCase().includes(kw.toLowerCase()));
+    });
+
+    const filteredData = {
+        ...data,
+        lifts: lifts,
+        liftsOpen: lifts.filter(l => l.status === 'open').length,
+        liftsTotal: lifts.length
+    };
+
+    return createResult(details, filteredData, 'intermaps.com (Zugspitz Arena)');
+}

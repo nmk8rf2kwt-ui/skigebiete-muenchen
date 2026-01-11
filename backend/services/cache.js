@@ -21,14 +21,32 @@ class Cache {
     }
 
     set(key, value) {
+        // Get existing history if available
+        const existing = this.cache.get(key);
+        let history = existing ? (existing.history || []) : [];
+
+        // Add new timestamp if present and unique
+        if (value && value.lastUpdated) {
+            // Check if it's already in history
+            if (!history.includes(value.lastUpdated)) {
+                history.push(value.lastUpdated);
+            }
+        }
+
+        // Cleanup: Keep only today's updates
+        const today = new Date().toISOString().split('T')[0];
+        history = history.filter(ts => ts.startsWith(today) || new Date(ts).toISOString().startsWith(today));
+
         this.cache.set(key, {
             data: value,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            history: history
         });
-        // Auto-save on set? Maybe too frequent. Let's rely on interval or manual trigger?
-        // Actually, for parser data (low frequency), saving on set is fine.
-        // For traffic (high frequency), maybe not.
-        // Let's implement a global save function instead of per-set.
+    }
+
+    getHistory(key) {
+        const item = this.cache.get(key);
+        return item ? (item.history || []) : [];
     }
 
     get(key) {

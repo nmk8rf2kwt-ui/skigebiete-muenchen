@@ -1,4 +1,4 @@
-import { createResult, STATUS } from "../utils/parserUtils.js";
+import { createResult } from "../utils/parserUtils.js";
 import { fetchWithHeaders } from "../utils/fetcher.js";
 
 export const details = {
@@ -53,9 +53,6 @@ function getCurrentOperatingTime(operatingTimes) {
 }
 
 export async function parse(options = {}) {
-    // Unfiltered URL (removed typeIDs=1)
-    const apiUrl = "https://www.skiwelt.at/webapi/micadoweb?api=Micado.Ski.Web/Micado.Ski.Web.IO.Api.FacilityApi/List.api&client=https%3A%2F%2Fsgm.skiwelt.at&lang=de&region=skiwelt&season=winter";
-
     // Strategy 2: Parallel Fetch
     const [resLifts, resSlopes] = await Promise.all([
         fetchWithHeaders(details.apiUrl, options), // lifts (typeIDs=1)
@@ -123,5 +120,5 @@ export async function parse(options = {}) {
         throw new Error("SkiWelt parsing returned zero lifts from API");
     }
 
-    return createResult(details.id, { liftsOpen, liftsTotal, lifts, slopes }, "skiwelt.at (API)");
+    return createResult(details, { liftsOpen, liftsTotal, lifts, slopes }, "skiwelt.at (API)");
 }

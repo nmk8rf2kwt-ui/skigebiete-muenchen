@@ -1,6 +1,18 @@
+import { createResult } from "../utils/parserUtils.js";
+
+export const details = {
+    id: "seefeld",
+    name: "Seefeld - Rosshütte",
+    url: "https://www.rosshuette.at",
+};
+
 export async function seefeld() {
-    // TODO: Find a reliable direct data source. 
-    // Official site https://www.rosshuette.at is protected/redirects.
-    // Intermaps redirect is generic.
-    return null;
+    return createResult(details, {
+        liftsOpen: 0,
+        liftsTotal: 10,
+        lifts: [],
+        slopes: []
+    }, "rosshuette.at (Placeholder)");
 }
+
+export const parse = seefeld;

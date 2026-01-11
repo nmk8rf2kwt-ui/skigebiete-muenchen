@@ -1,4 +1,4 @@
-import { fetchHtml, createResult, STATUS } from "../utils/parserUtils.js";
+import { fetchHtml, createResult } from "../utils/parserUtils.js";
 
 export const details = {
   id: "sudelfeld",
@@ -70,5 +70,5 @@ export async function parse(options = {}) {
     throw new Error("Sudelfeld parsing returned zero lifts");
   }
 
-  return createResult(details.id, { liftsOpen, liftsTotal, lifts, slopes }, "sudelfeld.de (Intermaps)");
+  return createResult(details, { liftsOpen, liftsTotal, lifts, slopes }, "sudelfeld.de (Intermaps)");
 }

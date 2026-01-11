@@ -20,7 +20,7 @@ export async function getResortCongestionAnalysis(resortId, days = 7) {
         if (!supabase) {
             return {
                 hasData: false,
-                minDataPoints: 100,
+                minDataPoints: 5,
                 currentDataPoints: 0,
                 message: 'Database not connected (local dev)'
             };
@@ -39,17 +39,17 @@ export async function getResortCongestionAnalysis(resortId, days = 7) {
         if (!data || data.length === 0) {
             return {
                 hasData: false,
-                minDataPoints: 100,
+                minDataPoints: 5,
                 currentDataPoints: 0,
                 message: 'Insufficient data for analysis'
             };
         }
 
         // Check if we have enough data (at least 100 data points for reliable analysis)
-        if (data.length < 100) {
+        if (data.length < 5) {
             return {
                 hasData: false,
-                minDataPoints: 100,
+                minDataPoints: 5,
                 currentDataPoints: data.length,
                 message: `Collecting data... ${data.length}/100 data points`
             };

@@ -8,5 +8,5 @@ export const details = {
 };
 
 export async function parse(_options = {}) {
-    return createResult(details.id, { liftsOpen: 0, liftsTotal: 0, lifts: [], slopes: [] }, "badkleinkirchheim.com (Placeholder)");
+    return createResult(details, { liftsOpen: 0, liftsTotal: 0, lifts: [], slopes: [] }, "badkleinkirchheim.com (Placeholder)");
 }

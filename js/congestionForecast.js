@@ -66,6 +66,8 @@ async function loadCongestionForecast(resortId, cellId) {
     // Label: "Jetzt", "+1h", "+2h" or "14:00"
     let label = slot.timeLabel;
     if (index === 0) label = "Jetzt";
+    else if (index === 1) label = "+ 1 h";
+    else if (index === 2) label = "+ 2 h";
 
     // Icon/Color logic
     let color = slot.color;

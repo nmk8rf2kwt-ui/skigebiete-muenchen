@@ -9,7 +9,7 @@ export const details = {
     district: "Innsbruck"
 };
 
-export async function parse(options = {}) {
+export async function parse(_options = {}) {
     const data = await fetchIntermaps(details.apiUrl);
     if (!data) {
         throw new Error('Failed to fetch Kühtai (Innsbruck) Intermaps data');
@@ -37,7 +37,7 @@ export async function parse(options = {}) {
     // Or better: filter slopes relative to filtered lifts location/names? Hard.
     // Let's stick to lifts filter effectively defining the "status".
 
-    return createResult(details.id, {
+    return createResult(details, {
         liftsOpen,
         liftsTotal,
         lifts: kuehtaiLifts,

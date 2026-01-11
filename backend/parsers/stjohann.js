@@ -59,7 +59,7 @@ export default async function parseStJohann() {
         const liftsOpen = lifts.filter(l => l.status === "open").length;
         const liftsTotal = lifts.length;
 
-        return createResult("st_johann", {
+        return createResult({ id: "st_johann", name: "St. Johann in Tirol" }, {
             liftsOpen,
             liftsTotal,
             lifts,

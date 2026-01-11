@@ -9,10 +9,10 @@ export const details = {
     district: "Landeck"
 };
 
-export async function parse(options = {}) {
+export async function parse(_options = {}) {
     const data = await fetchIntermaps(details.apiUrl);
     if (!data) {
         throw new Error('Failed to fetch St. Anton (Ski Arlberg) Intermaps data');
     }
-    return createResult(details.id, data, 'intermaps.com (Ski Arlberg)');
+    return createResult(details, data, 'intermaps.com (Ski Arlberg)');
 }

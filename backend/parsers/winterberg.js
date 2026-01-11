@@ -66,5 +66,5 @@ export async function parse(options = {}) {
     // Parse Snow/Slopes if possible (Todo later or basic now)
     // For now return basic lift data
 
-    return createResult(details.id, { liftsOpen, liftsTotal, lifts }, "skiliftkarussell.de");
+    return createResult(details, { liftsOpen, liftsTotal, lifts }, "skiliftkarussell.de");
 }

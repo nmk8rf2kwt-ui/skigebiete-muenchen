@@ -68,5 +68,5 @@ export async function parse(options = {}) {
         throw new Error("Todtnauberg parser found 0 lifts (Selectors might need adjustment)");
     }
 
-    return createResult(details.id, { liftsOpen, liftsTotal, lifts }, "skilifte-todtnauberg.de");
+    return createResult(details, { liftsOpen, liftsTotal, lifts }, "skilifte-todtnauberg.de");
 }

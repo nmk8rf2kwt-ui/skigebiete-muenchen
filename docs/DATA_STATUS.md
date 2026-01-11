@@ -33,6 +33,15 @@ This document tracks the technical implementation details of all ski resort pars
 | **Hochzillertal** | `hochzillertal_hochfuegen.js` | `winter.intermaps.com/hochzillertal` |
 | **Hörnerbahn** | `hoerner.js` | `winter.intermaps.com/hoernerbahn` |
 | **Ischgl** | `ischgl.js` | `winter.intermaps.com/silvretta_arena` |
+| **Kitzbühel** | `kitzbuehel.js` | `winter.intermaps.com/kitzski` |
+| **Oberstdorf** | `oberstdorf.js` | `winter.intermaps.com/oberstdorf_kleinwalsertal` |
+| **Nordpark** | `innsbruck.js` | `winter.intermaps.com/innsbruck` |
+| **Patscherkofel** | `innsbruck.js` | `winter.intermaps.com/innsbruck` |
+| **Mutters** | `innsbruck.js` | `winter.intermaps.com/innsbruck` |
+| **Bergeralm** | `innsbruck.js` | `winter.intermaps.com/innsbruck` |
+| **Glungezer** | `innsbruck.js` | `winter.intermaps.com/innsbruck` |
+| **Schlick 2000** | `innsbruck.js` | `winter.intermaps.com/innsbruck` |
+| **Oberperfuss** | `innsbruck.js` | `winter.intermaps.com/innsbruck` |
 | **Kitzsteinhorn** | `kitzsteinhorn.js` | `winter.intermaps.com/kitzsteinhorn` |
 | **Kronplatz** | `kronplatz.js` | `winter.intermaps.com/kronplatz` |
 | **Kühtai** | `kuehtai.js` | `winter.intermaps.com/innsbruck` (Filtered) |
@@ -46,12 +55,11 @@ This document tracks the technical implementation details of all ski resort pars
 | **Schladming** | `schladming.js` | `winter.intermaps.com/schladming` |
 | **Silvretta Montafon** | `silvretta_montafon.js` | `winter.intermaps.com/montafon` |
 | **Sölden** | `soelden.js` | `winter.intermaps.com/soelden` |
-| **Spitzingsee** | `spitzingsee.js` | `winter.intermaps.com/alpenbahnen_spitzingsee` |
-| **St. Anton** | `st_anton.js` | `winter.intermaps.com/skiarlberg` |
-| **Stubaier Gletscher** | `stubaier_gletscher.js` | `winter.intermaps.com/stubaier_gletscher` |
-| **Sudelfeld** | `sudelfeld.js` | `winter.intermaps.com/sudelfeld` |
-| **Zillertal Arena** | `zillertal_arena.js` | `winter.intermaps.com/zillertal_arena` |
-| **Zwölferhorn** | `salzkammergut.js` | `winter.intermaps.com/salzkammergut` |
+| **Turracher Höhe** | `turracher_hoehe.js` | `winter.intermaps.com/turracher_hoehe` |
+| **Snow Space Salzburg** | `snow_space_salzburg.js` | `winter.intermaps.com/salzburger_sportwelt` |
+| **Ehrwald** | `ehrwald.js` | `winter.intermaps.com/zugspitz_arena` |
+| **Lermoos** | `lermoos.js` | `winter.intermaps.com/zugspitz_arena` |
+| **Zugspitze** | `zugspitze.js` | `winter.intermaps.com/zugspitzplatt` |
 | **Steinplatte** | `steinplatte.js` | `steinplatte.tirol` |
 | **Winklmoos** | `winklmoos.js` | `winklmoosalm.de` |
 
@@ -67,12 +75,10 @@ This document tracks the technical implementation details of all ski resort pars
 | **Hahnenkamm** | `hahnenkamm.js` | `hahnenkamm.com` |
 | **Hochkössen** | `hochkoessen.js` | `skikoessen.at` |
 | **Kampenwand** | `kampenwand.js` | `kampenwand.de` |
-| **Kitzbühel** | `kitzbuehel.js` | `kitzski.at` |
 | **Lermoos** | `lermoos.js` | `bergbahnen-langes.at` |
 | **Lofer** | `lofer.js` | `skialm-lofer.com` |
 | **Oberaudorf** | `oberaudorf.js` | `hocheck.com` |
 | **Oberjoch** | `oberjoch.js` | `bergbahnen-hindelang-oberjoch.de` |
-| **Oberstdorf** | `oberstdorf.js` | `ok-bergbahnen.com` |
 | **Seefeld** | `seefeld.js` | `seefeld.com` |
 | **Ski Juwel** | `skijuwel.js` | `skijuwel.com` |
 | **Wendelstein** | `wendelstein.js` | `wendelsteinbahn.de` |
@@ -84,14 +90,11 @@ This document tracks the technical implementation details of all ski resort pars
 
 | Priority | Resort | Parser File | Target API / Strategy |
 |:---------|:-------|:------------|:----------------------|
-| **1 (High)** | **Zugspitze** | `zugspitze.js` | Locate new Scraping URL |
 | **4** | **Sella Ronda** | `sella_ronda.js` | Dolomiti Superski API |
 | **5** | **Dolomiti Superski** | `dolomiti_superski.js` | Dolomiti Superski API |
 | - | Bad Kleinkirchheim | `bad_kleinkirchheim.js` | - |
 | - | Hochkönig | `hochkoenig.js` | Ski Amade API? |
 | - | Serfaus-Fiss-Ladis | `serfaus_fiss_ladis.js` | - |
-| - | Snow Space SBG | `snow_space_salzburg.js` | - |
-| - | Turracher Höhe | `turracher_hoehe.js` | - |
 | - | Winterberg (DE) | `winterberg.js` | Liftstars API? |
 | - | Willingen (DE) | `willingen.js` | - |
 | - | Wurmberg (DE) | `wurmberg.js` | - |

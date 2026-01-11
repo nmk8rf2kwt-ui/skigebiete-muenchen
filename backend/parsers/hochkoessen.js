@@ -55,5 +55,5 @@ export async function parse(options = {}) {
         throw new Error("Hochkössen parsing returned zero lifts");
     }
 
-    return createResult(details.id, { liftsOpen, liftsTotal }, "kaiserwinkl.com");
+    return createResult(details, { liftsOpen, liftsTotal }, "kaiserwinkl.com");
 }

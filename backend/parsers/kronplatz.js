@@ -61,5 +61,5 @@ export async function parse(options = {}) {
     const liftsOpen = lifts.filter(l => l.status === "open").length;
     const liftsTotal = lifts.length;
 
-    return createResult(details.id, { liftsOpen, liftsTotal, lifts, slopes }, "Intermaps (kronplatz.com)");
+    return createResult(details, { liftsOpen, liftsTotal, lifts, slopes }, "Intermaps (kronplatz.com)");
 }

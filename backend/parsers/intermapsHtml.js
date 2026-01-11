@@ -6,7 +6,7 @@ import { fetchHtml, createResult } from "../utils/parserUtils.js";
  * @param {string} url 
  * @param {object} options 
  */
-export async function parseIntermapsHtml(resortId, url, options = {}) {
+export async function parseIntermapsHtml(details, url, options = {}) {
     const $ = await fetchHtml(url, options);
 
     const lifts = [];
@@ -57,5 +57,5 @@ export async function parseIntermapsHtml(resortId, url, options = {}) {
         throw new Error("Intermaps parsing returned zero items");
     }
 
-    return createResult(resortId, { liftsOpen, liftsTotal, lifts, slopes }, new URL(url).hostname);
+    return createResult(details, { liftsOpen, liftsTotal, lifts, slopes }, new URL(url).hostname);
 }

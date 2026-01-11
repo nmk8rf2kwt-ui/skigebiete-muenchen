@@ -7,7 +7,7 @@ export const details = {
     district: "Tiroler Oberland",
 };
 
-export async function parse(options = {}) {
+export async function parse(_options = {}) {
     // TODO: Implement parsing (API not found)
-    return createResult(details.id, { liftsOpen: 0, liftsTotal: 0, lifts: [], slopes: [] }, "serfaus-fiss-ladis.at (Placeholder)");
+    return createResult(details, { liftsOpen: 0, liftsTotal: 0, lifts: [], slopes: [] }, "serfaus-fiss-ladis.at (Placeholder)");
 }

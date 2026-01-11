@@ -60,6 +60,14 @@ export async function fetchIntermaps(url) {
         const liftsOpen = lifts.filter(l => l.status === 'open').length;
         const liftsTotal = lifts.length;
 
+        let lastUpdated = new Date().toISOString();
+        if (data.lastUpdate) {
+            const date = new Date(data.lastUpdate);
+            if (!isNaN(date.getTime())) {
+                lastUpdated = date.toISOString();
+            }
+        }
+
         return {
             liftsOpen,
             liftsTotal,
@@ -67,7 +75,7 @@ export async function fetchIntermaps(url) {
             slopes,
             status: "live",
             source: url,
-            lastUpdated: new Date().toISOString()
+            lastUpdated: lastUpdated
         };
     } catch (error) {
         console.error(`Intermaps parser error for ${url}:`, error.message);

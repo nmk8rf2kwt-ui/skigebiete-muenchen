@@ -1,15 +1,18 @@
 import * as cheerio from "cheerio";
 import { fetchWithHeaders } from "../utils/fetcher.js";
+import { createResult } from "../utils/parserUtils.js";
+
+export const details = {
+    id: "winklmoos",
+    name: "Winklmoosalm - Reit im Winkl",
+    url: "https://www.winklmoosalm.de/anlagen",
+};
 
 export async function winklmoos() {
-    const res = await fetchWithHeaders("https://www.winklmoosalm.de/anlagen");
+    const res = await fetchWithHeaders(details.url);
     if (!res.ok) throw new Error("Failed to fetch Winklmoos");
     const html = await res.text();
     const $ = cheerio.load(html);
-
-    // First table in content seems to be lifts
-    // Agent found: tbody tr.text-gray-800
-    // Open status: bg-emerald-400
 
     const rows = $("tbody tr.text-gray-800");
 
@@ -18,8 +21,6 @@ export async function winklmoos() {
 
     rows.each((_, row) => {
         const $row = $(row);
-        // Check openness: find div with bg-emerald-400
-        // Note: Tailwind classes might be specific
         const isOpen = $row.find(".bg-emerald-400").length > 0 || $row.find(".bg-emerald-500").length > 0;
 
         liftsTotal++;
@@ -30,7 +31,6 @@ export async function winklmoos() {
 
     // Fallback if no specific rows found (sometimes dynamic loading)
     if (liftsTotal === 0) {
-        // Check if there is a summary text like "12 / 13"
         const text = $("body").text();
         const match = text.match(/Geöffnete Anlagen.*?(\d+)\s*\/\s*(\d+)/i);
         if (match) {
@@ -41,10 +41,12 @@ export async function winklmoos() {
         }
     }
 
-    return {
+    return createResult(details, {
         liftsOpen,
         liftsTotal,
-        status: "ok",
-        lastUpdated: new Date().toISOString()
-    };
+        lifts: [],
+        slopes: []
+    }, "winklmoosalm.de");
 }
+
+export const parse = winklmoos;

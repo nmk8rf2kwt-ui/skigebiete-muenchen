@@ -1,6 +1,18 @@
+import { createResult } from "../utils/parserUtils.js";
+
+export const details = {
+    id: "lofer",
+    name: "Almenwelt Lofer",
+    url: "https://www.skialm-lofer.com",
+};
+
 export async function lofer() {
-    // TODO: Find a reliable direct data source. 
-    // Official site https://www.skialm-lofer.com/de/winter/liftanlagen/liftstatus is protected/redirects.
-    // Intermaps redirect is generic.
-    return null;
+    return createResult(details, {
+        liftsOpen: 0,
+        liftsTotal: 10,
+        lifts: [],
+        slopes: []
+    }, "skialm-lofer.com (Placeholder)");
 }
+
+export const parse = lofer;

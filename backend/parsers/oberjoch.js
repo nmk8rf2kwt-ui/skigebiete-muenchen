@@ -1,10 +1,16 @@
 import * as cheerio from "cheerio";
 import { fetchWithHeaders } from "../utils/fetcher.js";
+import { createResult } from "../utils/parserUtils.js";
+
+export const details = {
+    id: "oberjoch",
+    name: "Oberjoch - Bad Hindelang",
+    url: "https://www.bergbahnen-hindelang-oberjoch.de/status/",
+};
 
 export async function oberjoch() {
-    const url = "https://www.bergbahnen-hindelang-oberjoch.de/status/";
     try {
-        const res = await fetchWithHeaders(url);
+        const res = await fetchWithHeaders(details.url);
         if (!res.ok) throw new Error("Status " + res.status);
 
         const html = await res.text();
@@ -12,11 +18,8 @@ export async function oberjoch() {
 
         const lifts = [];
 
-        // Select lifts list
         $("ul.lifts li.lift").each((i, el) => {
             const $el = $(el);
-
-            // Extract status
             const $icon = $el.find(".status-icon");
             let status = "closed";
             if ($icon.hasClass("open")) {
@@ -25,13 +28,8 @@ export async function oberjoch() {
                 status = "closed";
             }
 
-            // Extract name and clean it
-            // The name is the text of the li, excluding children text if possible, but here 
-            // the structure is <li class="lift"><span ...></span> Name </li>
-            // So we can get text and trim.
             let name = $el.text().trim();
-            // Remove soft hyphens and &nbsp; artifacts if any remain
-            name = name.replace(/\u00AD/g, ""); // Remove soft hyphen
+            name = name.replace(/\u00AD/g, "");
             name = name.replace(/\s+/g, " ").trim();
 
             if (name) {
@@ -46,26 +44,20 @@ export async function oberjoch() {
         const liftsTotal = lifts.length;
 
         if (liftsTotal === 0) {
-            return {
-                liftsOpen: 0, // safe fallback
-                liftsTotal: 0,
-                status: "parse_error" // indicates something went wrong with parsing structure
-            };
+            throw new Error("Oberjoch parsed zero lifts");
         }
 
-        return {
+        return createResult(details, {
             liftsOpen,
             liftsTotal,
-            status: "open", // Overall status could be computed
-            lifts: lifts
-        };
+            lifts: lifts,
+            slopes: []
+        }, "bergbahnen-hindelang-oberjoch.de");
 
     } catch (e) {
         console.error("Oberjoch parser error:", e);
-        return {
-            liftsOpen: 0,
-            liftsTotal: 0,
-            status: "error"
-        };
+        return null;
     }
 }
+
+export const parse = oberjoch;

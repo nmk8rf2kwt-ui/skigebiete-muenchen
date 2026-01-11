@@ -1,11 +1,10 @@
 import { spitzingsee } from "./spitzingsee.js";
-import { brauneck } from "./brauneck.js";
+import { parse as brauneck } from "./brauneck.js";
 import { parse as sudelfeld } from "./sudelfeld.js";
 import { parse as garmisch } from "./garmisch.js";
 import { parse as zugspitze } from "./zugspitze.js";
 import { parse as wilderKaiser } from "./wilder-kaiser.js";
 import { steinplatte } from "./steinplatte.js";
-import { parse as kitzbuehel } from "./kitzbuehel.js";
 import { parse as hochkoessen } from "./hochkoessen.js";
 import { winklmoos } from "./winklmoos.js";
 import { parse as ehrwalderAlmbahn } from "./ehrwald.js";
@@ -21,7 +20,6 @@ import { hahnenkamm } from "./hahnenkamm.js";
 import { oberaudorf } from "./oberaudorf.js";
 import { kampenwand } from "./kampenwand.js";
 import { balderschwang } from "./balderschwang.js";
-import { oberstdorf } from "./oberstdorf.js";
 import { oberjoch } from "./oberjoch.js";
 import { wendelstein } from "./wendelstein.js";
 
@@ -49,8 +47,19 @@ import { parse as nassfeld } from "./nassfeld.js";
 import { parse as obergurgl_hochgurgl } from "./obergurgl_hochgurgl.js";
 import { parse as axamer_lizum } from "./axamer_lizum.js";
 import { parse as kuehtai } from "./kuehtai.js";
-import { parse as stubaierGletscher } from "./stubaier_gletscher.js";
-import { parse as snowSpaceSalzburg } from "./snow_space_salzburg.js";
+import { parse as stubaierGletscher } from './stubaier_gletscher.js';
+import { parse as snowSpaceSalzburg } from './snow_space_salzburg.js';
+import { parse as kitzbuehel } from './kitzbuehel.js';
+import { parse as oberstdorf } from './oberstdorf.js';
+import {
+    parseNordpark as nordpark,
+    parsePatscherkofel as patscherkofel,
+    parseMutters as mutters,
+    parseBergeralm as bergeralm,
+    parseGlungezer as glungezer,
+    parseSchlick2000 as schlick2000,
+    parseOberperfuss as oberperfuss
+} from './innsbruck.js';
 import { parse as hochkoenig } from "./hochkoenig.js";
 import { parse as silvrettaMontafon } from "./silvretta_montafon.js";
 import { parse as damuelsMellau } from "./damuels_mellau.js";
@@ -60,6 +69,10 @@ import { parse as kronplatz } from "./kronplatz.js";
 import { parse as dolomitiSuperski } from "./dolomiti_superski.js";
 import { parse as sellaRonda } from "./sella_ronda.js";
 import { parseLoser, parseFeuerkogel, parseKrippenstein, parseZwoelferhorn, parseGaissauHintersee } from "./salzkammergut.js";
+import { parse as pitztal } from "./pitztal.js";
+import { parse as venet } from "./venet.js";
+import { parse as achensee } from "./achensee.js";
+
 
 export const PARSERS = {
     "spitzingsee": spitzingsee,
@@ -108,6 +121,14 @@ export const PARSERS = {
     "hochzillertal_hochfuegen": hochzillertal_hochfuegen,
     "kitzsteinhorn": kitzsteinhorn,
     "nassfeld": nassfeld,
+
+    "nordpark": nordpark,
+    "patscherkofel": patscherkofel,
+    "mutters": mutters,
+    "bergeralm": bergeralm,
+    "glungezer": glungezer,
+    "schlick_2000": schlick2000,
+    "oberperfuss": oberperfuss,
     "obergurgl_hochgurgl": obergurgl_hochgurgl,
     "axamer_lizum": axamer_lizum,
     "kuehtai": kuehtai,
@@ -125,5 +146,8 @@ export const PARSERS = {
     "feuerkogel": parseFeuerkogel,
     "gaissau_hintersee": parseGaissauHintersee,
     "loser": parseLoser,
-    "zwoelferhorn": parseZwoelferhorn
+    "zwoelferhorn": parseZwoelferhorn,
+    "pitztal": pitztal,
+    "venet": venet,
+    "achensee": achensee
 };

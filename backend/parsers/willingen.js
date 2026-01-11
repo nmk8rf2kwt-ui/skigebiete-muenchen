@@ -9,9 +9,9 @@ export const details = {
     district: "Sauerland",
 };
 
-export async function parse(options = {}) {
+export async function parse(_options = {}) {
     const url = details.url;
-    const res = await fetchWithHeaders(url, options);
+    const res = await fetchWithHeaders(url, _options);
 
     if (!res.ok) {
         throw new Error(`Failed to fetch Willingen: ${res.status}`);
@@ -24,7 +24,6 @@ export async function parse(options = {}) {
     // Example: <a href="..." class="ico-lifte"><strong>12</strong> Lifte<br /><span>in Betrieb</span></a>
 
     let liftsOpen = 0;
-    let slopesOpen = 0;
 
     const liftsOpenText = $(".ico-lifte strong").first().text().trim();
     const slopesOpenText = $(".ico-abfahrt strong").first().text().trim();
@@ -34,7 +33,7 @@ export async function parse(options = {}) {
     }
 
     if (slopesOpenText && !isNaN(parseInt(slopesOpenText))) {
-        slopesOpen = parseInt(slopesOpenText);
+        // slopesOpen = parseInt(slopesOpenText);
     }
 
     // Hardcoded total for now as it's not dynamically available on the main page summary
@@ -47,5 +46,5 @@ export async function parse(options = {}) {
     // Populate dummy lifts to matching the count if needed, but 'liftsOpen' property usually overrides
     // For now, let's just return the counts.
 
-    return createResult(details.id, { liftsOpen, liftsTotal, lifts, slopes: [] }, "skigebiet-willingen.de (Summary)");
+    return createResult(details, { liftsOpen, liftsTotal, lifts, slopes: [] }, "skigebiet-willingen.de (Summary)");
 }

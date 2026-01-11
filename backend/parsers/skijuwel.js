@@ -68,7 +68,7 @@ export default async function parseSkiJuwel() {
         const liftsOpen = lifts.filter(l => l.status === "open").length;
         const liftsTotal = lifts.length;
 
-        return createResult("ski_juwel", {
+        return createResult({ id: "ski_juwel", name: "Ski Juwel Alpbachtal Wildschönau" }, {
             liftsOpen,
             liftsTotal,
             lifts,

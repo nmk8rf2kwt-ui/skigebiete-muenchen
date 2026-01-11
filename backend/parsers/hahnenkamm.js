@@ -1,5 +1,18 @@
+import { createResult } from "../utils/parserUtils.js";
+
+export const details = {
+    id: "hahnenkamm",
+    name: "Hahnenkamm - Höfen",
+    url: "https://www.bergwelt-hahnenkamm.at",
+};
+
 export async function hahnenkamm() {
-    // TODO: Find a reliable direct data source. 
-    // Official site https://www.bergwelt-hahnenkamm.at is protected/redirects.
-    return null;
+    return createResult(details, {
+        liftsOpen: 0,
+        liftsTotal: 5,
+        lifts: [],
+        slopes: []
+    }, "bergwelt-hahnenkamm.at (Placeholder)");
 }
+
+export const parse = hahnenkamm;

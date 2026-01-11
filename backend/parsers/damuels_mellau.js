@@ -9,10 +9,10 @@ export const details = {
     district: "Bregenzerwald"
 };
 
-export async function parse(options = {}) {
+export async function parse(_options = {}) {
     const data = await fetchIntermaps(details.apiUrl);
     if (!data) {
         throw new Error('Failed to fetch Damüls Mellau Intermaps data');
     }
-    return createResult(details.id, data, 'intermaps.com (Damüls-Mellau)');
+    return createResult(details, data, 'intermaps.com (Damüls-Mellau)');
 }

@@ -44,12 +44,17 @@ export function extractNumber(text) {
 /**
  * Helper to build a standard success result
  */
-export function createResult(resortId, data, source) {
+export function createResult(details, data, source) {
+    // Determine ID and Name (supports both legacy string ID and new details object)
+    const id = typeof details === 'string' ? details : (details.id || 'unknown');
+    const name = typeof details === 'object' ? (details.name || data.name || 'Unknown') : (data.name || 'Unknown');
+
     return {
-        id: resortId,
+        id: id,
+        name: name,
         ...data, // liftsOpen, liftsTotal, snow, etc.
         status: STATUS.LIVE,
         source: source,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: data.lastUpdated || new Date().toISOString()
     };
 }

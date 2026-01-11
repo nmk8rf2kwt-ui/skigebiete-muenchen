@@ -1,9 +1,16 @@
 import * as cheerio from "cheerio";
 import { fetchWithHeaders } from "../utils/fetcher.js";
+import { createResult } from "../utils/parserUtils.js";
+
+export const details = {
+    id: "steinplatte",
+    name: "Steinplatte - Waidring",
+    url: "https://www.steinplatte.tirol/de/liftstatus.html",
+};
 
 export async function steinplatte() {
     const [liftsRes, snowRes] = await Promise.all([
-        fetchWithHeaders("https://www.steinplatte.tirol/de/liftstatus.html"),
+        fetchWithHeaders(details.url),
         fetchWithHeaders("https://www.steinplatte.tirol/de/schneebericht-steinplatte-winklmoosalm.html")
     ]);
 
@@ -23,63 +30,38 @@ export async function steinplatte() {
 
     states.each((i, el) => {
         if ($lifts(el).children().length > 0) return;
+
+        const statusText = $lifts(el).text().trim();
+        const status = statusText === "Geöffnet" ? "open" : "closed";
+
+        // Try to find name (usually preceding sibling or parent sibling)
+        // This is a rough parser, keeping it as is but wrapping in createResult
         liftsTotal++;
-        if ($lifts(el).text().trim() === "Geöffnet") {
-            liftsOpen++;
-        }
+        if (status === "open") liftsOpen++;
     });
 
-    // Parse Snow - only if fetch succeeded, else ignore (graceful degradation)
+    // Parse Snow
     let snowData = null;
     if (snowRes.ok) {
         try {
             const snowHtml = await snowRes.text();
             const $snow = cheerio.load(snowHtml);
-
-            // Normalize whitespace for Regex
             const snowBody = $snow('body').text().replace(/\s+/g, ' ');
 
-            // --- Regex Strategy ---
             let depth = null;
-            // Matches:
-            // 1. "Schneehöhe Berg 50 cm"
-            // 2. "50 cm Schneehöhe Berg"
             let depthMatch = snowBody.match(/Schneehöhe Berg\s*(\d+)\s*cm/i) || snowBody.match(/(\d+)\s*cm\s*Schneehöhe Berg/i);
+            if (depthMatch) depth = parseInt(depthMatch[1], 10);
 
-            if (depthMatch) {
-                // Determine which group has the digit. Could be index 1 in both cases regexes above.
-                depth = parseInt(depthMatch[1], 10);
-            }
-
-            // Last Snowfall
             let lastSnowISO = null;
-            // Matches:
-            // 1. "Letzter Schneefall 03.01.2026"
-            // 2. "03.01.2026 Letzter Schneefall"
             let dateMatch = snowBody.match(/Letzter Schneefall\s*(\d{2}\.\d{2}\.\d{4})/i) || snowBody.match(/(\d{2}\.\d{2}\.\d{4})\s*Letzter Schneefall/i);
-
             if (dateMatch) {
                 const parts = dateMatch[1].split('.');
                 lastSnowISO = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
             }
 
-            // Snow Type
-            // Keep the DOM traversal as backup or just regex
             let snowType = null;
-            // "Schneetyp" - usually Value follows Label or precedes it.
-            // "griffig Schneetyp" or "Schneetyp griffig"
-            // Let's assume the word next to "Schneetyp" that is NOT "Live" or empty
             const typeMatch = snowBody.match(/([a-zA-ZäöüÄÖÜ]+)\s*Schneetyp/i) || snowBody.match(/Schneetyp\s*([a-zA-ZäöüÄÖÜ]+)/i);
-            if (typeMatch) {
-                const candidate = typeMatch[1];
-                // Filter out common UI words if needed
-                if (candidate !== "Live" && candidate.length > 2) {
-                    snowType = candidate;
-                }
-            }
-
-            // If regex failed, maybe try the old findValue technique?
-            // Re-implement simplified findValue if needed, but regex is usually stronger for "Text Soup"
+            if (typeMatch && typeMatch[1] !== "Live" && typeMatch[1].length > 2) snowType = typeMatch[1];
 
             if (depth !== null) {
                 snowData = {
@@ -87,8 +69,6 @@ export async function steinplatte() {
                     mountain: depth,
                     state: snowType || null,
                     lastSnowfall: lastSnowISO,
-                    source: "resort",
-                    timestamp: new Date().toISOString()
                 };
             }
         } catch (e) {
@@ -96,11 +76,13 @@ export async function steinplatte() {
         }
     }
 
-    return {
+    return createResult(details, {
         liftsOpen,
         liftsTotal,
         snow: snowData,
-        status: "ok",
-        lastUpdated: new Date().toISOString()
-    };
+        lifts: [], // Detailed lifts missing in this rough parser
+        slopes: []
+    }, "steinplatte.tirol");
 }
+
+export const parse = steinplatte;

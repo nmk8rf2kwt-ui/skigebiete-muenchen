@@ -14,5 +14,5 @@ export async function parse(options = {}) {
   if (!data) {
     throw new Error('Failed to fetch Garmisch Intermaps data');
   }
-  return createResult(details.id, data, 'intermaps.com (Zugspitze-Garmisch)');
+  return createResult(details, data, 'intermaps.com (Zugspitze-Garmisch)');
 }
