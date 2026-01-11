@@ -87,13 +87,29 @@ async function load() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      signal: controller.signal
-    });
+    const endpoint = config?.endpoint || '/api/resorts';
+    const domainId = currentDomain;
+
+    let resorts = [];
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, { signal: controller.signal });
+      if (!response.ok) throw new Error("API 404");
+      resorts = await response.json();
+    } catch (apiErr) {
+      console.warn(`⚠️ API Failed (${apiErr.message}), attempting static fallback...`);
+      // Fallback Mapping for GH Pages (Static)
+      let fallbackUrl = 'backend/resorts.json'; // Default Ski
+      if (domainId === 'skate') fallbackUrl = 'backend/data/ice-skating.json';
+      if (domainId === 'walk') fallbackUrl = 'backend/data/winter-walks.json';
+
+      console.log(`👉 Fetching fallback: ${fallbackUrl}`);
+      const fallbackResponse = await fetch(fallbackUrl);
+      if (!fallbackResponse.ok) throw new Error(`Fallback failing: ${fallbackUrl}`);
+      resorts = await fallbackResponse.json();
+    }
+
     clearTimeout(timeoutId);
 
-    if (!response.ok) throw new Error("API-Verbindung fehlgeschlagen");
-    const resorts = await response.json();
     console.group("🔍 DIAGNOSTIC: Data Load");
     console.log(`[API] Raw count: ${resorts ? resorts.length : 0}`);
 
