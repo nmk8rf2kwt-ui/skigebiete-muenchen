@@ -77,6 +77,12 @@ export function calculateScore(resort) {
   if (resort.length > 5) score += 10;
   if (resort.night_light && pref === 'variety') score += 15;
 
+  // Skitour overrides
+  if (resort.avalancheLevel === 1) score += 30;
+  if (resort.newSnow > 15) score += 20;
+  if (pref === 'powder' && resort.newSnow > 10) score += 20;
+  if (pref === 'safe' && resort.avalancheLevel <= 2) score += 20;
+
   return Math.round(score);
 }
 
@@ -284,6 +290,13 @@ function generateReasoning(resort, pref, domainId = 'ski') {
     if (resort.has_lift) reasons.push({ type: 'good', icon: '🚠', text: 'Aufstiegshilfe vorhanden' });
     if (resort.night_light) reasons.push({ type: 'ok', icon: '🌙', text: 'Nachtrodeln möglich' });
     if (resort.walk_min > 30 && !resort.has_lift) reasons.push({ type: 'bad', icon: '🥾', text: `${resort.walk_min} min Aufstieg` });
+  } else if (domainId === 'skitour') {
+    // Skitour reasoning
+    if (resort.newSnow > 10) reasons.push({ type: 'good', icon: '❄️', text: `${resort.newSnow} cm Neuschnee` });
+    if (resort.avalancheLevel <= 2) reasons.push({ type: 'good', icon: '✅', text: `Lawinenstufe ${resort.avalancheLevel} (Sicher)` });
+    else reasons.push({ type: 'bad', icon: '⚠️', text: `Lawinenstufe ${resort.avalancheLevel}!` });
+
+    if (resort.elevation_gain > 800) reasons.push({ type: 'ok', icon: '🏔️', text: `${resort.elevation_gain}hm Aufstieg` });
   } else {
     // Basic reasons for other placeholder domains
     reasons.push({ type: 'good', icon: '✅', text: 'Heute gute Bedingungen' });

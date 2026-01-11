@@ -1,0 +1,44 @@
+[
+    {
+        "id": "taubenstein",
+        "name": "Taubenstein (Spitzingsee)",
+        "address": "Spitzingsee, 83727 Schliersee",
+        "latitude": 47.6622,
+        "longitude": 11.8885,
+        "elevation_gain": 600,
+        "distance": 6,
+        "level": "medium",
+        "avalancheLevel": 2,
+        "newSnow": 15,
+        "status": "open",
+        "description": "Klassiker am Spitzingsee, ehemalige Piste."
+    },
+    {
+        "id": "rotwand",
+        "name": "Rotwand Reibe",
+        "address": "Spitzingsee, 83727 Schliersee",
+        "latitude": 47.6500,
+        "longitude": 11.9333,
+        "elevation_gain": 850,
+        "distance": 12,
+        "level": "hard",
+        "avalancheLevel": 2,
+        "newSnow": 20,
+        "status": "open",
+        "description": "Lange, landschaftlich schöne Runde."
+    },
+    {
+        "id": "kolbensattel",
+        "name": "Kolbensattel (Oberammergau)",
+        "address": "Kreislainenweg, 82487 Oberammergau",
+        "latitude": 47.5950,
+        "longitude": 11.0550,
+        "elevation_gain": 400,
+        "distance": 4,
+        "level": "easy",
+        "avalancheLevel": 1,
+        "newSnow": 5,
+        "status": "open",
+        "description": "Perfekte Anfängertour auf gesicherter Route."
+    }
+]
