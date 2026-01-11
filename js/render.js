@@ -90,6 +90,11 @@ export function calculateScore(resort) {
   if (pref === 'natural' && resort.type === 'natural') score += 20;
   if (pref === 'indoor' && resort.type === 'indoor') score += 20;
 
+  // Walk overrides
+  if (resort.view) score += 20;
+  if (pref === 'sunny' && resort.weather?.icon?.includes('☀️')) score += 30;
+  if (pref === 'easy' && resort.level === 'easy') score += 20;
+
   return Math.round(score);
 }
 
@@ -312,6 +317,11 @@ function generateReasoning(resort, pref, domainId = 'ski') {
 
     if (resort.type === 'natural') reasons.push({ type: 'ok', icon: '🌲', text: 'Natureisbahn' });
     if (resort.type === 'indoor') reasons.push({ type: 'ok', icon: '🏟️', text: 'Eishalle (Wetterunabhängig)' });
+  } else if (domainId === 'walk') {
+    // Walk reasoning
+    if (resort.view) reasons.push({ type: 'good', icon: '🏔️', text: 'Panorama-Ausblick' });
+    if (resort.level === 'easy') reasons.push({ type: 'good', icon: '👟', text: 'Leichter Rundweg' });
+    if (resort.duration > 2) reasons.push({ type: 'ok', icon: '⏱️', text: `Längere Tour (${resort.duration}h)` });
   } else {
     // Basic reasons for other placeholder domains
     reasons.push({ type: 'good', icon: '✅', text: 'Heute gute Bedingungen' });

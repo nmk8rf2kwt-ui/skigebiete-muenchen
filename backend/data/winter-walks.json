@@ -1,0 +1,66 @@
+[
+    {
+        "id": "eibsee",
+        "name": "Eibsee Rundweg",
+        "address": "Eibsee, 82491 Grainau",
+        "latitude": 47.4560,
+        "longitude": 10.9930,
+        "duration": 2.0,
+        "distance": 90,
+        "level": "easy",
+        "view": true,
+        "description": "Traumhafte Kulisse unter der Zugspitze. Fast eben.",
+        "weather": {
+            "temp": -1,
+            "icon": "☀️"
+        }
+    },
+    {
+        "id": "partnach",
+        "name": "Partnachklamm",
+        "address": "Karl-und-Martin-Neuner-Platz, 82467 Garmisch-Partenkirchen",
+        "latitude": 47.4690,
+        "longitude": 11.1180,
+        "duration": 1.5,
+        "distance": 85,
+        "level": "medium",
+        "view": false,
+        "description": "Beeindruckende Eiszapfen in der Klamm. Eintritt erforderlich.",
+        "weather": {
+            "temp": 0,
+            "icon": "☁️"
+        }
+    },
+    {
+        "id": "herzogstand",
+        "name": "Herzogstand Panoramaweg",
+        "address": "Kesselbergstraße, 82431 Kochel am See",
+        "latitude": 47.6320,
+        "longitude": 11.3190,
+        "duration": 3.0,
+        "distance": 70,
+        "level": "hard",
+        "view": true,
+        "description": "Mit der Bahn hoch, dann Panoramablick über die Alpen.",
+        "weather": {
+            "temp": -4,
+            "icon": "🌤️"
+        }
+    },
+    {
+        "id": "perlacher",
+        "name": "Perlacher Forst",
+        "address": "München, Perlacher Forst",
+        "latitude": 48.0900,
+        "longitude": 11.5800,
+        "duration": 1.0,
+        "distance": 0,
+        "level": "easy",
+        "view": false,
+        "description": "Stadtnah, flach und perfekt für einen schnellen Spaziergang.",
+        "weather": {
+            "temp": 3,
+            "icon": "🌧️"
+        }
+    }
+]
