@@ -3,7 +3,8 @@ import { test, expect } from '@playwright/test';
 test('Wizard flow: Step 1 (Loc) -> Step 2 (Act) -> Step 3 (Pref) -> Results', async ({ page }) => {
 
     // Mock Photon API
-    await page.route(/photon\.komoot\.io\/api/, async route => {
+    // Mock Photon API
+    await page.route('https://photon.komoot.io/api/**', async route => {
         await route.fulfill({
             json: {
                 features: [{

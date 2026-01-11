@@ -261,7 +261,8 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem('skigebiete_user_location', JSON.stringify(mockLoc));
     // Set default wizard state to results
     // store.setState not available yet? It is imported.
-    store.setState({ currentDomain: 'ski', viewMode: 'top3', preference: 'fast' });
+    const debugDomain = urlParams.get('domain') || 'ski';
+    store.setState({ currentDomain: debugDomain, viewMode: 'top3', preference: 'fast' });
     // Proceed to standard init
   }
 
@@ -285,8 +286,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const heading = document.getElementById("resultsHeading");
     if (heading) heading.textContent = `Beste Wahl heute von ${loc.name || 'deinem Standort'}`;
 
-    // Default to ski if loading from saved
-    store.setState({ currentDomain: 'ski' });
+    // Default to ski if loading from saved and no domain set
+    if (!store.get().currentDomain) {
+      store.setState({ currentDomain: 'ski' });
+    }
   } else {
     wizardContainer.style.display = "block";
     resultsView.style.display = "none";
