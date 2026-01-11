@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Skigebiets-Finder</title>
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://js-de.sentry-cdn.com https://browser.sentry-cdn.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https:; connect-src 'self' http: https: ws:; worker-src 'self' blob:;">
+    content="default-src 'self'; script-src 'self' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://js-de.sentry-cdn.com https://browser.sentry-cdn.com; style-src 'self' https://unpkg.com; img-src 'self' data: https:; connect-src 'self' http: https: ws:; worker-src 'self' blob:;">
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -26,9 +26,9 @@
   <h1 id="mainTitle">🏔️ Winter-Finder</h1>
 
   <div class="meta">
-    Stand: <span id="timestamp">–</span> · <span style="color: #999;">v1.7.29</span>
+    Stand: <span id="timestamp">–</span> · <span class="text-gray text-md">v1.7.30</span>
     <a href="admin/dashboard.html" target="_blank" title="Admin Dashboard"
-      style="text-decoration: none; margin-left: 8px; opacity: 0.5;">⚙️</a>
+      class="decoration-none opacity-50 ml-sm">⚙️</a>
   </div>
 
 
@@ -55,7 +55,7 @@
     </div>
 
     <!-- Step 2: Activity Picker -->
-    <div id="step-activity" class="wizard-step" style="display: none;">
+    <div id="step-activity" class="wizard-step">
       <div class="step-header">
         <span class="step-badge">Schritt 2 von 3</span>
         <h2>Womit startest du heute?</h2>
@@ -66,47 +66,43 @@
         <button class="pref-btn" data-domain="ski">
           <span class="pref-icon">🎿</span>
           <span class="pref-label">Skifahren</span>
-          <small style="color: #7f8c8d; font-size: 0.7em;">Heute sinnvoll?</small>
+          <small class="text-gray text-xs">Heute sinnvoll?</small>
         </button>
-        <button class="pref-btn" data-domain="skate" disabled
-          style="opacity: 0.5; filter: grayscale(1); cursor: not-allowed;">
+        <button class="pref-btn opacity-50 grayscale cursor-not-allowed" data-domain="skate" disabled>
           <span class="pref-icon">⛸️</span>
           <span class="pref-label">Eislaufen</span>
-          <small style="color: #7f8c8d; font-size: 0.7em;">In Kürze</small>
+          <small class="text-gray text-xs">In Kürze</small>
         </button>
-        <button class="pref-btn" data-domain="sled" disabled
-          style="opacity: 0.5; filter: grayscale(1); cursor: not-allowed;">
+        <button class="pref-btn opacity-50 grayscale cursor-not-allowed" data-domain="sled" disabled>
           <span class="pref-icon">🛷</span>
           <span class="pref-label">Rodeln</span>
-          <small style="color: #7f8c8d; font-size: 0.7em;">In Kürze</small>
+          <small class="text-gray text-xs">In Kürze</small>
         </button>
-        <button class="pref-btn" data-domain="skitour" disabled
-          style="opacity: 0.5; filter: grayscale(1); cursor: not-allowed;">
+        <button class="pref-btn opacity-50 grayscale cursor-not-allowed" data-domain="skitour" disabled>
           <span class="pref-icon">🏔️</span>
           <span class="pref-label">Skitour</span>
-          <small style="color: #7f8c8d; font-size: 0.7em;">In Kürze</small>
+          <small class="text-gray text-xs">In Kürze</small>
         </button>
       </div>
 
       <!-- 5th Activity Button (Full Width) -->
-      <div style="margin-top: 15px;">
-        <button class="pref-btn" data-domain="walk" disabled
-          style="width: 100%; flex-direction: row; padding: 20px; opacity: 0.5; filter: grayscale(1); cursor: not-allowed;">
-          <span class="pref-icon" style="font-size: 1.8em; margin-right: 15px;">🚶</span>
-          <div style="text-align: left;">
+      <div class="mt-lg">
+        <button class="pref-btn w-full flex-row p-lg opacity-50 grayscale cursor-not-allowed" data-domain="walk" disabled>
+          <span class="pref-icon text-2xl mr-lg">🚶</span>
+          <div class="text-left">
             <span class="pref-label">Winterwanderung</span>
-            <small style="color: #7f8c8d; display: block; font-size: 0.8em;">In Kürze</small>
+            <small class="text-gray d-block text-sm">In Kürze</small>
           </div>
         </button>
       </div>
 
-      <div class="step-footer" style="margin-top: 20px;">
+      <div class="step-footer mt-lg">
         <button id="backToLocationFromActivity" class="wizard-back-btn">← Zurück</button>
       </div>
     </div>
 
     <!-- Step 3: Preferences -->
-    <div id="step-prefs" class="wizard-step" style="display: none;">
+    <div id="step-prefs" class="wizard-step">
       <div class="step-header">
         <span class="step-badge">Schritt 3 von 3</span>
         <h2>⛷️ Was ist dir heute wichtig?</h2>
@@ -148,21 +144,20 @@
         </button>
       </div>
 
-      <div class="step-footer" style="display: flex; gap: 10px; margin-top: 20px;">
+      <div class="step-footer d-flex gap-md mt-lg">
         <button id="backToActivity" class="wizard-back-btn">← Zurück</button>
-        <button id="showResultsBtn" class="wizard-next-btn" style="background: #2ecc71;">Meine Empfehlungen zeigen
+        <button id="showResultsBtn" class="wizard-next-btn bg-success">Meine Empfehlungen zeigen
           ➔</button>
       </div>
     </div>
   </div>
 
   <!-- Step 3: Results View -->
-  <div id="resultsView" style="display: none; padding: 0 20px;">
-    <div class="results-top-bar"
-      style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-      <h2 id="resultsHeading" style="margin: 0; font-size: 1.5em; color: #2c3e50;"></h2>
+  <div id="resultsView" class="p-lg d-none">
+    <div class="results-top-bar d-flex items-center justify-between mb-lg">
+      <h2 id="resultsHeading" class="m-0 text-2xl text-dark"></h2>
 
-      <div class="view-switcher-wizard" style="display: flex; background: #eee; border-radius: 20px; padding: 4px;">
+      <div class="view-switcher-wizard">
         <button class="view-btn active" data-view="top3">Top 3</button>
         <button class="view-btn" data-view="map">Karte</button>
         <button class="view-btn" data-view="table">Tabelle</button>
@@ -173,11 +168,10 @@
     <div id="top3Cards" class="top3-container"></div>
 
     <!-- Map View (Hidden by default, used in Step 3) -->
-    <div id="map-view"
-      style="display: none; height: 600px; width: 100%; margin: 20px 0; border-radius: 12px; z-index: 1;"></div>
+    <div id="map-view" class="d-none h-full w-full my-lg border-radius-lg z-10" style="height: 600px;"></div>
 
     <!-- Table View (Hidden by default) -->
-    <div id="tableView" style="display: none;">
+    <div id="tableView" class="d-none">
       <table id="skiTable">
         <thead>
           <tr class="header-group-row">
@@ -191,7 +185,7 @@
             <th title="Letzte Aktualisierung der Datenquellen">Daten-Status</th>
             <th>Name</th>
             <th class="tooltip-container">
-              Schwierigkeit <span style="font-size: 0.8em; cursor: help;">ℹ️</span>
+              Schwierigkeit <span class="text-sm cursor-help">ℹ️</span>
               <div class="tooltip-content">
                 <strong>Legende:</strong><br>
                 🟢 Familie (Anfänger/Familien)<br>
@@ -201,33 +195,33 @@
                 ⚫ Gletscher (Hochalpin/Profi)
               </div>
             </th>
-            <th data-sort="piste_km" title="Gesamte Pistenkilometer - Klicken zum Sortieren" style="cursor: pointer;">
+            <th data-sort="piste_km" title="Gesamte Pistenkilometer - Klicken zum Sortieren" class="cursor-pointer">
               Größe (km) ↕️</th>
             <th data-sort="liftsOpen" title="Anzahl geöffneter Lifte heute - Klicken zum Sortieren"
-              style="cursor: pointer;">
+              class="cursor-pointer">
               Lifte (Offen) ↕️</th>
-            <th data-sort="price" title="Tagesskipass-Preis - Klicken zum Sortieren" style="cursor: pointer;">Preis
+            <th data-sort="price" title="Tagesskipass-Preis - Klicken zum Sortieren" class="cursor-pointer">Preis
               (Tagesskipass) ↕️
             </th>
             <th data-sort="distance_km" title="Entfernung in Kilometern - Klicken zum Sortieren"
-              style="cursor: pointer;">
+              class="cursor-pointer">
               Distanz ↕️</th>
-            <th data-sort="distance" title="Fahrzeit ohne Verkehr - Klicken zum Sortieren" style="cursor: pointer;">
+            <th data-sort="distance" title="Fahrzeit ohne Verkehr - Klicken zum Sortieren" class="cursor-pointer">
               Fahrzeit (ohne Verkehrslage) ↕️</th>
             <th data-sort="traffic_delay" title="Verzögerung durch Verkehr - Klicken zum Sortieren"
-              style="cursor: pointer;">
+              class="cursor-pointer">
               Stauzeit ↕️</th>
             <th data-sort="traffic_duration" title="Fahrzeit mit aktuellem Verkehr - Klicken zum Sortieren"
-              style="cursor: pointer;">Fahrzeit (mit Verkehrslage) ↕️</th>
+              class="cursor-pointer">Fahrzeit (mit Verkehrslage) ↕️</th>
             <th title="Stauprognose basierend auf historischen Daten (aus München)">🚦 Prognose (aus M)</th>
             <th title="Wettervorhersage (3 Tage) - Hover für Details">Wetterprognose</th>
             <th data-sort="snow" title="Schneehöhen (Berg/Tal) & Letzter Schneefall - Klicken zum Sortieren"
-              style="cursor: pointer;">
+              class="cursor-pointer">
               Schneehöhen ↕️</th>
             <th title="Link zur Webcam">Webcam</th>
             <th title="Lifte & Pisten Details">Details</th>
-            <th data-sort="smartScore" title="SmartScore (0-100) - Klicken zum Sortieren" style="cursor: pointer;">
-              Score <span id="scoreInfoTrigger" style="cursor: help; color: #3498db;">ⓘ</span> ↕️
+            <th data-sort="smartScore" title="SmartScore (0-100) - Klicken zum Sortieren" class="cursor-pointer">
+              Score <span id="scoreInfoTrigger" class="cursor-help text-link">ⓘ</span> ↕️
             </th>
           </tr>
         </thead>
@@ -235,9 +229,9 @@
       </table>
     </div> <!-- End of #tableView -->
 
-    <div style="text-align: center; margin: 40px 0;">
-      <button id="restartWizard" class="wizard-restart-btn"
-        style="background: none; border: 2px solid #3498db; color: #3498db; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer;">←
+    <div class="text-center my-lg" style="margin: 40px 0;">
+      <button id="restartWizard" class="wizard-restart-btn text-link font-bold cursor-pointer"
+        style="background: none; border: 2px solid #3498db; padding: 10px 20px; border-radius: 20px;">←
         Suche anpassen</button>
     </div>
   </div> <!-- End of #resultsView -->
@@ -322,20 +316,17 @@
   <script type="module" src="js/app.js"></script>
 
   <!-- Footer -->
-  <footer
-    style="margin-top: 60px; padding: 30px 20px; background: #f8f9fa; border-top: 1px solid #e0e0e0; text-align: center;">
-    <div style="max-width: 1200px; margin: 0 auto;">
-      <p style="margin: 0 0 15px 0; color: #666; font-size: 0.9em;">
+  <footer class="footer-container">
+    <div class="footer-content">
+      <p class="footer-copyright">
         © 2026 Skigebiet-Finder
       </p>
-      <div style="margin: 15px 0;">
-        <a href="impressum.html"
-          style="color: #3498db; text-decoration: none; margin: 0 15px; font-weight: 500;">Impressum</a>
-        <span style="color: #ccc;">|</span>
-        <a href="datenschutz.html"
-          style="color: #3498db; text-decoration: none; margin: 0 15px; font-weight: 500;">Datenschutzerklärung</a>
+      <div class="footer-links">
+        <a href="impressum.html" class="footer-link">Impressum</a>
+        <span class="text-gray">|</span>
+        <a href="datenschutz.html" class="footer-link">Datenschutzerklärung</a>
       </div>
-      <p style="margin: 15px 0 0 0; color: #999; font-size: 0.85em;">
+      <p class="footer-disclaimer">
         Datenquellen: APIs der Skigebiete (Intermaps/Feratel), Open-Meteo, TomTom, OpenStreetMap
       </p>
     </div>
