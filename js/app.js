@@ -87,8 +87,7 @@ async function load() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-    const endpoint = config?.endpoint || '/api/resorts';
-    const domainId = currentDomain;
+
 
     let resorts = [];
     try {
