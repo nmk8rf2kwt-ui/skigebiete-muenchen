@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.9.0] - 2026-01-11
+
+### 🚀 Multi-Domain Expansion
+- **Rodeln (Sledding)**: Added dedicated activity with 3 initial sledding spots (Wallberg, Firstalm, Blomberg).
+    - Features: Custom reasoning (e.g., "Extra lange Bahn"), specific metrics (Length, Snow), and "SmartScore" adjustments.
+- **Skitour**: Added skimo support with new data points (Avalanche Level, Elevation Gain, New Snow).
+- **Eislaufen (Skate)**: Added support for Ice Skating rinks (Indoor) and natural lakes (Outdoor).
+- **Winterwandern (Walk)**: Added scenic winter walks with difficulty levels and duration metrics.
+
+### 🎨 Wizard & UX
+- **Dynamic 3-Step Wizard**:
+    - **Step 1 (Location)**: Standard start point.
+    - **Step 2 (Activity)**: New picker for 5 activities (Ski, Sled, Tour, Skate, Walk).
+    - **Step 3 (Preferences)**: Context-aware preferences (e.g., "Sicher" for Tour, "Indoor" for Skate, "Family" for Sled).
+- **State Persistence**: The wizard now remembers your last step and inputs (Location, Activity) if you reload the page.
+- **SmartScore 2.0**: The scoring algorithm now adapts to the selected domain (e.g., prioritizing avalanche safety for tours or lift status for skiing).
+
+### 🛠️ Backend
+- **New Routes**:
+    - `/api/sledding`
+    - `/api/skitours`
+    - `/api/ice-skating`
+    - `/api/winter-walks`
+- **Architecture**: Modularized `domainConfigs.js` on frontend to drive UI rendering dynamically.
+
 ## [1.7.29] - 2026-01-09
 
 ### 🗑️ Removed
