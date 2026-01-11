@@ -55,6 +55,7 @@ function formatDuration(minutes) {
 
 export function renderTable(data, sortKey = 'score', filter = 'all', sortDirection = 'desc') {
   const tbody = document.querySelector("#skiTable tbody");
+  const top3Container = document.getElementById("top3Cards");
   tbody.innerHTML = "";
 
   // 1. Enrich data with Score if not present
@@ -63,14 +64,28 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
     score: r.score !== undefined ? r.score : calculateScore(r)
   }));
 
-  // 2. Filter
-  if (filter.startsWith('top')) {
-    const topN = parseInt(filter.replace('top', ''), 10) || 3;
-    // Sort by score first to find top N
-    enrichedData.sort((a, b) => b.score - a.score);
-    enrichedData = enrichedData.slice(0, topN);
-  } else if (filter === 'open') {
-    enrichedData = enrichedData.filter(r => r.liftsOpen > 0);
+  // 2. Filter & View Mode
+  if (filter === 'top3') {
+    // Show cards, hide table (or show table below)
+    // user said "Top 3 heute als Primary UI" -> I'll show cards prominently.
+    top3Container.style.display = "grid";
+
+    // Find absolute Top 3 by score
+    const top3Data = [...enrichedData].sort((a, b) => b.score - a.score).slice(0, 3);
+    renderTop3Cards(top3Data);
+
+    // Also filter table to show top 3 (keeping it below or hidden?)
+    // I'll show the table below the cards but filtered to top 3
+    enrichedData = top3Data;
+  } else {
+    top3Container.style.display = "none";
+    if (filter.startsWith('top')) {
+      const topN = parseInt(filter.replace('top', ''), 10) || 3;
+      enrichedData.sort((a, b) => b.score - a.score);
+      enrichedData = enrichedData.slice(0, topN);
+    } else if (filter === 'open') {
+      enrichedData = enrichedData.filter(r => r.liftsOpen > 0);
+    }
   }
 
   // 3. Sort using imported sorting module
@@ -89,6 +104,94 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
     if (th.dataset.sort === sortKey) {
       th.innerHTML = th.innerHTML.replace('↕️', sortDirection === 'asc' ? '↑' : '↓');
     }
+  });
+}
+
+function renderTop3Cards(top3) {
+  const container = document.getElementById("top3Cards");
+  container.innerHTML = "";
+
+  top3.forEach((r, i) => {
+    const card = document.createElement("div");
+    card.className = "top3-card";
+
+    const safeName = escapeHtml(r.name);
+    const score = r.score ?? calculateScore(r);
+
+    // Explainability Logic
+    let reason = "Top-bewertet für heute!";
+    if (r.snow?.mountain > 50 && r.liftsOpen / r.liftsTotal > 0.8) {
+      reason = "Hervorragende Schneelage & fast alle Lifte offen.";
+    } else if (r.traffic?.delay < 5) {
+      reason = "Freie Fahrt & gute Pistenverhältnisse.";
+    } else if (r.piste_km > 100) {
+      reason = "Maximale Pistenvielfalt im Großraumgebiet.";
+    }
+
+    const lastUpdate = r.dataSources?.lifts?.lastUpdated
+      ? new Date(r.dataSources.lifts.lastUpdated).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+      : "unbekannt";
+
+    const isStale = r.dataSources?.lifts?.freshness === 'STALE' || r.dataSources?.lifts?.freshness === 'EXPIRED';
+    const staleWarning = isStale ? `<div style="color: #e67e22; font-weight: bold; font-size: 0.75em; margin-bottom: 8px;">⚠️ Daten ggf. veraltet (nicht vertrauenswürdig)</div>` : '';
+
+    card.innerHTML = `
+      <div class="top3-header">
+        <span class="top3-badge">#${i + 1} HEUTE</span>
+        ${staleWarning}
+        <h3 class="top3-title">${safeName}</h3>
+        <div class="top3-score-box">
+          <span class="top3-score-val">${score}</span>
+          <span class="top3-score-lbl">Score</span>
+        </div>
+      </div>
+      <div class="top3-content">
+        <div class="top3-metric-row">
+          <div class="top3-metric">
+            <span class="top3-metric-label">Schnee (Berg)</span>
+            <span class="top3-metric-value">${r.snow?.mountain ?? '-'} cm</span>
+          </div>
+          <div class="top3-metric">
+            <span class="top3-metric-label">Lifte Offen</span>
+            <span class="top3-metric-value">${r.liftsOpen ?? 0} / ${r.liftsTotal ?? r.lifts ?? '?'}</span>
+          </div>
+        </div>
+        <div class="top3-metric-row">
+          <div class="top3-metric">
+             <span class="top3-metric-label">Fahrzeit</span>
+             <span class="top3-metric-value">${Math.round((r.traffic?.duration || 0) / 60 || r.distance || 0)} min</span>
+          </div>
+          <div class="top3-metric">
+             <span class="top3-metric-label">Preis</span>
+             <span class="top3-metric-value">€${r.price ?? '-'}</span>
+          </div>
+        </div>
+
+        <!-- Monetization: Experiment -->
+        <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+           <a href="${r.website || '#'}" target="_blank" class="affiliate-btn ticket-btn" 
+              onclick="import('./utils.js').then(u => u.trackClick('${r.id}', 'ticket'))"
+              style="flex: 1; text-align: center; padding: 6px; background: #e67e22; color: white; border-radius: 4px; font-weight: bold; font-size: 0.8em; text-decoration: none;">
+              🎟️ Tickets
+           </a>
+           <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address || r.name)}" target="_blank" class="affiliate-btn route-btn"
+              onclick="import('./utils.js').then(u => u.trackClick('${r.id}', 'route'))"
+              style="flex: 1; text-align: center; padding: 6px; background: #34495e; color: white; border-radius: 4px; font-weight: bold; font-size: 0.8em; text-decoration: none;">
+              🚗 Route
+           </a>
+        </div>
+
+        <div class="top3-explainability">
+          <strong>Warum dieser Platz?</strong><br>
+          ${reason}
+        </div>
+      </div>
+      <div class="top3-footer">
+        <span class="top3-update">Update: ${lastUpdate}</span>
+        <button class="top3-action-btn details-btn" data-resort-id="${r.id}" data-resort-name="${safeName}">Details ➔</button>
+      </div>
+    `;
+    container.appendChild(card);
   });
 }
 
@@ -494,8 +597,9 @@ export function renderRow(row, data) {
 
   // SmartScore display (use new smartScore from backend, fallback to old score)
   const smartScore = data.smartScore ?? score;
+  const isStale = data.dataSources?.lifts?.freshness === 'STALE' || data.dataSources?.lifts?.freshness === 'EXPIRED';
   const smartScoreDisplay = smartScore !== '-' && smartScore !== null
-    ? `<strong title="SmartScore: ${smartScore}/100">${smartScore}</strong>`
+    ? `<strong title="SmartScore: ${smartScore}/100" style="${isStale ? 'color: #e67e22;' : ''}">${smartScore}${isStale ? ' ⚠️' : ''}</strong>`
     : '<span style="color: #999;">-</span>';
 
   row.innerHTML = `
@@ -519,8 +623,12 @@ export function renderRow(row, data) {
       </div>
     </td>
     <td>${webcamDisplay}</td>
-    <td>${detailsDisplay}</td>
-    <!-- History Column Removed -->
+    <td>
+      <div style="display: flex; gap: 4px;">
+        <a href="${r.website || '#'}" target="_blank" onclick="import('./utils.js').then(u=>u.trackClick('${data.id}', 'ticket'))" title="Tickets buchen" style="text-decoration:none; font-size:1.1em;">🎟️</a>
+        ${detailsDisplay}
+      </div>
+    </td>
     <td>${smartScoreDisplay}</td>
   `;
 }

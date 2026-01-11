@@ -36,6 +36,7 @@ import githubService from "./services/integrations/github.js"; // Added githubSe
 import routingRouter from "./routes/routing.js";
 import locatingRouter from "./routes/locating.js";
 import adminRouter from "./routes/admin.js";
+import trackingRouter from "./routes/tracking.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -118,6 +119,7 @@ app.use("/api/locating", locatingRouter);
 app.use("/api/status", statusRouter);
 app.use("/api/db-health", basicAuth, dbHealthRouter);
 app.use("/api/admin", basicAuth, adminRouter);
+app.use("/api/tracking", trackingRouter);
 app.use("/api", historyRouter);
 
 // Initialize Services

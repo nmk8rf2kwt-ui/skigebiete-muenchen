@@ -21,8 +21,8 @@ const WEIGHTS = {
 
 const FRESHNESS_MULTIPLIERS = {
     FRESH: 1.00,
-    DEGRADED: 0.85,
-    STALE: 0.70,
+    DEGRADED: 0.80,
+    STALE: 0.50,
     EXPIRED: 0.00
 };
 

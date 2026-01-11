@@ -39,3 +39,17 @@ export function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 function deg2rad(deg) {
     return deg * (Math.PI / 180)
 }
+/**
+ * Track an affiliate link click via a simple reach-out beacon
+ * @param {string} resortId 
+ * @param {string} type 
+ */
+export function trackClick(resortId, type) {
+    const url = `/api/tracking/click?resortId=${encodeURIComponent(resortId)}&type=${encodeURIComponent(type)}`;
+    // navigator.sendBeacon is ideal for tracking clicks as it's non-blocking
+    if (navigator.sendBeacon) {
+        navigator.sendBeacon(url);
+    } else {
+        fetch(url, { mode: 'no-cors' }).catch(() => { });
+    }
+}

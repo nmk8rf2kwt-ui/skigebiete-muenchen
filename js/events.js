@@ -146,41 +146,12 @@ export function initEventListeners(handlers) {
         closeHistoryBtn.addEventListener("click", () => historyModal.style.display = "none");
     }
 
-    // Status Modal
-    const statusModal = document.getElementById("statusModal");
-    const closeStatusBtn = document.querySelector(".close-status");
-
-    document.getElementById("openStatusBtn").addEventListener("click", (e) => {
-        e.preventDefault();
-        statusModal.style.display = "block";
-        fetchSystemStatus();
-        if (!window.statusInterval) {
-            window.statusInterval = setInterval(fetchSystemStatus, 5000);
-        }
-    });
-
-    if (closeStatusBtn) {
-        closeStatusBtn.addEventListener("click", () => {
-            statusModal.style.display = "none";
-            if (window.statusInterval) {
-                clearInterval(window.statusInterval);
-                window.statusInterval = null;
-            }
-        });
-    }
 
     // Global Modal Click-to-Close
     window.addEventListener("click", (event) => {
         if (event.target === weatherModal) weatherModal.style.display = "none";
         if (event.target === detailsModal) detailsModal.style.display = "none";
         if (event.target === historyModal) historyModal.style.display = "none";
-        if (event.target === statusModal) {
-            statusModal.style.display = "none";
-            if (window.statusInterval) {
-                clearInterval(window.statusInterval);
-                window.statusInterval = null;
-            }
-        }
     });
 
     // Delegated Clicks for Buttons in Dynamic Content (Table)
@@ -255,46 +226,4 @@ export function initEventListeners(handlers) {
         }
     });
 
-    // Sentry Session Replay Test Button
-    const testSentryBtn = document.getElementById("testSentryBtn");
-    if (testSentryBtn) {
-        testSentryBtn.addEventListener("click", async () => {
-            const resultDiv = document.getElementById("sentryTestResult");
-            if (!window.Sentry) {
-                resultDiv.innerHTML = '<span style="color: #e74c3c;">❌ Sentry ist nicht geladen</span>';
-                return;
-            }
-
-            testSentryBtn.disabled = true;
-            testSentryBtn.textContent = "⏳ Sende Test...";
-            resultDiv.innerHTML = '<span style="color: #3498db;">📡 Sende Test-Fehler an Sentry...</span>';
-
-            try {
-                window.Sentry.captureMessage('Test: Session Replay Verification', 'info');
-                setTimeout(() => {
-                    try {
-                        throw new Error('🧪 Test Error: Session Replay Verification - ' + new Date().toISOString());
-                    } catch (error) {
-                        window.Sentry.captureException(error);
-                        resultDiv.innerHTML = `
-                            <div style="color: #27ae60; background: #d4edda; padding: 10px; border-radius: 4px; border-left: 4px solid #27ae60;">
-                                <strong>✅ Test erfolgreich!</strong><br>
-                                <small>
-                                    • Fehler wurde an Sentry gesendet<br>
-                                    • Session Replay wurde aufgezeichnet<br>
-                                    • Überprüfen Sie Ihr Sentry Dashboard in ~30 Sekunden
-                                </small>
-                            </div>
-                        `;
-                        testSentryBtn.disabled = false;
-                        testSentryBtn.textContent = "🎬 Session Replay testen";
-                    }
-                }, 1000);
-            } catch (error) {
-                resultDiv.innerHTML = '<span style="color: #e74c3c;">❌ Fehler beim Test: ' + error.message + '</span>';
-                testSentryBtn.disabled = false;
-                testSentryBtn.textContent = "🎬 Session Replay testen";
-            }
-        });
-    }
 }

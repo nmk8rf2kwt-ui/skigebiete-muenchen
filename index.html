@@ -24,8 +24,7 @@
   <h1>🏔️ Skigebiets-Finder</h1>
 
   <div class="meta">
-    Stand: <span id="timestamp">–</span> · <span style="color: #999;">v1.7.29</span> · <a href="#" id="openStatusBtn"
-      style="color: #999; text-decoration: none;" title="System Status">📊</a>
+    Stand: <span id="timestamp">–</span> · <span style="color: #999;">v1.7.29</span>
     <a href="admin/dashboard.html" target="_blank" title="Admin Dashboard"
       style="text-decoration: none; margin-left: 8px; opacity: 0.5;">⚙️</a>
   </div>
@@ -95,6 +94,9 @@
 
   <!-- Spacer between controls and table -->
   <div style="height: 20px;"></div>
+
+  <!-- Top 3 Cards Container -->
+  <div id="top3Cards" class="top3-container" style="display: none;"></div>
 
   <div id="map-view" style="display: none; height: 600px; width: 100%; margin: 20px 0; border-radius: 8px; z-index: 1;">
   </div>
@@ -192,76 +194,6 @@
     </div>
   </div>
 
-  <!-- System Status Modal -->
-  <div id="statusModal" class="modal">
-    <div class="modal-content" style="max-width: 800px;">
-      <span class="close-status">&times;</span>
-      <h2>🖥️ System Status</h2>
-
-      <div class="status-grid">
-        <div class="status-card">
-          <h3>Database</h3>
-          <div id="statusDatabase" class="status-indicator">⚪ Checking...</div>
-          <div id="statusDatabaseSize" class="status-value" style="font-size: 0.85em; margin-top: 4px;">-</div>
-        </div>
-        <div class="status-card">
-          <h3>Scraper</h3>
-          <div id="statusScraper" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Weather API</h3>
-          <div id="statusWeather" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Scheduler</h3>
-          <div id="statusScheduler" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Traffic API</h3>
-          <div id="statusTraffic" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Geocoding</h3>
-          <div id="statusGeocoding" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Monitoring (Sentry)</h3>
-          <div id="statusMonitoring" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Webcams</h3>
-          <div id="statusWebcams" class="status-indicator">⚪ Checking...</div>
-        </div>
-        <div class="status-card">
-          <h3>Traffic Analysis</h3>
-          <div id="statusTrafficAnalysis" class="status-indicator">⚪ Checking...</div>
-          <div id="statusTrafficMetrics" class="status-value" style="font-size: 0.85em; margin-top: 4px;">-</div>
-        </div>
-        <div class="status-card">
-          <h3>Uptime</h3>
-          <div id="statusUptime" class="status-value">-</div>
-        </div>
-      </div>
-
-      <h3>🧪 Sentry Session Replay Test</h3>
-      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-        <p style="margin: 0 0 10px 0; color: #666; font-size: 0.9em;">
-          Testen Sie die Session Replay Funktion. Ein Test-Fehler wird an Sentry gesendet und die aktuelle Session wird
-          aufgezeichnet.
-        </p>
-        <button id="testSentryBtn"
-          style="background: #7c3aed; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
-          🎬 Session Replay testen
-        </button>
-        <div id="sentryTestResult" style="margin-top: 10px; font-size: 0.85em;"></div>
-      </div>
-
-      <h3>Live Logs</h3>
-      <div id="systemLogs" class="system-logs">
-        <div class="log-entry">Loading logs...</div>
-      </div>
-    </div>
-  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script type="module" src="js/weatherChart.js"></script>
@@ -282,7 +214,7 @@
           style="color: #3498db; text-decoration: none; margin: 0 15px; font-weight: 500;">Datenschutzerklärung</a>
       </div>
       <p style="margin: 15px 0 0 0; color: #999; font-size: 0.85em;">
-        Datenquellen: Open-Meteo, TomTom, OpenStreetMap, Skigebiets-Websites
+        Datenquellen: APIs der Skigebiete (Intermaps/Feratel), Open-Meteo, TomTom, OpenStreetMap
       </p>
     </div>
   </footer>

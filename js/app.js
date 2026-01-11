@@ -317,6 +317,12 @@ export async function handleGeolocation() {
 
 // Initializing the application
 document.addEventListener("DOMContentLoaded", () => {
+  // Set default filter to top3
+  store.setState({ filter: 'top3' });
+  document.querySelectorAll(".top-filter-btn").forEach(btn => {
+    if (btn.id === 'top3') btn.classList.add("active");
+  });
+
   initEventListeners({
     load,
     render,
