@@ -1,0 +1,66 @@
+[
+    {
+        "id": "nymphenburg",
+        "name": "Nymphenburger Kanal",
+        "address": "Schloss Nymphenburg, 80638 München",
+        "latitude": 48.1582,
+        "longitude": 11.5033,
+        "type": "natural",
+        "isOpen": false,
+        "price": 0,
+        "distance": 15,
+        "description": "Beliebtes Natureis im Schlosspark. Betreten auf eigene Gefahr.",
+        "weather": {
+            "temp": -2,
+            "icon": "❄️"
+        }
+    },
+    {
+        "id": "oberschleissheim",
+        "name": "Regattaanlage Oberschleißheim",
+        "address": "Dachauer Str. 35, 85764 Oberschleißheim",
+        "latitude": 48.2450,
+        "longitude": 11.5540,
+        "type": "natural",
+        "isOpen": true,
+        "price": 0,
+        "distance": 25,
+        "description": "Lange Bahnen für sportliche Läufer auf dem Regattabecken.",
+        "weather": {
+            "temp": -3,
+            "icon": "☀️"
+        }
+    },
+    {
+        "id": "prinzregenten",
+        "name": "Prinzregentenstadion",
+        "address": "Prinzregentenstraße 80, 81675 München",
+        "latitude": 48.1390,
+        "longitude": 11.6050,
+        "type": "indoor",
+        "isOpen": true,
+        "price": 6.50,
+        "distance": 10,
+        "description": "Traditionsreiches Stadion mit Flutlicht und Musik.",
+        "weather": {
+            "temp": 5,
+            "icon": "🌤️"
+        }
+    },
+    {
+        "id": "grunwald",
+        "name": "Eisplatz Grünwald",
+        "address": "Dr.-Max-Straße 20, 82031 Grünwald",
+        "latitude": 48.0450,
+        "longitude": 11.5230,
+        "type": "indoor",
+        "isOpen": true,
+        "price": 5.00,
+        "distance": 20,
+        "description": "Kleine, feine Eisfläche im Süden Münchens.",
+        "weather": {
+            "temp": 2,
+            "icon": "☁️"
+        }
+    }
+]

@@ -39,6 +39,7 @@ import adminRouter from "./routes/admin.js";
 import trackingRouter from "./routes/tracking.js";
 import sleddingRouter from "./routes/sledding.js";
 import skitoursRouter from "./routes/skitours.js";
+import iceSkatingRouter from "./routes/ice-skating.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -124,6 +125,7 @@ app.use("/api/admin", basicAuth, adminRouter);
 app.use("/api/tracking", trackingRouter);
 app.use("/api/sledding", sleddingRouter);
 app.use("/api/skitours", skitoursRouter);
+app.use("/api/ice-skating", iceSkatingRouter);
 app.use("/api", historyRouter);
 
 // Initialize Services

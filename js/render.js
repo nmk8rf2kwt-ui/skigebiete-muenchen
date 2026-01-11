@@ -83,6 +83,13 @@ export function calculateScore(resort) {
   if (pref === 'powder' && resort.newSnow > 10) score += 20;
   if (pref === 'safe' && resort.avalancheLevel <= 2) score += 20;
 
+  // Skate overrides
+  if (resort.isOpen === false) score = 0; // Close logic
+  else if (resort.isOpen) score += 40;
+
+  if (pref === 'natural' && resort.type === 'natural') score += 20;
+  if (pref === 'indoor' && resort.type === 'indoor') score += 20;
+
   return Math.round(score);
 }
 
@@ -297,6 +304,14 @@ function generateReasoning(resort, pref, domainId = 'ski') {
     else reasons.push({ type: 'bad', icon: '⚠️', text: `Lawinenstufe ${resort.avalancheLevel}!` });
 
     if (resort.elevation_gain > 800) reasons.push({ type: 'ok', icon: '🏔️', text: `${resort.elevation_gain}hm Aufstieg` });
+    if (resort.elevation_gain > 800) reasons.push({ type: 'ok', icon: '🏔️', text: `${resort.elevation_gain}hm Aufstieg` });
+  } else if (domainId === 'skate') {
+    // Skate reasoning
+    if (resort.isOpen) reasons.push({ type: 'good', icon: '✅', text: 'Geöffnet' });
+    else reasons.push({ type: 'bad', icon: '⛔', text: 'Geschlossen' });
+
+    if (resort.type === 'natural') reasons.push({ type: 'ok', icon: '🌲', text: 'Natureisbahn' });
+    if (resort.type === 'indoor') reasons.push({ type: 'ok', icon: '🏟️', text: 'Eishalle (Wetterunabhängig)' });
   } else {
     // Basic reasons for other placeholder domains
     reasons.push({ type: 'good', icon: '✅', text: 'Heute gute Bedingungen' });
