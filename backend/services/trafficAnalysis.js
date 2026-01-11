@@ -26,10 +26,10 @@ export async function getResortCongestionAnalysis(resortId, days = 7) {
             };
         }
 
-        // Query: Get all traffic data for this resort from all cities
+        // Query: Get only necessary columns for this resort
         const { data, error } = await supabase
             .from('traffic_logs')
-            .select('*')
+            .select('timestamp, delay, city_name')
             .eq('resort_id', resortId)
             .gte('timestamp', startDate.toISOString())
             .order('delay', { ascending: false });

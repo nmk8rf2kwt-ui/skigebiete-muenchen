@@ -47,7 +47,9 @@ export function extractNumber(text) {
 export function createResult(details, data, source) {
     // Determine ID and Name (supports both legacy string ID and new details object)
     const id = typeof details === 'string' ? details : (details.id || 'unknown');
-    const name = typeof details === 'object' ? (details.name || data.name || 'Unknown') : (data.name || 'Unknown');
+    
+    // PRIORITY: static details.name > data.name > 'Unknown'
+    const name = typeof details === 'object' && details.name ? details.name : (data.name || 'Unknown');
 
     return {
         id: id,
