@@ -424,11 +424,12 @@ export async function forceRefreshResort(resortId) {
         const rawData = await fetchWithTimeout((opts) => parser(opts), 10000);
 
         // Enrich with static metadata before validation to satisfy schema requirements
+        // Enrich with static metadata before validation to satisfy schema requirements
         const dataToValidate = {
             id: resort.id,
-            name: resort.name,
             status: rawData.status || 'live',
-            ...rawData
+            ...rawData,
+            name: rawData.name || resort.name, // Use rawData name if present, else fallback to static
         };
         const validation = ResortDataSchema.safeParse(dataToValidate);
 

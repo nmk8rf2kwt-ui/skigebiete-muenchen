@@ -47,14 +47,14 @@ export function extractNumber(text) {
 export function createResult(details, data, source) {
     // Determine ID and Name (supports both legacy string ID and new details object)
     const id = typeof details === 'string' ? details : (details.id || 'unknown');
-    
+
     // PRIORITY: static details.name > data.name > 'Unknown'
     const name = typeof details === 'object' && details.name ? details.name : (data.name || 'Unknown');
 
     return {
         id: id,
-        name: name,
-        ...data, // liftsOpen, liftsTotal, snow, etc.
+        ...data, // Spread first to prevent overwriting critical fields with undefined
+        name: name, // Ensure calculated name takes precedence
         status: STATUS.LIVE,
         source: source,
         lastUpdated: data.lastUpdated || new Date().toISOString()
