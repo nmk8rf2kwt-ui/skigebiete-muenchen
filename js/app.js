@@ -93,6 +93,10 @@ async function load() {
 
     if (!response.ok) throw new Error("API-Verbindung fehlgeschlagen");
     const resorts = await response.json();
+    console.log(`[DEBUG] Received ${resorts ? resorts.length : 0} resorts from API`);
+    if (!resorts || resorts.length === 0) {
+      console.warn("[DEBUG] API returned empty list!");
+    }
 
     // Enrich with distance and scoring
     const enhancedResorts = resorts.map(resort => {
@@ -242,6 +246,25 @@ import { DOMAIN_CONFIGS } from "./domainConfigs.js";
 
 // Initializing the application
 document.addEventListener("DOMContentLoaded", () => {
+  // DEBUG/SHORTLINK LOGIC
+  const urlParams = new URLSearchParams(window.location.search);
+
+  if (urlParams.has('clear')) {
+    localStorage.clear();
+    window.location.search = ''; // Reload cleanly
+    return;
+  }
+
+  if (urlParams.has('debug') || urlParams.has('results')) {
+    console.log("🛠️ Debug Mode Active: Bypassing Wizard");
+    const mockLoc = { latitude: 48.1351, longitude: 11.5820, name: "München (Debug)" };
+    localStorage.setItem('skigebiete_user_location', JSON.stringify(mockLoc));
+    // Set default wizard state to results
+    // store.setState not available yet? It is imported.
+    store.setState({ currentDomain: 'ski', viewMode: 'top3', preference: 'fast' });
+    // Proceed to standard init
+  }
+
   // 1. Initial State
   const savedLocation = localStorage.getItem('skigebiete_user_location');
   const wizardContainer = document.getElementById("wizardContainer");

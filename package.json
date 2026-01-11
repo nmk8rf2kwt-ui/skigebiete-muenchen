@@ -10,6 +10,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
+    "start": "cd backend && npm start",
     "test": "cd backend && npm test",
     "lint": "eslint .",
     "prepare": "husky"
