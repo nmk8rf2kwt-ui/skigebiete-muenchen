@@ -2,6 +2,7 @@ import express from "express";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { getWeatherForecast, getCurrentConditions } from "../services/weather/forecast.js";
 
 const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
@@ -20,10 +21,30 @@ const loadIceSkatingData = () => {
     }
 };
 
+
+
 // GET /api/ice-skating
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
     const data = loadIceSkatingData();
-    res.json(data);
+
+    const enriched = await Promise.all(data.map(async (item) => {
+        if (item.latitude && item.longitude) {
+            const forecast = await getWeatherForecast(item.latitude, item.longitude);
+            const current = getCurrentConditions(forecast);
+            if (current) {
+                return {
+                    ...item,
+                    weather: {
+                        temp: parseInt(current.temp),
+                        icon: current.emoji
+                    }
+                };
+            }
+        }
+        return item;
+    }));
+
+    res.json(enriched);
 });
 
 export default router;

@@ -20,10 +20,34 @@ const loadSkitourData = () => {
     }
 };
 
+import { getWeatherForecast, getCurrentConditions } from "../services/weather/forecast.js";
+
 // GET /api/skitours
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
     const data = loadSkitourData();
-    res.json(data);
+
+    const enriched = await Promise.all(data.map(async (item) => {
+        if (item.latitude && item.longitude) {
+            const forecast = await getWeatherForecast(item.latitude, item.longitude);
+            const current = getCurrentConditions(forecast);
+            if (current) {
+                // Use forecast for dynamic snow data
+                const todaysSnow = forecast.forecast[0]?.snowfall || 0;
+
+                return {
+                    ...item,
+                    newSnow: todaysSnow > 0 ? todaysSnow : item.newSnow, // Update if raining snow
+                    weather: {
+                        temp: parseInt(current.temp),
+                        icon: current.emoji
+                    }
+                };
+            }
+        }
+        return item;
+    }));
+
+    res.json(enriched);
 });
 
 export default router;

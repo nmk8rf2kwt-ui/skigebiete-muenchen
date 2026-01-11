@@ -108,6 +108,7 @@ async function load() {
 
       return {
         ...resort,
+        domain: domainId,
         distance_km: Math.round(dist),
         smartScore
       };

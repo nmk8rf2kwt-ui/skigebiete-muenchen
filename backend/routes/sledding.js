@@ -20,13 +20,32 @@ const loadSleddingData = () => {
     }
 };
 
+import { getWeatherForecast, getCurrentConditions } from "../services/weather/forecast.js";
+
 // GET /api/sledding
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
     const data = loadSleddingData();
 
-    // Enrich with some basic randomness for "live" feel (optional)
-    // or just return static
-    res.json(data);
+    // Enrich with live weather
+    const enriched = await Promise.all(data.map(async (item) => {
+        if (item.latitude && item.longitude) {
+            const forecast = await getWeatherForecast(item.latitude, item.longitude);
+            const current = getCurrentConditions(forecast);
+            if (current) {
+                return {
+                    ...item,
+                    weather: {
+                        temp: parseInt(current.temp), // "5°C" -> 5
+                        icon: current.emoji
+                    },
+                    snow: forecast.lastSnowfall ? item.snow : item.snow // Keep static snow for now found in JSON if distinct
+                };
+            }
+        }
+        return item;
+    }));
+
+    res.json(enriched);
 });
 
 export default router;

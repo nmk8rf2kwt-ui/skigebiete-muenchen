@@ -59,12 +59,19 @@ export function updateMap(resorts) {
             statusClass = 'is-error';
         }
 
+        // Determine Icon based on domain
+        let emoji = '⛷️';
+        if (resort.domain === 'sled') emoji = '🛷';
+        else if (resort.domain === 'skitour') emoji = '🏔️';
+        else if (resort.domain === 'skate') emoji = '⛸️';
+        else if (resort.domain === 'walk') emoji = '🚶';
+
         // Custom Marker Icon
         const icon = L.divIcon({
             className: 'custom-map-marker',
             html: `
                 <div class="marker-pin ${statusClass}"></div>
-                <div class="marker-icon">⛷️</div>
+                <div class="marker-icon">${emoji}</div>
             `,
             iconSize: [30, 42],
             iconAnchor: [15, 42],
