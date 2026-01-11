@@ -290,6 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!store.get().currentDomain) {
       store.setState({ currentDomain: 'ski' });
     }
+    load();
   } else {
     wizardContainer.style.display = "block";
     resultsView.style.display = "none";

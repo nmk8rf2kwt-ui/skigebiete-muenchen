@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.9.1] - 2026-01-11
+
+### 🩹 Hotfix
+- **Debug Mode Fix**: Resolved an issue where using `?debug=true` or loading from a saved session failed to trigger data fetch `load()`, resulting in an empty view. Added explicit `load()` trigger on initialization.
+
 ## [1.9.0] - 2026-01-11
 
 ### 🚀 Multi-Domain Expansion

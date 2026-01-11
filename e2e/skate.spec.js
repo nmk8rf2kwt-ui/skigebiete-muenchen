@@ -16,6 +16,16 @@ test('Eislaufen (Skate) flow working', async ({ page }) => {  // Mock Geolocatio
         await route.fulfill({ json: {} });
     });
 
+    // Mock Ice Skating API
+    await page.route('**/api/ice-skating', async route => {
+        await route.fulfill({
+            json: [{
+                id: 'prinzregenten', name: 'Prinzregentenstadion',
+                isOpen: true, type: 'indoor', weather: { temp: -2, icon: '❄️' }
+            }]
+        });
+    });
+
     // Mock Resorts API (Ski) - Fast response for initial load
     await page.route('**/api/resorts', async route => {
         await route.fulfill({ json: [] });
