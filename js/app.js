@@ -51,257 +51,162 @@ export function logToUI(msg, type = "info") {
   if (!container || !content) return;
 
   const time = new Date().toLocaleTimeString();
-  let icon = "ℹ️";
-  if (type === "success") icon = "✅";
-  if (type === "warning") icon = "⚠️";
-  if (type === "error") icon = "❌";
-
-  const entry = `<div class="status-entry">
-    <span style="color: #999;">[${time}]</span> ${icon} ${msg}
+  const icon = type === "success" ? "✅" : (type === "error" ? "❌" : "ℹ️");
+  const entry = `<div class="status-entry" style="border-left: 3px solid ${type === "success" ? "#2ecc71" : (type === "error" ? "#e74c3c" : "#3498db")}">
+    <span class="status-time">[${time}]</span> ${icon} ${msg}
   </div>`;
 
   content.innerHTML = entry + content.innerHTML;
-  container.style.display = "block";
 }
 
-export function hideError() {
-  const container = document.getElementById("searchError");
-  if (container) container.style.display = "none";
-}
-
-export function showLoading(msg = "Lade Live-Daten...") {
-  const banner = document.getElementById("loadingBanner");
-  const text = document.getElementById("loadingText");
-  if (banner && text) {
-    text.textContent = msg;
-    banner.style.display = "flex";
+export function showLoading(msg = "Lade Daten...") {
+  const loader = document.getElementById("loader");
+  if (loader) {
+    loader.querySelector(".loader-text").innerText = msg;
+    loader.style.display = "flex";
   }
 }
 
 export function hideLoading() {
-  const banner = document.getElementById("loadingBanner");
-  if (banner) banner.style.display = "none";
+  const loader = document.getElementById("loader");
+  if (loader) loader.style.display = "none";
 }
 
 /**
- * Load Data from Backend
+ * Core Logic: Fetch Resorts & Transform Data
  */
-export async function load() {
-  // Helper to process raw API data (scores, distances)
-  const processData = (rawData) => {
-    // Check if we are using the default Munich location
-    const distToMunich = getDistanceFromLatLonInKm(
-      currentSearchLocation.latitude,
-      currentSearchLocation.longitude,
-      MUNICH_DEFAULT.latitude,
-      MUNICH_DEFAULT.longitude
-    );
-    const isMunich = distToMunich < 2; // Within 2km of Marienplatz
-
-    let processed = rawData.map(resort => ({
-      ...resort,
-      score: calculateScore(resort),
-      // Preserve static duration only if we are in Munich
-      staticDuration: isMunich ? resort.distance : null
-    }));
-
-    if (currentSearchLocation.latitude) {
-      processed = processed.map(resort => {
-        if (resort.latitude && resort.longitude) {
-          const dist = getDistanceFromLatLonInKm(
-            currentSearchLocation.latitude,
-            currentSearchLocation.longitude,
-            resort.latitude,
-            resort.longitude
-          );
-          // NEW: Use linearDistance property, do NOT overwrite 'distance' (which is time in mins)
-          return { ...resort, linearDistance: Math.round(dist) };
-        }
-        return resort;
-      });
-    }
-    return processed;
-  };
-
+async function load() {
   showLoading();
-
-  // 1. Cache Strategy (Stale-While-Revalidate)
-  // Instantly show old data if available
   try {
-    const cached = localStorage.getItem('skigebiete_cache_v1');
-    if (cached) {
-      const { data, timestamp } = JSON.parse(cached);
-      const processed = processData(data);
-      store.setState({ resorts: processed, lastUpdated: new Date(timestamp) }, render);
-      // Ensure initMap is called if needed (render does it, but timing matters?)
-      // render() calls initMap if view is map.
-      console.log("⚡ Loaded from Cache");
-    }
-  } catch (e) {
-    console.warn("Cache read failed", e);
-  }
+    const domainId = store.get().currentDomain || 'ski';
+    const config = DOMAIN_CONFIGS[domainId];
+    const endpoint = config?.endpoint || '/api/resorts';
 
-  // 2. Network Strategy (Fresh Data)
-  try {
-    const res = await fetch(`${API_BASE_URL}/resorts`);
-    if (!res.ok) throw new Error("Failed to fetch resort data");
+    // Timeout logic for load
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-    let rawResorts = await res.json();
-
-    // Update Cache
-    localStorage.setItem('skigebiete_cache_v1', JSON.stringify({
-      data: rawResorts,
-      timestamp: new Date().getTime()
-    }));
-
-    const timestamp = new Date().toLocaleTimeString();
-    document.getElementById("timestamp").textContent = timestamp;
-
-    const finalResorts = processData(rawResorts);
-
-    store.setState({ resorts: finalResorts, lastUpdated: new Date() }, render);
-    logToUI(`Successfully loaded ${finalResorts.length} resorts`, "success");
-  } catch (err) {
-    showError(`Load Error: ${err.message}`);
-    logToUI(`Load Error: ${err.message}`, "error");
-  } finally {
-    hideLoading();
-  }
-}
-
-/**
- * Fetch Traffic Details for a specific starting point
- */
-export async function fetchTrafficForLocation(lat, lon, locationName = "custom location") {
-  showLoading(`Berechne Fahrzeiten von ${locationName}...`);
-  try {
-    const res = await fetch(`${API_BASE_URL}/routing/calculate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ latitude: lat, longitude: lon })
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      signal: controller.signal
     });
-    if (!res.ok) throw new Error("Traffic API failed");
+    clearTimeout(timeoutId);
 
-    const matrix = await res.json();
-    const resorts = store.get().resorts;
+    if (!response.ok) throw new Error("API-Verbindung fehlgeschlagen");
+    const resorts = await response.json();
 
-    const updatedResorts = resorts.map(resort => {
-      // Recalculate linear distance for the new location
-      let linearDist = resort.linearDistance;
-      if (resort.latitude && resort.longitude) {
-        linearDist = Math.round(getDistanceFromLatLonInKm(lat, lon, resort.latitude, resort.longitude));
-      }
+    // Enrich with distance and scoring
+    const enhancedResorts = resorts.map(resort => {
+      const dist = getDistanceFromLatLonInKm(
+        currentSearchLocation.latitude,
+        currentSearchLocation.longitude,
+        resort.latitude,
+        resort.longitude
+      );
 
-      // Determine if we are near Munich for this search (fallback logic)
-      const distToMunich = getDistanceFromLatLonInKm(lat, lon, MUNICH_DEFAULT.latitude, MUNICH_DEFAULT.longitude);
-      const isMunich = distToMunich < 2;
+      // Score remains ski-specific for now if it uses lifts, otherwise generalize
+      const smartScore = calculateScore(resort, store.get().preference, domainId);
 
-      const trafficData = matrix ? (matrix[resort.id] || matrix.resorts?.[resort.id]) : null;
-
-      if (trafficData) {
-        return {
-          ...resort,
-          linearDistance: linearDist,
-          staticDuration: isMunich ? resort.distance : null, // Reset static fallback based on new location
-          // Structure for render.js (expects seconds)
-          traffic: {
-            duration: trafficData.duration,      // seconds
-            delay: trafficData.delay,            // seconds
-            distanceKm: trafficData.distanceKm   // string or number
-          },
-          // Helper props if needed for sorting logic that uses root props?
-          // render.js uses data.traffic.distanceKm or data.distanceKm
-          distanceKm: trafficData.distanceKm,
-
-          inRadius: trafficData.inRadius
-        };
-      }
-
-      // Update linear distance and static fallback even if no traffic data
       return {
         ...resort,
-        linearDistance: linearDist,
-        staticDuration: isMunich ? resort.distance : null
+        distance_km: Math.round(dist),
+        smartScore
       };
     });
 
-    store.setState({ resorts: updatedResorts }, render);
-    logToUI(`Traffic times updated for ${locationName}`, "success");
-
-    // Also update map to show user location highlight
-    updateMap(updatedResorts);
-    showUserLocation(lat, lon, locationName);
-
+    store.setState({ resorts: enhancedResorts }, render);
+    logToUI(`Daten für ${enhancedResorts.length} Ziele geladen`, "success");
   } catch (err) {
-    showError(`Traffic Error: ${err.message}`);
-    logToUI(`Traffic Error: ${err.message}`, "error");
+    showError(`Daten-Ladefehler: ${err.message}`);
+    logToUI(err.message, "error");
   } finally {
     hideLoading();
   }
 }
 
 /**
- * Render logic
+ * Global render trigger
  */
-export function render() {
-  const state = store.get();
-  const resorts = store.getProcessedResorts();
-  const viewMode = state.viewMode || 'top3';
+function render() {
+  const { resorts, viewMode, currentDomain } = store.get();
+  if (!resorts.length) return;
 
-  const top3Cards = document.getElementById("top3Cards");
-  const mapView = document.getElementById("map-view");
+  const resultsGrid = document.getElementById("top3Cards");
   const tableView = document.getElementById("tableView");
+  const mapView = document.getElementById("map-view");
+
+  // Filter and Sort based on current UI state
+  const sortedResorts = [...resorts].sort((a, b) => b.smartScore - a.smartScore);
 
   if (viewMode === 'top3') {
-    if (top3Cards) top3Cards.style.display = "grid";
-    if (mapView) mapView.style.display = "none";
-    if (tableView) tableView.style.display = "none";
-    renderTable(resorts, state.sortKey, state.filter, state.sortDirection);
-  } else if (viewMode === 'map') {
-    if (top3Cards) top3Cards.style.display = "none";
-    if (mapView) mapView.style.display = "block";
-    if (tableView) tableView.style.display = "none";
-    import('./map.js').then(m => {
-      m.initMap(resorts);
-      m.updateMap(resorts);
-    });
+    import("./render.js").then(module => module.renderTop3Cards(sortedResorts.slice(0, 3), currentDomain));
   } else if (viewMode === 'table') {
-    if (top3Cards) top3Cards.style.display = "none";
-    if (mapView) mapView.style.display = "none";
-    if (tableView) tableView.style.display = "block";
-    renderTable(resorts, state.sortKey, state.filter, state.sortDirection);
+    renderTable(sortedResorts);
+  } else if (viewMode === 'map') {
+    updateMap(sortedResorts);
   }
+
+  // Update Map anyway if it's initialized
+  updateMap(sortedResorts);
 }
 
 /**
- * Address Search Handler
+ * Geocoding & Search Logic
  */
-export async function handleAddressSearch() {
-  const input = document.getElementById("addressInput").value;
-  if (!input || input.length < 3) return;
+async function handleAddressSearch() {
+  const address = document.getElementById("addressInput").value;
+  if (address.length < 3) return false;
 
-  showLoading(`Suche Standort: ${input}...`);
+  showLoading(`Suche "${address}"...`);
   try {
-    const res = await fetch(`${API_BASE_URL}/locating/geocode?q=${input}`);
-    if (!res.ok) throw new Error("Geocoding failed");
+    // 3 Second Timeout to prevent hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-    const data = await res.json();
-    if (!data || !data.latitude) throw new Error("Ort nicht gefunden");
-
-    setCurrentSearchLocation({
-      latitude: data.latitude,
-      longitude: data.longitude,
-      name: data.name || input
+    const response = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(address)}&limit=1`, {
+      signal: controller.signal
     });
+    clearTimeout(timeoutId);
 
-    logToUI(`Standort gefunden: ${currentSearchLocation.name}`, "success");
-    fetchTrafficForLocation(data.latitude, data.longitude, currentSearchLocation.name);
-    return true; // Success for wizard transition
+    const data = await response.json();
+
+    if (data.features?.length > 0) {
+      const feat = data.features[0];
+      const name = feat.properties.city || feat.properties.name || address;
+      const [lon, lat] = feat.geometry.coordinates;
+
+      setCurrentSearchLocation({ latitude: lat, longitude: lon, name });
+      logToUI(`Standort erkannt: ${name}`, "success");
+
+      // Auto-load after location fix
+      await fetchTrafficForLocation(lat, lon, name);
+      return true;
+    } else {
+      showError("Standort nicht gefunden. Bitte versuche es genauer.");
+      return false;
+    }
   } catch (err) {
     showError(`Such-Fehler: ${err.message}`);
     return false;
   } finally {
     hideLoading();
+  }
+}
+
+/**
+ * Traffic API Proxy
+ */
+async function fetchTrafficForLocation(lat, lon, name) {
+  try {
+    showLoading(`Berechne Fahrzeiten von ${name}...`);
+    const response = await fetch(`${API_BASE_URL}/api/traffic-all?lat=${lat}&lon=${lon}`);
+    if (!response.ok) throw new Error("Verkehrsdaten-Fehler");
+
+    // We update results silently in background
+    await load();
+  } catch (err) {
+    console.warn("Traffic error:", err);
+    logToUI("Fahrzeiten vorerst geschätzt (Traffic API Limit)", "info");
+    await load();
   }
 }
 
@@ -329,6 +234,8 @@ export async function handleGeolocation() {
   );
 }
 
+import { DOMAIN_CONFIGS } from "./domainConfigs.js";
+
 // Initializing the application
 document.addEventListener("DOMContentLoaded", () => {
   // 1. Initial State
@@ -350,9 +257,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const loc = JSON.parse(savedLocation);
     const heading = document.getElementById("resultsHeading");
     if (heading) heading.textContent = `Beste Wahl heute von ${loc.name || 'deinem Standort'}`;
+
+    // Default to ski if loading from saved
+    store.setState({ currentDomain: 'ski' });
   } else {
     wizardContainer.style.display = "block";
     resultsView.style.display = "none";
+
+    // Show Step 1 (Location) and ensure others are hidden
+    const stepLocation = document.getElementById('step-location');
+    const stepActivity = document.getElementById('step-activity');
+    const stepPrefs = document.getElementById('step-prefs');
+    if (stepLocation) stepLocation.style.display = 'block';
+    if (stepActivity) stepActivity.style.display = 'none';
+    if (stepPrefs) stepPrefs.style.display = 'none';
   }
 
   initEventListeners({

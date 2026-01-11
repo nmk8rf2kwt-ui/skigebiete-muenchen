@@ -3,6 +3,9 @@ import { sortResorts } from './sorting.js';
 import { escapeHtml } from './utils.js';
 import { renderCongestionCell } from './congestionForecast.js';
 
+import { store } from './store.js';
+import { DOMAIN_CONFIGS } from './domainConfigs.js';
+
 const SCORE_WEIGHTS = {
   PISTE_KM: 2,
   DISTANCE: -0.5,
@@ -12,8 +15,6 @@ const SCORE_WEIGHTS = {
   DEFAULT_DISTANCE: 100,
   DEFAULT_PRICE: 50
 };
-
-import { store } from './store.js';
 
 // Helper to calculate a score for ranking
 export function calculateScore(resort) {
@@ -158,22 +159,30 @@ export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirect
 
 function renderTop3Cards(topData, isExpanded = false) {
   const container = document.getElementById("top3Cards");
+  const domainId = store.get().currentDomain || 'ski';
+  const config = DOMAIN_CONFIGS[domainId];
+  const userPref = store.get().preference || config.prefs[0].id;
+
+  if (!container) return;
   container.innerHTML = "";
-  const userPref = store.get().preference || 'fast';
 
   topData.forEach((r, i) => {
     const card = document.createElement("div");
-    card.className = "top3-card"; // Keeping class name consistent or using new one
-
+    card.className = "top3-card";
     const score = r.smartScore ?? r.score ?? 0;
-    const etaMins = Math.round((r.traffic?.duration || 0) / 60 || r.distance || 0);
-    const snow = r.snow?.mountain ?? 0;
-    const totalLifts = r.liftsTotal || r.lifts || 1;
-    const liftPct = Math.round((r.liftsOpen / totalLifts) * 100);
 
-    // Generate Reasoning List
-    const reasons = generateReasoning(r, userPref);
+    // Generate Reasoning List (Simplified/Generalized)
+    const reasons = generateReasoning(r, userPref, domainId);
     const safeName = escapeHtml(r.name);
+
+    // Metadata-driven Metrics
+    const metricsHtml = config.metrics.map(m => `
+      <div class="brutal-metric" style="text-align: center;">
+          <span style="font-size: 1.5em; display: block;">${m.icon}</span>
+          <strong style="font-size: 1.1em; display: block;">${m.formatter(r)}</strong>
+          <span style="font-size: 0.75em; color: #7f8c8d;">${m.label}</span>
+      </div>
+    `).join('');
 
     card.innerHTML = `
       <div class="top3-header-new" style="background: #f8f9fa; padding: 15px; border-bottom: 1px solid #eee;">
@@ -184,21 +193,7 @@ function renderTop3Cards(topData, isExpanded = false) {
       </div>
       
       <div class="top3-metrics-brutal" style="display: flex; justify-content: space-around; padding: 20px 10px; background: #fff;">
-        <div class="brutal-metric" style="text-align: center;">
-            <span style="font-size: 1.5em; display: block;">🚠</span>
-            <strong style="font-size: 1.1em; display: block;">${liftPct}%</strong>
-            <span style="font-size: 0.75em; color: #7f8c8d;">Offen</span>
-        </div>
-        <div class="brutal-metric" style="text-align: center;">
-            <span style="font-size: 1.5em; display: block;">❄️</span>
-            <strong style="font-size: 1.1em; display: block;">${snow} cm</strong>
-            <span style="font-size: 0.75em; color: #7f8c8d;">Schnee</span>
-        </div>
-        <div class="brutal-metric" style="text-align: center;">
-            <span style="font-size: 1.5em; display: block;">🚗</span>
-            <strong style="font-size: 1.1em; display: block;">${etaMins} min</strong>
-            <span style="font-size: 0.75em; color: #7f8c8d;">Anfahrt</span>
-        </div>
+        ${metricsHtml}
       </div>
 
       <div class="top3-reasoning-collapsible" style="padding: 10px 15px; border-top: 1px dashed #eee;">
@@ -217,11 +212,11 @@ function renderTop3Cards(topData, isExpanded = false) {
       </div>
 
       <div class="top3-outcomes" style="padding: 15px; background: #fdfdfd; border-top: 1px solid #eee; display: flex; flex-direction: column; gap: 10px;">
-        <button class="outcome-btn-main" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address || r.name)}', '_blank')" style="padding: 12px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s;">Heute fahren ➔</button>
+        <button class="outcome-btn-main" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address || r.name)}', '_blank')" style="padding: 12px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s;">Anfahrt öffnen ➔</button>
         <div style="display: flex; gap: 8px;">
             <button onclick="navigator.share ? navigator.share({title: '${safeName}', url: window.location.href}) : alert('Share not supported')" style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Teilen 🔗</button>
             <button style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Merken ⭐</button>
-            <button class="details-btn" data-resort-id="${r.id}" data-resort-name="${safeName}" style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Details 📋</button>
+            ${domainId === 'ski' ? `<button class="details-btn" data-resort-id="${r.id}" data-resort-name="${safeName}" style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Details 📋</button>` : ''}
         </div>
       </div>
     `;
@@ -232,349 +227,385 @@ function renderTop3Cards(topData, isExpanded = false) {
 function generateReasoning(resort, pref) {
   const reasons = [];
   const liftPct = resort.liftsOpen / (resort.liftsTotal || resort.lifts || 1);
-  const snow = resort.snow?.mountain ?? 0;
-  const eta = Math.round((resort.traffic?.duration || 0) / 60 || resort.distance || 0);
-  const price = resort.price ?? 0;
+  function generateReasoning(resort, pref, domainId = 'ski') {
+    const reasons = [];
 
-  // 1. Lifts
-  if (liftPct > 0.8) reasons.push({ type: 'good', icon: '✅', text: `${Math.round(liftPct * 100)}% Lifte offen` });
-  else if (liftPct > 0.5) reasons.push({ type: 'ok', icon: '⚠️', text: `Nur ${Math.round(liftPct * 100)}% Lifte offen` });
-  else reasons.push({ type: 'bad', icon: '❌', text: `Wenig Betrieb (${Math.round(liftPct * 100)}%)` });
+    if (domainId === 'ski') {
+      const liftPct = resort.liftsOpen / (resort.liftsTotal || resort.lifts || 1);
+      const snow = resort.snow?.mountain ?? 0;
+      const eta = Math.round((resort.traffic?.duration || 0) / 60 || resort.distance || 0);
 
-  // 2. Snow
-  if (snow > 80) reasons.push({ type: 'good', icon: '✅', text: `${snow} cm Schnee (Top)` });
-  else if (snow > 30) reasons.push({ type: 'ok', icon: '✅', text: `${snow} cm Schnee` });
-  else reasons.push({ type: 'bad', icon: '⚠️', text: `Wenig Schnee (${snow} cm)` });
+      if (liftPct > 0.8) reasons.push({ type: 'good', icon: '✅', text: `${Math.round(liftPct * 100)}% Lifte offen` });
+      else if (liftPct > 0.5) reasons.push({ type: 'ok', icon: '⚠️', text: `Nur ${Math.round(liftPct * 100)}% Lifte offen` });
 
-  // 3. ETA
-  if (eta < 75) reasons.push({ type: 'good', icon: '✅', text: `Sehr nah (${eta} min)` });
-  else if (eta < 120) reasons.push({ type: 'ok', icon: '✅', text: `${eta} min Anfahrt` });
-  else reasons.push({ type: 'bad', icon: '⚠️', text: `Lange Anfahrt (${eta} min)` });
+      if (snow > 80) reasons.push({ type: 'good', icon: '✅', text: `${snow} cm Schnee (Top)` });
+      else if (snow > 30) reasons.push({ type: 'ok', icon: '✅', text: `${snow} cm Schnee` });
 
-  // 4. Price
-  if (price > 0) {
-    if (price < 45) reasons.push({ type: 'good', icon: '✅', text: `Günstiger Tagespass (€${price})` });
-    else if (price > 65) reasons.push({ type: 'bad', icon: '❌', text: `Hoher Preis (€${price})` });
+      if (eta < 90) reasons.push({ type: 'good', icon: '✅', text: `Schnelle Anfahrt (${eta} min)` });
+      else if (eta > 150) reasons.push({ type: 'bad', icon: '⚠️', text: `Längere Anfahrt (${eta} min)` });
+    } else {
+      // Basic reasons for placeholder domains
+      reasons.push({ type: 'good', icon: '✅', text: 'Heute gute Bedingungen' });
+      reasons.push({ type: 'ok', icon: '📍', text: 'Gut erreichbar' });
+    }
+
+    return reasons;
   }
 
-  return reasons;
-}
+  export function calculateScore(resort) {
+    const domainId = store.get().currentDomain || 'ski';
+
+    // Scoring for non-ski domains (Basic for now)
+    if (domainId !== 'ski') {
+      return Math.round(60 + Math.random() * 30); // Simple random score for MVP demonstration
+    }
+
+    const pref = store.get().preference || 'fast';
+
+    const piste = resort.piste_km || 0;
+    const dist = resort.distance || SCORE_WEIGHTS.DEFAULT_DISTANCE;
+    const price = resort.price || SCORE_WEIGHTS.DEFAULT_PRICE;
+    const openLifts = resort.liftsOpen || 0;
+    const snow = resort.snow?.mountain ?? 0;
+
+    let weights = { ...SCORE_WEIGHTS };
+
+    // Adjust weights based on preference
+    if (pref === 'fast') {
+      weights.DISTANCE = -1.5;
+    } else if (pref === 'snow') {
+      weights.SNOW = 2.0;
+    } else if (pref === 'open') {
+      weights.OPEN_LIFTS = 6.0;
+    } else if (pref === 'price') {
+      weights.PRICE = -1.5;
+    }
+
+    const score =
+      (piste * weights.PISTE_KM) +
+      (dist * weights.DISTANCE) +
+      (price * weights.PRICE) +
+      (openLifts * weights.OPEN_LIFTS) +
+      (snow * weights.SNOW);
+
+    return Math.round(score);
+  }
 
 
-// Helper to get current price based on date (Seasonal Pricing)
-function getCurrentPriceDetail(resort) {
-  if (!resort.seasons || !resort.seasons.length) {
+  // Helper to get current price based on date (Seasonal Pricing)
+  function getCurrentPriceDetail(resort) {
+    if (!resort.seasons || !resort.seasons.length) {
+      return resort.priceDetail;
+    }
+
+    // Get local date as YYYY-MM-DD
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const todayStr = `${year}-${month}-${day}`;
+
+    // Find matching season
+    const currentSeason = resort.seasons.find(s => {
+      return todayStr >= s.start && todayStr <= s.end;
+    });
+
+    if (currentSeason) {
+      return {
+        ...currentSeason.priceDetail,
+        // Append season name to info if not present
+        info: currentSeason.priceDetail.info || currentSeason.name
+      };
+    }
+
+    // Fallback to default if no season matches (e.g. out of season)
     return resort.priceDetail;
   }
 
-  // Get local date as YYYY-MM-DD
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  const todayStr = `${year}-${month}-${day}`;
+  export function renderRow(row, data) {
+    // Determine if data is missing or just zero
+    // const hasLive = data.status === "live"; // Unused
 
-  // Find matching season
-  const currentSeason = resort.seasons.find(s => {
-    return todayStr >= s.start && todayStr <= s.end;
-  });
+    // Escape Common Inputs
+    const safeName = escapeHtml(data.name);
+    const safeWebsite = escapeHtml(data.website);
+    const safeWebcam = escapeHtml(data.webcam);
 
-  if (currentSeason) {
-    return {
-      ...currentSeason.priceDetail,
-      // Append season name to info if not present
-      info: currentSeason.priceDetail.info || currentSeason.name
-    };
-  }
+    // Format price
+    let price = "-";
 
-  // Fallback to default if no season matches (e.g. out of season)
-  return resort.priceDetail;
-}
+    // Dynamic Price Check
+    const pd = getCurrentPriceDetail(data);
 
-export function renderRow(row, data) {
-  // Determine if data is missing or just zero
-  // const hasLive = data.status === "live"; // Unused
+    if (pd) {
+      const cur = pd.currency || "€";
+      const fmt = (v) => v ? v.toFixed(2).replace('.', ',') + ' ' + cur : null;
 
-  // Escape Common Inputs
-  const safeName = escapeHtml(data.name);
-  const safeWebsite = escapeHtml(data.website);
-  const safeWebcam = escapeHtml(data.webcam);
+      const pAdult = fmt(pd.adult);
+      const pYouth = fmt(pd.youth);
+      const pChild = fmt(pd.child);
+      const safeInfo = escapeHtml(pd.info || 'Zur Preisübersicht');
 
-  // Format price
-  let price = "-";
-
-  // Dynamic Price Check
-  const pd = getCurrentPriceDetail(data);
-
-  if (pd) {
-    const cur = pd.currency || "€";
-    const fmt = (v) => v ? v.toFixed(2).replace('.', ',') + ' ' + cur : null;
-
-    const pAdult = fmt(pd.adult);
-    const pYouth = fmt(pd.youth);
-    const pChild = fmt(pd.child);
-    const safeInfo = escapeHtml(pd.info || 'Zur Preisübersicht');
-
-    price = `
+      price = `
       <a href="${safeWebsite}" target="_blank" style="text-decoration: none; color: inherit; display: block; font-size: 0.8em; line-height: 1.3; text-align: left;" title="${safeInfo}">
         ${pAdult ? `<div style="white-space: nowrap;">Erw.: ${pAdult}</div>` : ''}
         ${pYouth ? `<div style="white-space: nowrap;">Jugendl.: ${pYouth}</div>` : ''}
         ${pChild ? `<div style="white-space: nowrap;">Kind: ${pChild}</div>` : ''}
       </a>
     `;
-  } else if (data.price) {
-    price = `€${data.price.toFixed(2)}`;
-  }
-
-  // Format lifts
-  let liftStatus = "-";
-  // liftsTotal comes from live parser, lifts comes from static JSON
-  const totalLifts = data.liftsTotal || data.lifts;
-
-  if (data.status === "error") {
-    liftStatus = "n.a. ⚠️";
-  } else if (totalLifts) {
-    if (data.status === "static_only" || data.status === undefined) {
-      liftStatus = `⏳ / ${totalLifts}`;
-    } else {
-      const open = data.liftsOpen ?? "?";
-      liftStatus = `${open} / ${totalLifts}`;
-    }
-  }
-
-  // Format travel time (Standard & Traffic)
-  let standardMins = 0;
-  let trafficDisplay = '<span style="color: #bdc3c7; font-size: 0.9em;">-</span>'; // Default gray
-  let standardDisplay = "-";
-  let delayDisplay = "-";
-
-  // Check if we have live traffic data (duration & delay in seconds from backend)
-  if (data.traffic?.loading) {
-    trafficDisplay = '<span class="loading-spinner-small"></span>';
-    // Use fallback if available
-    if (data.staticDuration) standardMins = data.staticDuration;
-  } else if (data.traffic && data.traffic.duration) {
-    // Backend delivers seconds since v1.4.1 fix
-    const durationSecs = data.traffic.duration;
-    const delaySecs = data.traffic.delay || 0;
-
-    // Calculate Live & Base Minutes
-    const liveMins = Math.round(durationSecs / 60);
-    const baseMins = Math.round((durationSecs - delaySecs) / 60);
-
-    standardMins = baseMins;
-
-    // 2. Traffic Time with Color
-    const delayMins = Math.round(delaySecs / 60);
-    let style = "";
-    if (delayMins > 20) style = "color: #e74c3c; font-weight: bold;"; // Red
-    else if (delayMins > 10) style = "color: #f39c12; font-weight: bold;"; // Orange
-    else if (delayMins > 0) style = "color: #f1c40f;"; // Yellow
-    else style = "color: #2ecc71;"; // Green
-
-    const delayText = delayMins > 0 ? ` (+${delayMins} min)` : '';
-    const formattedLive = formatDuration(liveMins);
-    trafficDisplay = `<span style="${style}" title="Aktuell: ${liveMins} min${escapeHtml(delayText)}">${formattedLive}</span>`;
-
-    // 3. Independent Delay Display
-    const formattedDelay = formatDuration(delayMins);
-    delayDisplay = `<span style="${style}">${formattedDelay}</span>`;
-  } else if (data.staticDuration) {
-    // Fallback to static Munich data ONLY if we are in Munich (determined by app.js)
-    standardMins = data.staticDuration;
-    if (data.status === "live") {
-      // Improved error visibility for live resorts missing traffic data
-      trafficDisplay = `<span title="Verkehrsdaten konnten nicht geladen werden" style="color: #e67e22; font-weight: bold; cursor: help;">⚠️ n.a.</span>`;
-    }
-  }
-
-  // Render Standard Display (Column 1)
-  if (standardMins > 0) {
-    const timeText = formatDuration(standardMins);
-    if (data.latitude && data.longitude) {
-      const destQuery = data.address ? encodeURIComponent(data.address) : `${data.latitude},${data.longitude}`;
-      // Note: If we use static time, we might still want to link to directions from current location?
-      // Yes, current location is in data? No.
-      // Directions link usually assumes "current user location" or specific origin.
-      // Google Maps "dir" without origin uses user's current location.
-      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destQuery}&travelmode=driving`;
-      const title = data.traffic ? `Fahrzeit ohne Verkehr (Live-Basis: ${standardMins} min)` : `Fahrzeit ab München (Statisch: ${standardMins} min)`;
-      standardDisplay = `<a href="${mapsUrl}" target="_blank" title="${title}" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${timeText}</a>`;
-    } else {
-      standardDisplay = timeText;
-    }
-  }
-
-  // ... (Snow Display logic starts) ...
-
-
-  // Snow Display - use forecast data if available
-  let snowDisplay = "-";
-  // Check for new object structure first
-  if (data.snow && typeof data.snow === 'object') {
-    const s = data.snow;
-    // const mountain = s.mountain !== null ? `${s.mountain} cm` : "-";
-    // const valley = s.valley !== null ? `${s.valley} cm` : "-";
-
-    // Combined display: "Mountain / Valley" or just one if the other is missing?
-    // User asked for "schneehöhen für tal und berg".
-    // Let's ensure icons or labels: "🏔️ 50 / 🏠 20"
-
-    let text = "";
-    if (s.mountain !== null && s.valley !== null) {
-      text = `🏔️${s.mountain} / 🏠${s.valley} cm`;
-    } else if (s.mountain !== null) {
-      text = `🏔️${s.mountain} cm`;
-    } else if (s.valley !== null) {
-      text = `🏠${s.valley} cm`;
-    } else {
-      text = "-";
+    } else if (data.price) {
+      price = `€${data.price.toFixed(2)}`;
     }
 
-    // Source Indication
-    const sourceColor = s.source === 'api' ? '#f1c40f' : '#2ecc71'; // Yellow vs Green
-    const sourceTitle = s.source === 'api'
-      ? 'Daten von Wetter-API (geschätzt/Fallback)'
-      : 'Offizielle Daten vom Skigebiet';
+    // Format lifts
+    let liftStatus = "-";
+    // liftsTotal comes from live parser, lifts comes from static JSON
+    const totalLifts = data.liftsTotal || data.lifts;
 
-    const timestamp = s.timestamp ? new Date(s.timestamp).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '';
-    const safeState = escapeHtml(s.state || ''); // Ensure s.state is treated as string for escapeHtml
-    const tooltip = `${sourceTitle}${timestamp ? ` (Stand: ${timestamp})` : ''}${safeState ? `\nZustand: ${safeState}` : ''}`;
-
-    snowDisplay = `<span title="${escapeHtml(tooltip)}" style="border-bottom: 2px solid ${sourceColor}; cursor: help;">${text}</span>`;
-
-  } else if (data.snow) {
-    // Fallback to old format (string)
-    snowDisplay = escapeHtml(data.snow);
-  } else if (data.status === "error") {
-    snowDisplay = "n.a.";
-  }
-
-  // Last Snowfall Display - check nested structure
-  let lastSnowfallDisplay = "-";
-  // Priority: data.snow.lastSnowfall (Resort) -> data.forecast.lastSnowfall (API) -> data.lastSnowfall (Legacy)
-  const lastSnowfallDate = data.snow?.lastSnowfall || data.forecast?.lastSnowfall || data.lastSnowfall;
-
-  if (lastSnowfallDate) {
-    const snowDate = new Date(lastSnowfallDate);
-    const today = new Date();
-    // Fix: Handle future dates (e.g. from different timezones or forecast data) by clamping to 0
-    const diffTime = today - snowDate;
-    let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    if (diffDays < 0) diffDays = 0;
-
-    if (diffDays === 0) {
-      lastSnowfallDisplay = "heute";
-    } else if (diffDays === 1) {
-      lastSnowfallDisplay = "gestern";
-    } else if (diffDays <= 7) {
-      lastSnowfallDisplay = `vor ${diffDays} Tagen`;
-    } else {
-      lastSnowfallDisplay = snowDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+    if (data.status === "error") {
+      liftStatus = "n.a. ⚠️";
+    } else if (totalLifts) {
+      if (data.status === "static_only" || data.status === undefined) {
+        liftStatus = `⏳ / ${totalLifts}`;
+      } else {
+        const open = data.liftsOpen ?? "?";
+        liftStatus = `${open} / ${totalLifts}`;
+      }
     }
-  }
 
-  // Weather
-  const weatherIcon = getWeatherIcon(data.weather);
-  let weatherDisplay = "-";
+    // Format travel time (Standard & Traffic)
+    let standardMins = 0;
+    let trafficDisplay = '<span style="color: #bdc3c7; font-size: 0.9em;">-</span>'; // Default gray
+    let standardDisplay = "-";
+    let delayDisplay = "-";
 
-  // Forecast (3 Days) - check data.forecast array
-  // Backend sends forecast as: { forecast: [...], lastSnowfall: "..." }
-  const forecastArray = data.forecast?.forecast || data.forecast;
+    // Check if we have live traffic data (duration & delay in seconds from backend)
+    if (data.traffic?.loading) {
+      trafficDisplay = '<span class="loading-spinner-small"></span>';
+      // Use fallback if available
+      if (data.staticDuration) standardMins = data.staticDuration;
+    } else if (data.traffic && data.traffic.duration) {
+      // Backend delivers seconds since v1.4.1 fix
+      const durationSecs = data.traffic.duration;
+      const delaySecs = data.traffic.delay || 0;
 
-  if (forecastArray && Array.isArray(forecastArray) && forecastArray.length >= 3) {
-    // Create three icons
-    const icons = forecastArray.slice(0, 3).map(f => {
-      // Ensure we have a symbol. If backend sends text (e.g. "Overcast" or "Fog"), derive icon from it.
-      // Emojis are usually non-Latin characters. Use regex to check for letters.
-      let icon = f.weatherEmoji;
-      let desc = f.weatherDesc || f.weather || "";
+      // Calculate Live & Base Minutes
+      const liveMins = Math.round(durationSecs / 60);
+      const baseMins = Math.round((durationSecs - delaySecs) / 60);
 
-      // If icon is missing OR contains Latin letters, derive it.
-      if (!icon || /[a-zA-Z]/.test(icon)) {
-        icon = getWeatherIcon(f.weather || f.weatherDesc || icon || "");
+      standardMins = baseMins;
+
+      // 2. Traffic Time with Color
+      const delayMins = Math.round(delaySecs / 60);
+      let style = "";
+      if (delayMins > 20) style = "color: #e74c3c; font-weight: bold;"; // Red
+      else if (delayMins > 10) style = "color: #f39c12; font-weight: bold;"; // Orange
+      else if (delayMins > 0) style = "color: #f1c40f;"; // Yellow
+      else style = "color: #2ecc71;"; // Green
+
+      const delayText = delayMins > 0 ? ` (+${delayMins} min)` : '';
+      const formattedLive = formatDuration(liveMins);
+      trafficDisplay = `<span style="${style}" title="Aktuell: ${liveMins} min${escapeHtml(delayText)}">${formattedLive}</span>`;
+
+      // 3. Independent Delay Display
+      const formattedDelay = formatDuration(delayMins);
+      delayDisplay = `<span style="${style}">${formattedDelay}</span>`;
+    } else if (data.staticDuration) {
+      // Fallback to static Munich data ONLY if we are in Munich (determined by app.js)
+      standardMins = data.staticDuration;
+      if (data.status === "live") {
+        // Improved error visibility for live resorts missing traffic data
+        trafficDisplay = `<span title="Verkehrsdaten konnten nicht geladen werden" style="color: #e67e22; font-weight: bold; cursor: help;">⚠️ n.a.</span>`;
+      }
+    }
+
+    // Render Standard Display (Column 1)
+    if (standardMins > 0) {
+      const timeText = formatDuration(standardMins);
+      if (data.latitude && data.longitude) {
+        const destQuery = data.address ? encodeURIComponent(data.address) : `${data.latitude},${data.longitude}`;
+        // Note: If we use static time, we might still want to link to directions from current location?
+        // Yes, current location is in data? No.
+        // Directions link usually assumes "current user location" or specific origin.
+        // Google Maps "dir" without origin uses user's current location.
+        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destQuery}&travelmode=driving`;
+        const title = data.traffic ? `Fahrzeit ohne Verkehr (Live-Basis: ${standardMins} min)` : `Fahrzeit ab München (Statisch: ${standardMins} min)`;
+        standardDisplay = `<a href="${mapsUrl}" target="_blank" title="${title}" style="text-decoration: underline; text-decoration-style: dotted; color: inherit;">${timeText}</a>`;
+      } else {
+        standardDisplay = timeText;
+      }
+    }
+
+    // ... (Snow Display logic starts) ...
+
+
+    // Snow Display - use forecast data if available
+    let snowDisplay = "-";
+    // Check for new object structure first
+    if (data.snow && typeof data.snow === 'object') {
+      const s = data.snow;
+      // const mountain = s.mountain !== null ? `${s.mountain} cm` : "-";
+      // const valley = s.valley !== null ? `${s.valley} cm` : "-";
+
+      // Combined display: "Mountain / Valley" or just one if the other is missing?
+      // User asked for "schneehöhen für tal und berg".
+      // Let's ensure icons or labels: "🏔️ 50 / 🏠 20"
+
+      let text = "";
+      if (s.mountain !== null && s.valley !== null) {
+        text = `🏔️${s.mountain} / 🏠${s.valley} cm`;
+      } else if (s.mountain !== null) {
+        text = `🏔️${s.mountain} cm`;
+      } else if (s.valley !== null) {
+        text = `🏠${s.valley} cm`;
+      } else {
+        text = "-";
       }
 
-      // If we derived the icon from text, use that text as description if none exists
-      if (!desc && /[a-zA-Z]/.test(f.weather)) desc = f.weather;
+      // Source Indication
+      const sourceColor = s.source === 'api' ? '#f1c40f' : '#2ecc71'; // Yellow vs Green
+      const sourceTitle = s.source === 'api'
+        ? 'Daten von Wetter-API (geschätzt/Fallback)'
+        : 'Offizielle Daten vom Skigebiet';
 
-      // Tooltip: "Mo, 06.01.: Leicht bewölkt, 5°C / -2°C"
-      const dateObj = new Date(f.date);
-      const dateStr = dateObj.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
-      const tempStr = `${f.tempMax}°C / ${f.tempMin}°C`;
-      const safeDesc = escapeHtml(desc);
-      const tooltip = `${dateStr}: ${safeDesc ? safeDesc + ', ' : ''}${tempStr}`;
+      const timestamp = s.timestamp ? new Date(s.timestamp).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '';
+      const safeState = escapeHtml(s.state || ''); // Ensure s.state is treated as string for escapeHtml
+      const tooltip = `${sourceTitle}${timestamp ? ` (Stand: ${timestamp})` : ''}${safeState ? `\nZustand: ${safeState}` : ''}`;
 
-      // Short Date: "26.1."
-      const shortDate = dateObj.toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' });
+      snowDisplay = `<span title="${escapeHtml(tooltip)}" style="border-bottom: 2px solid ${sourceColor}; cursor: help;">${text}</span>`;
 
-      return `
+    } else if (data.snow) {
+      // Fallback to old format (string)
+      snowDisplay = escapeHtml(data.snow);
+    } else if (data.status === "error") {
+      snowDisplay = "n.a.";
+    }
+
+    // Last Snowfall Display - check nested structure
+    let lastSnowfallDisplay = "-";
+    // Priority: data.snow.lastSnowfall (Resort) -> data.forecast.lastSnowfall (API) -> data.lastSnowfall (Legacy)
+    const lastSnowfallDate = data.snow?.lastSnowfall || data.forecast?.lastSnowfall || data.lastSnowfall;
+
+    if (lastSnowfallDate) {
+      const snowDate = new Date(lastSnowfallDate);
+      const today = new Date();
+      // Fix: Handle future dates (e.g. from different timezones or forecast data) by clamping to 0
+      const diffTime = today - snowDate;
+      let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      if (diffDays < 0) diffDays = 0;
+
+      if (diffDays === 0) {
+        lastSnowfallDisplay = "heute";
+      } else if (diffDays === 1) {
+        lastSnowfallDisplay = "gestern";
+      } else if (diffDays <= 7) {
+        lastSnowfallDisplay = `vor ${diffDays} Tagen`;
+      } else {
+        lastSnowfallDisplay = snowDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+      }
+    }
+
+    // Weather
+    const weatherIcon = getWeatherIcon(data.weather);
+    let weatherDisplay = "-";
+
+    // Forecast (3 Days) - check data.forecast array
+    // Backend sends forecast as: { forecast: [...], lastSnowfall: "..." }
+    const forecastArray = data.forecast?.forecast || data.forecast;
+
+    if (forecastArray && Array.isArray(forecastArray) && forecastArray.length >= 3) {
+      // Create three icons
+      const icons = forecastArray.slice(0, 3).map(f => {
+        // Ensure we have a symbol. If backend sends text (e.g. "Overcast" or "Fog"), derive icon from it.
+        // Emojis are usually non-Latin characters. Use regex to check for letters.
+        let icon = f.weatherEmoji;
+        let desc = f.weatherDesc || f.weather || "";
+
+        // If icon is missing OR contains Latin letters, derive it.
+        if (!icon || /[a-zA-Z]/.test(icon)) {
+          icon = getWeatherIcon(f.weather || f.weatherDesc || icon || "");
+        }
+
+        // If we derived the icon from text, use that text as description if none exists
+        if (!desc && /[a-zA-Z]/.test(f.weather)) desc = f.weather;
+
+        // Tooltip: "Mo, 06.01.: Leicht bewölkt, 5°C / -2°C"
+        const dateObj = new Date(f.date);
+        const dateStr = dateObj.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+        const tempStr = `${f.tempMax}°C / ${f.tempMin}°C`;
+        const safeDesc = escapeHtml(desc);
+        const tooltip = `${dateStr}: ${safeDesc ? safeDesc + ', ' : ''}${tempStr}`;
+
+        // Short Date: "26.1."
+        const shortDate = dateObj.toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' });
+
+        return `
         <div style="display: flex; flex-direction: column; align-items: center; margin-right: 8px;" title="${escapeHtml(tooltip)}">
           <span style="font-size: 0.7em; font-weight: bold; color: #444; margin-bottom: 2px;">${Math.round(f.tempMax)}°/${Math.round(f.tempMin)}°</span>
           <span style="font-size: 1.8em; cursor: help;">${icon}</span>
           <span style="font-size: 0.7em; color: #666; margin-top: -2px;">${shortDate}</span>
         </div>
       `;
-    }).join("");
-    // Flex container for the days
-    weatherDisplay = `<div style="display: flex;">${icons}</div>`;
-  } else if (data.status === "error") {
-    weatherDisplay = "n.a.";
-  } else if (data.weather) {
-    // Fallback to single icon
-    const safeWeather = escapeHtml(data.weather);
-    const tooltip = `Aktuell: ${safeWeather}`;
-    weatherDisplay = `<span title="${escapeHtml(tooltip)}" style="cursor: help; font-size: 1.2em;">${weatherIcon}</span>`;
-  } else if (data.status === "static_only") {
-    weatherDisplay = "⏳";
-  }
+      }).join("");
+      // Flex container for the days
+      weatherDisplay = `<div style="display: flex;">${icons}</div>`;
+    } else if (data.status === "error") {
+      weatherDisplay = "n.a.";
+    } else if (data.weather) {
+      // Fallback to single icon
+      const safeWeather = escapeHtml(data.weather);
+      const tooltip = `Aktuell: ${safeWeather}`;
+      weatherDisplay = `<span title="${escapeHtml(tooltip)}" style="cursor: help; font-size: 1.2em;">${weatherIcon}</span>`;
+    } else if (data.status === "static_only") {
+      weatherDisplay = "⏳";
+    }
 
 
 
-  // Details button (for resorts with lift/slope data)
-  const hasLifts = Array.isArray(data.lifts) && data.lifts.length > 0;
-  const hasSlopes = Array.isArray(data.slopes) && data.slopes.length > 0;
+    // Details button (for resorts with lift/slope data)
+    const hasLifts = Array.isArray(data.lifts) && data.lifts.length > 0;
+    const hasSlopes = Array.isArray(data.slopes) && data.slopes.length > 0;
 
-  if (data.status === 'live' && !hasLifts && !hasSlopes) {
-    // Debug log to trace why button might be missing for live resorts
-    // console.debug(`[Render] Resort ${data.id} is live but has no details arrays. Lifts: ${typeof data.lifts}, Slopes: ${typeof data.slopes}`);
-  }
+    if (data.status === 'live' && !hasLifts && !hasSlopes) {
+      // Debug log to trace why button might be missing for live resorts
+      // console.debug(`[Render] Resort ${data.id} is live but has no details arrays. Lifts: ${typeof data.lifts}, Slopes: ${typeof data.slopes}`);
+    }
 
-  const hasDetails = hasLifts || hasSlopes;
-  const detailsDisplay = hasDetails
-    ? `<button class="details-btn" data-resort-id="${data.id}" data-resort-name="${safeName}" title="Lifte & Pisten Details anzeigen">📋</button>`
-    : '<span title="Keine Details verfügbar">-</span>';
+    const hasDetails = hasLifts || hasSlopes;
+    const detailsDisplay = hasDetails
+      ? `<button class="details-btn" data-resort-id="${data.id}" data-resort-name="${safeName}" title="Lifte & Pisten Details anzeigen">📋</button>`
+      : '<span title="Keine Details verfügbar">-</span>';
 
-  // History button - REMOVED
-  // Traffic Analysis is now triggered via the Traffic Trend column
-  const historyDisplay = "";
+    // History button - REMOVED
+    // Traffic Analysis is now triggered via the Traffic Trend column
+    const historyDisplay = "";
 
-  // Score
-  const score = data.score ?? "-";
+    // Score
+    const score = data.score ?? "-";
 
-  // Data Freshness Display (replaces old traffic light)
-  // Format time helper
-  const formatFreshnessTime = (isoString) => {
-    if (!isoString) return '-';
-    const d = new Date(isoString);
-    return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-  };
+    // Data Freshness Display (replaces old traffic light)
+    // Format time helper
+    const formatFreshnessTime = (isoString) => {
+      if (!isoString) return '-';
+      const d = new Date(isoString);
+      return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    };
 
-  // Get freshness class
-  const getFreshnessClass = (state) => {
-    if (!state) return '';
-    return state.toLowerCase(); // fresh, degraded, stale, expired
-  };
+    // Get freshness class
+    const getFreshnessClass = (state) => {
+      if (!state) return '';
+      return state.toLowerCase(); // fresh, degraded, stale, expired
+    };
 
-  // Build data freshness display
-  const dataSources = data.dataSources || {};
+    // Build data freshness display
+    const dataSources = data.dataSources || {};
 
-  const liftsInfo = dataSources.lifts || {};
-  const weatherInfo = dataSources.weather || {};
-  const snowInfo = dataSources.snow || {};
-  const trafficInfo = dataSources.traffic || {};
+    const liftsInfo = dataSources.lifts || {};
+    const weatherInfo = dataSources.weather || {};
+    const snowInfo = dataSources.snow || {};
+    const trafficInfo = dataSources.traffic || {};
 
-  const dataFreshnessDisplay = `
+    const dataFreshnessDisplay = `
     <div class="data-freshness">
       <div class="freshness-item ${getFreshnessClass(liftsInfo.freshness)}" title="${liftsInfo.source || 'Unknown'} (${liftsInfo.type || 'N/A'})${liftsInfo.sourceUrl ? '\n' + liftsInfo.sourceUrl : ''}">
         🚠 <span class="freshness-time">${formatFreshnessTime(liftsInfo.lastUpdated)}</span>
@@ -591,83 +622,83 @@ export function renderRow(row, data) {
     </div>
   `;
 
-  // Classification styling
-  // Standardized German Classifications
-  let typeLabel = data.classification || "Sportlich";
-  let typeIcon = "🟡"; // Default
-  let typeDesc = "Ausgewogenes Skigebiet";
+    // Classification styling
+    // Standardized German Classifications
+    let typeLabel = data.classification || "Sportlich";
+    let typeIcon = "🟡"; // Default
+    let typeDesc = "Ausgewogenes Skigebiet";
 
-  const cls = (data.classification || "").toLowerCase();
+    const cls = (data.classification || "").toLowerCase();
 
-  // Mapping based on new German values in resorts.json
-  if (cls === "familie" || cls.includes("family")) {
-    typeLabel = "Familie";
-    typeIcon = "🟢";
-    typeDesc = "Ideal für Anfänger und Familien - breite, flache Pisten.";
-  } else if (cls === "genuss" || cls.includes("scenic")) {
-    typeLabel = "Genuss";
-    typeIcon = "🟡";
-    typeDesc = "Landschaftlich reizvoll, entspanntes Skifahren.";
-  } else if (cls === "sportlich" || cls.includes("sport")) {
-    typeLabel = "Sportlich";
-    typeIcon = "🔴";
-    typeDesc = "Anspruchsvollere Pisten für Fortgeschrittene und Könner.";
-  } else if (cls.includes("großraum") || cls.includes("large")) {
-    typeIcon = "🔵";
-    typeDesc = "Große Pistenvielfalt";
-  } else if (cls === "gletscher" || cls.includes("glacier")) {
-    typeLabel = "Gletscher";
-    typeIcon = "⚫";
-    typeDesc = "Hochalpines Gletscherskigebiet, absolut schneesicher.";
-  }
-
-  // Use title attribute for mouseover
-  const typeDisplay = `<span title="${typeDesc}" style="cursor: help;">${typeIcon} ${typeLabel}</span>`;
-
-  // Weather button (Removed in favor of 3-day forecast)
-  // But maybe kept for modal details if needed? The user confusingly asked to "place weather symbol from first column to weather column". 
-  // Wait, there was a "weather button" (🌤️) next to the name?
-  // Old code: `<td>${statusIndicator} ... ${weatherBtn} ${historyBtn}</td>`
-  // I will REMOVE ${weatherBtn} and ${historyBtn} from Name column.
-
-  // Webcam display
-  const webcamDisplay = safeWebcam
-    ? `<a href="${safeWebcam}" target="_blank" title="Webcam öffnen" style="text-decoration: none;">📷</a>`
-    : '<span title="Keine Webcam verfügbar">-</span>';
-
-  // Distance (in km) - priority: Traffic API -> Air Distance
-  let distanceDisplay = "-";
-
-  if (data.traffic?.loading) {
-    distanceDisplay = '<span class="loading-spinner-small"></span>';
-  } else {
-    // Priority 1: Road distance from Traffic API
-    const roadKm = data.traffic?.distanceKm || data.distanceKm; // handle both structures
-
-    // Priority 2: Calculated linear distance (Air)
-    const airKm = data.linearDistance;
-
-    if (roadKm) {
-      distanceDisplay = `${roadKm} km`;
-    } else if (airKm) {
-      // Show air distance with indication
-      distanceDisplay = `<span title="Luftlinie (Keine Routendaten verfügbar)" style="cursor: help; border-bottom: 1px dotted #999;">${airKm} km ✈️</span>`;
-    } else {
-      distanceDisplay = "-";
+    // Mapping based on new German values in resorts.json
+    if (cls === "familie" || cls.includes("family")) {
+      typeLabel = "Familie";
+      typeIcon = "🟢";
+      typeDesc = "Ideal für Anfänger und Familien - breite, flache Pisten.";
+    } else if (cls === "genuss" || cls.includes("scenic")) {
+      typeLabel = "Genuss";
+      typeIcon = "🟡";
+      typeDesc = "Landschaftlich reizvoll, entspanntes Skifahren.";
+    } else if (cls === "sportlich" || cls.includes("sport")) {
+      typeLabel = "Sportlich";
+      typeIcon = "🔴";
+      typeDesc = "Anspruchsvollere Pisten für Fortgeschrittene und Könner.";
+    } else if (cls.includes("großraum") || cls.includes("large")) {
+      typeIcon = "🔵";
+      typeDesc = "Große Pistenvielfalt";
+    } else if (cls === "gletscher" || cls.includes("glacier")) {
+      typeLabel = "Gletscher";
+      typeIcon = "⚫";
+      typeDesc = "Hochalpines Gletscherskigebiet, absolut schneesicher.";
     }
-  }
 
-  // Combined Weather & Snow Display
-  // Combined Weather & Snow Display (Removed)
+    // Use title attribute for mouseover
+    const typeDisplay = `<span title="${typeDesc}" style="cursor: help;">${typeIcon} ${typeLabel}</span>`;
 
-  // SmartScore display (use new smartScore from backend, fallback to old score)
-  const smartScore = data.smartScore ?? score;
-  const isStale = data.dataSources?.lifts?.freshness === 'STALE' || data.dataSources?.lifts?.freshness === 'EXPIRED';
-  const smartScoreDisplay = smartScore !== '-' && smartScore !== null
-    ? `<strong title="SmartScore: ${smartScore}/100" style="${isStale ? 'color: #e67e22;' : ''}">${smartScore}${isStale ? ' ⚠️' : ''}</strong>`
-    : '<span style="color: #999;">-</span>';
+    // Weather button (Removed in favor of 3-day forecast)
+    // But maybe kept for modal details if needed? The user confusingly asked to "place weather symbol from first column to weather column". 
+    // Wait, there was a "weather button" (🌤️) next to the name?
+    // Old code: `<td>${statusIndicator} ... ${weatherBtn} ${historyBtn}</td>`
+    // I will REMOVE ${weatherBtn} and ${historyBtn} from Name column.
 
-  row.innerHTML = `
+    // Webcam display
+    const webcamDisplay = safeWebcam
+      ? `<a href="${safeWebcam}" target="_blank" title="Webcam öffnen" style="text-decoration: none;">📷</a>`
+      : '<span title="Keine Webcam verfügbar">-</span>';
+
+    // Distance (in km) - priority: Traffic API -> Air Distance
+    let distanceDisplay = "-";
+
+    if (data.traffic?.loading) {
+      distanceDisplay = '<span class="loading-spinner-small"></span>';
+    } else {
+      // Priority 1: Road distance from Traffic API
+      const roadKm = data.traffic?.distanceKm || data.distanceKm; // handle both structures
+
+      // Priority 2: Calculated linear distance (Air)
+      const airKm = data.linearDistance;
+
+      if (roadKm) {
+        distanceDisplay = `${roadKm} km`;
+      } else if (airKm) {
+        // Show air distance with indication
+        distanceDisplay = `<span title="Luftlinie (Keine Routendaten verfügbar)" style="cursor: help; border-bottom: 1px dotted #999;">${airKm} km ✈️</span>`;
+      } else {
+        distanceDisplay = "-";
+      }
+    }
+
+    // Combined Weather & Snow Display
+    // Combined Weather & Snow Display (Removed)
+
+    // SmartScore display (use new smartScore from backend, fallback to old score)
+    const smartScore = data.smartScore ?? score;
+    const isStale = data.dataSources?.lifts?.freshness === 'STALE' || data.dataSources?.lifts?.freshness === 'EXPIRED';
+    const smartScoreDisplay = smartScore !== '-' && smartScore !== null
+      ? `<strong title="SmartScore: ${smartScore}/100" style="${isStale ? 'color: #e67e22;' : ''}">${smartScore}${isStale ? ' ⚠️' : ''}</strong>`
+      : '<span style="color: #999;">-</span>';
+
+    row.innerHTML = `
     <td>${dataFreshnessDisplay}</td>
     <td><a href="${safeWebsite}" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">${safeName}</a></td>
     <td>${typeDisplay}</td>
@@ -696,4 +727,4 @@ export function renderRow(row, data) {
     </td>
     <td>${smartScoreDisplay}</td>
   `;
-}
+  }

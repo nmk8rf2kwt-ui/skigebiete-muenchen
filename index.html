@@ -21,7 +21,7 @@
 <body>
 
 
-  <h1>🏔️ Skigebiets-Finder</h1>
+  <h1 id="mainTitle">🏔️ Winter-Finder</h1>
 
   <div class="meta">
     Stand: <span id="timestamp">–</span> · <span style="color: #999;">v1.7.29</span>
@@ -38,8 +38,8 @@
     <!-- Step 1: Location -->
     <div id="step-location" class="wizard-step active">
       <div class="step-header">
-        <span class="step-badge">Schritt 1 von 2</span>
-        <h2>🏔️ Von wo startest du?</h2>
+        <span class="step-badge">Schritt 1 von 3</span>
+        <h2 id="locationHeadingElement">🏔️ Von wo startest du?</h2>
       </div>
       <p class="step-desc">Gib deinen Standort ein, um präzise Fahrzeiten und Stauprognosen zu erhalten.</p>
 
@@ -52,10 +52,61 @@
       </div>
     </div>
 
-    <!-- Step 2: Preferences -->
+    <!-- Step 2: Activity Picker -->
+    <div id="step-activity" class="wizard-step" style="display: none;">
+      <div class="step-header">
+        <span class="step-badge">Schritt 2 von 3</span>
+        <h2>Womit startest du heute?</h2>
+      </div>
+      <p class="step-desc">Wähle dein heutiges Winter-Abenteuer.</p>
+
+      <div class="pref-grid" id="activityPicker">
+        <button class="pref-btn" data-domain="ski">
+          <span class="pref-icon">🎿</span>
+          <span class="pref-label">Skifahren</span>
+          <small style="color: #7f8c8d; font-size: 0.7em;">Heute sinnvoll?</small>
+        </button>
+        <button class="pref-btn" data-domain="skate" disabled
+          style="opacity: 0.5; filter: grayscale(1); cursor: not-allowed;">
+          <span class="pref-icon">⛸️</span>
+          <span class="pref-label">Eislaufen</span>
+          <small style="color: #7f8c8d; font-size: 0.7em;">In Kürze</small>
+        </button>
+        <button class="pref-btn" data-domain="sled" disabled
+          style="opacity: 0.5; filter: grayscale(1); cursor: not-allowed;">
+          <span class="pref-icon">🛷</span>
+          <span class="pref-label">Rodeln</span>
+          <small style="color: #7f8c8d; font-size: 0.7em;">In Kürze</small>
+        </button>
+        <button class="pref-btn" data-domain="skitour" disabled
+          style="opacity: 0.5; filter: grayscale(1); cursor: not-allowed;">
+          <span class="pref-icon">🏔️</span>
+          <span class="pref-label">Skitour</span>
+          <small style="color: #7f8c8d; font-size: 0.7em;">In Kürze</small>
+        </button>
+      </div>
+
+      <!-- 5th Activity Button (Full Width) -->
+      <div style="margin-top: 15px;">
+        <button class="pref-btn" data-domain="walk" disabled
+          style="width: 100%; flex-direction: row; padding: 20px; opacity: 0.5; filter: grayscale(1); cursor: not-allowed;">
+          <span class="pref-icon" style="font-size: 1.8em; margin-right: 15px;">🚶</span>
+          <div style="text-align: left;">
+            <span class="pref-label">Winterwanderung</span>
+            <small style="color: #7f8c8d; display: block; font-size: 0.8em;">In Kürze</small>
+          </div>
+        </button>
+      </div>
+
+      <div class="step-footer" style="margin-top: 20px;">
+        <button id="backToLocationFromActivity" class="wizard-back-btn">← Zurück</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Preferences -->
     <div id="step-prefs" class="wizard-step" style="display: none;">
       <div class="step-header">
-        <span class="step-badge">Schritt 2 von 2</span>
+        <span class="step-badge">Schritt 3 von 3</span>
         <h2>⛷️ Was ist dir heute wichtig?</h2>
       </div>
       <p class="step-desc">Wir passen den SmartScore basierend auf deinen Vorlieben an.</p>
@@ -66,7 +117,7 @@
           <span class="pref-label">Schnell dort</span>
         </button>
         <button class="pref-btn" data-pref="open">
-          <span class="pref-icon">Open</span>
+          <span class="pref-icon">🚠</span>
           <span class="pref-label">Viel offen</span>
         </button>
         <button class="pref-btn" data-pref="snow">
@@ -80,7 +131,7 @@
       </div>
 
       <div class="step-footer" style="display: flex; gap: 10px; margin-top: 20px;">
-        <button id="backToLocation" class="wizard-back-btn">← Zurück</button>
+        <button id="backToActivity" class="wizard-back-btn">← Zurück</button>
         <button id="showResultsBtn" class="wizard-next-btn" style="background: #2ecc71;">Meine Empfehlungen zeigen
           ➔</button>
       </div>

@@ -1,5 +1,54 @@
 import { store } from "./store.js";
 import { API_BASE_URL } from "./config.js";
+import { DOMAIN_CONFIGS } from "./domainConfigs.js";
+
+function setDomain(domainId) {
+    const config = DOMAIN_CONFIGS[domainId];
+    if (!config) return;
+
+    store.setState({
+        currentDomain: domainId,
+        preference: config.prefs[0].id // Set default pref for domain
+    });
+
+    // Update UI Elements
+    const mainTitle = document.getElementById('mainTitle');
+    if (mainTitle) mainTitle.textContent = `${config.icon} ${config.label}-Finder`;
+
+    const locationHeading = document.getElementById('locationHeadingElement');
+    if (locationHeading) locationHeading.textContent = `${config.icon} Von wo startest du?`;
+
+    const prefHeading = document.querySelector('#step-prefs h2');
+    if (prefHeading) prefHeading.textContent = `${config.icon} Was ist dir heute wichtig?`;
+
+    updatePreferenceUI(config);
+
+    // Transition to Preferences Step (Step 3)
+    document.getElementById('step-activity').style.display = 'none';
+    document.getElementById('step-prefs').style.display = 'block';
+}
+
+function updatePreferenceUI(config) {
+    const prefGrid = document.querySelector('#step-prefs .pref-grid');
+    if (!prefGrid) return;
+
+    prefGrid.innerHTML = config.prefs.map(p => `
+    <button class="pref-btn ${store.get().preference === p.id ? 'active' : ''}" data-pref="${p.id}">
+      <span class="pref-icon">${p.icon}</span>
+      <span class="pref-label">${p.label}</span>
+    </button>
+  `).join('');
+
+    // Re-attach listeners to new buttons
+    prefGrid.querySelectorAll('.pref-btn').forEach(btn => {
+        btn.onclick = () => {
+            prefGrid.querySelectorAll('.pref-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            store.setState({ preference: btn.dataset.pref });
+        };
+    });
+}
+
 import {
     displayWeather,
     displayResortDetails,
@@ -33,34 +82,59 @@ export function initEventListeners(handlers) {
     const wizardContainer = document.getElementById("wizardContainer");
     const resultsView = document.getElementById("resultsView");
     const stepLocation = document.getElementById("step-location");
+    const stepActivity = document.getElementById("step-activity");
     const stepPrefs = document.getElementById("step-prefs");
 
-    // Location Submit -> Prefs
+    // Wizard Step 1: Location Submit -> Activity (Step 2)
     document.getElementById("submitLocationBtn").addEventListener("click", () => {
         const input = document.getElementById("addressInput").value;
         if (input.length >= 3) {
-            handleAddressSearch().then(() => {
-                stepLocation.style.display = "none";
-                stepPrefs.style.display = "block";
+            handleAddressSearch().then((success) => {
+                if (success) {
+                    stepLocation.style.display = "none";
+                    stepActivity.style.display = "block";
+                }
             });
         } else {
             alert("Bitte gib einen Standort ein (mind. 3 Zeichen).");
         }
     });
 
-    // Back from Prefs to Location
-    document.getElementById("backToLocation").addEventListener("click", () => {
-        stepPrefs.style.display = "none";
-        stepLocation.style.display = "block";
+    // Wizard Step 2: Activity Selection -> Prefs (Step 3)
+    document.querySelectorAll("#step-activity .pref-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (!btn.disabled) {
+                setDomain(btn.dataset.domain);
+            }
+        });
     });
 
-    // Preference Selection
-    document.querySelectorAll(".pref-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            document.querySelectorAll(".pref-btn").forEach(b => b.classList.remove("active"));
+    // Back from Activity (Step 2) to Location (Step 1)
+    const backToLocFromActBtn = document.getElementById("backToLocationFromActivity");
+    if (backToLocFromActBtn) {
+        backToLocFromActBtn.addEventListener("click", () => {
+            stepActivity.style.display = "none";
+            stepLocation.style.display = "block";
+        });
+    }
+
+    // Back from Prefs (Step 3) to Activity (Step 2)
+    const backToActBtn = document.getElementById("backToActivity");
+    if (backToActBtn) {
+        backToActBtn.addEventListener("click", () => {
+            stepPrefs.style.display = "none";
+            stepActivity.style.display = "block";
+        });
+    }
+
+    // Preference Selection (Step 3)
+    document.querySelector("#step-prefs .pref-grid").addEventListener("click", (e) => {
+        const btn = e.target.closest(".pref-btn");
+        if (btn && !btn.disabled) {
+            document.querySelectorAll("#step-prefs .pref-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
             store.setState({ preference: btn.dataset.pref });
-        });
+        }
     });
 
     // Show Results
@@ -68,11 +142,9 @@ export function initEventListeners(handlers) {
         wizardContainer.style.display = "none";
         resultsView.style.display = "block";
 
-        // Update Heading
         const loc = getCurrentSearchLocation();
         document.getElementById("resultsHeading").textContent = `Beste Wahl heute von ${loc.name || 'deinem Standort'}`;
 
-        // Trigger rendering of results
         render();
     });
 
@@ -81,6 +153,7 @@ export function initEventListeners(handlers) {
         resultsView.style.display = "none";
         wizardContainer.style.display = "block";
         stepLocation.style.display = "block";
+        stepActivity.style.display = "none";
         stepPrefs.style.display = "none";
     });
 
@@ -88,10 +161,9 @@ export function initEventListeners(handlers) {
     const originalHandleGeo = handleGeolocation;
     const interceptedHandleGeo = async () => {
         await originalHandleGeo();
-        // Wait a bit for geocoding to finish and store to update
         setTimeout(() => {
             stepLocation.style.display = "none";
-            stepPrefs.style.display = "block";
+            stepActivity.style.display = "block"; // Go to Activity next
         }, 800);
     };
     document.getElementById("locateBtn").onclick = interceptedHandleGeo;
@@ -103,7 +175,6 @@ export function initEventListeners(handlers) {
             document.querySelectorAll(".view-switcher-wizard .view-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
-            // Toggle visibility of sub-views
             const mapView = document.getElementById("map-view");
             const tableView = document.getElementById("tableView");
             const top3Cards = document.getElementById("top3Cards");
@@ -131,7 +202,7 @@ export function initEventListeners(handlers) {
         if (e.key === 'Enter') document.getElementById("submitLocationBtn").click();
     });
 
-    // Sort Headers (Desktop Table Headers)
+    // Sort Headers
     document.querySelectorAll("th[data-sort]").forEach(th => {
         th.style.cursor = "pointer";
         th.addEventListener("click", () => {
@@ -139,81 +210,52 @@ export function initEventListeners(handlers) {
             const state = store.get();
             const currentSort = state.sortKey;
             let sortDirection = state.sortDirection;
-
             if (currentSort === newSort) {
                 sortDirection = sortDirection === "desc" ? "asc" : "desc";
             } else {
                 sortDirection = ['distance', 'distance_km', 'traffic_duration', 'price'].includes(newSort) ? "asc" : "desc";
             }
-
             store.setState({ sortKey: newSort, sortDirection }, render);
         });
     });
 
-    // Sort Buttons (Toolbar)
+    // Sort Buttons
     document.querySelectorAll(".sort-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             const newSort = btn.dataset.sort;
             const state = store.get();
             const currentSort = state.sortKey;
             let sortDirection = state.sortDirection;
-
-            // Toggle direction if same sort, otherwise default direction
             if (currentSort === newSort) {
                 sortDirection = sortDirection === "desc" ? "asc" : "desc";
             } else {
                 sortDirection = ['distance', 'distance_km', 'traffic_duration', 'price'].includes(newSort) ? "asc" : "desc";
             }
-
             store.setState({ sortKey: newSort, sortDirection }, render);
-
-            // Highlight active sort button
             document.querySelectorAll(".sort-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
         });
     });
 
-    /**
-     * Modal Event Handlers
-     */
-
-    // Weather Modal
+    // Modals
     const weatherModal = document.getElementById("weatherModal");
     const closeWeatherBtn = document.querySelector(".close");
-    if (closeWeatherBtn) {
-        closeWeatherBtn.addEventListener("click", () => weatherModal.style.display = "none");
-    }
+    if (closeWeatherBtn) closeWeatherBtn.addEventListener("click", () => weatherModal.style.display = "none");
 
-    // Details Modal
     const detailsModal = document.getElementById("detailsModal");
     const closeDetailsBtn = document.querySelector(".close-details");
-    if (closeDetailsBtn) {
-        closeDetailsBtn.addEventListener("click", () => detailsModal.style.display = "none");
-    }
+    if (closeDetailsBtn) closeDetailsBtn.addEventListener("click", () => detailsModal.style.display = "none");
 
-    // History Modal
     const historyModal = document.getElementById("historyModal");
     const closeHistoryBtn = document.querySelector(".close-history");
-    if (closeHistoryBtn) {
-        closeHistoryBtn.addEventListener("click", () => historyModal.style.display = "none");
-    }
+    if (closeHistoryBtn) closeHistoryBtn.addEventListener("click", () => historyModal.style.display = "none");
 
-    // Score Modal
     const scoreModal = document.getElementById("scoreModal");
     const closeScoreBtn = document.querySelector(".close-score");
     const scoreTrigger = document.getElementById("scoreInfoTrigger");
-    if (scoreTrigger) {
-        scoreTrigger.addEventListener("click", (e) => {
-            e.stopPropagation();
-            scoreModal.style.display = "block";
-        });
-    }
-    if (closeScoreBtn) {
-        closeScoreBtn.addEventListener("click", () => scoreModal.style.display = "none");
-    }
+    if (scoreTrigger) scoreTrigger.addEventListener("click", (e) => { e.stopPropagation(); scoreModal.style.display = "block"; });
+    if (closeScoreBtn) closeScoreBtn.addEventListener("click", () => scoreModal.style.display = "none");
 
-
-    // Global Modal Click-to-Close
     window.addEventListener("click", (event) => {
         if (event.target === weatherModal) weatherModal.style.display = "none";
         if (event.target === detailsModal) detailsModal.style.display = "none";
@@ -221,76 +263,47 @@ export function initEventListeners(handlers) {
         if (event.target === scoreModal) scoreModal.style.display = "none";
     });
 
-    // Delegated Clicks for Buttons in Dynamic Content (Table)
     document.addEventListener("click", async (event) => {
-        // Use closest to handle clicks on children (icons, text)
         const weatherBtn = event.target.closest('.weather-btn');
         const detailsBtn = event.target.closest('.details-btn');
         const historyBtn = event.target.closest('.history-btn');
         const tabBtn = event.target.closest('.tab-btn');
 
-        // Weather Button
         if (weatherBtn) {
             const { resortId, resortName } = weatherBtn.dataset;
             weatherModal.style.display = "block";
             document.getElementById("weatherResortName").textContent = `${resortName} - 3-Day Forecast`;
             document.getElementById("weatherForecast").innerHTML = "<p>Loading...</p>";
-
             try {
                 const res = await fetch(`${API_BASE_URL}/api/weather/${resortId}`);
-                if (!res.ok) throw new Error("Failed to fetch weather");
                 const data = await res.json();
                 displayWeather(data.forecast);
             } catch (error) {
-                console.error("Weather error:", error);
                 document.getElementById("weatherForecast").innerHTML = "<p>❌ Weather data unavailable</p>";
             }
         }
 
-        // Details Button
         if (detailsBtn) {
             const { resortId, resortName } = detailsBtn.dataset;
             const resort = store.get().resorts.find(r => r.id === resortId);
-
-            if (!resort) {
-                alert("Resort data not found");
-                return;
+            if (resort) {
+                detailsModal.style.display = "block";
+                document.getElementById("detailsResortName").textContent = `${resortName} - Details`;
+                displayResortDetails(resort);
             }
-
-            detailsModal.style.display = "block";
-            document.getElementById("detailsResortName").textContent = `${resortName} - Details`;
-            displayResortDetails(resort);
         }
 
-        // Traffic Analysis (Legacy History Button / New Traffic Cell)
         if (historyBtn) {
-            const { resortId } = historyBtn.dataset; // Name might be missing on div triggers
-            // Lookup name from store if missing
+            const { resortId } = historyBtn.dataset;
             const resort = store.get().resorts.find(r => r.id === resortId);
             const resortName = resort ? resort.name : (historyBtn.dataset.resortName || 'Resort');
-
             setCurrentResortId(resortId);
             resetModalStates();
-
             historyModal.style.display = "block";
             document.getElementById("historyResortName").textContent = `${resortName} - Verkehrsprognose`;
-
-            // Explicitly load the traffic chart
-            // We need to dynamically import or ensure this function is available. 
-            // It is exported from modals.js. We need to update imports first!
-            // However, switchHistoryTab('traffic') does exactly this logic internally if we kept it.
-            // But we wanted to simplify.
-            // Let's assume switchHistoryTab('traffic') is easiest path IF we keep the tab switching logic in modals.js purely for loading, 
-            // even if tabs are hidden.
-            // Actually, I'll update imports in next step to import loadResortTrafficHistory directly.
-            // TEMPORARY: using switchHistoryTab for compatibility if I haven't removed it yet.
             switchHistoryTab('traffic');
         }
 
-        // Tab Switching in History Modal (if any tabs left)
-        if (tabBtn) {
-            switchHistoryTab(tabBtn.dataset.tab);
-        }
+        if (tabBtn) switchHistoryTab(tabBtn.dataset.tab);
     });
-
 }
