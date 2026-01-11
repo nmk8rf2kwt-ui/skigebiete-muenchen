@@ -198,9 +198,14 @@ export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirect
     // 4. Render Rows
     tbody.innerHTML = "";
     enrichedData.forEach((resort, index) => {
-      const tr = document.createElement("tr");
-      renderRow(tr, { ...resort, rank: index + 1 });
-      tbody.appendChild(tr);
+      try {
+        const tr = document.createElement("tr");
+        renderRow(tr, { ...resort, rank: index + 1 });
+        tbody.appendChild(tr);
+      } catch (err) {
+        console.error(`Error rendering row for resort ${resort.name || resort.id}:`, err);
+        // Optional: continue
+      }
     });
 
     // Visual: Update Arrows
