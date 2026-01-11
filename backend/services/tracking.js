@@ -1,4 +1,4 @@
-import { supabase } from '../supabase.js';
+import { supabase } from './db.js';
 
 /**
  * Log a click on an affiliate link (aggregated only)

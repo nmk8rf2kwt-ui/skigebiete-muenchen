@@ -1,17 +1,24 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+    // Set a location in localStorage to bypass onboarding
+    await page.addInitScript(() => {
+        window.localStorage.setItem('skigebiete_user_location', JSON.stringify({
+            latitude: 48.1351,
+            longitude: 11.582,
+            name: "München (Test)"
+        }));
+    });
+});
+
 test('Traffic data is displayed', async ({ page }) => {
-    await page.goto('https://nmk8rf2kwt-ui.github.io/skigebiete-muenchen/');
+    await page.goto('/');
 
-    // Wait for the table to load
-    await page.locator('#skiTable tbody tr').first().waitFor();
+    // Wait for content (either cards or table)
+    await expect(page.locator('.top3-card').or(page.locator('#skiTable tbody tr'))).not.toHaveCount(0);
 
-    // Check if we have any execution for "Anfahrt" column (index depends on layout, but let's look for text)
-    // We expect either minutes (e.g. "60 min") or "n.a." or similar.
-    // We want to verify it's NOT just empty or stuck loading.
-
-    // Get all cells in the "Anfahrt" column (assuming it's roughly the 3rd or 4th column)
-    // Or simpler: verify that we see some time format in the table.
+    // Check if we have any time format displayed (e.g. "60 min") or "n.a."
     const regex = /([0-9]+ min)|(n\.a\.)/;
+    // Use locator('body') to be safe across different view modes
     await expect(page.locator('body')).toHaveText(regex);
 });

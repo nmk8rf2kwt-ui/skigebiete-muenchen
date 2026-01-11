@@ -32,128 +32,146 @@
 
 
 
-  <div id="searchError" class="error-container">
-    <div class="error-header"
-      onclick="this.parentElement.querySelector('.error-content').style.display = this.parentElement.querySelector('.error-content').style.display === 'none' ? 'block' : 'none'">
-      <span>⚠️ Fehler & Warnungen</span>
-      <span class="error-toggle">▼</span>
-    </div>
-    <div class="error-content" id="errorContent"></div>
-  </div>
+  <!-- Guided Search Wizard -->
+  <div id="wizardContainer" class="wizard-container">
 
-  <!-- Main Toolbar -->
-  <p style="margin: 0 0 5px 0; color: #666; font-size: 0.9em;">
-    Bitte geben Sie Ihren Standort ein, von wo Sie anreisen, oder geben Sie Ihren Standort über den Button frei.
-  </p>
-  <div class="toolbar-container" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+    <!-- Step 1: Location -->
+    <div id="step-location" class="wizard-step active">
+      <div class="step-header">
+        <span class="step-badge">Schritt 1 von 2</span>
+        <h2>🏔️ Von wo startest du?</h2>
+      </div>
+      <p class="step-desc">Gib deinen Standort ein, um präzise Fahrzeiten und Stauprognosen zu erhalten.</p>
 
-    <!-- Row 1: Search & View -->
-    <div class="search-group" style="width: 100%; justify-content: flex-start; align-items: center;">
-      <input type="text" id="addressInput" placeholder="München, Marienplatz"
-        title="Geben Sie einen Ort oder eine Adresse ein (mind. 3 Zeichen)"
-        style="width: 250px; flex: none; max-width: 100%;" />
-
-      <button id="searchBtn" title="Fahrzeiten von dieser Adresse berechnen">🔍 Suchen</button>
-      <button id="locateBtn" title="Meinen aktuellen Standort verwenden">📍 Mein Standort</button>
-
-      <!-- Moved View Toggle Here -->
-      <button id="viewToggle" title="Zwischen Listen- und Kartenansicht wechseln" style="margin-left: auto;">🗺️
-        Kartenansicht</button>
-    </div>
-
-    <!-- Row 2: Filters (Top N + ODER + Radius) -->
-    <div class="actions-group" style="flex-wrap: wrap; align-items: center; width: 100%; gap: 8px;">
-      <span class="filter-label" style="font-size: 0.75em; font-weight: bold; color: #666;">FILTERN</span>
-
-      <button id="top3" class="top-filter-btn" data-top="3" title="Top 3 Skigebiete anzeigen">🏆 Top 3</button>
-      <button id="top5" class="top-filter-btn" data-top="5" title="Top 5 Skigebiete anzeigen">🥇 Top 5</button>
-      <button id="top10" class="top-filter-btn" data-top="10" title="Top 10 Skigebiete anzeigen">🔟 Top 10</button>
-
-      <span style="font-size: 0.75em; font-weight: bold; color: #666; margin: 0 8px;">ODER</span>
-
-      <!-- Radius Slider (Compact) -->
-      <div class="radius-slider-group" style="display: flex; align-items: center; gap: 4px;">
-        <label for="radiusSlider" style="font-size: 0.8em; color: #555;">Radius:</label>
-        <input type="range" id="radiusSlider" min="50" max="500" value="150" step="10" style="width: 80px;"
-          title="Suchradius bestimmt die max. Entfernung für Routing-Berechnungen">
-        <span id="radiusValue" style="font-size: 0.8em; font-weight: bold; width: 45px;">150 km</span>
+      <div class="search-group-wizard">
+        <div class="input-wrapper-wizard">
+          <input type="text" id="addressInput" placeholder="München, Marienplatz" autocomplete="off" />
+          <button id="locateBtn" class="locate-icon-btn" title="Meinen Standort verwenden">📍</button>
+        </div>
+        <button id="submitLocationBtn" class="wizard-next-btn">Weiter</button>
       </div>
     </div>
 
-    <!-- Row 3: Sort Controls -->
-    <div class="sort-row" style="display: flex; flex-wrap: wrap; align-items: center; width: 100%; gap: 8px;">
-      <span style="font-size: 0.75em; font-weight: bold; color: #666;">SORTIEREN</span>
-      <button class="sort-btn" data-sort="smartScore" title="Nach SmartScore sortieren">🏆 Score</button>
-      <button class="sort-btn" data-sort="snow" title="Nach Schneehöhe sortieren">❄️ Schnee</button>
-      <button class="sort-btn" data-sort="distance_km" title="Nach Entfernung sortieren">📍 Nähe</button>
-      <button class="sort-btn" data-sort="liftsOpen" title="Nach offenen Liften sortieren">🚠 Offen</button>
-      <button class="sort-btn" data-sort="piste_km" title="Nach Pistenkilometern sortieren">🎿 Pisten</button>
+    <!-- Step 2: Preferences -->
+    <div id="step-prefs" class="wizard-step" style="display: none;">
+      <div class="step-header">
+        <span class="step-badge">Schritt 2 von 2</span>
+        <h2>⛷️ Was ist dir heute wichtig?</h2>
+      </div>
+      <p class="step-desc">Wir passen den SmartScore basierend auf deinen Vorlieben an.</p>
+
+      <div class="pref-grid">
+        <button class="pref-btn" data-pref="fast">
+          <span class="pref-icon">⚡</span>
+          <span class="pref-label">Schnell dort</span>
+        </button>
+        <button class="pref-btn" data-pref="open">
+          <span class="pref-icon">Open</span>
+          <span class="pref-label">Viel offen</span>
+        </button>
+        <button class="pref-btn" data-pref="snow">
+          <span class="pref-icon">❄️</span>
+          <span class="pref-label">Viel Schnee</span>
+        </button>
+        <button class="pref-btn" data-pref="price">
+          <span class="pref-icon">💰</span>
+          <span class="pref-label">Günstig</span>
+        </button>
+      </div>
+
+      <div class="step-footer" style="display: flex; gap: 10px; margin-top: 20px;">
+        <button id="backToLocation" class="wizard-back-btn">← Zurück</button>
+        <button id="showResultsBtn" class="wizard-next-btn" style="background: #2ecc71;">Meine Empfehlungen zeigen
+          ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Results View -->
+  <div id="resultsView" style="display: none; padding: 0 20px;">
+    <div class="results-top-bar"
+      style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+      <h2 id="resultsHeading" style="margin: 0; font-size: 1.5em; color: #2c3e50;"></h2>
+
+      <div class="view-switcher-wizard" style="display: flex; background: #eee; border-radius: 20px; padding: 4px;">
+        <button class="view-btn active" data-view="top3">Top 3</button>
+        <button class="view-btn" data-view="map">Karte</button>
+        <button class="view-btn" data-view="table">Tabelle</button>
+      </div>
     </div>
 
-  </div>
+    <!-- Top 3 Recommendation Cards -->
+    <div id="top3Cards" class="top3-container"></div>
 
-  <!-- Spacer between controls and table -->
-  <div style="height: 20px;"></div>
+    <!-- Map View (Hidden by default, used in Step 3) -->
+    <div id="map-view"
+      style="display: none; height: 600px; width: 100%; margin: 20px 0; border-radius: 12px; z-index: 1;"></div>
 
-  <!-- Top 3 Cards Container -->
-  <div id="top3Cards" class="top3-container" style="display: none;"></div>
+    <!-- Table View (Hidden by default) -->
+    <div id="tableView" style="display: none;">
+      <table id="skiTable">
+        <thead>
+          <tr class="header-group-row">
+            <th colspan="2" class="group-header">Skigebiet</th>
+            <th colspan="4" class="group-header group-resort">🏔️ Daten zum Skigebiet</th>
+            <th colspan="5" class="group-header group-journey">🚗 Anreise & Verkehr</th>
+            <th colspan="3" class="group-header group-conditions">❄️ Bedingungen</th>
+            <th colspan="2" class="group-header group-extras">ℹ️ Extras</th>
+          </tr>
+          <tr class="header-col-row">
+            <th title="Letzte Aktualisierung der Datenquellen">Daten-Status</th>
+            <th>Name</th>
+            <th class="tooltip-container">
+              Schwierigkeit <span style="font-size: 0.8em; cursor: help;">ℹ️</span>
+              <div class="tooltip-content">
+                <strong>Legende:</strong><br>
+                🟢 Familie (Anfänger/Familien)<br>
+                🟡 Genuss (Landschaft/Entspannt)<br>
+                🔴 Sportlich (Fortgeschrittene)<br>
+                🔵 Große Pistenvielfalt<br>
+                ⚫ Gletscher (Hochalpin/Profi)
+              </div>
+            </th>
+            <th data-sort="piste_km" title="Gesamte Pistenkilometer - Klicken zum Sortieren" style="cursor: pointer;">
+              Größe (km) ↕️</th>
+            <th data-sort="liftsOpen" title="Anzahl geöffneter Lifte heute - Klicken zum Sortieren"
+              style="cursor: pointer;">
+              Lifte (Offen) ↕️</th>
+            <th data-sort="price" title="Tagesskipass-Preis - Klicken zum Sortieren" style="cursor: pointer;">Preis
+              (Tagesskipass) ↕️
+            </th>
+            <th data-sort="distance_km" title="Entfernung in Kilometern - Klicken zum Sortieren"
+              style="cursor: pointer;">
+              Distanz ↕️</th>
+            <th data-sort="distance" title="Fahrzeit ohne Verkehr - Klicken zum Sortieren" style="cursor: pointer;">
+              Fahrzeit (ohne Verkehrslage) ↕️</th>
+            <th data-sort="traffic_delay" title="Verzögerung durch Verkehr - Klicken zum Sortieren"
+              style="cursor: pointer;">
+              Stauzeit ↕️</th>
+            <th data-sort="traffic_duration" title="Fahrzeit mit aktuellem Verkehr - Klicken zum Sortieren"
+              style="cursor: pointer;">Fahrzeit (mit Verkehrslage) ↕️</th>
+            <th title="Stauprognose basierend auf historischen Daten (aus München)">🚦 Prognose (aus M)</th>
+            <th title="Wettervorhersage (3 Tage) - Hover für Details">Wetterprognose</th>
+            <th data-sort="snow" title="Schneehöhen (Berg/Tal) & Letzter Schneefall - Klicken zum Sortieren"
+              style="cursor: pointer;">
+              Schneehöhen ↕️</th>
+            <th title="Link zur Webcam">Webcam</th>
+            <th title="Lifte & Pisten Details">Details</th>
+            <th data-sort="smartScore" title="SmartScore (0-100) - Klicken zum Sortieren" style="cursor: pointer;">
+              Score <span id="scoreInfoTrigger" style="cursor: help; color: #3498db;">ⓘ</span> ↕️
+            </th>
+          </tr>
+        </thead>
+        </tbody>
+      </table>
+    </div> <!-- End of #tableView -->
 
-  <div id="map-view" style="display: none; height: 600px; width: 100%; margin: 20px 0; border-radius: 8px; z-index: 1;">
-  </div>
-
-  <table id="skiTable">
-    <thead>
-      <tr class="header-group-row">
-        <th colspan="2" class="group-header">Skigebiet</th>
-        <th colspan="4" class="group-header group-resort">🏔️ Daten zum Skigebiet</th>
-        <th colspan="5" class="group-header group-journey">🚗 Anreise & Verkehr</th>
-        <th colspan="3" class="group-header group-conditions">❄️ Bedingungen</th>
-        <th colspan="2" class="group-header group-extras">ℹ️ Extras</th>
-      </tr>
-      <tr class="header-col-row">
-        <th title="Letzte Aktualisierung der Datenquellen">Daten-Status</th>
-        <th>Name</th>
-        <th class="tooltip-container">
-          Schwierigkeit <span style="font-size: 0.8em; cursor: help;">ℹ️</span>
-          <div class="tooltip-content">
-            <strong>Legende:</strong><br>
-            🟢 Familie (Anfänger/Familien)<br>
-            🟡 Genuss (Landschaft/Entspannt)<br>
-            🔴 Sportlich (Fortgeschrittene)<br>
-            🔵 Große Pistenvielfalt<br>
-            ⚫ Gletscher (Hochalpin/Profi)
-          </div>
-        </th>
-        <th data-sort="piste_km" title="Gesamte Pistenkilometer - Klicken zum Sortieren" style="cursor: pointer;">
-          Größe (km) ↕️</th>
-        <th data-sort="liftsOpen" title="Anzahl geöffneter Lifte heute - Klicken zum Sortieren"
-          style="cursor: pointer;">
-          Lifte (Offen) ↕️</th>
-        <th data-sort="price" title="Tagesskipass-Preis - Klicken zum Sortieren" style="cursor: pointer;">Preis
-          (Tagesskipass) ↕️
-        </th>
-        <th data-sort="distance_km" title="Entfernung in Kilometern - Klicken zum Sortieren" style="cursor: pointer;">
-          Distanz ↕️</th>
-        <th data-sort="distance" title="Fahrzeit ohne Verkehr - Klicken zum Sortieren" style="cursor: pointer;">
-          Fahrzeit (ohne Verkehrslage) ↕️</th>
-        <th data-sort="traffic_delay" title="Verzögerung durch Verkehr - Klicken zum Sortieren"
-          style="cursor: pointer;">
-          Stauzeit ↕️</th>
-        <th data-sort="traffic_duration" title="Fahrzeit mit aktuellem Verkehr - Klicken zum Sortieren"
-          style="cursor: pointer;">Fahrzeit (mit Verkehrslage) ↕️</th>
-        <th title="Stauprognose basierend auf historischen Daten (aus München)">🚦 Prognose (aus M)</th>
-        <th title="Wettervorhersage (3 Tage) - Hover für Details">Wetterprognose</th>
-        <th data-sort="snow" title="Schneehöhen (Berg/Tal) & Letzter Schneefall - Klicken zum Sortieren"
-          style="cursor: pointer;">
-          Schneehöhen ↕️</th>
-        <th title="Link zur Webcam">Webcam</th>
-        <th title="Lifte & Pisten Details">Details</th>
-        <th data-sort="smartScore" title="SmartScore (0-100) - Klicken zum Sortieren" style="cursor: pointer;">Score ↕️
-        </th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+    <div style="text-align: center; margin: 40px 0;">
+      <button id="restartWizard" class="wizard-restart-btn"
+        style="background: none; border: 2px solid #3498db; color: #3498db; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer;">←
+        Suche anpassen</button>
+    </div>
+  </div> <!-- End of #resultsView -->
 
   <!-- Weather Modal -->
   <div id="weatherModal" class="modal">
@@ -166,14 +184,40 @@
     </div>
   </div>
 
-  <!-- Details Modal (Lifts & Slopes) -->
-  <div id="detailsModal" class="modal">
-    <div class="modal-content">
-      <span class="close-details">&times;</span>
-      <h2 id="detailsResortName">Resort Details</h2>
-      <div id="detailsContent" class="details-content">
-        <p>Loading...</p>
+  <!-- Score Info Modal -->
+  <div id="scoreModal" class="modal">
+    <div class="modal-content score-modal-content">
+      <span class="close-score">&times;</span>
+      <h2>Was ist der SmartScore?</h2>
+      <p>Der SmartScore (0-100) bewertet Skigebiete tagesaktuell basierend auf drei Hauptfaktoren:</p>
+
+      <div class="score-breakdown">
+        <div class="score-factor">
+          <div class="factor-icon">❄️</div>
+          <div class="factor-text">
+            <strong>Schnee & Pisten (50%)</strong>
+            <p>Schneehöhe am Berg und im Tal sowie der Anteil der geöffneten Pistenkilometer.</p>
+          </div>
+        </div>
+        <div class="score-factor">
+          <div class="factor-icon">🚗</div>
+          <div class="factor-text">
+            <strong>Erreichbarkeit (30%)</strong>
+            <p>Fahrzeit von deinem Standort inklusive aktueller Staumeldungen und Verzögerungen.</p>
+          </div>
+        </div>
+        <div class="score-factor">
+          <div class="factor-icon">🚠</div>
+          <div class="factor-text">
+            <strong>Angebotsvielfalt (20%)</strong>
+            <p>Anzahl der geöffneten Lifte und das allgemeine Preis-Leistungs-Verhältnis.</p>
+          </div>
+        </div>
       </div>
+
+      <blockquote>
+        <p><strong>Tipp:</strong> Ein Score über 80 bedeutet perfekte Bedingungen für einen Tagestrip!</p>
+      </blockquote>
     </div>
   </div>
 

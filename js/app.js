@@ -246,17 +246,30 @@ export async function fetchTrafficForLocation(lat, lon, locationName = "custom l
 export function render() {
   const state = store.get();
   const resorts = store.getProcessedResorts();
+  const viewMode = state.viewMode || 'top3';
 
-  // Rendering table (list mode)
-  if (state.viewMode === "list") {
-    document.getElementById("skiTable").style.display = "table";
-    document.getElementById("map-view").style.display = "none";
+  const top3Cards = document.getElementById("top3Cards");
+  const mapView = document.getElementById("map-view");
+  const tableView = document.getElementById("tableView");
+
+  if (viewMode === 'top3') {
+    if (top3Cards) top3Cards.style.display = "grid";
+    if (mapView) mapView.style.display = "none";
+    if (tableView) tableView.style.display = "none";
     renderTable(resorts, state.sortKey, state.filter, state.sortDirection);
-  } else {
-    document.getElementById("skiTable").style.display = "none";
-    document.getElementById("map-view").style.display = "block";
-    initMap(resorts);
-    updateMap(resorts);
+  } else if (viewMode === 'map') {
+    if (top3Cards) top3Cards.style.display = "none";
+    if (mapView) mapView.style.display = "block";
+    if (tableView) tableView.style.display = "none";
+    import('./map.js').then(m => {
+      m.initMap(resorts);
+      m.updateMap(resorts);
+    });
+  } else if (viewMode === 'table') {
+    if (top3Cards) top3Cards.style.display = "none";
+    if (mapView) mapView.style.display = "none";
+    if (tableView) tableView.style.display = "block";
+    renderTable(resorts, state.sortKey, state.filter, state.sortDirection);
   }
 }
 
@@ -283,9 +296,10 @@ export async function handleAddressSearch() {
 
     logToUI(`Standort gefunden: ${currentSearchLocation.name}`, "success");
     fetchTrafficForLocation(data.latitude, data.longitude, currentSearchLocation.name);
-
+    return true; // Success for wizard transition
   } catch (err) {
     showError(`Such-Fehler: ${err.message}`);
+    return false;
   } finally {
     hideLoading();
   }
@@ -317,11 +331,29 @@ export async function handleGeolocation() {
 
 // Initializing the application
 document.addEventListener("DOMContentLoaded", () => {
-  // Set default filter to top3
-  store.setState({ filter: 'top3' });
-  document.querySelectorAll(".top-filter-btn").forEach(btn => {
-    if (btn.id === 'top3') btn.classList.add("active");
+  // 1. Initial State
+  const savedLocation = localStorage.getItem('skigebiete_user_location');
+  const wizardContainer = document.getElementById("wizardContainer");
+  const resultsView = document.getElementById("resultsView");
+
+  store.setState({
+    filter: 'top3',
+    viewMode: 'top3',
+    preference: 'fast' // Default
   });
+
+  // 2. Initial View Decision
+  if (savedLocation) {
+    wizardContainer.style.display = "none";
+    resultsView.style.display = "block";
+
+    const loc = JSON.parse(savedLocation);
+    const heading = document.getElementById("resultsHeading");
+    if (heading) heading.textContent = `Beste Wahl heute von ${loc.name || 'deinem Standort'}`;
+  } else {
+    wizardContainer.style.display = "block";
+    resultsView.style.display = "none";
+  }
 
   initEventListeners({
     load,

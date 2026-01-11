@@ -8,22 +8,42 @@ const SCORE_WEIGHTS = {
   DISTANCE: -0.5,
   PRICE: -0.5,
   OPEN_LIFTS: 3,
+  SNOW: 0.5,
   DEFAULT_DISTANCE: 100,
   DEFAULT_PRICE: 50
 };
 
+import { store } from './store.js';
+
 // Helper to calculate a score for ranking
 export function calculateScore(resort) {
+  const pref = store.get().preference || 'fast';
+
   const piste = resort.piste_km || 0;
   const dist = resort.distance || SCORE_WEIGHTS.DEFAULT_DISTANCE;
   const price = resort.price || SCORE_WEIGHTS.DEFAULT_PRICE;
   const openLifts = resort.liftsOpen || 0;
+  const snow = resort.snow?.mountain ?? 0;
+
+  let weights = { ...SCORE_WEIGHTS };
+
+  // Adjust weights based on preference
+  if (pref === 'fast') {
+    weights.DISTANCE = -1.5;
+  } else if (pref === 'snow') {
+    weights.SNOW = 2.0;
+  } else if (pref === 'open') {
+    weights.OPEN_LIFTS = 6.0;
+  } else if (pref === 'price') {
+    weights.PRICE = -1.5;
+  }
 
   const score =
-    (piste * SCORE_WEIGHTS.PISTE_KM) +
-    (dist * SCORE_WEIGHTS.DISTANCE) +
-    (price * SCORE_WEIGHTS.PRICE) +
-    (openLifts * SCORE_WEIGHTS.OPEN_LIFTS);
+    (piste * weights.PISTE_KM) +
+    (dist * weights.DISTANCE) +
+    (price * weights.PRICE) +
+    (openLifts * weights.OPEN_LIFTS) +
+    (snow * weights.SNOW);
 
   return Math.round(score);
 }
@@ -53,10 +73,13 @@ function formatDuration(minutes) {
   return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} h`;
 }
 
-export function renderTable(data, sortKey = 'score', filter = 'all', sortDirection = 'desc') {
+export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirection = 'desc') {
   const tbody = document.querySelector("#skiTable tbody");
   const top3Container = document.getElementById("top3Cards");
-  tbody.innerHTML = "";
+  const mapView = document.getElementById("map-view");
+  const skiTable = document.getElementById("skiTable");
+  const expandContainer = document.getElementById("expandContainer");
+  const viewMode = store.get().viewMode || 'top3';
 
   // 1. Enrich data with Score if not present
   let enrichedData = data.map(r => ({
@@ -64,21 +87,46 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
     score: r.score !== undefined ? r.score : calculateScore(r)
   }));
 
-  // 2. Filter & View Mode
-  if (filter === 'top3') {
-    // Show cards, hide table (or show table below)
-    // user said "Top 3 heute als Primary UI" -> I'll show cards prominently.
+  // 2. View Mode & Filtering Logic
+  if (viewMode === 'map') {
+    top3Container.style.display = "none";
+    expandContainer.style.display = "none";
+    skiTable.style.display = "none";
+    mapView.style.display = "block";
+
+    // Trigger Map Refresh (Map module handles the actual markers)
+    import('./map.js').then(m => m.updateMap(enrichedData));
+    return; // Fast exit for map
+  }
+
+  if (viewMode === 'top3' || viewMode === 'cards') {
+    mapView.style.display = "none";
+    skiTable.style.display = "none";
     top3Container.style.display = "grid";
 
-    // Find absolute Top 3 by score
-    const top3Data = [...enrichedData].sort((a, b) => b.score - a.score).slice(0, 3);
-    renderTop3Cards(top3Data);
+    // Expansion Level
+    let limit = 3;
+    if (filter === 'top5') limit = 5;
+    if (filter === 'top10') limit = 10;
+    if (filter === 'all') limit = 1000;
 
-    // Also filter table to show top 3 (keeping it below or hidden?)
-    // I'll show the table below the cards but filtered to top 3
-    enrichedData = top3Data;
+    const displayData = [...enrichedData].sort((a, b) => b.score - a.score).slice(0, limit);
+    renderTop3Cards(displayData, limit > 3);
+
+    // Show Expand button if we have more but aren't showing all
+    expandContainer.style.display = (limit < enrichedData.length && filter !== 'all') ? "block" : "none";
+    if (filter === 'top10') {
+      document.getElementById("expandBtn").textContent = "✨ Alle Skigebiete anzeigen";
+    } else {
+      document.getElementById("expandBtn").textContent = "✨ Weitere Skigebiete entdecken";
+    }
   } else {
+    // TABLE VIEW (Legacy or Explicit)
+    mapView.style.display = "none";
     top3Container.style.display = "none";
+    expandContainer.style.display = "none";
+    skiTable.style.display = "table";
+
     if (filter.startsWith('top')) {
       const topN = parseInt(filter.replace('top', ''), 10) || 3;
       enrichedData.sort((a, b) => b.score - a.score);
@@ -86,113 +134,130 @@ export function renderTable(data, sortKey = 'score', filter = 'all', sortDirecti
     } else if (filter === 'open') {
       enrichedData = enrichedData.filter(r => r.liftsOpen > 0);
     }
+
+    // 3. Sort using imported sorting module
+    enrichedData = sortResorts(enrichedData, sortKey, sortDirection);
+
+    // 4. Render Rows
+    tbody.innerHTML = "";
+    enrichedData.forEach((resort, index) => {
+      const tr = document.createElement("tr");
+      renderRow(tr, { ...resort, rank: index + 1 });
+      tbody.appendChild(tr);
+    });
+
+    // Visual: Update Arrows
+    document.querySelectorAll("th[data-sort]").forEach(th => {
+      th.innerHTML = th.innerHTML.replace('↑', '↕️').replace('↓', '↕️');
+      if (th.dataset.sort === sortKey) {
+        th.innerHTML = th.innerHTML.replace('↕️', sortDirection === 'asc' ? '↑' : '↓');
+      }
+    });
   }
-
-  // 3. Sort using imported sorting module
-  enrichedData = sortResorts(enrichedData, sortKey, sortDirection);
-
-  // 4. Render
-  enrichedData.forEach((resort, index) => {
-    const tr = document.createElement("tr");
-    renderRow(tr, { ...resort, rank: index + 1 });
-    tbody.appendChild(tr);
-  });
-
-  // Visual: Update Arrows
-  document.querySelectorAll("th[data-sort]").forEach(th => {
-    th.innerHTML = th.innerHTML.replace('↑', '↕️').replace('↓', '↕️');
-    if (th.dataset.sort === sortKey) {
-      th.innerHTML = th.innerHTML.replace('↕️', sortDirection === 'asc' ? '↑' : '↓');
-    }
-  });
 }
 
-function renderTop3Cards(top3) {
+function renderTop3Cards(topData, isExpanded = false) {
   const container = document.getElementById("top3Cards");
   container.innerHTML = "";
+  const userPref = store.get().preference || 'fast';
 
-  top3.forEach((r, i) => {
+  topData.forEach((r, i) => {
     const card = document.createElement("div");
-    card.className = "top3-card";
+    card.className = "top3-card"; // Keeping class name consistent or using new one
 
+    const score = r.smartScore ?? r.score ?? 0;
+    const etaMins = Math.round((r.traffic?.duration || 0) / 60 || r.distance || 0);
+    const snow = r.snow?.mountain ?? 0;
+    const totalLifts = r.liftsTotal || r.lifts || 1;
+    const liftPct = Math.round((r.liftsOpen / totalLifts) * 100);
+
+    // Generate Reasoning List
+    const reasons = generateReasoning(r, userPref);
     const safeName = escapeHtml(r.name);
-    const score = r.score ?? calculateScore(r);
-
-    // Explainability Logic
-    let reason = "Top-bewertet für heute!";
-    if (r.snow?.mountain > 50 && r.liftsOpen / r.liftsTotal > 0.8) {
-      reason = "Hervorragende Schneelage & fast alle Lifte offen.";
-    } else if (r.traffic?.delay < 5) {
-      reason = "Freie Fahrt & gute Pistenverhältnisse.";
-    } else if (r.piste_km > 100) {
-      reason = "Maximale Pistenvielfalt im Großraumgebiet.";
-    }
-
-    const lastUpdate = r.dataSources?.lifts?.lastUpdated
-      ? new Date(r.dataSources.lifts.lastUpdated).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
-      : "unbekannt";
-
-    const isStale = r.dataSources?.lifts?.freshness === 'STALE' || r.dataSources?.lifts?.freshness === 'EXPIRED';
-    const staleWarning = isStale ? `<div style="color: #e67e22; font-weight: bold; font-size: 0.75em; margin-bottom: 8px;">⚠️ Daten ggf. veraltet (nicht vertrauenswürdig)</div>` : '';
 
     card.innerHTML = `
-      <div class="top3-header">
-        <span class="top3-badge">#${i + 1} HEUTE</span>
-        ${staleWarning}
-        <h3 class="top3-title">${safeName}</h3>
-        <div class="top3-score-box">
-          <span class="top3-score-val">${score}</span>
-          <span class="top3-score-lbl">Score</span>
+      <div class="top3-header-new" style="background: #f8f9fa; padding: 15px; border-bottom: 1px solid #eee;">
+        <span class="top3-badge" style="display: inline-block; padding: 2px 8px; background: #3498db; color: white; border-radius: 4px; font-size: 0.7em; font-weight: bold; margin-bottom: 5px;">
+            ${isExpanded ? '#' + (i + 1) : '🏆 # ' + (i + 1) + ' FÜR HEUTE'}
+        </span>
+        <h3 style="margin: 0; font-size: 1.25em; color: #2c3e50;">${safeName} <span style="font-size: 0.8em; color: #95a5a6;">(${score})</span></h3>
+      </div>
+      
+      <div class="top3-metrics-brutal" style="display: flex; justify-content: space-around; padding: 20px 10px; background: #fff;">
+        <div class="brutal-metric" style="text-align: center;">
+            <span style="font-size: 1.5em; display: block;">🚠</span>
+            <strong style="font-size: 1.1em; display: block;">${liftPct}%</strong>
+            <span style="font-size: 0.75em; color: #7f8c8d;">Offen</span>
+        </div>
+        <div class="brutal-metric" style="text-align: center;">
+            <span style="font-size: 1.5em; display: block;">❄️</span>
+            <strong style="font-size: 1.1em; display: block;">${snow} cm</strong>
+            <span style="font-size: 0.75em; color: #7f8c8d;">Schnee</span>
+        </div>
+        <div class="brutal-metric" style="text-align: center;">
+            <span style="font-size: 1.5em; display: block;">🚗</span>
+            <strong style="font-size: 1.1em; display: block;">${etaMins} min</strong>
+            <span style="font-size: 0.75em; color: #7f8c8d;">Anfahrt</span>
         </div>
       </div>
-      <div class="top3-content">
-        <div class="top3-metric-row">
-          <div class="top3-metric">
-            <span class="top3-metric-label">Schnee (Berg)</span>
-            <span class="top3-metric-value">${r.snow?.mountain ?? '-'} cm</span>
-          </div>
-          <div class="top3-metric">
-            <span class="top3-metric-label">Lifte Offen</span>
-            <span class="top3-metric-value">${r.liftsOpen ?? 0} / ${r.liftsTotal ?? r.lifts ?? '?'}</span>
-          </div>
-        </div>
-        <div class="top3-metric-row">
-          <div class="top3-metric">
-             <span class="top3-metric-label">Fahrzeit</span>
-             <span class="top3-metric-value">${Math.round((r.traffic?.duration || 0) / 60 || r.distance || 0)} min</span>
-          </div>
-          <div class="top3-metric">
-             <span class="top3-metric-label">Preis</span>
-             <span class="top3-metric-value">€${r.price ?? '-'}</span>
-          </div>
-        </div>
 
-        <!-- Monetization: Experiment -->
-        <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-           <a href="${r.website || '#'}" target="_blank" class="affiliate-btn ticket-btn" 
-              onclick="import('./utils.js').then(u => u.trackClick('${r.id}', 'ticket'))"
-              style="flex: 1; text-align: center; padding: 6px; background: #e67e22; color: white; border-radius: 4px; font-weight: bold; font-size: 0.8em; text-decoration: none;">
-              🎟️ Tickets
-           </a>
-           <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address || r.name)}" target="_blank" class="affiliate-btn route-btn"
-              onclick="import('./utils.js').then(u => u.trackClick('${r.id}', 'route'))"
-              style="flex: 1; text-align: center; padding: 6px; background: #34495e; color: white; border-radius: 4px; font-weight: bold; font-size: 0.8em; text-decoration: none;">
-              🚗 Route
-           </a>
+      <div class="top3-reasoning-collapsible" style="padding: 10px 15px; border-top: 1px dashed #eee;">
+        <div class="reasoning-summary" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #3498db; font-weight: bold; font-size: 0.9em;" onclick="this.nextElementSibling.classList.toggle('expanded'); this.querySelector('.toggle-icon').textContent = this.nextElementSibling.classList.contains('expanded') ? '▴' : '▾'">
+            <span>Warum diese Wahl?</span>
+            <span class="toggle-icon">▾</span>
         </div>
-
-        <div class="top3-explainability">
-          <strong>Warum dieser Platz?</strong><br>
-          ${reason}
-        </div>
+        <ul class="reasoning-list">
+            ${reasons.map(reason => `
+                <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                    <span>${reason.icon}</span>
+                    <span>${reason.text}</span>
+                </li>
+            `).join('')}
+        </ul>
       </div>
-      <div class="top3-footer">
-        <span class="top3-update">Update: ${lastUpdate}</span>
-        <button class="top3-action-btn details-btn" data-resort-id="${r.id}" data-resort-name="${safeName}">Details ➔</button>
+
+      <div class="top3-outcomes" style="padding: 15px; background: #fdfdfd; border-top: 1px solid #eee; display: flex; flex-direction: column; gap: 10px;">
+        <button class="outcome-btn-main" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address || r.name)}', '_blank')" style="padding: 12px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s;">Heute fahren ➔</button>
+        <div style="display: flex; gap: 8px;">
+            <button onclick="navigator.share ? navigator.share({title: '${safeName}', url: window.location.href}) : alert('Share not supported')" style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Teilen 🔗</button>
+            <button style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Merken ⭐</button>
+            <button class="details-btn" data-resort-id="${r.id}" data-resort-name="${safeName}" style="flex: 1; padding: 8px; background: #eee; border: none; border-radius: 6px; cursor: pointer;">Details 📋</button>
+        </div>
       </div>
     `;
     container.appendChild(card);
   });
+}
+
+function generateReasoning(resort, pref) {
+  const reasons = [];
+  const liftPct = resort.liftsOpen / (resort.liftsTotal || resort.lifts || 1);
+  const snow = resort.snow?.mountain ?? 0;
+  const eta = Math.round((resort.traffic?.duration || 0) / 60 || resort.distance || 0);
+  const price = resort.price ?? 0;
+
+  // 1. Lifts
+  if (liftPct > 0.8) reasons.push({ type: 'good', icon: '✅', text: `${Math.round(liftPct * 100)}% Lifte offen` });
+  else if (liftPct > 0.5) reasons.push({ type: 'ok', icon: '⚠️', text: `Nur ${Math.round(liftPct * 100)}% Lifte offen` });
+  else reasons.push({ type: 'bad', icon: '❌', text: `Wenig Betrieb (${Math.round(liftPct * 100)}%)` });
+
+  // 2. Snow
+  if (snow > 80) reasons.push({ type: 'good', icon: '✅', text: `${snow} cm Schnee (Top)` });
+  else if (snow > 30) reasons.push({ type: 'ok', icon: '✅', text: `${snow} cm Schnee` });
+  else reasons.push({ type: 'bad', icon: '⚠️', text: `Wenig Schnee (${snow} cm)` });
+
+  // 3. ETA
+  if (eta < 75) reasons.push({ type: 'good', icon: '✅', text: `Sehr nah (${eta} min)` });
+  else if (eta < 120) reasons.push({ type: 'ok', icon: '✅', text: `${eta} min Anfahrt` });
+  else reasons.push({ type: 'bad', icon: '⚠️', text: `Lange Anfahrt (${eta} min)` });
+
+  // 4. Price
+  if (price > 0) {
+    if (price < 45) reasons.push({ type: 'good', icon: '✅', text: `Günstiger Tagespass (€${price})` });
+    else if (price > 65) reasons.push({ type: 'bad', icon: '❌', text: `Hoher Preis (€${price})` });
+  }
+
+  return reasons;
 }
 
 

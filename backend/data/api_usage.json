@@ -25,8 +25,17 @@
       },
       "limitReached": false,
       "last_updated": "2026-01-10T15:00:07.960Z"
+    },
+    "2026-01-11": {
+      "requests": 815,
+      "breakdown": {
+        "tomtom": 810,
+        "ors": 5
+      },
+      "limitReached": false,
+      "last_updated": "2026-01-11T13:29:04.440Z"
     }
   },
-  "total_requests": 256,
-  "last_updated": "2026-01-10T15:00:07.960Z"
+  "total_requests": 1071,
+  "last_updated": "2026-01-11T13:29:04.440Z"
 }

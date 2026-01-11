@@ -27,56 +27,108 @@ export function initEventListeners(handlers) {
     load();
     setInterval(load, 30 * 60 * 1000);
 
-    // Search
-    document.getElementById("searchBtn").addEventListener("click", handleAddressSearch);
-    document.getElementById("locateBtn").addEventListener("click", handleGeolocation);
-    document.getElementById("addressInput").addEventListener("keypress", (e) => {
-        if (e.key === 'Enter') handleAddressSearch();
+    /**
+     * WIZARD STEP NAVIGATION
+     */
+    const wizardContainer = document.getElementById("wizardContainer");
+    const resultsView = document.getElementById("resultsView");
+    const stepLocation = document.getElementById("step-location");
+    const stepPrefs = document.getElementById("step-prefs");
+
+    // Location Submit -> Prefs
+    document.getElementById("submitLocationBtn").addEventListener("click", () => {
+        const input = document.getElementById("addressInput").value;
+        if (input.length >= 3) {
+            handleAddressSearch().then(() => {
+                stepLocation.style.display = "none";
+                stepPrefs.style.display = "block";
+            });
+        } else {
+            alert("Bitte gib einen Standort ein (mind. 3 Zeichen).");
+        }
     });
 
-    // Radius Slider
-    const radiusSlider = document.getElementById("radiusSlider");
-    const radiusValue = document.getElementById("radiusValue");
-
-    // Sync initial state from DOM (browser might cache input value on reload)
-    if (radiusSlider) {
-        store.setState({ radius: parseInt(radiusSlider.value, 10) });
-        if (radiusValue) radiusValue.textContent = `${radiusSlider.value} km`;
-    }
-    if (radiusSlider && radiusValue) {
-        // Update UI and Filter immediately on slide
-        radiusSlider.addEventListener("input", () => {
-            const val = parseInt(radiusSlider.value, 10);
-            radiusValue.textContent = `${val} km`;
-            store.setState({ radius: val }, render);
-        });
-    }
-
-    // View & Filter Buttons
-    document.getElementById("viewToggle").addEventListener("click", () => {
-        const nextMode = store.get().viewMode === "list" ? "map" : "list";
-        document.getElementById("viewToggle").textContent = nextMode === "list" ? "🗺️ Kartenansicht" : "📄 Listenansicht";
-        store.setState({ viewMode: nextMode }, render);
+    // Back from Prefs to Location
+    document.getElementById("backToLocation").addEventListener("click", () => {
+        stepPrefs.style.display = "none";
+        stepLocation.style.display = "block";
     });
 
-    // Top N Filter Buttons (Top 3, Top 5, Top 10)
-    document.querySelectorAll(".top-filter-btn").forEach(btn => {
+    // Preference Selection
+    document.querySelectorAll(".pref-btn").forEach(btn => {
         btn.addEventListener("click", () => {
-            const topN = parseInt(btn.dataset.top, 10);
-            const currentFilter = store.get().filter;
-
-            // Toggle: if already active, reset to "all"
-            if (currentFilter === `top${topN}`) {
-                store.setState({ filter: "all" }, render);
-                // Reset all button styles
-                document.querySelectorAll(".top-filter-btn").forEach(b => b.classList.remove("active"));
-            } else {
-                store.setState({ filter: `top${topN}` }, render);
-                // Highlight active button
-                document.querySelectorAll(".top-filter-btn").forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-            }
+            document.querySelectorAll(".pref-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            store.setState({ preference: btn.dataset.pref });
         });
+    });
+
+    // Show Results
+    document.getElementById("showResultsBtn").addEventListener("click", () => {
+        wizardContainer.style.display = "none";
+        resultsView.style.display = "block";
+
+        // Update Heading
+        const loc = getCurrentSearchLocation();
+        document.getElementById("resultsHeading").textContent = `Beste Wahl heute von ${loc.name || 'deinem Standort'}`;
+
+        // Trigger rendering of results
+        render();
+    });
+
+    // Restart Wizard
+    document.getElementById("restartWizard").addEventListener("click", () => {
+        resultsView.style.display = "none";
+        wizardContainer.style.display = "block";
+        stepLocation.style.display = "block";
+        stepPrefs.style.display = "none";
+    });
+
+    // Geolocation Success (Auto-advance)
+    const originalHandleGeo = handleGeolocation;
+    const interceptedHandleGeo = async () => {
+        await originalHandleGeo();
+        // Wait a bit for geocoding to finish and store to update
+        setTimeout(() => {
+            stepLocation.style.display = "none";
+            stepPrefs.style.display = "block";
+        }, 800);
+    };
+    document.getElementById("locateBtn").onclick = interceptedHandleGeo;
+
+    // View Switcher (Wizard Version)
+    document.querySelectorAll(".view-switcher-wizard .view-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const nextView = btn.dataset.view;
+            document.querySelectorAll(".view-switcher-wizard .view-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            // Toggle visibility of sub-views
+            const mapView = document.getElementById("map-view");
+            const tableView = document.getElementById("tableView");
+            const top3Cards = document.getElementById("top3Cards");
+
+            if (nextView === 'top3') {
+                top3Cards.style.display = "grid";
+                mapView.style.display = "none";
+                tableView.style.display = "none";
+            } else if (nextView === 'map') {
+                top3Cards.style.display = "none";
+                mapView.style.display = "block";
+                tableView.style.display = "none";
+            } else {
+                top3Cards.style.display = "none";
+                mapView.style.display = "none";
+                tableView.style.display = "block";
+            }
+
+            store.setState({ viewMode: nextView }, render);
+        });
+    });
+
+    // Search input Enter key
+    document.getElementById("addressInput").addEventListener("keypress", (e) => {
+        if (e.key === 'Enter') document.getElementById("submitLocationBtn").click();
     });
 
     // Sort Headers (Desktop Table Headers)
@@ -146,12 +198,27 @@ export function initEventListeners(handlers) {
         closeHistoryBtn.addEventListener("click", () => historyModal.style.display = "none");
     }
 
+    // Score Modal
+    const scoreModal = document.getElementById("scoreModal");
+    const closeScoreBtn = document.querySelector(".close-score");
+    const scoreTrigger = document.getElementById("scoreInfoTrigger");
+    if (scoreTrigger) {
+        scoreTrigger.addEventListener("click", (e) => {
+            e.stopPropagation();
+            scoreModal.style.display = "block";
+        });
+    }
+    if (closeScoreBtn) {
+        closeScoreBtn.addEventListener("click", () => scoreModal.style.display = "none");
+    }
+
 
     // Global Modal Click-to-Close
     window.addEventListener("click", (event) => {
         if (event.target === weatherModal) weatherModal.style.display = "none";
         if (event.target === detailsModal) detailsModal.style.display = "none";
         if (event.target === historyModal) historyModal.style.display = "none";
+        if (event.target === scoreModal) scoreModal.style.display = "none";
     });
 
     // Delegated Clicks for Buttons in Dynamic Content (Table)

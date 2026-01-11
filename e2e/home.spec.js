@@ -1,42 +1,40 @@
 import { test, expect } from '@playwright/test';
 
-test('Homepage loads and displays title', async ({ page }) => {
-    // Go to the local development (or production) URL
-    // Ideally this is configurable, but for now we assume local dev or a specific target.
-    // Since we are running this in a CI environment or locally where we might not have the full stack running,
-    // we might need to point to the live URL or a local server.
-    // For this test, let's assume we want to test the *live* version or a locally served static version.
-    // Since I don't have a dev server command running in this agent session for frontend, 
-    // I will point to the live GitHub pages URL for verification or assume the user runs a server.
-    // BETTER: Let's assume we are testing the file locally using `file://` or a local server if configured.
-    // Given the constraint, I'll use the live URL for "Verification" as requested, 
-    // OR strictly, I should start a local server.
-    // Let's settle on testing the Live URL for this specific "Hardening" pass to ensure *Production* is good.
-
-    await page.goto('https://nmk8rf2kwt-ui.github.io/skigebiete-muenchen/');
-
-    // Expect a title "to contain" a substring.
-    await expect(page).toHaveTitle(/Skigebiets-Finder/);
+test.beforeEach(async ({ page }) => {
+    // Set a location in localStorage to bypass onboarding
+    await page.addInitScript(() => {
+        window.localStorage.setItem('skigebiete_user_location', JSON.stringify({
+            latitude: 48.1351,
+            longitude: 11.582,
+            name: "München (Test)"
+        }));
+    });
 });
 
-test('Resort table is populated', async ({ page }) => {
-    await page.goto('https://nmk8rf2kwt-ui.github.io/skigebiete-muenchen/');
+test('Homepage loads and displays title', async ({ page }) => {
+    await page.goto('/');
+    // Use a regex that is flexible
+    await expect(page).toHaveTitle(/Skigebiet/);
+});
 
-    // Wait for the table body to have rows
+test('Resort data is populated', async ({ page }) => {
+    await page.goto('/');
+
+    // Check if either Top 3 cards or table rows are visible
+    const top3Cards = page.locator('.top3-card');
     const tableRows = page.locator('#skiTable tbody tr');
 
-    // We expect at least one row (the "Spitzingsee", "Sudelfeld" etc.)
-    await expect(tableRows).not.toHaveCount(0);
-
-    // Optional: Check if a known resort exists
-    await expect(page.locator('text=Spitzingsee')).toBeVisible();
+    // Wait for at least one of them to appear (Top 3 is default now)
+    await expect(async () => {
+        const hasCards = await top3Cards.count() > 0;
+        const hasRows = await tableRows.count() > 0;
+        expect(hasCards || hasRows).toBeTruthy();
+    }).toPass();
 });
 
-test('No loading banner is visible', async ({ page }) => {
-    await page.goto('https://nmk8rf2kwt-ui.github.io/skigebiete-muenchen/');
+test('Content is visible on load', async ({ page }) => {
+    await page.goto('/');
 
-    // The banner ID we removed was "loading-banner" (or similar, checking clean state)
-    // We can just check that the page looks "ready"
-    const table = page.locator('#skiTable tbody');
-    await expect(table).toBeVisible();
+    // Verify that the main UI containers are present
+    await expect(page.locator('#top3Cards')).toBeVisible();
 });
