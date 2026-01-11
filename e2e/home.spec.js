@@ -1,6 +1,21 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
+    // Mock Backend APIs to ensure reliability without running backend
+    await page.route('**/api/resorts', async route => {
+        await route.fulfill({
+            json: [{
+                id: '1', name: 'Resort A', latitude: 47, longitude: 11,
+                liftsOpen: 5, liftsTotal: 10, snow: { mountain: 100 }, distance: 60,
+                traffic: { duration: 3600, delay: 0 }
+            }]
+        });
+    });
+
+    await page.route('**/api/traffic-all*', async route => {
+        await route.fulfill({ json: { '1': { duration: 3600, delay: 0 } } });
+    });
+
     // Set a location in localStorage to bypass onboarding
     await page.addInitScript(() => {
         window.localStorage.setItem('skigebiete_user_location', JSON.stringify({

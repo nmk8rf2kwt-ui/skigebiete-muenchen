@@ -188,7 +188,7 @@ export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirect
   }
 }
 
-function renderTop3Cards(topData, isExpanded = false) {
+export function renderTop3Cards(topData, isExpanded = false) {
   const container = document.getElementById("top3Cards");
   const domainId = store.get().currentDomain || 'ski';
   const config = DOMAIN_CONFIGS[domainId];

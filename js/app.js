@@ -128,7 +128,10 @@ async function load() {
  */
 function render() {
   const { resorts, viewMode, currentDomain } = store.get();
-  if (!resorts.length) return;
+
+  if (!resorts || !resorts.length) {
+    return;
+  }
 
   const resultsGrid = document.getElementById("top3Cards");
   const tableView = document.getElementById("tableView");
@@ -138,7 +141,7 @@ function render() {
   const sortedResorts = [...resorts].sort((a, b) => b.smartScore - a.smartScore);
 
   if (viewMode === 'top3') {
-    import("./render.js").then(module => module.renderTop3Cards(sortedResorts.slice(0, 3), currentDomain));
+    import("./render.js").then(module => module.renderTop3Cards(sortedResorts.slice(0, 3)));
   } else if (viewMode === 'table') {
     renderTable(sortedResorts);
   } else if (viewMode === 'map') {
