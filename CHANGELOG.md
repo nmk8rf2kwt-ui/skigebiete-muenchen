@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.9.2] - 2026-01-11
+
+### 🩹 Hotfix
+- **Syntax Error Fix**: Fixed a critical `SyntaxError` caused by a misplaced `import` statement in `js/app.js`, which prevented the application from initializing on some devices/browsers.
+
 ## [1.9.1] - 2026-01-11
 
 ### 🩹 Hotfix

@@ -4,6 +4,7 @@ import { API_BASE_URL } from "./config.js";
 import { store } from "./store.js";
 import { escapeHtml, getDistanceFromLatLonInKm } from "./utils.js";
 import { initEventListeners } from "./events.js";
+import { DOMAIN_CONFIGS } from "./domainConfigs.js";
 
 // Global Error Handler
 window.onerror = function (msg, url, lineNo, columnNo, error) {
@@ -242,7 +243,7 @@ export async function handleGeolocation() {
   );
 }
 
-import { DOMAIN_CONFIGS } from "./domainConfigs.js";
+
 
 // Initializing the application
 document.addEventListener("DOMContentLoaded", () => {
