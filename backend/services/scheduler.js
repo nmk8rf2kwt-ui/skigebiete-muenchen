@@ -141,17 +141,33 @@ export async function updateTrafficMatrix() {
             // Update in-memory cache for frontend (Standard View)
             for (const [resortId, data] of Object.entries(munichData)) {
                 if (data) {
-                    trafficCache.set(resortId, data);
+                    // HISTORY MANAGEMENT
+                    const existing = trafficCache.get(resortId);
+                    const trafficHistory = existing ? (existing.trafficHistory || []) : [];
+
+                    const newPoint = {
+                        timestamp: new Date().toISOString(),
+                        duration: Math.round(data.duration / 60), // Store in minutes
+                        delay: Math.round(data.delay / 60)
+                    };
+
+                    // Add new point to start
+                    trafficHistory.unshift(newPoint);
+
+                    // Keep last 24 entries (~12 hours)
+                    const keptHistory = trafficHistory.slice(0, 24);
+
+                    trafficCache.set(resortId, {
+                        ...data,
+                        delay_min: Math.round(data.delay / 60),
+                        duration_min: Math.round(data.duration / 60),
+                        trafficHistory: keptHistory // Persist history
+                    });
 
                     // Log Standard History (Legacy format for main chart?)
-                    // Or do we rely on the matrix logs now? 
-                    // Let's keep the standard log for continuity if saveTrafficLog relies on it.
-                    // saveTrafficLog uses standardTime vs currentTime.
                     const resort = resorts.find(r => r.id === resortId);
                     if (resort) {
                         const standard = resort.distance || 0;
-                        // UPDATED: Await async save
-                        // Log in minutes for DB
                         await saveTrafficLog(resortId, standard, Math.round(data.duration / 60));
                     }
                 }
@@ -169,7 +185,6 @@ export async function updateTrafficMatrix() {
                 for (const resort of resorts) {
                     const data = cityData[resort.id];
                     if (data) {
-                        // UPDATED: Log in MINUTES for consistency with history
                         await saveMatrixTrafficLog(
                             city.id,
                             city.name,
@@ -200,6 +215,58 @@ export async function updateTrafficMatrix() {
         statusLogger.updateComponentStatus('traffic_analysis', 'degraded');
         statusLogger.log('error', 'traffic', `Traffic Matrix update failed: ${error.message}`);
     }
+}
+
+// 4. Warm Traffic Cache from DB
+export async function warmTrafficCache() {
+    console.log("🔥 Warming traffic cache from DB...");
+    const { getResortTrafficHistory } = await import("./resorts/archive.js");
+    const resorts = getStaticResorts();
+    const cityId = 'muenchen';
+
+    for (const resort of resorts) {
+        // Skip if we already have detailed history in cache
+        const cached = trafficCache.get(resort.id);
+        if (cached && cached.trafficHistory && cached.trafficHistory.length > 5) continue;
+
+        try {
+            // Get last 20 logs
+            // Ideally we'd have a limit param in getResortTrafficHistory, but we can slice
+            const logs = await getResortTrafficHistory(cityId, resort.id);
+            if (logs && logs.length > 0) {
+                // Determine most recent to see if we have live data
+                // logs is ordered ASC by default in archive.js (check implementation)
+                // wait, archive.js says: .order('timestamp', { ascending: true })
+                // So newest is last.
+
+                const recentLogs = logs.slice(-24).reverse(); // Newest first
+
+                const trafficHistory = recentLogs.map(l => ({
+                    timestamp: l.timestamp,
+                    duration: l.duration, // Stored as minutes in DB? helper says "Math.round(data.duration / 60)" in updateMatrix
+                    delay: l.delay
+                }));
+
+                // Get newest for "current" state if cache is empty
+                const newest = trafficHistory[0];
+
+                // Only update if cache is empty or stale?
+                // We merge history into existing or create new
+                const existingData = cached || {};
+
+                trafficCache.set(resort.id, {
+                    ...existingData,
+                    // If no live data, maybe use newest log as fallback? 
+                    // Better to let "status" handle live vs static.
+                    // Just attach history.
+                    trafficHistory: trafficHistory
+                });
+            }
+        } catch (e) {
+            console.error(`Failed to warm traffic for ${resort.id}:`, e.message);
+        }
+    }
+    console.log("✅ Traffic cache warmed.");
 }
 
 // -- DATABASE HEALTH CHECK --
@@ -271,6 +338,9 @@ export function initScheduler() {
         setInterval(updateTrafficMatrix, 30 * 60 * 1000); // Every 30 minutes (Limit API usage)
         updateTrafficMatrix(); // Initial run
     }, 5000);
+
+    // Warm Traffic Cache (async, don't block)
+    setTimeout(warmTrafficCache, 8000);
 
     // C. Initial fetch for weather
     setTimeout(refreshWeather, 2000);

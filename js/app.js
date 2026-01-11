@@ -144,7 +144,7 @@ function render() {
   if (viewMode === 'top3') {
     import("./render.js").then(module => module.renderTop3Cards(sortedResorts.slice(0, 3)));
   } else if (viewMode === 'table') {
-    renderTable(sortedResorts);
+    renderTable(sortedResorts, undefined, 'all');
   } else if (viewMode === 'map') {
     updateMap(sortedResorts);
   }

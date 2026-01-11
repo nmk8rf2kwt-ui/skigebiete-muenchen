@@ -5,9 +5,16 @@ test.beforeEach(async ({ page }) => {
     await page.route('**/api/resorts', async route => {
         await route.fulfill({
             json: [{
-                id: '1', name: 'Resort A', latitude: 47, longitude: 11,
+                id: '1', name: 'Resort with History', latitude: 47, longitude: 11,
                 liftsOpen: 5, liftsTotal: 10, snow: { mountain: 100 }, distance: 60,
-                traffic: { duration: 3600, delay: 0 }
+                traffic: {
+                    duration: 3600, delay: 0,
+                    historyStats: {
+                        avg: 3500,
+                        top5: [3200, 3300, 3400, 3450, 3500],
+                        count: 20
+                    }
+                }
             }]
         });
     });
@@ -52,4 +59,58 @@ test('Content is visible on load', async ({ page }) => {
 
     // Verify that the main UI containers are present
     await expect(page.locator('#top3Cards')).toBeVisible();
+});
+
+test('Traffic tooltip renders history stats', async ({ page }) => {
+    // 1. Mock API implicitly handled by beforeEach? 
+    // Wait, beforeEach sets route, but I overwrote it in previous version.
+    // I should assert that the mock specific to this test is used.
+    // The beforeEach mock has NO historyStats.
+    // I need to override the route for THIS test.
+
+    await page.route('**/api/resorts', async route => {
+        await route.fulfill({
+            json: [{
+                id: '1', name: 'Resort with History', latitude: 47, longitude: 11,
+                liftsOpen: 5, liftsTotal: 10, snow: { mountain: 100 }, distance: 60,
+                traffic: {
+                    duration: 3600, delay: 0,
+                    historyStats: {
+                        avg: 3500,
+                        top5: [3200, 3300, 3400, 3450, 3500],
+                        count: 20
+                    }
+                }
+            }]
+        });
+    });
+
+    await page.goto('/');
+
+    // Ensure results view is active (wait for Top 3)
+    await expect(page.locator('#top3Cards')).toBeVisible();
+
+    // Switch to Table View
+    await page.click('button[data-view="table"]');
+
+    // Debug info
+    const tableDisplay = await page.evaluate(() => {
+        const t = document.getElementById('skiTable');
+        return getComputedStyle(t).display;
+    });
+    console.log("Table Display:", tableDisplay);
+
+    const storeState = await page.evaluate(() => {
+        const activeBtn = document.querySelector('.view-switcher-wizard .view-btn.active');
+        return activeBtn ? activeBtn.dataset.view : 'none';
+    });
+    console.log("Active View Button:", storeState);
+
+    // Locate traffic pill using Title attribute partial match
+    const trafficBadge = page.locator('#skiTable tbody tr span[title*="Aktuell"]').first();
+
+    // Verify it exists and has the expected text in title
+    await expect(trafficBadge).toBeVisible();
+    await expect(trafficBadge).toHaveAttribute('title', /Top 5: 3200, 3300/);
+    await expect(trafficBadge).toHaveAttribute('title', /Ø: 3500 min/);
 });

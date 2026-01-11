@@ -243,7 +243,33 @@ export async function getAllResortsLive() {
                 if (traffic) {
                     // Overwrite static distance with live duration - DISABLED to allow comparison
                     // resort.distance = traffic.duration; 
-                    liveData.traffic = traffic; // Pass full object if frontend needs distance km
+
+                    // Calculate History Stats
+                    const history = traffic.trafficHistory || [];
+                    let historyStats = null;
+
+                    if (history.length > 0) {
+                        const durations = history.map(h => h.duration).filter(d => d > 0);
+
+                        if (durations.length > 0) {
+                            // Average
+                            const avg = Math.round(durations.reduce((a, b) => a + b, 0) / durations.length);
+
+                            // Top 5 (Fastest times) - Unique values? No, just fastest occurrences
+                            const top5 = [...durations].sort((a, b) => a - b).slice(0, 5);
+
+                            historyStats = {
+                                avg: avg,
+                                top5: top5,
+                                count: durations.length
+                            };
+                        }
+                    }
+
+                    liveData.traffic = {
+                        ...traffic,
+                        historyStats // Expose stats
+                    };
                 }
 
                 // ============ SMARTSCORE CALCULATION ============

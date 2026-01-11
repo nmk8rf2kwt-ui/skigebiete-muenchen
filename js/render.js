@@ -445,7 +445,17 @@ export function renderRow(row, data) {
 
     const delayText = delayMins > 0 ? ` (+${delayMins} min)` : '';
     const formattedLive = formatDuration(liveMins);
-    trafficDisplay = `<span class="${styleClass}" title="Aktuell: ${liveMins} min${escapeHtml(delayText)}">${formattedLive}</span>`;
+
+    // Audit Requirement: Top 5 times + Average
+    let tooltipTitle = `Aktuell: ${liveMins} min${escapeHtml(delayText)}`;
+
+    if (data.traffic.historyStats) {
+      const stats = data.traffic.historyStats;
+      const top5Str = stats.top5.join(', ');
+      tooltipTitle += `\nØ: ${stats.avg} min | Top 5: ${top5Str} min`;
+    }
+
+    trafficDisplay = `<span class="${styleClass}" title="${escapeHtml(tooltipTitle)}">${formattedLive}</span>`;
 
     // 3. Independent Delay Display
     const formattedDelay = formatDuration(delayMins);
