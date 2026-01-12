@@ -31,16 +31,25 @@ jobs:
     - name: Install Dependencies
       run: |
         cd backend
-        npm install
+        npm ci
         
     - name: Run Traffic Tracker
       run: |
         node scripts/update_travel_times.mjs
         
-    - name: Commit and Push resorts.json changes
+    - name: Commit and Push changes
       run: |
         git config --global user.name 'Traffic Bot'
         git config --global user.email 'bot@skigebiete-muenchen.de'
+        
+        # Stage possible changes
         git add backend/resorts.json
-        # Only commit if there are changes
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Data: Update base travel times in resorts.json [skip ci]" && git push)
+        git add backend/data/api_usage.json
+        
+        # Only commit if there are staged changes
+        if ! git diff --staged --quiet; then
+          git commit -m "Data: Update traffic data [skip ci]"
+          git push
+        else
+          echo "No changes to commit"
+        fi
