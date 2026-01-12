@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.9.6] - 2026-01-12
+### 🩹 Hotfix
+- **Map Visibility**: Fixed a bug where the map was not initializing because the `initMap` function was not being called in the rendering loop. Accessing the map view now correctly displays tiles and markers.
+
 ## [1.9.5] - 2026-01-12
 ### 🐛 Bug Fixes
 - **Static Deployment**: Fixed a duplicate variable declaration in `app.js`.

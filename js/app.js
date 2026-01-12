@@ -185,12 +185,14 @@ function render() {
     console.log("👉 Delegating to renderTable");
     renderTable(sortedResorts, undefined, 'all');
   } else if (viewMode === 'map') {
+    console.log("👉 Delegating to Map (Init & Update)");
+    initMap(sortedResorts);
     updateMap(sortedResorts);
   }
 
   console.groupEnd();
 
-  // Update Map anyway if it's initialized
+  // Also ensure map is updated if it exists (e.g. background update)
   updateMap(sortedResorts);
 }
 
