@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.10.1] - 2026-01-12
+### 🛡️ Security Hardening
+- **CodeQL Fixes**: Addressed all High-severity findings including Format String Injection and Dynamic Method Validation.
+- **XSS Prevention**: Implemented robust HTML escaping for all user-generated content in logs and UI rendering.
+- **Permissions**: Hardened GitHub Actions workflows with strict `permissions` blocks.
+### 🧹 Cleanup
+- **Audit**: Removed unused `constants.js` and reorganized backend scripts.
+- **Docs**: Added `docs/MONITORING.md` defining system health checks.
+
 ## [1.10.0] - 2026-01-12
 ### ⚡ Performance
 - **Lazy Loading**: `Chart.js` (~200KB) is now only loaded when the Traffic Forecast tab is opened, significantly reducing initial page load size for all users.

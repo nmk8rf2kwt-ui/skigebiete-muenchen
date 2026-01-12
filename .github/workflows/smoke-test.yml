@@ -9,6 +9,9 @@ on:
     - cron: '*/30 * * * *' # Every 30 minutes
   workflow_dispatch: # Manual trigger
 
+permissions:
+  contents: read
+
 jobs:
   smoke-test:
     runs-on: ubuntu-latest

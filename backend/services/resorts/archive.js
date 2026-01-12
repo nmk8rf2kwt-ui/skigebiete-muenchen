@@ -31,7 +31,7 @@ export async function saveSnapshot(resortId, data) {
             }, { onConflict: 'resort_id, date' });
 
         if (error) {
-            console.error(`Supabase error saving snapshot for ${resortId}:`, error.message);
+            console.error('Supabase error saving snapshot for resort:', resortId, error.message);
             return false;
         }
         return true;
@@ -73,12 +73,12 @@ export async function saveMatrixTrafficLog(cityId, cityName, resortId, duration,
             });
 
         if (error) {
-            console.error(`Supabase error saving traffic log for ${cityId} -> ${resortId}:`, error.message);
+            console.error('Supabase error saving traffic log for city:', cityId, 'resort:', resortId, error.message);
             return false;
         }
         return true;
     } catch (error) {
-        console.error(`Error saving matrix log for ${cityId} -> ${resortId}:`, error.message);
+        console.error('Error saving matrix log for city:', cityId, 'resort:', resortId, error.message);
         return false;
     }
 }
@@ -101,13 +101,13 @@ export async function getHistory(resortId, days = 7) {
             .order('date', { ascending: false });
 
         if (error) {
-            console.error(`Supabase error getting history for ${resortId}:`, error.message);
+            console.error('Supabase error getting history for resort:', resortId, error.message);
             return [];
         }
 
         return data || [];
     } catch (error) {
-        console.error(`Error reading history for ${resortId}:`, error);
+        console.error('Error reading history for resort:', resortId, error);
         return [];
     }
 }
@@ -234,7 +234,7 @@ export async function updateHistoricalWeather(resortId, date, weatherData) {
         if (error) throw error;
         return true;
     } catch (error) {
-        console.error(`Error updating historical weather for ${resortId} on ${date}:`, error.message);
+        console.error('Error updating historical weather for resort:', resortId, 'date:', date, error.message);
         return false;
     }
 }
@@ -270,7 +270,7 @@ export async function getCityTrafficHistory(cityId) {
         if (error) throw error;
         return data;
     } catch (error) {
-        console.error(`Error getting city traffic history for ${cityId}:`, error);
+        console.error('Error getting city traffic history for city:', cityId, error);
         return [];
     }
 }
@@ -289,7 +289,7 @@ export async function getResortTrafficHistory(cityId, resortId) {
         if (error) throw error;
         return data;
     } catch (error) {
-        console.error(`Error getting resort traffic history for ${resortId}:`, error);
+        console.error('Error getting resort traffic history for resort:', resortId, error);
         return [];
     }
 }

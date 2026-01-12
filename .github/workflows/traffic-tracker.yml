@@ -6,6 +6,9 @@ on:
     - cron: '*/30 5-21 * * *'
   workflow_dispatch: # Allow manual trigger
 
+permissions:
+  contents: write
+
 jobs:
   track-traffic:
     runs-on: ubuntu-latest

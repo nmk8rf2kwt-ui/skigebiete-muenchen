@@ -419,6 +419,7 @@ export async function getSingleResortLive(resortId) {
             // But the legacy code `api/lifts/:resort` seemed to trigger a fresh fetch?
             // The code said: `const data = parser ? await fetchWithTimeout(parser(), 8000) : {};`
             // So it was always fresh. Let's keep that behavior for this specific function.
+            if (typeof parser !== 'function') throw new Error(`Invalid parser type for ${resortId}`);
             const data = await fetchWithTimeout((opts) => parser(opts), 8000);
             return {
                 ...(resort || {}),
@@ -447,6 +448,7 @@ export async function forceRefreshResort(resortId) {
 
     try {
         logger.scraper.info(`🔄 Force refreshing ${resortId}...`);
+        if (typeof parser !== 'function') throw new Error(`Invalid parser type for ${resortId}`);
         const rawData = await fetchWithTimeout((opts) => parser(opts), 10000);
 
         // Enrich with static metadata before validation to satisfy schema requirements

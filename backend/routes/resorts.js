@@ -34,7 +34,7 @@ router.get("/:resort", async (req, res) => {
         if (result && result.error) return res.status(500).json({ error: result.error });
         res.json(result);
     } catch (err) {
-        console.error(`Error in resort/lift route for ${resort}:`, err);
+        console.error('Error in resort/lift route for resort:', resort, err);
         res.status(500).json({ error: "Internal server error" });
     }
 });

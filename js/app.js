@@ -38,9 +38,8 @@ export function showError(message) {
   if (!container || !content) return;
 
   const time = new Date().toLocaleTimeString();
-  const entry = `<div class="error-entry">
-    <span style="color: #999;">[${time}]</span> ${message}
-  </div>`;
+  <span style="color: #999;">[${time}]</span> ${ escapeHtml(message) }
+  </div > `;
 
   content.innerHTML = entry + content.innerHTML;
   container.style.display = "block";
@@ -53,8 +52,7 @@ export function logToUI(msg, type = "info") {
 
   const time = new Date().toLocaleTimeString();
   const icon = type === "success" ? "✅" : (type === "error" ? "❌" : "ℹ️");
-  const entry = `<div class="status-entry" style="border-left: 3px solid ${type === "success" ? "#2ecc71" : (type === "error" ? "#e74c3c" : "#3498db")}">
-    <span class="status-time">[${time}]</span> ${icon} ${msg}
+    <span class="status-time">[${time}]</span> ${icon} ${escapeHtml(msg)}
   </div>`;
 
   content.innerHTML = entry + content.innerHTML;

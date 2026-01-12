@@ -253,7 +253,7 @@ export function renderTop3Cards(topData, isExpanded = false) {
       const metricsHtml = config.metrics.map(m => `
         <div class="metric-box">
             <span class="metric-icon">${m.icon}</span>
-            <strong class="metric-value">${m.formatter(r)}</strong>
+            <strong class="metric-value">${escapeHtml(String(m.formatter(r)))}</strong>
             <span class="metric-label">${m.label}</span>
         </div>
         `).join('');
@@ -279,7 +279,7 @@ export function renderTop3Cards(topData, isExpanded = false) {
                 ${reasons.map(reason => `
                     <li class="reasoning-item">
                         <span>${reason.icon}</span>
-                        <span>${reason.text}</span>
+                        <span>${escapeHtml(reason.text)}</span>
                     </li>
                 `).join('')}
             </ul>
