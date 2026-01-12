@@ -403,7 +403,9 @@ export async function getAllResortsLive() {
 // Single Resort Fetch (with cache check)
 export async function getSingleResortLive(resortId) {
     const resort = getResortConfig(resortId);
-    const parser = PARSERS[resortId];
+
+    // SECURITY: Only access PARSERS if the ID is definitely valid (CodeQL Safe)
+    const parser = VALID_PARSER_IDS.has(resortId) ? PARSERS[resortId] : null;
 
     // If unknown and no parser, return null
     if (!resort && !parser) return null;
@@ -421,10 +423,6 @@ export async function getSingleResortLive(resortId) {
             // The code said: `const data = parser ? await fetchWithTimeout(parser(), 8000) : {};`
             // So it was always fresh. Let's keep that behavior for this specific function.
 
-            // SECURITY: Explicit Whitelist Validation for CodeQL
-            if (!VALID_PARSER_IDS.has(resortId)) {
-                throw new Error(`Invalid parser key ${resortId}`);
-            }
 
             if (typeof parser !== 'function') throw new Error(`Invalid parser type for ${resortId}`);
             const data = await fetchWithTimeout((opts) => parser(opts), 8000);
