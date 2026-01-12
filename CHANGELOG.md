@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.9.8] - 2026-01-12
+### 🩹 Hotfix
+- **Lint/Syntax Fix**: Fixed an unexpected identifier error in `utils.js` (stray curly braces) that was causing CodeQL warnings and potential runtime issues in debug mode.
+
 ## [1.9.7] - 2026-01-12
 ### 🧹 Cleanup
 - **Conditional Logging**: Diagnostic logs are now hidden by default to keep the console clean. Use `?debug=true` in the URL to see verbose "Offensive Debugging" logs.

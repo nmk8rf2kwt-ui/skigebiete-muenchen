@@ -53,8 +53,6 @@ export function trackClick(resortId, type) {
         fetch(url, { mode: 'no-cors' }).catch(() => { });
     }
 }
-    }
-}
 
 /**
  * Logs messages only if debug mode is active (via URL param ?debug=true)
