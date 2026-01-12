@@ -1,6 +1,6 @@
 // Score calculation constants
 import { sortResorts } from './sorting.js';
-import { escapeHtml } from './utils.js';
+import { escapeHtml, debugLog, debugGroup, debugGroupEnd } from './utils.js';
 import { renderCongestionCell } from './congestionForecast.js';
 
 import { store } from './store.js';
@@ -219,14 +219,14 @@ export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirect
 }
 
 export function renderTop3Cards(topData, isExpanded = false) {
-  console.group("🃏 DIAGNOSTIC: renderTop3Cards");
-  console.log(`Input: ${topData?.length} resorts`, topData[0]);
+  debugGroup("🃏 DIAGNOSTIC: renderTop3Cards");
+  debugLog(`Input: ${topData?.length} resorts`, topData[0]);
 
   const container = document.getElementById("top3Cards");
 
   if (!container) {
     console.error("❌ CRITICAL: #top3Cards container NOT FOUND in DOM!");
-    console.groupEnd();
+    debugGroupEnd();
     return;
   }
 
@@ -234,7 +234,7 @@ export function renderTop3Cards(topData, isExpanded = false) {
   const config = DOMAIN_CONFIGS[domainId];
   const userPref = store.get().preference || config.prefs[0].id; // Fallback to first pref
 
-  console.log(`Config: Domain=${domainId}, Pref=${userPref}`, config);
+  debugLog(`Config: Domain=${domainId}, Pref=${userPref}`, config);
 
   if (!container) return;
   container.innerHTML = "";
@@ -295,12 +295,13 @@ export function renderTop3Cards(topData, isExpanded = false) {
         </div>
         `;
       container.appendChild(card);
-      console.log(`✅ Card appended: ${safeName}`);
+      debugLog(`✅ Card appended: ${safeName}`);
     } catch (err) {
       console.error("❌ Failed to render card", r, err);
     }
   });
-  console.groupEnd();
+
+  debugGroupEnd();
 }
 
 function generateReasoning(resort, pref, domainId = 'ski') {

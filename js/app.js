@@ -2,7 +2,7 @@ import { renderTable, calculateScore } from "./render.js";
 import { initMap, updateMap, showUserLocation } from "./map.js";
 import { API_BASE_URL } from "./config.js";
 import { store } from "./store.js";
-import { escapeHtml, getDistanceFromLatLonInKm } from "./utils.js";
+import { escapeHtml, getDistanceFromLatLonInKm, debugLog, debugGroup, debugGroupEnd } from "./utils.js";
 import { initEventListeners } from "./events.js";
 import { DOMAIN_CONFIGS } from "./domainConfigs.js";
 
@@ -109,12 +109,12 @@ async function load() {
 
     clearTimeout(timeoutId);
 
-    console.group("🔍 DIAGNOSTIC: Data Load");
-    console.log(`[API] Raw count: ${resorts ? resorts.length : 0}`);
+    debugGroup("🔍 DIAGNOSTIC: Data Load");
+    debugLog(`[API] Raw count: ${resorts ? resorts.length : 0}`);
 
     if (!resorts || resorts.length === 0) {
       console.warn("⚠️ API returned empty array!");
-      console.groupEnd();
+      debugGroupEnd();
       return;
     }
 
@@ -142,8 +142,8 @@ async function load() {
       };
     });
 
-    console.log(`[Enriched] Count: ${enhancedResorts.length}`, enhancedResorts[0]);
-    console.groupEnd();
+    debugLog(`[Enriched] Count: ${enhancedResorts.length}`, enhancedResorts[0]);
+    debugGroupEnd();
 
     store.setState({ resorts: enhancedResorts }, render);
     logToUI(`Daten für ${enhancedResorts.length} Ziele geladen`, "success");
@@ -161,12 +161,12 @@ async function load() {
  */
 function render() {
   const { resorts, viewMode, currentDomain } = store.get();
-  console.group("🎨 DIAGNOSTIC: Render Phase");
-  console.log(`State: Mode=${viewMode}, Domain=${currentDomain}, Resorts=${resorts?.length}`);
+  debugGroup("🎨 DIAGNOSTIC: Render Phase");
+  debugLog(`State: Mode=${viewMode}, Domain=${currentDomain}, Resorts=${resorts?.length}`);
 
   if (!resorts || !resorts.length) {
     console.warn("⚠️ Render called with empty resorts!");
-    console.groupEnd();
+    debugGroupEnd();
     return;
   }
 
@@ -176,21 +176,21 @@ function render() {
 
   // Filter and Sort based on current UI state
   const sortedResorts = [...resorts].sort((a, b) => b.smartScore - a.smartScore);
-  console.log(`Top Resort: ${sortedResorts[0].name} (Score: ${sortedResorts[0].smartScore})`);
+  debugLog(`Top Resort: ${sortedResorts[0].name} (Score: ${sortedResorts[0].smartScore})`);
 
   if (viewMode === 'top3') {
-    console.log("👉 Delegating to renderTop3Cards");
+    debugLog("👉 Delegating to renderTop3Cards");
     import("./render.js").then(module => module.renderTop3Cards(sortedResorts.slice(0, 3)));
   } else if (viewMode === 'table') {
-    console.log("👉 Delegating to renderTable");
+    debugLog("👉 Delegating to renderTable");
     renderTable(sortedResorts, undefined, 'all');
   } else if (viewMode === 'map') {
-    console.log("👉 Delegating to Map (Init & Update)");
+    debugLog("👉 Delegating to Map (Init & Update)");
     initMap(sortedResorts);
     updateMap(sortedResorts);
   }
 
-  console.groupEnd();
+  debugGroupEnd();
 
   // Also ensure map is updated if it exists (e.g. background update)
   updateMap(sortedResorts);

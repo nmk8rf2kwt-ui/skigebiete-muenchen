@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.9.7] - 2026-01-12
+### 🧹 Cleanup
+- **Conditional Logging**: Diagnostic logs are now hidden by default to keep the console clean. Use `?debug=true` in the URL to see verbose "Offensive Debugging" logs.
+- **Security Check**: Verified that CI/CD pipelines use GitHub Secrets correctly.
+
 ## [1.9.6] - 2026-01-12
 ### 🩹 Hotfix
 - **Map Visibility**: Fixed a bug where the map was not initializing because the `initMap` function was not being called in the rendering loop. Accessing the map view now correctly displays tiles and markers.

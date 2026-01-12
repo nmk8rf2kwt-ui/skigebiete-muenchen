@@ -53,3 +53,29 @@ export function trackClick(resortId, type) {
         fetch(url, { mode: 'no-cors' }).catch(() => { });
     }
 }
+    }
+}
+
+/**
+ * Logs messages only if debug mode is active (via URL param ?debug=true)
+ */
+export function debugLog(message, ...args) {
+    const isDebug = new URLSearchParams(window.location.search).has('debug');
+    if (isDebug) {
+        console.log(`[DEBUG] ${message}`, ...args);
+    }
+}
+
+export function debugGroup(label) {
+    const isDebug = new URLSearchParams(window.location.search).has('debug');
+    if (isDebug) {
+        console.group(label);
+    }
+}
+
+export function debugGroupEnd() {
+    const isDebug = new URLSearchParams(window.location.search).has('debug');
+    if (isDebug) {
+        console.groupEnd();
+    }
+}
