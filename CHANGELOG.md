@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.10.0] - 2026-01-12
+### ⚡ Performance
+- **Lazy Loading**: `Chart.js` (~200KB) is now only loaded when the Traffic Forecast tab is opened, significantly reducing initial page load size for all users.
+- **Dynamic Imports**: Implemented dynamic module loading for charts in `modals.js`.
+
 ## [1.9.8] - 2026-01-12
 ### 🩹 Hotfix
 - **Lint/Syntax Fix**: Fixed an unexpected identifier error in `utils.js` (stray curly braces) that was causing CodeQL warnings and potential runtime issues in debug mode.

@@ -10,6 +10,22 @@ let historyChart = null;
 let resortTrafficChartInstance = null;
 let detailsHistoryChart = null;
 
+// Lazy Load Helper
+let chartJsPromise = null;
+function loadChartLib() {
+    if (window.Chart) return Promise.resolve(window.Chart);
+    if (chartJsPromise) return chartJsPromise;
+
+    chartJsPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = "https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js";
+        script.onload = () => resolve(window.Chart);
+        script.onerror = () => reject(new Error("Failed to load Chart.js"));
+        document.head.appendChild(script);
+    });
+    return chartJsPromise;
+}
+
 export function setCurrentResortId(id) {
     currentResortId = id;
 }
@@ -286,7 +302,11 @@ export async function loadResortTrafficHistory(resortId) {
     const nearestCity = findNearestCity(userLat, userLon);
 
     try {
-        const res = await fetch(`${API_BASE_URL}/traffic/${nearestCity}/${resortId}`);
+        const [res] = await Promise.all([
+            fetch(`${API_BASE_URL}/traffic/${nearestCity}/${resortId}`),
+            loadChartLib()
+        ]);
+
         if (!res.ok) throw new Error('Failed to fetch traffic history');
 
         const response = await res.json();
