@@ -6,7 +6,7 @@ export const DOMAIN_CONFIGS = {
         subline: 'Heute sinnvoll?',
         endpoint: '/api/resorts',
         metrics: [
-            { id: 'lifts', label: 'Offen', icon: '🚠', formatter: (r) => `${Math.round((r.liftsOpen / (r.liftsTotal || r.lifts || 1)) * 100)}%` },
+            { id: 'lifts', label: 'Offen', icon: '🚠', formatter: (r) => (r.liftsOpen !== null && r.liftsOpen !== undefined) ? `${Math.round((r.liftsOpen / (r.liftsTotal || r.lifts || 1)) * 100)}%` : '-' },
             { id: 'snow', label: 'Schnee', icon: '❄️', formatter: (r) => `${r.snow?.mountain ?? 0} cm` },
             { id: 'eta', label: 'Anfahrt', icon: '🚗', formatter: (r) => `${Math.round((r.traffic?.duration || 0) / 60 || r.distance || 0)} min` }
         ],
