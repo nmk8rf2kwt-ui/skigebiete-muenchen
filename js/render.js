@@ -288,9 +288,9 @@ export function renderTop3Cards(topData, isExpanded = false) {
         <div class="top3-outcomes outcomes-container">
             <button class="outcome-btn-route" data-action="route" data-destination="${encodeURIComponent(r.address || r.name)}">Anfahrt öffnen ➔</button>
             <div class="action-buttons-row">
-                <button class="action-btn" data-action="share" data-title="${safeName}" data-url="${window.location.href}">Teilen 🔗</button>
+                <button class="action-btn" data-action="share" data-title="${safeName}" data-url="${escapeHtml(window.location.href)}">Teilen 🔗</button>
                 <button class="action-btn" data-action="save">Merken ⭐</button>
-                ${domainId === 'ski' ? `<button class="action-btn" data-action="details" data-resort-id="${r.id}" data-resort-name="${safeName}">Details 📋</button>` : ''}
+                ${domainId === 'ski' ? `<button class="action-btn" data-action="details" data-resort-id="${escapeHtml(r.id)}" data-resort-name="${safeName}">Details 📋</button>` : ''}
             </div>
         </div>
         `;

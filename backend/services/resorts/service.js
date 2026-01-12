@@ -419,6 +419,10 @@ export async function getSingleResortLive(resortId) {
             // But the legacy code `api/lifts/:resort` seemed to trigger a fresh fetch?
             // The code said: `const data = parser ? await fetchWithTimeout(parser(), 8000) : {};`
             // So it was always fresh. Let's keep that behavior for this specific function.
+
+            // SECURITY: Validate parser key
+            if (!Object.prototype.hasOwnProperty.call(PARSERS, resortId)) throw new Error(`Invalid parser key ${resortId}`);
+
             if (typeof parser !== 'function') throw new Error(`Invalid parser type for ${resortId}`);
             const data = await fetchWithTimeout((opts) => parser(opts), 8000);
             return {
@@ -443,7 +447,13 @@ export async function forceRefreshResort(resortId) {
     const resort = getResortConfig(resortId);
     if (!resort) throw new Error("Resort not found");
 
+    // Securely validate that the resortId corresponds to a real parser (prevents prototype access)
+    if (!Object.prototype.hasOwnProperty.call(PARSERS, resortId)) {
+        throw new Error("No parser for this resort");
+    }
     const parser = PARSERS[resortId];
+
+    // Extra safety measure (though hasOwnProperty usually ensures it is the key)
     if (!parser) throw new Error("No parser for this resort");
 
     try {
