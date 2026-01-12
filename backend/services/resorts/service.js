@@ -453,11 +453,19 @@ export async function forceRefreshResort(resortId) {
 
         // Enrich with static metadata before validation to satisfy schema requirements
         // Enrich with static metadata before validation to satisfy schema requirements
+        // Defensive Name Resolution: Ensure name exists to prevent validation failure
+        let finalName = rawData.name;
+        if (!finalName && resort.name) finalName = resort.name;
+        if (!finalName) {
+            logger.warn(`⚠️ Resort ${resort.id} missing name in both parser output and config during forceRefresh! Using fallback.`);
+            finalName = "Unknown Resort";
+        }
+
         const dataToValidate = {
             id: resort.id,
             status: rawData.status || 'live',
             ...rawData,
-            name: rawData.name || resort.name, // Use rawData name if present, else fallback to static
+            name: finalName,
         };
         const validation = ResortDataSchema.safeParse(dataToValidate);
 
