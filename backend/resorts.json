@@ -2,7 +2,7 @@
     {
         "id": "spitzingsee",
         "name": "Spitzingsee - Tegernsee",
-        "distance": 71,
+        "distance": 4118,
         "piste_km": 20,
         "lifts": 10,
         "price": 51,
@@ -22,7 +22,7 @@
     {
         "id": "brauneck",
         "name": "Brauneck / Lenggries",
-        "distance": 63,
+        "distance": 3641,
         "piste_km": 34,
         "lifts": 15,
         "price": 53,
@@ -42,7 +42,7 @@
     {
         "id": "garmisch",
         "name": "Garmisch-Classic",
-        "distance": 74,
+        "distance": 4281,
         "piste_km": 40,
         "lifts": 18,
         "price": 69,
@@ -119,7 +119,7 @@
     {
         "id": "sudelfeld",
         "name": "Sudelfeld - Bayrischzell",
-        "distance": 57,
+        "distance": 3460,
         "piste_km": 31,
         "lifts": 13,
         "price": 52,
@@ -139,7 +139,7 @@
     {
         "id": "zugspitze",
         "name": "Zugspitze",
-        "distance": 81,
+        "distance": 4777,
         "piste_km": 20,
         "lifts": 10,
         "price": 69,
@@ -160,7 +160,7 @@
     {
         "id": "wilder-kaiser",
         "name": "SkiWelt Wilder Kaiser",
-        "distance": 99,
+        "distance": 5028,
         "piste_km": 270,
         "lifts": 80,
         "price": 69,
@@ -218,7 +218,7 @@
     {
         "id": "hochkoessen",
         "name": "Hochkössen",
-        "distance": 88,
+        "distance": 4574,
         "piste_km": 22,
         "lifts": 11,
         "price": 36,
@@ -238,7 +238,7 @@
     {
         "id": "winklmoos",
         "name": "Reit im Winkl (Winklmoos)",
-        "distance": 88,
+        "distance": 4929,
         "piste_km": 44,
         "lifts": 12,
         "price": 63,
@@ -258,7 +258,7 @@
     {
         "id": "steinplatte",
         "name": "Steinplatte Waidring",
-        "distance": 122,
+        "distance": 6551,
         "piste_km": 42,
         "lifts": 14,
         "price": 63,
@@ -278,7 +278,7 @@
     {
         "id": "ehrwald",
         "name": "Ehrwalder Almbahn",
-        "distance": 105,
+        "distance": 5592,
         "piste_km": 27,
         "lifts": 7,
         "price": 68,
@@ -298,7 +298,7 @@
     {
         "id": "lermoos",
         "name": "Lermoos / Grubigstein",
-        "distance": 97,
+        "distance": 5212,
         "piste_km": 27,
         "lifts": 8,
         "price": 68,
@@ -318,7 +318,7 @@
     {
         "id": "tiroler-zugspitzbahn",
         "name": "Tiroler Zugspitzbahn",
-        "distance": 105,
+        "distance": 5218,
         "piste_km": 17,
         "lifts": 9,
         "price": 69,
@@ -339,7 +339,7 @@
     {
         "id": "st_johann",
         "name": "St. Johann in Tirol",
-        "distance": 101,
+        "distance": 5136,
         "piste_km": 40,
         "lifts": 16,
         "price": 62,
@@ -359,7 +359,7 @@
     {
         "id": "ski_juwel",
         "name": "Ski Juwel Alpbachtal",
-        "distance": 113,
+        "distance": 6241,
         "piste_km": 113,
         "lifts": 45,
         "price": 68.5,
@@ -417,7 +417,7 @@
     {
         "id": "kitzbuehel",
         "name": "Kitzbühel / Kirchberg",
-        "distance": 110,
+        "distance": 5579,
         "piste_km": 233,
         "lifts": 58,
         "price": 72,
@@ -499,7 +499,7 @@
     {
         "id": "berwang",
         "name": "Berwang",
-        "distance": 112,
+        "distance": 5908,
         "piste_km": 36,
         "lifts": 12,
         "price": 68,
@@ -519,7 +519,7 @@
     {
         "id": "seefeld",
         "name": "Seefeld / Rosshütte",
-        "distance": 104,
+        "distance": 5757,
         "piste_km": 19,
         "lifts": 10,
         "price": 61.5,
@@ -539,7 +539,7 @@
     {
         "id": "hahnenkamm",
         "name": "Hahnenkamm (Reutte)",
-        "distance": 129,
+        "distance": 6181,
         "piste_km": 16,
         "lifts": 5,
         "price": 52,
@@ -559,7 +559,7 @@
     {
         "id": "lofer",
         "name": "Lofer / Almenwelt",
-        "distance": 115,
+        "distance": 5882,
         "piste_km": 46,
         "lifts": 10,
         "price": 62,
@@ -579,7 +579,7 @@
     {
         "id": "ofterschwang",
         "name": "Ofterschwang",
-        "distance": 122,
+        "distance": 6981,
         "piste_km": 16,
         "lifts": 7,
         "price": 54.5,
@@ -599,7 +599,7 @@
     {
         "id": "bolsterlang",
         "name": "Bolsterlang",
-        "distance": 125,
+        "distance": 7361,
         "piste_km": 17,
         "lifts": 5,
         "price": 54.5,
@@ -619,7 +619,7 @@
     {
         "id": "oberaudorf",
         "name": "Oberaudorf - Hocheck",
-        "distance": 54,
+        "distance": 3195,
         "piste_km": 12,
         "lifts": 5,
         "price": 38,
@@ -639,7 +639,7 @@
     {
         "id": "kampenwand",
         "name": "Kampenwand",
-        "distance": 68,
+        "distance": 4371,
         "piste_km": 12,
         "lifts": 4,
         "price": 32,
@@ -659,7 +659,7 @@
     {
         "id": "oberstdorf",
         "name": "Oberstdorf / Kleinwalsertal",
-        "distance": 131,
+        "distance": 7513,
         "piste_km": 130,
         "lifts": 48,
         "price": 68.7,
@@ -679,7 +679,7 @@
     {
         "id": "oberjoch",
         "name": "Oberjoch (Bad Hindelang)",
-        "distance": 117,
+        "distance": 6895,
         "piste_km": 30,
         "lifts": 6,
         "price": 52.5,
@@ -699,7 +699,7 @@
     {
         "id": "balderschwang",
         "name": "Balderschwang",
-        "distance": 138,
+        "distance": 8040,
         "piste_km": 41,
         "lifts": 12,
         "price": 45,
@@ -719,7 +719,7 @@
     {
         "id": "winterberg",
         "name": "Skiliftkarussell Winterberg",
-        "distance": 292,
+        "distance": 17787,
         "piste_km": 27.5,
         "lifts": 26,
         "price": 48,
@@ -737,7 +737,7 @@
     {
         "id": "feldberg",
         "name": "Feldberg (Schwarzwald)",
-        "distance": 223,
+        "distance": 13240,
         "piste_km": 30,
         "lifts": 14,
         "price": 47,
@@ -755,7 +755,7 @@
     {
         "id": "todtnauberg",
         "name": "Todtnauberg",
-        "distance": 239,
+        "distance": 14125,
         "piste_km": 13,
         "lifts": 6,
         "price": 38,
@@ -773,7 +773,7 @@
     {
         "id": "arber",
         "name": "Großer Arber",
-        "distance": 180,
+        "distance": 7381,
         "piste_km": 12,
         "lifts": 9,
         "price": 42,
@@ -791,7 +791,7 @@
     {
         "id": "fichtelberg",
         "name": "Fichtelberg - Oberwiesenthal",
-        "distance": 320,
+        "distance": 12093,
         "piste_km": 15.5,
         "lifts": 6,
         "price": 39,
@@ -809,7 +809,7 @@
     {
         "id": "wurmberg",
         "name": "Wurmberg - Braunlage",
-        "distance": 350,
+        "distance": 17565,
         "piste_km": 11.8,
         "lifts": 6,
         "price": 45,
@@ -827,7 +827,7 @@
     {
         "id": "wendelstein",
         "name": "Wendelstein",
-        "distance": 65,
+        "distance": 5685,
         "piste_km": 8,
         "lifts": 4,
         "price": 38,
@@ -845,7 +845,7 @@
     {
         "id": "willingen",
         "name": "Willingen (Sauerland)",
-        "distance": 420,
+        "distance": 18541,
         "piste_km": 18,
         "lifts": 16,
         "price": 44,
@@ -863,7 +863,7 @@
     {
         "id": "zillertal_arena",
         "name": "Zillertal Arena",
-        "distance": 125,
+        "distance": 6550,
         "piste_km": 150,
         "lifts": 52,
         "price": 72,
@@ -883,7 +883,7 @@
     {
         "id": "mayrhofen",
         "name": "Mayrhofen (Penkenbahn)",
-        "distance": 130,
+        "distance": 6443,
         "piste_km": 42,
         "lifts": 21,
         "price": 68.5,
@@ -903,7 +903,7 @@
     {
         "id": "hintertux",
         "name": "Hintertuxer Gletscher",
-        "distance": 140,
+        "distance": 9496,
         "piste_km": 60,
         "lifts": 21,
         "price": 72,
@@ -923,7 +923,7 @@
     {
         "id": "soelden",
         "name": "Sölden",
-        "distance": 190,
+        "distance": 9789,
         "piste_km": 144,
         "lifts": 31,
         "price": 75,
@@ -940,7 +940,7 @@
     {
         "id": "obertauern",
         "name": "Obertauern",
-        "distance": 180,
+        "distance": 8165,
         "piste_km": 100,
         "lifts": 26,
         "price": 65,
@@ -957,7 +957,7 @@
     {
         "id": "ischgl",
         "name": "Ischgl / Samnaun",
-        "distance": 210,
+        "distance": 10074,
         "piste_km": 239,
         "lifts": 45,
         "price": 72,
@@ -974,7 +974,7 @@
     {
         "id": "st_anton",
         "name": "St. Anton am Arlberg",
-        "distance": 230,
+        "distance": 9482,
         "piste_km": 305,
         "lifts": 88,
         "price": 75,
@@ -991,7 +991,7 @@
     {
         "id": "serfaus_fiss_ladis",
         "name": "Serfaus-Fiss-Ladis",
-        "distance": 190,
+        "distance": 9807,
         "piste_km": 214,
         "lifts": 68,
         "price": 68,
@@ -1008,7 +1008,7 @@
     {
         "id": "saalbach",
         "name": "Saalbach Hinterglemm Leogang Fieberbrunn",
-        "distance": 180,
+        "distance": 8448,
         "piste_km": 270,
         "lifts": 70,
         "price": 72,
@@ -1025,7 +1025,7 @@
     {
         "id": "schladming",
         "name": "Schladming-Dachstein (Planai)",
-        "distance": 210,
+        "distance": 7950,
         "piste_km": 123,
         "lifts": 44,
         "price": 73.5,
@@ -1042,7 +1042,7 @@
     {
         "id": "hochzillertal_hochfuegen",
         "name": "Hochzillertal / Hochfügen",
-        "distance": 130,
+        "distance": 5653,
         "piste_km": 90,
         "lifts": 39,
         "price": 72.5,
@@ -1059,7 +1059,7 @@
     {
         "id": "kitzsteinhorn",
         "name": "Zell am See / Kaprun (Kitzsteinhorn)",
-        "distance": 170,
+        "distance": 9096,
         "piste_km": 61,
         "lifts": 23,
         "price": 76,
@@ -1076,7 +1076,7 @@
     {
         "id": "nassfeld",
         "name": "Nassfeld",
-        "distance": 260,
+        "distance": 12973,
         "piste_km": 110,
         "lifts": 30,
         "price": 62,
@@ -1093,7 +1093,7 @@
     {
         "id": "obergurgl_hochgurgl",
         "name": "Obergurgl-Hochgurgl",
-        "distance": 195,
+        "distance": 10748,
         "piste_km": 112,
         "lifts": 25,
         "price": 73,
@@ -1110,7 +1110,7 @@
     {
         "id": "axamer_lizum",
         "name": "Axamer Lizum",
-        "distance": 150,
+        "distance": 7494,
         "piste_km": 40,
         "lifts": 9,
         "price": 54,
@@ -1127,7 +1127,7 @@
     {
         "id": "kuehtai",
         "name": "Kühtai",
-        "distance": 130,
+        "distance": 8004,
         "piste_km": 47,
         "lifts": 12,
         "price": 52,
@@ -1161,7 +1161,7 @@
     {
         "id": "snow_space_salzburg",
         "name": "Snow Space Salzburg",
-        "distance": 170,
+        "distance": 7148,
         "piste_km": 210,
         "lifts": 70,
         "price": 73,
@@ -1178,7 +1178,7 @@
     {
         "id": "hochkoenig",
         "name": "Hochkönig",
-        "distance": 175,
+        "distance": 7743,
         "piste_km": 120,
         "lifts": 34,
         "price": 73,
@@ -1195,7 +1195,7 @@
     {
         "id": "silvretta_montafon",
         "name": "Silvretta Montafon",
-        "distance": 220,
+        "distance": 9261,
         "piste_km": 140,
         "lifts": 35,
         "price": 74,
@@ -1212,7 +1212,7 @@
     {
         "id": "damuels_mellau",
         "name": "Damüls Mellau",
-        "distance": 210,
+        "distance": 10100,
         "piste_km": 109,
         "lifts": 28,
         "price": 66,
@@ -1229,7 +1229,7 @@
     {
         "id": "turracher_hoehe",
         "name": "Turracher Höhe",
-        "distance": 240,
+        "distance": 11062,
         "piste_km": 42,
         "lifts": 15,
         "price": 60,
@@ -1246,7 +1246,7 @@
     {
         "id": "bad_kleinkirchheim",
         "name": "Bad Kleinkirchheim",
-        "distance": 260,
+        "distance": 11552,
         "piste_km": 103,
         "lifts": 24,
         "price": 62,
@@ -1263,7 +1263,7 @@
     {
         "id": "kronplatz",
         "name": "Kronplatz",
-        "distance": 215,
+        "distance": 10987,
         "piste_km": 120,
         "lifts": 32,
         "price": 74,
@@ -1280,7 +1280,7 @@
     {
         "id": "dolomitisuperski",
         "name": "Dolomiti Superski",
-        "distance": 230,
+        "distance": 12723,
         "piste_km": 1200,
         "lifts": 450,
         "price": 80,
@@ -1297,7 +1297,7 @@
     {
         "id": "sella_ronda",
         "name": "Sella Ronda",
-        "distance": 230,
+        "distance": 12759,
         "piste_km": 40,
         "lifts": 10,
         "price": 80,
@@ -1314,7 +1314,7 @@
     {
         "id": "loser",
         "name": "Loser - Altaussee",
-        "distance": 180,
+        "distance": 10625,
         "piste_km": 34,
         "lifts": 8,
         "price": 54,
@@ -1327,7 +1327,7 @@
     {
         "id": "feuerkogel",
         "name": "Feuerkogel - Ebensee",
-        "distance": 170,
+        "distance": 10541,
         "piste_km": 10,
         "lifts": 7,
         "price": 52,
@@ -1340,7 +1340,7 @@
     {
         "id": "dachstein_krippenstein",
         "name": "Dachstein Krippenstein",
-        "distance": 190,
+        "distance": 9536,
         "piste_km": 30,
         "lifts": 5,
         "price": 56,
@@ -1366,7 +1366,7 @@
     {
         "id": "gaissau_hintersee",
         "name": "Gaissau-Hintersee",
-        "distance": 140,
+        "distance": 6681,
         "piste_km": 34,
         "lifts": 9,
         "price": 45,
@@ -1392,7 +1392,7 @@
     {
         "id": "patscherkofel",
         "name": "Patscherkofel (Innsbruck)",
-        "distance": 105,
+        "distance": 7944,
         "piste_km": 18,
         "lifts": 6,
         "price": 45,
@@ -1405,7 +1405,7 @@
     {
         "id": "mutters",
         "name": "Muttereralm (Innsbruck)",
-        "distance": 105,
+        "distance": 6392,
         "piste_km": 16,
         "lifts": 6,
         "price": 42,
@@ -1418,7 +1418,7 @@
     {
         "id": "bergeralm",
         "name": "Bergeralm (Steinach)",
-        "distance": 125,
+        "distance": 7077,
         "piste_km": 29,
         "lifts": 8,
         "price": 48,
@@ -1431,7 +1431,7 @@
     {
         "id": "glungezer",
         "name": "Glungezer (Tulfes)",
-        "distance": 110,
+        "distance": 6201,
         "piste_km": 23,
         "lifts": 7,
         "price": 43,
@@ -1444,7 +1444,7 @@
     {
         "id": "schlick_2000",
         "name": "Schlick 2000 (Fulpmes)",
-        "distance": 115,
+        "distance": 7690,
         "piste_km": 22,
         "lifts": 9,
         "price": 49,
@@ -1457,7 +1457,7 @@
     {
         "id": "oberperfuss",
         "name": "Rangger Köpfl (Oberperfuss)",
-        "distance": 115,
+        "distance": 6846,
         "piste_km": 17,
         "lifts": 5,
         "price": 40,
@@ -1470,7 +1470,7 @@
     {
         "id": "pitztal",
         "name": "Pitztaler Gletscher & Rifflsee",
-        "distance": 170,
+        "distance": 10061,
         "piste_km": 40,
         "lifts": 12,
         "price": 65,
@@ -1483,7 +1483,7 @@
     {
         "id": "venet",
         "name": "Venet Bergbahnen",
-        "distance": 150,
+        "distance": 13179,
         "piste_km": 22,
         "lifts": 7,
         "price": 50,
@@ -1496,7 +1496,7 @@
     {
         "id": "achensee",
         "name": "Achensee Regions",
-        "distance": 95,
+        "distance": 15465,
         "piste_km": 50,
         "lifts": 25,
         "price": 55,
