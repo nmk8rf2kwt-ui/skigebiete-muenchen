@@ -80,14 +80,42 @@ export function updateMap(resorts) {
 
         const marker = L.marker([resort.latitude, resort.longitude], { icon: icon }).addTo(map);
 
-        // Enhanced Popup Content
-        const trafficInfo = resort.traffic
-            ? `${resort.traffic.duration_min || Math.round(resort.traffic.duration / 60)} min`
-            : (resort.distance ? `${resort.distance} min` : 'N/A');
+        // Enhanced Popup Content with Robust Checks
+        let trafficInfo = 'N/A';
+        if (resort.traffic) {
+            const mins = resort.traffic.duration_min || Math.round((resort.traffic.duration || 0) / 60);
+            trafficInfo = `${mins} min`;
+        } else if (resort.distance) {
+            // Fallback to static distance (approx 1 min/km driving)
+            trafficInfo = `~${resort.distance} min`;
+        }
 
-        const snowInfo = resort.snow || 'N/A';
-        const liftsInfo = resort.liftsTotal ? `${resort.liftsOpen || 0}/${resort.liftsTotal}` : 'N/A';
-        const weatherInfo = resort.weather || 'Unknown';
+        // Snow: Handle Object vs String
+        let snowInfo = 'N/A';
+        if (resort.snow) {
+            if (typeof resort.snow === 'object') {
+                const depth = resort.snow.mountain ?? resort.snow.valley ?? 0;
+                snowInfo = `${depth} cm`;
+            } else {
+                snowInfo = resort.snow;
+            }
+        }
+
+        // Lifts: Handle missing liftsTotal
+        const total = resort.liftsTotal || resort.lifts || 0;
+        const open = resort.liftsOpen || 0;
+        const liftsInfo = total > 0 ? `${open}/${total}` : 'N/A';
+
+        // Weather: Handle Object vs String
+        let weatherInfo = 'Unknown';
+        if (resort.weather) {
+            if (typeof resort.weather === 'object') {
+                // Try to get icon/emoji
+                weatherInfo = resort.weather.icon || resort.weather.weather || '🌤️';
+            } else {
+                weatherInfo = resort.weather;
+            }
+        }
 
         const popupContent = `
             <div class="map-popup-content">
