@@ -18,6 +18,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // We are in backend/services, resorts.json is in backend/
 const RESORTS_FILE = path.join(__dirname, "../../resorts.json");
+const VALID_PARSER_IDS = new Set(Object.keys(PARSERS));
 
 // -- STATE --
 let STATIC_RESORTS = [];
@@ -420,8 +421,10 @@ export async function getSingleResortLive(resortId) {
             // The code said: `const data = parser ? await fetchWithTimeout(parser(), 8000) : {};`
             // So it was always fresh. Let's keep that behavior for this specific function.
 
-            // SECURITY: Validate parser key
-            if (!Object.prototype.hasOwnProperty.call(PARSERS, resortId)) throw new Error(`Invalid parser key ${resortId}`);
+            // SECURITY: Explicit Whitelist Validation for CodeQL
+            if (!VALID_PARSER_IDS.has(resortId)) {
+                throw new Error(`Invalid parser key ${resortId}`);
+            }
 
             if (typeof parser !== 'function') throw new Error(`Invalid parser type for ${resortId}`);
             const data = await fetchWithTimeout((opts) => parser(opts), 8000);
@@ -448,12 +451,13 @@ export async function forceRefreshResort(resortId) {
     if (!resort) throw new Error("Resort not found");
 
     // Securely validate that the resortId corresponds to a real parser (prevents prototype access)
-    if (!Object.prototype.hasOwnProperty.call(PARSERS, resortId)) {
+    // CodeQL: Using explicit Set lookup
+    if (!VALID_PARSER_IDS.has(resortId)) {
         throw new Error("No parser for this resort");
     }
     const parser = PARSERS[resortId];
 
-    // Extra safety measure (though hasOwnProperty usually ensures it is the key)
+    // Extra safety measure
     if (!parser) throw new Error("No parser for this resort");
 
     try {
