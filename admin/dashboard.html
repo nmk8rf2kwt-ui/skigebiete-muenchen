@@ -722,7 +722,10 @@
                 }
 
                 tr.innerHTML = `
-                    <td><strong>${r.name}</strong></td>
+                    <td>
+                        <button id="btn-details-${r.id}" class="btn-sm" style="margin-right:5px; width:24px; padding:0;" onclick="toggleDetails('${r.id}')">▼</button>
+                        <strong>${r.name}</strong>
+                    </td>
                     <td>${flag} ${r.country}</td>
                     <td><span class="badge ${badgeClass}">${r.status}</span></td>
                     <td style="font-family:monospace; text-align:center;">${r.updatesToday !== undefined ? r.updatesToday : 0}x</td>
@@ -733,11 +736,41 @@
                     </td>
                 `;
                 tbody.appendChild(tr);
+
+                // Detailed Hidden Row
+                const trDetail = document.createElement('tr');
+                trDetail.id = `details-${r.id}`;
+                trDetail.style.display = 'none';
+                trDetail.style.backgroundColor = '#161b22'; // Darker bg
+
+                const jsonDetails = r.lastDetails ? JSON.stringify(r.lastDetails, null, 2) : 'No data available';
+
+                trDetail.innerHTML = `
+                    <td colspan="7" style="padding:0;">
+                        <div style="padding:10px; border-bottom:1px solid #30363d;">
+                            <h4 style="margin:0 0 5px 0; color:#58a6ff;">🔍 Last Response Details</h4>
+                            <pre style="background:#0d1117; padding:10px; border-radius:4px; overflow-x:auto; font-size:0.8em; color:#c9d1d9; margin:0;">${jsonDetails}</pre>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(trDetail);
             });
 
             document.getElementById('scraperCount').innerText = `${liveCount}/${list.length}`;
             document.getElementById('scraperSummary').innerHTML =
                 errorCount > 0 ? `<span class="status-crit">${errorCount} Errors</span>` : `<span class="status-ok">All Systems Normal</span>`;
+        }
+
+        function toggleDetails(id) {
+            const row = document.getElementById(`details-${id}`);
+            const btn = document.getElementById(`btn-details-${id}`);
+            if (row.style.display === 'none') {
+                row.style.display = 'table-row';
+                btn.innerText = '▲';
+            } else {
+                row.style.display = 'none';
+                btn.innerText = '▼';
+            }
         }
 
         async function refreshResort(id, btn) {

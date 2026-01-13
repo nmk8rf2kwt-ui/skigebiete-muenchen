@@ -141,7 +141,8 @@ export function getResortsStatus() {
             lastUpdated: cached ? new Date(cached.timestamp).toISOString() : null,
             nextRun: getNextScheduledRun(),
             trafficDelay: traffic ? traffic.delay_min : null,
-            updatesToday: parserCache.getHistory(resort.id).length
+            updatesToday: parserCache.getHistory(resort.id).length,
+            lastDetails: cached ? cached : null // Expose full cached object for debugging
         };
     });
 }
