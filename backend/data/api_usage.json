@@ -37,14 +37,14 @@
       "limitReachedBy": "tomtom"
     },
     "2026-01-13": {
-      "requests": 420,
+      "requests": 480,
       "breakdown": {
-        "tomtom": 420
+        "tomtom": 480
       },
       "limitReached": false,
-      "last_updated": "2026-01-13T11:38:44.675Z"
+      "last_updated": "2026-01-13T13:54:35.753Z"
     }
   },
-  "total_requests": 2316,
-  "last_updated": "2026-01-13T11:38:44.675Z"
+  "total_requests": 2376,
+  "last_updated": "2026-01-13T13:54:35.753Z"
 }
