@@ -148,7 +148,7 @@ export function getResortsStatus() {
 
 
 // Concurrency Limit
-const limit = pLimit(5);
+const limit = pLimit(2);
 
 export async function getAllResortsLive() {
     const resorts = getStaticResorts();
@@ -507,6 +507,8 @@ export async function forceRefreshResort(resortId) {
     }
 }
 
+
+
 /**
  * STRICT Refresh of all parsers.
  * Unlike getAllResortsLive (which is passive/cached), this FORCES a fetch for every resort.
@@ -518,6 +520,10 @@ export async function refreshAllResorts() {
 
     const results = await Promise.all(
         resorts.map(resort => limit(async () => {
+            // Add jitter to prevent thundering herd on API endpoints (0.5s - 2s)
+            const jitter = Math.floor(Math.random() * 1500) + 500;
+            await new Promise(resolve => setTimeout(resolve, jitter));
+
             const parser = PARSERS[resort.id];
             if (!parser) return { id: resort.id, status: 'skipped' };
 

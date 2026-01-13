@@ -1,7 +1,8 @@
+import { fetchWithHeaders } from "../utils/fetcher.js";
 
 export async function fetchIntermaps(url) {
     try {
-        const response = await fetch(url);
+        const response = await fetchWithHeaders(url);
         if (!response.ok) {
             throw new Error(`Failed to fetch Intermaps data: ${response.status}`);
         }
