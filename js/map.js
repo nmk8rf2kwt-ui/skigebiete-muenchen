@@ -86,8 +86,8 @@ export function updateMap(resorts) {
             const mins = resort.traffic.duration_min || Math.round((resort.traffic.duration || 0) / 60);
             trafficInfo = `${mins} min`;
         } else if (resort.distance) {
-            // Fallback to static distance (approx 1 min/km driving)
-            trafficInfo = `~${resort.distance} min`;
+            // Fallback to static distance (stored as seconds in resort.distance)
+            trafficInfo = `~${Math.round(resort.distance / 60)} min`;
         }
 
         // Snow: Handle Object vs String
