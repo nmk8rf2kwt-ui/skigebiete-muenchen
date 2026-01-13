@@ -222,7 +222,7 @@ async function handleAddressSearch() {
       const [lon, lat] = feat.geometry.coordinates;
 
       setCurrentSearchLocation({ latitude: lat, longitude: lon, name });
-      localStorage.setItem('skigebiete_user_location', JSON.stringify({ latitude: lat, longitude: lon, name })); // Save persistence
+      store.saveUserLocation({ latitude: lat, longitude: lon, name }); // Save persistence
       logToUI(`Standort erkannt: ${name}`, "success");
 
       // Auto-load after location fix
@@ -272,7 +272,7 @@ export async function handleGeolocation() {
     (position) => {
       const { latitude, longitude } = position.coords;
       setCurrentSearchLocation({ latitude, longitude, name: "Ihre aktuelle Position" });
-      localStorage.setItem('skigebiete_user_location', JSON.stringify({ latitude, longitude, name: "Ihre aktuelle Position" }));
+      store.saveUserLocation({ latitude, longitude, name: "Ihre aktuelle Position" });
       logToUI("Eigener Standort gefunden", "success");
       fetchTrafficForLocation(latitude, longitude, "Ihre Position");
     },
@@ -299,7 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (urlParams.has('debug') || urlParams.has('results')) {
     console.log("🛠️ Debug Mode Active: Bypassing Wizard");
     const mockLoc = { latitude: 48.1351, longitude: 11.5820, name: "München (Debug)" };
-    localStorage.setItem('skigebiete_user_location', JSON.stringify(mockLoc));
+    store.saveUserLocation(mockLoc);
     // Set default wizard state to results
     // store.setState not available yet? It is imported.
     const debugDomain = urlParams.get('domain') || 'ski';
@@ -308,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 1. Initial State
-  const savedLocation = localStorage.getItem('skigebiete_user_location');
+  const savedLocation = store.loadUserLocation();
   const wizardContainer = document.getElementById("wizardContainer");
   const resultsView = document.getElementById("resultsView");
 

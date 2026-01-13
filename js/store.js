@@ -31,6 +31,23 @@ export const store = {
     /**
      * Get sorted and filtered resorts ready for rendering
      */
+    saveUserLocation(location) {
+        try {
+            localStorage.setItem('skigebiete_user_location', JSON.stringify(location));
+        } catch (e) {
+            console.warn('Failed to save location', e);
+        }
+    },
+
+    loadUserLocation() {
+        try {
+            return localStorage.getItem('skigebiete_user_location');
+        } catch (e) {
+            console.warn('Failed to load location', e);
+            return null;
+        }
+    },
+
     getProcessedResorts() {
         let data = [...this.state.resorts];
 
