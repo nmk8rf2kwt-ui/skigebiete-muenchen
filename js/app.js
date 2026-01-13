@@ -222,6 +222,7 @@ async function handleAddressSearch() {
       const [lon, lat] = feat.geometry.coordinates;
 
       setCurrentSearchLocation({ latitude: lat, longitude: lon, name });
+      localStorage.setItem('skigebiete_user_location', JSON.stringify({ latitude: lat, longitude: lon, name })); // Save persistence
       logToUI(`Standort erkannt: ${name}`, "success");
 
       // Auto-load after location fix
@@ -271,6 +272,7 @@ export async function handleGeolocation() {
     (position) => {
       const { latitude, longitude } = position.coords;
       setCurrentSearchLocation({ latitude, longitude, name: "Ihre aktuelle Position" });
+      localStorage.setItem('skigebiete_user_location', JSON.stringify({ latitude, longitude, name: "Ihre aktuelle Position" }));
       logToUI("Eigener Standort gefunden", "success");
       fetchTrafficForLocation(latitude, longitude, "Ihre Position");
     },
@@ -318,40 +320,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 2. Initial View Decision
   if (savedLocation) {
-    wizardContainer.style.display = "none";
-    resultsView.style.display = "block";
-
+    // Returning User: Sync state but START AT WIZARD STEP 2
     const loc = JSON.parse(savedLocation);
-    const heading = document.getElementById("resultsHeading");
-    if (heading) heading.textContent = `Beste Wahl heute von ${loc.name || 'deinem Standort'}`;
+    setCurrentSearchLocation(loc);
 
-    // Default to ski if loading from saved and no domain set
+    // Show Wizard, Hide Results
+    wizardContainer.style.display = "block";
+    resultsView.style.display = "none";
+
+    // Jump to Step 2
+    if (stepLocation) stepLocation.style.display = 'none';
+    if (stepActivity) stepActivity.style.display = 'block';
+    if (stepPrefs) stepPrefs.style.display = 'none';
+
+    logToUI(`Willkommen zurück! Standort: ${loc.name}`, 'success');
+
+    // Pre-load data in background
     if (!store.get().currentDomain) {
       store.setState({ currentDomain: 'ski' });
     }
     load();
   } else {
+    // New User: Start at Step 1
     wizardContainer.style.display = "block";
     resultsView.style.display = "none";
 
-    // Restore Step Logic
-    const savedStep = localStorage.getItem('wizard_current_step');
-    const stepLocation = document.getElementById('step-location');
-    const stepActivity = document.getElementById('step-activity');
-    const stepPrefs = document.getElementById('step-prefs');
-
-    // Hide all first
-    if (stepLocation) stepLocation.style.display = 'none';
+    if (stepLocation) stepLocation.style.display = 'block';
     if (stepActivity) stepActivity.style.display = 'none';
     if (stepPrefs) stepPrefs.style.display = 'none';
-
-    // Show saved or default
-    if (savedStep && document.getElementById(savedStep)) {
-      document.getElementById(savedStep).style.display = 'block';
-      // Ensure badges/headers are updated if needed (simplified here)
-    } else {
-      if (stepLocation) stepLocation.style.display = 'block';
-    }
   }
 
   initEventListeners({
