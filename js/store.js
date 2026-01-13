@@ -39,11 +39,12 @@ export const store = {
         }
     },
 
-    loadUserLocation() {
+    getUserLocation() {
         try {
-            return localStorage.getItem('skigebiete_user_location');
+            const data = localStorage.getItem('skigebiete_user_location');
+            return data ? JSON.parse(data) : null;
         } catch (e) {
-            console.warn('Failed to load location', e);
+            console.warn('Failed to load/parse location', e);
             return null;
         }
     },

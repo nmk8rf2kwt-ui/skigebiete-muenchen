@@ -268,19 +268,24 @@ export async function handleGeolocation() {
   }
 
   showLoading("Ermittle Standort...");
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const { latitude, longitude } = position.coords;
-      setCurrentSearchLocation({ latitude, longitude, name: "Ihre aktuelle Position" });
-      store.saveUserLocation({ latitude, longitude, name: "Ihre aktuelle Position" });
-      logToUI("Eigener Standort gefunden", "success");
-      fetchTrafficForLocation(latitude, longitude, "Ihre Position");
-    },
-    (err) => {
-      showError(`Geolocation failed: ${err.message}`);
-      hideLoading();
-    }
-  );
+
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrentSearchLocation({ latitude, longitude, name: "Ihre aktuelle Position" });
+        store.saveUserLocation({ latitude, longitude, name: "Ihre aktuelle Position" });
+        logToUI("Eigener Standort gefunden", "success");
+        fetchTrafficForLocation(latitude, longitude, "Ihre Position");
+        resolve(true);
+      },
+      (err) => {
+        showError(`Geolocation failed: ${err.message}`);
+        hideLoading();
+        resolve(false); // Resolve false so we don't crash, but user stays on step 1
+      }
+    );
+  });
 }
 
 
@@ -308,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 1. Initial State
-  const savedLocation = store.loadUserLocation();
+  const savedLocation = store.getUserLocation();
   const wizardContainer = document.getElementById("wizardContainer");
   const resultsView = document.getElementById("resultsView");
 
@@ -321,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 2. Initial View Decision
   if (savedLocation) {
     // Returning User: Sync state but START AT WIZARD STEP 2
-    const loc = JSON.parse(savedLocation);
+    const loc = savedLocation;
     setCurrentSearchLocation(loc);
 
     // Show Wizard, Hide Results
