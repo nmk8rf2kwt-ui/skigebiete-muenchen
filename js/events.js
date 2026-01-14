@@ -94,19 +94,24 @@ export function initEventListeners(handlers) {
     const stepPrefs = document.getElementById("step-prefs");
 
     // Wizard Step 1: Location Submit -> Activity (Step 2)
-    document.getElementById("submitLocationBtn").addEventListener("click", () => {
-        const input = document.getElementById("addressInput").value;
-        if (input.length >= 3) {
-            handleAddressSearch().then((success) => {
-                if (success) {
-                    stepLocation.style.display = "none";
-                    stepActivity.style.display = "block";
-                }
-            });
-        } else {
-            alert("Bitte gib einen Standort ein (mind. 3 Zeichen).");
-        }
-    });
+    const submitBtn = document.getElementById("submitLocationBtn");
+    if (submitBtn) {
+        submitBtn.addEventListener("click", () => {
+            const input = document.getElementById("addressInput").value;
+            if (input.length >= 3) {
+                handleAddressSearch().then((success) => {
+                    if (success) {
+                        stepLocation.style.display = "none";
+                        stepActivity.style.display = "block";
+                    }
+                });
+            } else {
+                alert("Bitte gib einen Standort ein (mind. 3 Zeichen).");
+            }
+        });
+    } else {
+        console.error("❌ submitLocationBtn not found!");
+    }
 
     // Wizard Step 2: Activity Selection -> Prefs (Step 3)
     document.querySelectorAll("#step-activity .pref-btn").forEach(btn => {
@@ -168,13 +173,20 @@ export function initEventListeners(handlers) {
     // Geolocation Success (Auto-advance)
     const originalHandleGeo = handleGeolocation;
     const interceptedHandleGeo = async () => {
-        await originalHandleGeo();
-        setTimeout(() => {
-            stepLocation.style.display = "none";
-            stepActivity.style.display = "block"; // Go to Activity next
-        }, 800);
+        const success = await originalHandleGeo();
+        if (success) {
+            setTimeout(() => {
+                stepLocation.style.display = "none";
+                stepActivity.style.display = "block"; // Go to Activity next
+            }, 800);
+        }
     };
-    document.getElementById("locateBtn").onclick = interceptedHandleGeo;
+    const locateBtn = document.getElementById("locateBtn");
+    if (locateBtn) {
+        locateBtn.onclick = interceptedHandleGeo;
+    } else {
+        console.error("❌ locateBtn not found");
+    }
 
     // View Switcher (Wizard Version)
     document.querySelectorAll(".view-switcher-wizard .view-btn").forEach(btn => {

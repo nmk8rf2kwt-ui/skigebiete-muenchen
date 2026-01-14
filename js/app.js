@@ -91,7 +91,12 @@ async function load() {
 
     let resorts = [];
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, { signal: controller.signal });
+      // Sanitize URL construction
+      const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+      const cleanBase = API_BASE_URL.endsWith('/') ? API_BASE_URL : `${API_BASE_URL}/`;
+      const finalUrl = `${cleanBase}${cleanEndpoint}`;
+
+      const response = await fetch(finalUrl, { signal: controller.signal });
       if (!response.ok) throw new Error("API 404");
       resorts = await response.json();
     } catch (apiErr) {
@@ -99,6 +104,8 @@ async function load() {
       // Fallback Mapping for GH Pages (Static)
       let fallbackUrl = 'backend/resorts.json'; // Default Ski
       if (domainId === 'skate') fallbackUrl = 'backend/data/ice-skating.json';
+      if (domainId === 'sled') fallbackUrl = 'backend/data/sledding.json';
+      if (domainId === 'skitour') fallbackUrl = 'backend/data/skitours.json';
       if (domainId === 'walk') fallbackUrl = 'backend/data/winter-walks.json';
 
       console.log(`👉 Fetching fallback: ${fallbackUrl}`);
@@ -317,6 +324,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const wizardContainer = document.getElementById("wizardContainer");
   const resultsView = document.getElementById("resultsView");
 
+  // DOM Elements for Steps
+  const stepLocation = document.getElementById("step-location");
+  const stepActivity = document.getElementById("step-activity");
+  const stepPrefs = document.getElementById("step-prefs");
+
   store.setState({
     filter: 'top3',
     viewMode: 'top3',
@@ -324,14 +336,24 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // 2. Initial View Decision
-  if (savedLocation) {
+  if (urlParams.has('results') || urlParams.has('debug')) {
+    // Debug/Deep Link: Show Results Immediately
+    if (wizardContainer) wizardContainer.style.display = "none";
+    if (resultsView) resultsView.style.display = "block";
+
+    // Ensure we have a domain if not set
+    if (!store.get().currentDomain) {
+      store.setState({ currentDomain: 'ski' });
+    }
+    load();
+  } else if (savedLocation) {
     // Returning User: Sync state but START AT WIZARD STEP 2
     const loc = savedLocation;
     setCurrentSearchLocation(loc);
 
     // Show Wizard, Hide Results
-    wizardContainer.style.display = "block";
-    resultsView.style.display = "none";
+    if (wizardContainer) wizardContainer.style.display = "block";
+    if (resultsView) resultsView.style.display = "none";
 
     // Jump to Step 2
     if (stepLocation) stepLocation.style.display = 'none';
@@ -347,8 +369,8 @@ document.addEventListener("DOMContentLoaded", () => {
     load();
   } else {
     // New User: Start at Step 1
-    wizardContainer.style.display = "block";
-    resultsView.style.display = "none";
+    if (wizardContainer) wizardContainer.style.display = "block";
+    if (resultsView) resultsView.style.display = "none";
 
     if (stepLocation) stepLocation.style.display = 'block';
     if (stepActivity) stepActivity.style.display = 'none';
