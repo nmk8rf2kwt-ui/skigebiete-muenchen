@@ -43,9 +43,6 @@ test('Interaction CUJ: Sorting and Map Toggle', async ({ page }) => {
     // 1. Sorting Test - verify that clicking header toggles order
     const rows = page.locator('#resortRows tr');
 
-    // Record initial first row content
-    const initialFirstRow = await rows.first().textContent();
-
     // Click to sort by distance
     await page.click('th[data-sort="distance_km"]');
     await page.waitForTimeout(300); // Wait for re-render
