@@ -9,14 +9,13 @@ on:
 permissions:
   contents: write
 
-env:
-  TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
-  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-
-jobs:
   track-traffic:
     runs-on: ubuntu-latest
+    
+    env:
+      TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     
     
     steps:
