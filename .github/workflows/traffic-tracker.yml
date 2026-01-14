@@ -9,6 +9,7 @@ on:
 permissions:
   contents: write
 
+jobs:
   track-traffic:
     runs-on: ubuntu-latest
     
