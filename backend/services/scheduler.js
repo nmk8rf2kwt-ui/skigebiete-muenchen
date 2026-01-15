@@ -334,22 +334,23 @@ export function initScheduler() {
     setInterval(refreshWeather, 60 * 60 * 1000);
 
     // B. Traffic Matrix Loop (30 minutes) - Optimized frequency
+    // OPTIMIZED: Reduced initial delay from 5s to 3s for faster startup
     setTimeout(() => {
         setInterval(updateTrafficMatrix, 30 * 60 * 1000); // Every 30 minutes (Limit API usage)
         updateTrafficMatrix(); // Initial run
-    }, 5000);
+    }, 3000);
 
     // Warm Traffic Cache (async, don't block)
-    setTimeout(warmTrafficCache, 8000);
+    setTimeout(warmTrafficCache, 6000);
 
-    // C. Initial fetch for weather
-    setTimeout(refreshWeather, 2000);
+    // C. Initial fetch for weather - OPTIMIZED: Reduced from 2s to 1s
+    setTimeout(refreshWeather, 1000);
 
     // D. Sync Static Resorts Config (One-time on start)
     setTimeout(() => {
         const resorts = getStaticResorts();
         syncResortsToDatabase(resorts);
-    }, 5000);
+    }, 4000);
 
     // E. Snapshot Loop (Check every hour) - DISABLED (Feature Removed)
     // setInterval(() => {
@@ -378,12 +379,12 @@ export function initScheduler() {
         }
     }, 5 * 60 * 1000); // Check every 5 minutes
 
-    // F2. Initial Parser Refresh (delayed) to ensure cache population on restart
+    // F2. Initial Parser Refresh - OPTIMIZED: Reduced from 15s to 10s
     // This resolves the "Unknown" status on cold starts and populates logs
     setTimeout(() => {
         console.log("🚀 Triggering initial parser refresh on startup...");
         refreshParsers();
-    }, 15000);
+    }, 10000);
 
     // G. Database Health Check (Daily at 03:00)
     setInterval(() => {
@@ -394,7 +395,7 @@ export function initScheduler() {
     }, 60 * 60 * 1000); // Check every hour, run at 03:00
 
     // Initial health check on startup
-    setTimeout(runDatabaseHealthCheck, 10000); // 10 seconds after startup
+    setTimeout(runDatabaseHealthCheck, 8000); // 10 seconds after startup
 
 
     // H. History Cleanup (Daily)

@@ -4,6 +4,7 @@ services:
     env: node
     region: frankfurt
     plan: free
+    healthCheckPath: /health
     buildCommand: cd backend && npm install
     startCommand: cd backend && node index.js
     envVars:

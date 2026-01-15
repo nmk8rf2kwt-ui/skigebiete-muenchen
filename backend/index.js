@@ -100,16 +100,44 @@ app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, '../index
 
 // -- API ROUTES --
 
-// Health check
+// Health check with data freshness info
 app.get("/health", (req, res) => {
   const resorts = getStaticResorts();
-  const cacheStats = parserCache.getStats();
-  res.json({
-    status: "ok",
-    version: "1.7.0",
-    service: "skigebiete-backend",
-    resorts: resorts.length,
-    cache: cacheStats
+  const parserStats = parserCache.getStats();
+  
+  // Import weather and traffic caches for stats
+  import("./services/cache.js").then(({ weatherCache, trafficCache }) => {
+    const weatherStats = weatherCache.getStats();
+    const trafficStats = trafficCache.getStats();
+    
+    // Consider "ready" when we have at least 50% of resorts cached
+    const minReady = Math.floor(resorts.length * 0.5);
+    const isReady = parserStats.valid >= minReady && weatherStats.valid >= minReady;
+    
+    res.json({
+      status: "ok",
+      ready: isReady,
+      version: "1.7.25",
+      service: "skigebiete-backend",
+      resorts: resorts.length,
+      cache: {
+        parser: parserStats,
+        weather: weatherStats,
+        traffic: trafficStats
+      },
+      timestamp: new Date().toISOString()
+    });
+  }).catch(() => {
+    // Fallback if import fails
+    res.json({
+      status: "ok",
+      ready: parserStats.valid > 0,
+      version: "1.7.25",
+      service: "skigebiete-backend",
+      resorts: resorts.length,
+      cache: { parser: parserStats },
+      timestamp: new Date().toISOString()
+    });
   });
 });
 
