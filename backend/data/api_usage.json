@@ -54,14 +54,14 @@
       "last_updated": "2026-01-14T09:00:12.307Z"
     },
     "2026-01-15": {
-      "requests": 420,
+      "requests": 480,
       "breakdown": {
-        "tomtom": 420
+        "tomtom": 480
       },
       "limitReached": false,
-      "last_updated": "2026-01-15T11:38:50.052Z"
+      "last_updated": "2026-01-15T13:54:10.984Z"
     }
   },
-  "total_requests": 3204,
-  "last_updated": "2026-01-15T11:38:50.052Z"
+  "total_requests": 3264,
+  "last_updated": "2026-01-15T13:54:10.984Z"
 }
