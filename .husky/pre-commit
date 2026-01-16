@@ -1,1 +1,5 @@
+# Sync versions from package.json before commit
+node scripts/sync-version.mjs
+
+# Run tests
 npm test

@@ -104,20 +104,20 @@ app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, '../index
 app.get("/health", (req, res) => {
   const resorts = getStaticResorts();
   const parserStats = parserCache.getStats();
-  
+
   // Import weather and traffic caches for stats
   import("./services/cache.js").then(({ weatherCache, trafficCache }) => {
     const weatherStats = weatherCache.getStats();
     const trafficStats = trafficCache.getStats();
-    
+
     // Consider "ready" when we have at least 50% of resorts cached
     const minReady = Math.floor(resorts.length * 0.5);
     const isReady = parserStats.valid >= minReady && weatherStats.valid >= minReady;
-    
+
     res.json({
       status: "ok",
       ready: isReady,
-      version: "1.7.25",
+      version: "1.10.1",
       service: "skigebiete-backend",
       resorts: resorts.length,
       cache: {
@@ -132,7 +132,7 @@ app.get("/health", (req, res) => {
     res.json({
       status: "ok",
       ready: parserStats.valid > 0,
-      version: "1.7.25",
+      version: "1.10.1",
       service: "skigebiete-backend",
       resorts: resorts.length,
       cache: { parser: parserStats },
@@ -170,7 +170,7 @@ if (process.env.SENTRY_DSN) {
 }
 
 app.listen(PORT, () => {
-  console.log(`✅ Backend running on port ${PORT} (v1.7.1)`);
+  console.log(`✅ Backend running on port ${PORT} (v1.10.1)`);
 
   import("./services/system/monitoring.js").then(({ statusLogger }) => {
     statusLogger.log('info', 'system', `Server started on port ${PORT}`);
