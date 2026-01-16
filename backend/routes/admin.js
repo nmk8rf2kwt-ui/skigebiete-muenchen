@@ -7,6 +7,8 @@ import { webcamMonitor } from "../services/system/monitoring.js";
 import { getAllResortsLive, forceRefreshResort } from "../services/resorts/service.js";
 import { fetchTravelTimes } from "../services/tomtom.js"; // Import TomTom service
 import { parserCache, weatherCache, trafficCache } from "../services/cache.js";
+import { sentryService } from "../services/integrations/sentry.js";
+import githubService from "../services/integrations/github.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -151,6 +153,26 @@ router.post("/traffic/test", async (req, res) => {
     } catch (error) {
         console.error("Traffic Test Failed:", error);
         res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// GET /api/admin/sentry/issues - Fetch unresolved Sentry issues
+router.get("/sentry/issues", async (req, res) => {
+    try {
+        const issues = await sentryService.getIssues(10);
+        res.json(issues);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET /api/admin/github/status - Fetch latest GitHub Actions run
+router.get("/github/status", async (req, res) => {
+    try {
+        const status = await githubService.fetchLatestRun();
+        res.json(status);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
