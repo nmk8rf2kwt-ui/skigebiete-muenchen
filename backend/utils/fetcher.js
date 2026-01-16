@@ -47,9 +47,9 @@ async function randomDelay(min = 500, max = 2000) {
  * Fetch with retry logic and exponential backoff
  * @param {string} url - URL to fetch
  * @param {object} options - Fetch options
- * @param {number} maxRetries - Maximum number of retry attempts (default: 3)
+ * @param {number} maxRetries - Maximum number of retry attempts (default: 2, reduced from 3)
  */
-async function fetchWithRetry(url, options = {}, maxRetries = 3) {
+async function fetchWithRetry(url, options = {}, maxRetries = 2) {
     let lastError;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -134,8 +134,8 @@ export async function fetchWithHeaders(url, options = {}) {
         ...options.headers
     };
 
-    // Set default timeout if not provided (30 seconds)
-    const timeout = options.timeout || 30000;
+    // Set default timeout if not provided (15 seconds, reduced from 30s for faster failure detection)
+    const timeout = options.timeout || 15000;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
