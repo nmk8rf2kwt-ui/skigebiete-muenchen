@@ -13,17 +13,29 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Health Endpoint
+      - name: Wake Backend (with retry for cold start)
         run: |
-          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 60 https://skigebiete-muenchen-backend.onrender.com/health)
-          echo "Health check response: $response"
-          if [ "$response" != "200" ]; then
-            echo "Warning: Health endpoint returned $response"
-          fi
+          max_attempts=3
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "Attempt $attempt of $max_attempts..."
+            response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 120 https://skigebiete-muenchen-backend.onrender.com/health || echo "000")
+            echo "Health check response: $response"
+            if [ "$response" = "200" ]; then
+              echo "✅ Backend is healthy"
+              exit 0
+            fi
+            echo "⏳ Waiting 30s before retry..."
+            sleep 30
+            attempt=$((attempt + 1))
+          done
+          echo "⚠️ Backend did not respond after $max_attempts attempts (cold start may still be in progress)"
+          # Don't fail the workflow - backend might just be slow to wake
+          exit 0
       
-      - name: Verify API Ready
+      - name: Verify API Ready (optional)
+        continue-on-error: true
         run: |
-          # Wait for backend to fully initialize after wake
           sleep 5
           count=$(curl -s --max-time 30 https://skigebiete-muenchen-backend.onrender.com/api/resorts | jq 'length' 2>/dev/null || echo "0")
           echo "Resorts loaded: $count"
