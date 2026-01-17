@@ -138,7 +138,9 @@ export function getResortsStatus() {
             liftsOpen: cached ? cached.liftsOpen : null,
             liftsTotal: cached ? cached.liftsTotal : null,
             liftsDiff: cached ? (cached.liftsDiff || 0) : 0,
-            lastUpdated: cached ? new Date(cached.timestamp).toISOString() : null,
+            lastUpdated: cached && cached.timestamp && !isNaN(new Date(cached.timestamp).getTime())
+                ? new Date(cached.timestamp).toISOString()
+                : null,
             nextRun: getNextScheduledRun(),
             trafficDelay: traffic ? traffic.delay_min : null,
             updatesToday: parserCache.getHistory(resort.id).length,
