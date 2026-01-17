@@ -18,6 +18,17 @@ export const DOMAIN_CONFIGS = {
                     return r.snow || '0 cm';
                 }
             },
+            {
+                id: 'weather',
+                label: 'Wetter',
+                icon: '🌤️',
+                formatter: (r) => {
+                    const w = r.weather;
+                    if (!w) return '-';
+                    if (typeof w === 'string') return w;
+                    return `${w.emoji || w.icon || ''} ${w.temp || ''}`.trim();
+                }
+            },
             { id: 'eta', label: 'Anfahrt', icon: '🚗', formatter: (r) => `${Math.round((r.traffic?.duration || 0) / 60 || r.distance || 0)} min` }
         ],
         prefs: [
