@@ -418,10 +418,14 @@
                     <div style="margin-top: 10px; font-size: 0.9em;" id="orsStatus">
                         <span class="status-ok">Normal</span>
                     </div>
+                    <div style="margin-top: 15px; border-top: 1px solid #30363d; padding-top: 10px;">
+                        <button class="btn-sm" onclick="testORSAPI(this)"
+                            style="width: 100%; border-color:#d29922; color:#d29922;">🌍 Test Geocoding API</button>
+                    </div>
                 </div>
 
                 <div class="card">
-                    <h3>📊 30-Day Trend</h3>
+                    <h3>📊 30-Day Trend (Total API Requests)</h3>
                     <div style="height: 200px; position: relative; width: 100%;">
                         <canvas id="usageChart"></canvas>
                     </div>
@@ -1196,6 +1200,29 @@
                 console.error("Trigger fail", error);
                 alert("Failed to trigger refresh.");
             }
+        }
+
+        async function testORSAPI(btn) {
+            const originalText = btn.innerText;
+            btn.innerText = "⏳ Testing...";
+            btn.disabled = true;
+            try {
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/ors/test`, { method: 'POST' });
+                const json = await res.json();
+
+                if (json.success) {
+                    const data = json.data;
+                    alert(`✅ ORS Connected!\n\nResult for 'München':\nLat: ${data.latitude}\nLon: ${data.longitude}`);
+                    btn.innerText = "✅ OK";
+                } else {
+                    alert(`❌ ORS Error:\n\n${json.error}`);
+                    btn.innerText = "❌ Fail";
+                }
+            } catch (e) {
+                alert(`Connection Error: ${e.message}`);
+                btn.innerText = "❌ Net Fail";
+            }
+            setTimeout(() => { btn.disabled = false; btn.innerText = originalText; }, 3000);
         }
 
         async function testWeatherAPI(btn) {

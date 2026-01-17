@@ -29,6 +29,7 @@ backend/cache/
 *_api_dump.json
 temp_*.html
 test-parser*.mjs
+debug-supabase.mjs
 widget.js
 detailView.js
 variables.jss

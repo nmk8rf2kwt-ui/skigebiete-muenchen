@@ -221,6 +221,21 @@ router.post("/traffic/test", async (req, res) => {
     }
 });
 
+// POST /api/admin/ors/test
+router.post("/ors/test", async (req, res) => {
+    try {
+        const { geocodeAddress } = await import("../services/ors.js");
+        const result = await geocodeAddress("München");
+
+        if (!result) {
+            return res.json({ success: false, error: "Geocoding returned null (Check API Key or Quota)" });
+        }
+        res.json({ success: true, data: result });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // GET /api/admin/sentry/issues - Fetch unresolved Sentry issues
 router.get("/sentry/issues", async (req, res) => {
     try {

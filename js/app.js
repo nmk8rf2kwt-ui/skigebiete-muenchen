@@ -216,31 +216,41 @@ async function handleAddressSearch() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-    const response = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(address)}&limit=1`, {
+    // Use backend endpoint to ensure usage tracking
+    const response = await fetch(`${API_BASE_URL}/api/locating/geocode?q=${encodeURIComponent(address)}`, {
       signal: controller.signal
     });
     clearTimeout(timeoutId);
 
-    const data = await response.json();
-
-    if (data.features?.length > 0) {
-      const feat = data.features[0];
-      const name = feat.properties.city || feat.properties.name || address;
-      const [lon, lat] = feat.geometry.coordinates;
-
-      setCurrentSearchLocation({ latitude: lat, longitude: lon, name });
-      store.saveUserLocation({ latitude: lat, longitude: lon, name }); // Save persistence
-      logToUI(`Standort erkannt: ${name}`, "success");
-
-      // Auto-load after location fix
-      await fetchTrafficForLocation(lat, lon, name);
-      return true;
-    } else {
+    if (response.status === 404) {
       showError("Standort nicht gefunden. Bitte versuche es genauer.");
       return false;
     }
+
+    if (!response.ok) throw new Error("Geocoding fehlgeschlagen");
+
+    const data = await response.json();
+
+    if (data && data.latitude && data.longitude) {
+      const { name, latitude, longitude } = data;
+
+      setCurrentSearchLocation({ latitude, longitude, name });
+      store.saveUserLocation({ latitude, longitude, name }); // Save persistence
+      logToUI(`Standort erkannt: ${name}`, "success");
+
+      // Auto-load after location fix
+      await fetchTrafficForLocation(latitude, longitude, name);
+      return true;
+    } else {
+      showError("Ungültige Daten empfangen.");
+      return false;
+    }
   } catch (err) {
-    showError(`Such-Fehler: ${err.message}`);
+    if (err.name === 'AbortError') {
+      showError("Zeitüberschreitung bei der Suche.");
+    } else {
+      showError(`Such-Fehler: ${err.message}`);
+    }
     return false;
   } finally {
     hideLoading();
