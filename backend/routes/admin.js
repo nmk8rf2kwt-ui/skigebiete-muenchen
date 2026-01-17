@@ -9,6 +9,7 @@ import { fetchTravelTimes } from "../services/tomtom.js"; // Import TomTom servi
 import { parserCache, weatherCache, trafficCache } from "../services/cache.js";
 import { sentryService } from "../services/integrations/sentry.js";
 import githubService from "../services/integrations/github.js";
+import { refreshWeather } from "../services/scheduler.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -132,6 +133,13 @@ router.get("/weather", async (req, res) => {
         console.error("Admin Weather Error:", error);
         res.status(500).json({ error: error.message });
     }
+});
+
+// POST /api/admin/weather/refresh
+router.post("/weather/refresh", (req, res) => {
+    // Fire and forget to avoid timeout
+    refreshWeather().catch(err => console.error("Manual Weather Refresh Failed:", err));
+    res.json({ message: "Weather refresh triggered in background. Updates will appear shortly." });
 });
 
 // GET /api/admin/parsers

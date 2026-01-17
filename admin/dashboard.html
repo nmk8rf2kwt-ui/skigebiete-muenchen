@@ -344,7 +344,11 @@
                 <div class="card" style="max-height: 500px; display:flex; flex-direction:column;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                         <h3>❄️ Weather & Snow Status</h3>
-                        <button class="btn-sm" onclick="fetchWeather()">🔄 Refresh</button>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-sm" onclick="triggerWeatherRefresh()"
+                                style="border-color:#d29922; color:#d29922;">⚡ Force Update</button>
+                            <button class="btn-sm" onclick="fetchWeather()">🔄 Refresh</button>
+                        </div>
                     </div>
                     <div style="overflow-y: auto; flex:1;">
                         <table id="weatherTable" style="width:100%; border-collapse:collapse;">
@@ -1127,6 +1131,33 @@
             } catch (error) {
                 console.error("Weather fetch failed", error);
                 document.getElementById('weatherBody').innerHTML = `<tr><td colspan="5" class="status-crit">Failed to load weather.</td></tr>`;
+            }
+        }
+        async function triggerWeatherRefresh() {
+            if (!confirm("Start heavy weather data refresh for all resorts?")) return;
+
+            try {
+                const btn = document.querySelector('button[onclick="triggerWeatherRefresh()"]');
+                const originalText = btn.innerText;
+                btn.innerText = "⏳ Running...";
+                btn.disabled = true;
+
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/weather/refresh`, { method: 'POST' });
+                const data = await res.json();
+
+                if (data.error) {
+                    alert(`Error: ${data.error}`);
+                } else {
+                    alert("✅ Refresh triggered. Updates appear as they finish.");
+                    // Refresh view after a short delay
+                    setTimeout(fetchWeather, 2000);
+                }
+
+                btn.innerText = originalText;
+                btn.disabled = false;
+            } catch (error) {
+                console.error("Trigger fail", error);
+                alert("Failed to trigger refresh.");
             }
         }
     </script>
