@@ -333,10 +333,10 @@ export function initScheduler() {
     // A. Weather Loop (1 hour)
     setInterval(refreshWeather, 60 * 60 * 1000);
 
-    // B. Traffic Matrix Loop (30 minutes) - Optimized frequency
+    // B. Traffic Matrix Loop (60 minutes) - Optimized frequency
     // OPTIMIZED: Reduced initial delay from 5s to 3s for faster startup
     setTimeout(() => {
-        setInterval(updateTrafficMatrix, 30 * 60 * 1000); // Every 30 minutes (Limit API usage)
+        setInterval(updateTrafficMatrix, 60 * 60 * 1000); // Every 60 minutes (Limit API usage)
         updateTrafficMatrix(); // Initial run
     }, 3000);
 

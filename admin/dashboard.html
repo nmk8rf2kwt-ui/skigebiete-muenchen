@@ -345,6 +345,8 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                         <h3>❄️ Weather & Snow Status</h3>
                         <div style="display:flex; gap:10px;">
+                            <button class="btn-sm" onclick="testWeatherAPI(this)"
+                                style="border-color:#58a6ff; color:#58a6ff;">🧪 Test API</button>
                             <button class="btn-sm" onclick="triggerWeatherRefresh()"
                                 style="border-color:#d29922; color:#d29922;">⚡ Force Update</button>
                             <button class="btn-sm" onclick="fetchWeather()">🔄 Refresh</button>
@@ -1148,7 +1150,7 @@
             try {
                 const btn = document.querySelector('button[onclick="triggerWeatherRefresh()"]');
                 const originalText = btn.innerText;
-                btn.innerText = "⏳ Running...";
+                btn.innerText = "⏳ Doing it...";
                 btn.disabled = true;
 
                 const res = await fetchWithAuth(`${API_BASE_URL}/admin/weather/refresh`, { method: 'POST' });
@@ -1157,9 +1159,10 @@
                 if (data.error) {
                     alert(`Error: ${data.error}`);
                 } else {
-                    alert("✅ Refresh triggered. Updates appear as they finish.");
+                    alert("✅ Refresh triggered. Updates appear in 2-5 seconds.");
                     // Refresh view after a short delay
                     setTimeout(fetchWeather, 2000);
+                    setTimeout(fetchWeather, 5000);
                 }
 
                 btn.innerText = originalText;
@@ -1168,6 +1171,26 @@
                 console.error("Trigger fail", error);
                 alert("Failed to trigger refresh.");
             }
+        }
+
+        async function testWeatherAPI(btn) {
+            btn.innerText = "⏳ Testing...";
+            btn.disabled = true;
+            try {
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/weather/test`, { method: 'POST' });
+                const json = await res.json();
+                if (json.success) {
+                    alert(`✅ Open-Meteo Success!\n\nMunich: ${json.data.temp}°C, ${json.data.emoji}\nWind: ${json.data.windSpeed} km/h`);
+                    btn.innerText = "✅ OK";
+                } else {
+                    alert(`❌ Weather API Error:\n\n${json.error}`);
+                    btn.innerText = "❌ Error";
+                }
+            } catch (e) {
+                alert(`Connection Error: ${e.message}`);
+                btn.innerText = "❌ Fail";
+            }
+            setTimeout(() => { btn.disabled = false; btn.innerText = "🧪 Test API"; }, 3000);
         }
     </script>
 </body>

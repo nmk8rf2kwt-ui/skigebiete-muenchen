@@ -142,6 +142,21 @@ router.post("/weather/refresh", (req, res) => {
     res.json({ message: "Weather refresh triggered in background. Updates will appear shortly." });
 });
 
+// POST /api/admin/weather/test
+router.post("/weather/test", async (req, res) => {
+    try {
+        const { getWeatherForecast } = await import("../services/weather/forecast.js");
+        // Test Munich Coordinates
+        const result = await getWeatherForecast(48.1351, 11.5820);
+        if (!result) {
+            return res.status(500).json({ error: "Weather Service returned null (Breaker Open or Fetch Failed)" });
+        }
+        res.json({ success: true, data: result.currentConditions });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // GET /api/admin/parsers
 router.get("/parsers", async (req, res) => {
     try {
