@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.11.0] - 2026-01-17
+### Added
+- Consolidated preferences in Wizard (Step 3) for clearer selection.
+- **Auto-Submit** functionality for preferences (instant results).
+- "Gutes Wetter" preference category.
+- Dynamic weather icons in results.
+
+### Changed
+- Revised scoring logic: "Günstig" now strictly penalizes expensive day passes defined by steep weights.
+- "Winterwanderung" button integration improved in layout.
+- Removed deprecated status buttons.
+- Updated dependencies and fixed security warnings.
+
 ## [1.10.1] - 2026-01-12
 ### 🛡️ Security Hardening
 - **CodeQL Fixes**: Addressed all High-severity findings including Format String Injection and Dynamic Method Validation.

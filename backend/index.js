@@ -170,7 +170,7 @@ if (process.env.SENTRY_DSN) {
 }
 
 app.listen(PORT, () => {
-  console.log(`✅ Backend running on port ${PORT} (v1.10.1)`);
+  console.log(`✅ Backend running on port ${PORT} (v1.11.0)`);
 
   import("./services/system/monitoring.js").then(({ statusLogger }) => {
     statusLogger.log('info', 'system', `Server started on port ${PORT}`);
