@@ -543,7 +543,14 @@
                     return;
                 }
 
-                tbody.innerHTML = data.map(issue => `
+                // Split issues into last 24h and older
+                const now = new Date();
+                const twentyFourHoursAgo = new Date(now - 24 * 60 * 60 * 1000);
+                
+                const recentIssues = data.filter(issue => new Date(issue.lastSeen) >= twentyFourHoursAgo);
+                const olderIssues = data.filter(issue => new Date(issue.lastSeen) < twentyFourHoursAgo);
+
+                const renderIssueRow = (issue) => `
                     <tr class="border-b last:border-0 hover:bg-gray-50">
                         <td class="py-3 font-medium text-red-600 truncate max-w-xs" title="${issue.title}">
                             ${issue.title}
@@ -561,12 +568,49 @@
                             </a>
                         </td>
                     </tr>
-                `).join('');
+                `;
+
+                let html = '';
+                
+                // Render recent issues (last 24h)
+                if (recentIssues.length > 0) {
+                    html += recentIssues.map(renderIssueRow).join('');
+                } else {
+                    html += `<tr><td colspan="5" class="py-3 text-center" style="color: var(--success-color);">✅ No issues in last 24h</td></tr>`;
+                }
+
+                // Render older issues in collapsible section
+                if (olderIssues.length > 0) {
+                    html += `
+                        <tr id="older-issues-toggle" style="cursor: pointer; background: var(--bg-color);" onclick="toggleOlderIssues()">
+                            <td colspan="5" class="py-2 text-center" style="color: var(--muted-color);">
+                                <span id="older-issues-arrow">▶</span> ${olderIssues.length} older issues (click to expand)
+                            </td>
+                        </tr>
+                    `;
+                    html += `<tbody id="older-issues-body" style="display: none;">`;
+                    html += olderIssues.map(renderIssueRow).join('');
+                    html += `</tbody>`;
+                }
+
+                tbody.innerHTML = html;
 
             } catch (error) {
                 console.error("Failed to load Sentry data", error);
                 document.getElementById('sentry-table-body').innerHTML =
                     `<tr><td colspan="5" class="py-4 text-center text-red-400">Failed to fetch data</td></tr>`;
+            }
+        }
+
+        function toggleOlderIssues() {
+            const body = document.getElementById('older-issues-body');
+            const arrow = document.getElementById('older-issues-arrow');
+            if (body.style.display === 'none') {
+                body.style.display = 'table-row-group';
+                arrow.textContent = '▼';
+            } else {
+                body.style.display = 'none';
+                arrow.textContent = '▶';
             }
         }
 
