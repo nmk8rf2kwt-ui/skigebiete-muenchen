@@ -16,7 +16,47 @@ Add `RENDER_DEPLOY_HOOK` to GitHub Secrets:
 
 ---
 
-## Manual Deployment
+## Render CLI (Manual Deployment)
+
+### Setup (one-time)
+```bash
+# Install via Homebrew
+brew install render
+
+# Login (opens browser for authentication)
+render login
+```
+
+### Deploy Commands
+```bash
+# Trigger deploy (interactive)
+render deploys create
+
+# Trigger deploy with service ID (non-interactive)
+render deploys create srv-d58i8femcj7s73chf9t0
+
+# Deploy and wait for completion
+render deploys create srv-d58i8femcj7s73chf9t0 --wait
+
+# View deploy logs
+render deploys list srv-d58i8femcj7s73chf9t0
+```
+
+### Other Useful Commands
+```bash
+# List all services
+render services
+
+# SSH into running service
+render ssh srv-d58i8femcj7s73chf9t0
+
+# View service logs
+render logs srv-d58i8femcj7s73chf9t0
+```
+
+---
+
+## Git-based Deployment
 
 1. Check status of changed files
    // turbo
