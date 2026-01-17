@@ -625,9 +625,13 @@
                             </td>
                         </tr>
                     `;
-                    html += `<tbody id="older-issues-body" style="display: none;">`;
-                    html += olderIssues.map(renderIssueRow).join('');
-                    html += `</tbody>`;
+                    // Render rows directly but hidden
+                    // We modify the string returned by renderIssueRow to include display:none and a selector class
+                    html += olderIssues.map(issue => {
+                        const row = renderIssueRow(issue);
+                        // Inject style and class for identification
+                        return row.replace('<tr class="', '<tr style="display:none;" class="older-issue-row ');
+                    }).join('');
                 }
 
                 tbody.innerHTML = html;
@@ -640,13 +644,18 @@
         }
 
         function toggleOlderIssues() {
-            const body = document.getElementById('older-issues-body');
+            const rows = document.querySelectorAll('.older-issue-row');
             const arrow = document.getElementById('older-issues-arrow');
-            if (body.style.display === 'none') {
-                body.style.display = 'table-row-group';
+
+            // Check state of first row (if any)
+            if (rows.length === 0) return;
+            const isHidden = rows[0].style.display === 'none';
+
+            if (isHidden) {
+                rows.forEach(r => r.style.display = 'table-row');
                 arrow.textContent = '▼';
             } else {
-                body.style.display = 'none';
+                rows.forEach(r => r.style.display = 'none');
                 arrow.textContent = '▶';
             }
         }
