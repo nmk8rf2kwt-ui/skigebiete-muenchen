@@ -3,9 +3,9 @@ import { test, expect } from '@playwright/test';
 test('Persistence CUJ: User location and preferences are saved', async ({ page }) => {
 
     // Mock APIs
-    await page.route('https://photon.komoot.io/api/**', async route => {
+    await page.route('**/api/locating/geocode*', async route => {
         await route.fulfill({
-            json: { features: [{ properties: { name: 'München' }, geometry: { coordinates: [11.58, 48.13] } }] }
+            json: { name: 'München', latitude: 48.13, longitude: 11.58 }
         });
     });
     // Mock Backend

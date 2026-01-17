@@ -24,7 +24,7 @@ test('Interaction CUJ: Sorting and Map Toggle', async ({ page }) => {
         });
     });
     // Mock other apis
-    await page.route('https://photon.komoot.io/api/**', async route => route.fulfill({ json: { features: [] } }));
+    await page.route('**/api/locating/geocode*', async route => route.fulfill({ json: { name: 'München', latitude: 48.13, longitude: 11.58 } }));
     await page.route('**/api/traffic-all*', async route => route.fulfill({ json: {} }));
 
     // Start directly at results (simulation)

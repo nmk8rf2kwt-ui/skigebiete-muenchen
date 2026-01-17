@@ -37,11 +37,10 @@ test.describe('Skitour Domain', () => {
 
         // Bypass Step 1
         await page.addInitScript(() => {
-            localStorage.setItem('wizard_current_step', 'step-activity');
-            localStorage.setItem('user_location', JSON.stringify({
-                lat: 48.1351,
-                lon: 11.582,
-                address: "München (Test)"
+            localStorage.setItem('skigebiete_user_location', JSON.stringify({
+                latitude: 48.1351,
+                longitude: 11.5820,
+                name: "München (Test)"
             }));
         });
 
@@ -66,13 +65,10 @@ test.describe('Skitour Domain', () => {
         await expect(safePref).toBeVisible();
         await expect(safePref.locator('.pref-label')).toHaveText('Sicher');
 
-        // 4. Select "Sicher"
+        // 4. Select "Sicher" (Auto-submits)
         await safePref.click();
 
-        // 5. Submit
-        await page.click('#showResultsBtn');
-
-        // 6. Verify Results
+        // 5. Verify Results
         await expect(page.locator('#resultsView')).toBeVisible();
         await expect(page.locator('#resultsHeading')).toContainText('Beste Wahl heute');
 

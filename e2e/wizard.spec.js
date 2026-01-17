@@ -3,14 +3,13 @@ import { test, expect } from '@playwright/test';
 test.describe('Wizard Tests', () => {
 
     test.beforeEach(async ({ page }) => {
-        // Mock Photon API
-        await page.route('**photon.komoot.io**', async route => {
+        // Mock Geocoding API (Backend)
+        await page.route('**/api/locating/geocode*', async route => {
             await route.fulfill({
                 json: {
-                    features: [{
-                        properties: { name: 'München', city: 'München' },
-                        geometry: { coordinates: [11.5820, 48.1351] }
-                    }]
+                    name: 'München',
+                    latitude: 48.1351,
+                    longitude: 11.5820
                 }
             });
         });
@@ -75,8 +74,9 @@ test.describe('Wizard Tests', () => {
 
         // Step 3: Preferences (Step 3 -> Results)
         await expect(page.locator('#step-prefs')).toBeVisible();
-        await page.click('.pref-btn[data-pref="snow"]');
-        await page.click('#showResultsBtn');
+        await page.click('.pref-btn[data-pref="conditions"]');
+
+        // Results View (Auto-submitted)
 
         // Results View
         await expect(page.locator('#resultsView')).toBeVisible();

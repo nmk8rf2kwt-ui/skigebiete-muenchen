@@ -43,11 +43,10 @@ test.describe('Sledding Domain (Rodeln)', () => {
 
         // Bypass Step 1 by setting storage
         await page.addInitScript(() => {
-            localStorage.setItem('wizard_current_step', 'step-activity');
-            localStorage.setItem('user_location', JSON.stringify({
-                lat: 48.1351,
-                lon: 11.582,
-                address: "München (Test)"
+            localStorage.setItem('skigebiete_user_location', JSON.stringify({
+                latitude: 48.1351,
+                longitude: 11.5820,
+                name: "München (Test)"
             }));
         });
 
@@ -72,17 +71,10 @@ test.describe('Sledding Domain (Rodeln)', () => {
         await expect(fastPref).toBeVisible();
         await expect(fastPref.locator('.pref-label')).toHaveText('Rasant');
 
-        // 4. Select "Rasant" and "Mit Lift"
+        // 4. Select "Rasant" (Auto-submits)
         await fastPref.click();
-        const liftPref = page.locator('button[data-pref="lift"]');
-        if (await liftPref.isVisible()) {
-            await liftPref.click();
-        }
 
-        // 5. Submit
-        await page.click('#showResultsBtn');
-
-        // 6. Verify Results
+        // 5. Verify Results
         await expect(page.locator('#resultsView')).toBeVisible();
         await expect(page.locator('#resultsHeading')).toContainText('Beste Wahl heute');
 
