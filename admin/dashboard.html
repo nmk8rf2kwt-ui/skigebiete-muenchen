@@ -1107,15 +1107,16 @@
                 }
 
                 data.forEach(r => {
-                    if (!r.weather) return;
+                    // Backend sends 'current' object
+                    if (!r.current) return;
 
                     const tr = document.createElement('tr');
                     tr.style.borderBottom = '1px solid #30363d';
 
-                    const temp = r.weather.temp || '-';
-                    const snow = r.weather.snow || '-';
-                    const emoji = r.weather.emoji || '';
-                    const desc = r.weather.weather || '-';
+                    const temp = r.current.temp || '-';
+                    const snow = r.current.snow || '-';
+                    const emoji = r.current.emoji || '';
+                    const desc = r.current.weather || '-';
 
                     // Format Updated time
                     let updated = '-';
