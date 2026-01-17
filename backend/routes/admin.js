@@ -120,7 +120,8 @@ router.get("/parsers", async (req, res) => {
         // Pass full data object to frontend, as it perfectly matches dashboard needs
         res.json(resorts);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Admin Parsers Error:", error.message, error.stack);
+        res.status(500).json({ error: error.message, stack: process.env.NODE_ENV !== 'production' ? error.stack : undefined });
     }
 });
 
