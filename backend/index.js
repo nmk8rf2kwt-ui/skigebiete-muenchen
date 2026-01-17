@@ -117,7 +117,7 @@ app.get("/health", (req, res) => {
     res.json({
       status: "ok",
       ready: isReady,
-      version: "1.10.1",
+      version: "1.11.0",
       service: "skigebiete-backend",
       resorts: resorts.length,
       cache: {
@@ -132,7 +132,7 @@ app.get("/health", (req, res) => {
     res.json({
       status: "ok",
       ready: parserStats.valid > 0,
-      version: "1.10.1",
+      version: "1.11.0",
       service: "skigebiete-backend",
       resorts: resorts.length,
       cache: { parser: parserStats },
