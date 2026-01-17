@@ -308,17 +308,28 @@ function generateReasoning(resort, pref, domainId = 'ski') {
   const reasons = [];
 
   if (domainId === 'ski') {
-    const liftPct = resort.liftsOpen / (resort.liftsTotal || resort.lifts || 1);
-    const snow = resort.snow?.mountain ?? 0;
-    const eta = Math.round((resort.traffic?.duration || 0) / 60 || resort.distance || 0);
+    // Robust check for missing data
+    const liftsTotal = resort.liftsTotal || resort.lifts || 0;
+    const hasLiftData = resort.liftsOpen !== null && resort.liftsOpen !== undefined;
 
-    if (liftPct > 0.8) reasons.push({ type: 'good', icon: '✅', text: `${Math.round(liftPct * 100)}% Lifte offen` });
-    else if (liftPct > 0.5) reasons.push({ type: 'ok', icon: '⚠️', text: `Nur ${Math.round(liftPct * 100)}% Lifte offen` });
+    // Only calculate pct if we have data and total > 0
+    let liftPct = 0;
+    if (hasLiftData && liftsTotal > 0) {
+      liftPct = resort.liftsOpen / liftsTotal;
+
+      if (liftPct > 0.8) reasons.push({ type: 'good', icon: '✅', text: `${Math.round(liftPct * 100)}% Lifte offen` });
+      else if (liftPct > 0.5) reasons.push({ type: 'ok', icon: '⚠️', text: `Nur ${Math.round(liftPct * 100)}% Lifte offen` });
+      else if (liftPct === 0 && resort.status === 'live') reasons.push({ type: 'bad', icon: '⛔', text: 'Kein Liftbetrieb' });
+    }
+    // If no data, do NOT push "Nur 0% offen" warning
+
+    const snow = resort.snow?.mountain ?? resort.snow?.valley ?? 0;
+    const eta = Math.round((resort.traffic?.duration || 0) / 60 || resort.distance || 0);
 
     if (snow > 80) reasons.push({ type: 'good', icon: '✅', text: `${snow} cm Schnee (Top)` });
     else if (snow > 30) reasons.push({ type: 'ok', icon: '✅', text: `${snow} cm Schnee` });
 
-    if (eta < 90) reasons.push({ type: 'good', icon: '✅', text: `Schnelle Anfahrt (${eta} min)` });
+    if (eta < 90 && eta > 0) reasons.push({ type: 'good', icon: '✅', text: `Schnelle Anfahrt (${eta} min)` });
     else if (eta > 150) reasons.push({ type: 'bad', icon: '⚠️', text: `Längere Anfahrt (${eta} min)` });
   } else if (domainId === 'sled') {
     // Sledding specific reasoning

@@ -101,13 +101,21 @@ export function updateMap(resorts) {
             }
         }
 
-        // Lifts: Handle missing liftsTotal
+        // Lifts: Handle missing liftsTotal and missing live data
         const total = resort.liftsTotal || resort.lifts || 0;
-        const open = resort.liftsOpen || 0;
-        const liftsInfo = total > 0 ? `${open}/${total}` : 'N/A';
+        const open = resort.liftsOpen; // Might be null
+        let liftsInfo = 'N/A';
+
+        if (total > 0) {
+            if (open !== null && open !== undefined) {
+                liftsInfo = `${open}/${total}`;
+            } else {
+                liftsInfo = `?/${total}`;
+            }
+        }
 
         // Weather: Handle Object vs String
-        let weatherInfo = 'Unknown';
+        let weatherInfo = '-';
         if (resort.weather) {
             if (typeof resort.weather === 'object') {
                 // Try to get icon/emoji
@@ -115,6 +123,11 @@ export function updateMap(resorts) {
             } else {
                 weatherInfo = resort.weather;
             }
+        } else if (resort.status === 'live') {
+            // If live but no weather string, maybe show -
+            weatherInfo = '-';
+        } else {
+            weatherInfo = 'Unknown';
         }
 
         const popupContent = `

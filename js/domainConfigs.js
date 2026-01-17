@@ -7,7 +7,17 @@ export const DOMAIN_CONFIGS = {
         endpoint: '/api/resorts',
         metrics: [
             { id: 'lifts', label: 'Offen', icon: '🚠', formatter: (r) => (r.liftsOpen !== null && r.liftsOpen !== undefined) ? `${Math.round((r.liftsOpen / (r.liftsTotal || r.lifts || 1)) * 100)}%` : '-' },
-            { id: 'snow', label: 'Schnee', icon: '❄️', formatter: (r) => `${r.snow?.mountain ?? 0} cm` },
+            {
+                id: 'snow',
+                label: 'Schnee',
+                icon: '❄️',
+                formatter: (r) => {
+                    if (r.snow && typeof r.snow === 'object') {
+                        return `${r.snow.mountain ?? r.snow.valley ?? 0} cm`;
+                    }
+                    return r.snow || '0 cm';
+                }
+            },
             { id: 'eta', label: 'Anfahrt', icon: '🚗', formatter: (r) => `${Math.round((r.traffic?.duration || 0) / 60 || r.distance || 0)} min` }
         ],
         prefs: [
