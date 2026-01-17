@@ -31,14 +31,19 @@ export async function refreshWeather() {
                     const current = getCurrentConditions(forecast);
                     weatherCache.set(resort.id, { forecast, current, timestamp: Date.now() });
                     successCount++;
+                    if (successCount <= 5) console.log(`  -> Cached weather for ${resort.id}: ${current.emoji} ${current.temp}`);
+                } else {
+                    console.warn(`  -> Weather fetch returned null for ${resort.id}`);
                 }
             } catch (err) {
                 console.error(`Failed to fetch weather for ${resort.id}:`, err);
                 statusLogger.log('warn', 'weather', `Failed to fetch weather for ${resort.name}`);
             }
+        } else {
+            // console.log(`  -> Skipping ${resort.id} (no lat/lon)`);
         }
     }
-    console.log("Weather refresh complete.");
+    console.log(`Weather refresh complete. Success: ${successCount}/${resorts.length}`);
     statusLogger.updateComponentStatus('weather', 'healthy');
     statusLogger.log('success', 'weather', `Weather refresh complete (${successCount}/${resorts.length} resorts).`);
 }

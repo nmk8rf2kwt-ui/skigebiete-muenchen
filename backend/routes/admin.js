@@ -145,13 +145,18 @@ router.post("/weather/refresh", (req, res) => {
 // POST /api/admin/weather/test
 router.post("/weather/test", async (req, res) => {
     try {
-        const { getWeatherForecast } = await import("../services/weather/forecast.js");
+        const { getWeatherForecast, getCurrentConditions } = await import("../services/weather/forecast.js");
         // Test Munich Coordinates
         const result = await getWeatherForecast(48.1351, 11.5820);
         if (!result) {
             return res.status(500).json({ error: "Weather Service returned null (Breaker Open or Fetch Failed)" });
         }
-        res.json({ success: true, data: result.currentConditions });
+
+        // FIX: Use the helper to generate the Display object (Emoji, Temp, Desc)
+        // 'result' is the full forecast object. 'result.currentConditions' is just for SmartScore.
+        const displayData = getCurrentConditions(result);
+
+        res.json({ success: true, data: displayData });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
