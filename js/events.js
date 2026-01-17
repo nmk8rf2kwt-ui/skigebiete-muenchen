@@ -44,14 +44,7 @@ function updatePreferenceUI(config) {
     </button>
   `).join('');
 
-    // Re-attach listeners to new buttons
-    prefGrid.querySelectorAll('.pref-btn').forEach(btn => {
-        btn.onclick = () => {
-            prefGrid.querySelectorAll('.pref-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            store.setState({ preference: btn.dataset.pref });
-        };
-    });
+    // Listeners handled via delegation in initEventListeners
 }
 
 import {
@@ -140,26 +133,36 @@ export function initEventListeners(handlers) {
         });
     }
 
-    // Preference Selection (Step 3)
+    // Preference Selection (Step 3) - AUTO SUBMIT
     document.querySelector("#step-prefs .pref-grid").addEventListener("click", (e) => {
         const btn = e.target.closest(".pref-btn");
         if (btn && !btn.disabled) {
             document.querySelectorAll("#step-prefs .pref-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
             store.setState({ preference: btn.dataset.pref });
+
+            // Auto-Submit Logic
+            setTimeout(() => {
+                wizardContainer.style.display = "none";
+                resultsView.style.display = "block";
+                const loc = getCurrentSearchLocation();
+                document.getElementById("resultsHeading").textContent = `Beste Wahl heute von ${loc.name || 'deinem Standort'}`;
+                render();
+            }, 150); // Small delay for visual feedback
         }
     });
 
-    // Show Results
-    document.getElementById("showResultsBtn").addEventListener("click", () => {
-        wizardContainer.style.display = "none";
-        resultsView.style.display = "block";
-
-        const loc = getCurrentSearchLocation();
-        document.getElementById("resultsHeading").textContent = `Beste Wahl heute von ${loc.name || 'deinem Standort'}`;
-
-        render();
-    });
+    // Show Results (Legacy/Fallback)
+    const showResBtn = document.getElementById("showResultsBtn");
+    if (showResBtn) {
+        showResBtn.addEventListener("click", () => {
+            wizardContainer.style.display = "none";
+            resultsView.style.display = "block";
+            const loc = getCurrentSearchLocation();
+            document.getElementById("resultsHeading").textContent = `Beste Wahl heute von ${loc.name || 'deinem Standort'}`;
+            render();
+        });
+    }
 
     // Restart Wizard
     document.getElementById("restartWizard").addEventListener("click", () => {

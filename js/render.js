@@ -37,27 +37,31 @@ export function calculateScore(resort) {
   let weights = { ...SCORE_WEIGHTS };
 
   // Adjust weights based on preference
-  if (pref === 'fast') {
-    weights.DISTANCE = -2.0;
-    weights.TRAFFIC_DELAY = -1.0;
-  } else if (pref === 'near') {
-    weights.DISTANCE = -3.0;
-    weights.TRAFFIC_DELAY = -0.5;
-  } else if (pref === 'traffic') {
-    weights.TRAFFIC_DELAY = -5.0;
-    weights.DISTANCE = -0.5;
-  } else if (pref === 'variety') {
-    weights.PISTE_KM = 4.0;
-    weights.OPEN_LIFTS = 5.0;
-  } else if (pref === 'family') {
-    weights.PRICE = -2.0;
-    weights.DISTANCE = -1.0;
-  } else if (pref === 'snow') {
+  // Adjust weights based on preference
+  if (pref === 'travel') {
+    // "Schnell & Wenig Stau"
+    weights.DISTANCE = -2.5;
+    weights.TRAFFIC_DELAY = -3.0; // Strong penalty for traffic
+  } else if (pref === 'conditions') {
+    // "Gute Bedingungen (Schnee & Lifte)"
     weights.SNOW = 3.0;
-  } else if (pref === 'open') {
-    weights.OPEN_LIFTS = 6.0;
+    weights.OPEN_LIFTS = 3.0;
+  } else if (pref === 'large') {
+    // "Großes Skigebiet" (formerly Variety)
+    weights.PISTE_KM = 4.0;
+    weights.OPEN_LIFTS = 3.0;
+  } else if (pref === 'easy') {
+    // "Einfaches Skigebiet" (formerly Family)
+    weights.PRICE = -1.0;
+    weights.PISTE_KM = -0.5; // Favor smaller
+    // Bonus for family classification handles the rest
   } else if (pref === 'price') {
-    weights.PRICE = -2.0;
+    weights.PRICE = -8.0; // Drastically increased from -2.0 to filter out expensive resorts
+    weights.DISTANCE = -4.0; // Usually cheap means local
+    weights.PISTE_KM = 0.5; // Dampen influence of size
+    weights.OPEN_LIFTS = 1.0; // Dampen influence of lift count
+  } else if (pref === 'weather') {
+    // handled via overrides below
   }
 
   let score =
@@ -68,31 +72,23 @@ export function calculateScore(resort) {
     (snow * weights.SNOW) +
     (trafficDelayMins * weights.TRAFFIC_DELAY);
 
-  if (pref === 'family' && isFamily) {
+  if (pref === 'easy' && isFamily) {
     score += weights.FAMILY_BONUS;
   }
 
   // Sled specific overrides
   if (resort.has_lift) score += 20;
   if (resort.length > 5) score += 10;
-  if (resort.night_light && pref === 'variety') score += 15;
+  if (resort.night_light && pref === 'large') score += 15;
 
   // Skitour overrides
   if (resort.avalancheLevel === 1) score += 30;
   if (resort.newSnow > 15) score += 20;
-  if (pref === 'powder' && resort.newSnow > 10) score += 20;
-  if (pref === 'safe' && resort.avalancheLevel <= 2) score += 20;
-
-  // Skate overrides
-  if (resort.isOpen === false) score = 0; // Close logic
-  else if (resort.isOpen) score += 40;
-
-  if (pref === 'natural' && resort.type === 'natural') score += 20;
-  if (pref === 'indoor' && resort.type === 'indoor') score += 20;
+  if (pref === 'conditions' && resort.newSnow > 10) score += 20;
 
   // Walk overrides
   if (resort.view) score += 20;
-  if (pref === 'sunny' && resort.weather?.icon?.includes('☀️')) score += 30;
+  if (pref === 'weather' && (resort.weather?.icon?.includes('☀️') || typeof resort.weather === 'string' && resort.weather.includes('Sunny'))) score += 30;
   if (pref === 'easy' && resort.level === 'easy') score += 20;
 
   return Math.round(score);
@@ -250,13 +246,20 @@ export function renderTop3Cards(topData, isExpanded = false) {
       const safeName = escapeHtml(r.name);
 
       // Metadata-driven Metrics
-      const metricsHtml = config.metrics.map(m => `
+      const metricsHtml = config.metrics.map(m => {
+        let iconContent = m.icon;
+        if (typeof m.icon === 'function') {
+          iconContent = m.icon(r);
+        }
+
+        return `
         <div class="metric-box">
-            <span class="metric-icon">${m.icon}</span>
+            <span class="metric-icon">${iconContent}</span>
             <strong class="metric-value">${escapeHtml(String(m.formatter(r)))}</strong>
             <span class="metric-label">${m.label}</span>
         </div>
-        `).join('');
+        `;
+      }).join('');
 
       card.innerHTML = `
         <div class="top3-header-new">

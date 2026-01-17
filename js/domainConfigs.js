@@ -21,25 +21,46 @@ export const DOMAIN_CONFIGS = {
             {
                 id: 'weather',
                 label: 'Wetter',
-                icon: '🌤️',
+                icon: (r) => {
+                    const w = r.weather;
+                    if (!w) return '🌤️';
+
+                    // 1. If string contains Emoji, return it (simple heuristic)
+                    const emojiMatch = typeof w === 'string' && w.match(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
+                    if (emojiMatch) return emojiMatch[0];
+
+                    // 2. Keyword mapping (Fallback for plain text)
+                    const text = (typeof w === 'string' ? w : (w.description || '')).toLowerCase();
+                    if (text.includes('sonne') || text.includes('klar') || text.includes('sun') || text.includes('clear')) return '☀️';
+                    if (text.includes('schnee') || text.includes('snow')) return '❄️';
+                    if (text.includes('regen') || text.includes('rain')) return '🌧️';
+                    if (text.includes('nebel') || text.includes('fog')) return '🌫️';
+                    if (text.includes('gewitter') || text.includes('storm')) return '⛈️';
+                    if (text.includes('wolke') || text.includes('cloud') || text.includes('overcast') || text.includes('trüb')) return '☁️';
+
+                    return '🌤️';
+                },
                 formatter: (r) => {
                     const w = r.weather;
                     if (!w) return '-';
-                    if (typeof w === 'string') return w;
-                    return `${w.emoji || w.icon || ''} ${w.temp || ''}`.trim();
+                    if (typeof w === 'string') {
+                        // Optional: Strip emoji from text if we display it above?
+                        // User screenshot showed only text. But our data has emoji.
+                        // Let's keep it as is for now to minimize risk.
+                        return w.replace(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/, '').trim() || w;
+                    }
+                    return `${w.temp || ''}`.trim();
                 }
             },
             { id: 'eta', label: 'Anfahrt', icon: '🚗', formatter: (r) => `${Math.round((r.traffic?.duration || 0) / 60 || r.distance || 0)} min` }
         ],
         prefs: [
-            { id: 'fast', label: 'Schnell dort', icon: '⚡' },
-            { id: 'near', label: 'Möglichst nah', icon: '📏' },
-            { id: 'variety', label: 'Viel Abwechslung', icon: '🎢' },
-            { id: 'traffic', label: 'Wenig Stau', icon: '🚦' },
-            { id: 'family', label: 'Familie', icon: '👨‍👩‍👧' },
-            { id: 'snow', label: 'Viel Schnee', icon: '❄️' },
-            { id: 'price', label: 'Günstig', icon: '💰' },
-            { id: 'open', label: 'Viel offen', icon: '🚠' }
+            { id: 'travel', label: 'Schnell & wenig Stau', icon: '🚀' },
+            { id: 'conditions', label: 'Gute Bedingungen', icon: '✨' },
+            { id: 'weather', label: 'Gutes Wetter', icon: '☀️' },
+            { id: 'large', label: 'Großes Skigebiet', icon: '🏔️' },
+            { id: 'easy', label: 'Einfaches Skigebiet', icon: '😌' },
+            { id: 'price', label: 'Günstig', icon: '💰' }
         ]
     },
     skitour: {

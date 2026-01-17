@@ -34,6 +34,7 @@ function filterByKeywords(data, keywords) {
 
 export async function parseLoser() {
     const data = await fetchSalzkammergutData();
+    if (!data) throw new Error("Failed to fetch Salzkammergut data");
     // Keywords based on dump: "Loser", "Sandling"
     const filtered = filterByKeywords(data, ["Loser", "Sandling", "L3", "L4", "L5", "L7", "S1"]);
     return createResult({ id: "loser", name: "Loser - Altaussee" }, filtered, "intermaps.com (Salzkammergut)");
@@ -41,24 +42,28 @@ export async function parseLoser() {
 
 export async function parseFeuerkogel() {
     const data = await fetchSalzkammergutData();
+    if (!data) throw new Error("Failed to fetch Salzkammergut data");
     const filtered = filterByKeywords(data, ["Feuerkogel", "Gruber", "Edeltal"]);
     return createResult({ id: "feuerkogel", name: "Feuerkogel" }, filtered, "intermaps.com (Salzkammergut)");
 }
 
 export async function parseKrippenstein() {
     const data = await fetchSalzkammergutData();
+    if (!data) throw new Error("Failed to fetch Salzkammergut data");
     const filtered = filterByKeywords(data, ["Krippenstein", "Dachstein"]);
     return createResult({ id: "dachstein_krippenstein", name: "Dachstein Krippenstein" }, filtered, "intermaps.com (Salzkammergut)");
 }
 
 export async function parseZwoelferhorn() {
     const data = await fetchSalzkammergutData();
+    if (!data) throw new Error("Failed to fetch Salzkammergut data");
     const filtered = filterByKeywords(data, ["12er Horn", "12er-Horn"]);
     return createResult({ id: "zwoelferhorn", name: "Zwölferhorn" }, filtered, "intermaps.com (Salzkammergut)");
 }
 
 export async function parseGaissauHintersee() {
     const data = await fetchSalzkammergutData();
+    if (!data) throw new Error("Failed to fetch Salzkammergut data");
     const filtered = filterByKeywords(data, ["Hintersee", "Spielberg", "Gaissau", "Latschenalm"]);
     return createResult({ id: "gaissau_hintersee", name: "Gaissau-Hintersee" }, filtered, "intermaps.com (Salzkammergut)");
 }

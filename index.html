@@ -94,15 +94,14 @@
       </div>
 
       <!-- 5th Activity Button (Full Width) -->
-      <div class="mt-lg">
-        <button class="pref-btn w-full flex-row p-lg" data-domain="walk">
-          <span class="pref-icon text-2xl mr-lg">🚶</span>
-          <div class="text-left">
-            <span class="pref-label">Winterwanderung</span>
-            <small class="text-gray d-block text-sm">Gut begehbar?</small>
-          </div>
-        </button>
-      </div>
+      <button class="pref-btn" data-domain="walk"
+        style="grid-column: 1 / -1; width: 100%; flex-direction: row; padding: 16px;">
+        <span class="pref-icon text-2xl mr-lg">🚶</span>
+        <div class="text-left">
+          <span class="pref-label">Winterwanderung</span>
+          <small class="text-gray d-block text-sm">Gut begehbar?</small>
+        </div>
+      </button>
 
       <div class="step-footer mt-lg">
         <button id="backToLocationFromActivity" class="wizard-back-btn">← Zurück</button>
@@ -118,33 +117,26 @@
       <p class="step-desc">Wir passen den SmartScore basierend auf deinen Vorlieben an.</p>
 
       <div class="pref-grid">
-        <button class="pref-btn" data-pref="fast">
-          <span class="pref-icon">⚡</span>
-          <span class="pref-label">Schnell dort</span>
+        <button class="pref-btn" data-pref="travel">
+          <span class="pref-icon">🚀</span>
+          <span class="pref-label">Schnell & wenig Stau</span>
         </button>
-        <button class="pref-btn" data-pref="near">
-          <span class="pref-icon">📏</span>
-          <span class="pref-label">Möglichst nah</span>
+        <button class="pref-btn" data-pref="conditions">
+          <span class="pref-icon">✨</span>
+          <span class="pref-label">Gute Bedingungen</span>
+          <small class="text-gray text-xs">Schnee & Lifte</small>
         </button>
-        <button class="pref-btn" data-pref="variety">
-          <span class="pref-icon">🎢</span>
-          <span class="pref-label">Viel Abwechslung</span>
+        <button class="pref-btn" data-pref="weather">
+          <span class="pref-icon">☀️</span>
+          <span class="pref-label">Gutes Wetter</span>
         </button>
-        <button class="pref-btn" data-pref="traffic">
-          <span class="pref-icon">🚦</span>
-          <span class="pref-label">Wenig Stau</span>
+        <button class="pref-btn" data-pref="large">
+          <span class="pref-icon">🏔️</span>
+          <span class="pref-label">Großes Skigebiet</span>
         </button>
-        <button class="pref-btn" data-pref="family">
-          <span class="pref-icon">👨‍👩‍👧</span>
-          <span class="pref-label">Familie</span>
-        </button>
-        <button class="pref-btn" data-pref="open">
-          <span class="pref-icon">🚠</span>
-          <span class="pref-label">Viel offen</span>
-        </button>
-        <button class="pref-btn" data-pref="snow">
-          <span class="pref-icon">❄️</span>
-          <span class="pref-label">Viel Schnee</span>
+        <button class="pref-btn" data-pref="easy">
+          <span class="pref-icon">�</span>
+          <span class="pref-label">Einfaches Skigebiet</span>
         </button>
         <button class="pref-btn" data-pref="price">
           <span class="pref-icon">💰</span>
@@ -154,8 +146,8 @@
 
       <div class="step-footer d-flex gap-md mt-lg">
         <button id="backToActivity" class="wizard-back-btn">← Zurück</button>
-        <button id="showResultsBtn" class="wizard-next-btn bg-success">Meine Empfehlungen zeigen
-          ➔</button>
+        <!-- Next button hidden as selection auto-submits -->
+        <button id="showResultsBtn" class="wizard-next-btn bg-success d-none">Empfehlungen zeigen</button>
       </div>
     </div>
   </div>
