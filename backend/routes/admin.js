@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { getUsageStats } from "../services/system/usage.js";
 import { webcamMonitor } from "../services/system/monitoring.js";
-import { getAllResortsLive, forceRefreshResort } from "../services/resorts/service.js";
+import { getAllResortsLive, forceRefreshResort, getResortsStatus } from "../services/resorts/service.js";
 import { fetchTravelTimes } from "../services/tomtom.js"; // Import TomTom service
 import { parserCache, weatherCache, trafficCache } from "../services/cache.js";
 import { sentryService } from "../services/integrations/sentry.js";
@@ -114,14 +114,13 @@ router.post("/webcams/check", async (req, res) => {
 router.get("/parsers", async (req, res) => {
     try {
         // Use fast status check instead of potentially triggering scrapes
-        const { getResortsStatus } = await import("../services/resorts/service.js");
         const resorts = getResortsStatus();
 
-        // Pass full data object to frontend, as it perfectly matches dashboard needs
+        // Pass full data object to frontend
         res.json(resorts);
     } catch (error) {
         console.error("Admin Parsers Error:", error.message, error.stack);
-        res.status(500).json({ error: error.message, stack: process.env.NODE_ENV !== 'production' ? error.stack : undefined });
+        res.status(500).json({ error: error.message });
     }
 });
 
