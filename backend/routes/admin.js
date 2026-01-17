@@ -110,6 +110,30 @@ router.post("/webcams/check", async (req, res) => {
     }
 });
 
+// GET /api/admin/weather
+router.get("/weather", async (req, res) => {
+    try {
+        const resorts = getResortsStatus();
+        const data = resorts.map(resort => {
+            const cached = weatherCache.get(resort.id);
+            return {
+                id: resort.id,
+                name: resort.name,
+                country: resort.country,
+                // weatherCache stores: { forecast, current, timestamp }
+                // current: { weather, emoji, snow, temp }
+                status: cached ? 'active' : 'missing',
+                current: cached ? cached.current : null,
+                lastUpdated: cached ? cached.timestamp : null
+            };
+        });
+        res.json(data);
+    } catch (error) {
+        console.error("Admin Weather Error:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // GET /api/admin/parsers
 router.get("/parsers", async (req, res) => {
     try {

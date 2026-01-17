@@ -339,6 +339,35 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Weather & Snow Status -->
+                <div class="card" style="max-height: 500px; display:flex; flex-direction:column;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3>❄️ Weather & Snow Status</h3>
+                        <button class="btn-sm" onclick="fetchWeather()">🔄 Refresh</button>
+                    </div>
+                    <div style="overflow-y: auto; flex:1;">
+                        <table id="weatherTable" style="width:100%; border-collapse:collapse;">
+                            <thead>
+                                <tr
+                                    style="position:sticky; top:0; background:var(--card-bg); z-index:10; border-bottom:1px solid var(--border-color);">
+                                    <th style="text-align:left; padding:8px;">Resort</th>
+                                    <th style="text-align:left; padding:8px;">Temp</th>
+                                    <th style="text-align:left; padding:8px;">Condition</th>
+                                    <th style="text-align:left; padding:8px;">Snow Depth</th>
+                                    <th style="text-align:left; padding:8px;">Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody id="weatherBody">
+                                <tr>
+                                    <td colspan="5" style="padding:10px; text-align:center;">Loading weather data...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Right Column: Usage, Webcams, System -->
@@ -453,6 +482,10 @@
             fetchWebcams();
             fetchParsers();
             fetchSystem();
+            fetchWebcams();
+            fetchParsers();
+            fetchWeather();
+            fetchSystem();
             fetchLogs('combined');
             loadSentryData();
             fetchGitHubStatus();
@@ -546,7 +579,7 @@
                 // Split issues into last 24h and older
                 const now = new Date();
                 const twentyFourHoursAgo = new Date(now - 24 * 60 * 60 * 1000);
-                
+
                 const recentIssues = data.filter(issue => new Date(issue.lastSeen) >= twentyFourHoursAgo);
                 const olderIssues = data.filter(issue => new Date(issue.lastSeen) < twentyFourHoursAgo);
 
@@ -571,7 +604,7 @@
                 `;
 
                 let html = '';
-                
+
                 // Render recent issues (last 24h)
                 if (recentIssues.length > 0) {
                     html += recentIssues.map(renderIssueRow).join('');
@@ -1045,6 +1078,56 @@
                 btn.style.borderColor = "var(--border-color)";
                 btn.style.color = "#c9d1d9";
             }, 5000);
+        }
+        async function fetchWeather() {
+            try {
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/weather`);
+                const data = await res.json();
+                const tbody = document.getElementById('weatherBody');
+                tbody.innerHTML = '';
+
+                if (data.error) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="status-crit">Error: ${data.error}</td></tr>`;
+                    return;
+                }
+
+                data.forEach(r => {
+                    if (!r.weather) return;
+
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid #30363d';
+
+                    const temp = r.weather.temp || '-';
+                    const snow = r.weather.snow || '-';
+                    const emoji = r.weather.emoji || '';
+                    const desc = r.weather.weather || '-';
+
+                    // Format Updated time
+                    let updated = '-';
+                    if (r.lastUpdated) {
+                        const date = new Date(r.lastUpdated);
+                        updated = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        // Add date if not today? keeping it simple for now
+                    }
+
+                    tr.innerHTML = `
+                        <td style="padding:8px;"><strong>${r.name}</strong></td>
+                        <td style="padding:8px; font-family:monospace;">${temp}</td>
+                        <td style="padding:8px;">${emoji} ${desc}</td>
+                        <td style="padding:8px;">${snow}</td>
+                        <td style="padding:8px; font-size:0.85em; color:var(--muted-color);">${updated}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                if (tbody.children.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:10px;">No weather data cached yet.</td></tr>`;
+                }
+
+            } catch (error) {
+                console.error("Weather fetch failed", error);
+                document.getElementById('weatherBody').innerHTML = `<tr><td colspan="5" class="status-crit">Failed to load weather.</td></tr>`;
+            }
         }
     </script>
 </body>
