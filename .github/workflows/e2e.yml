@@ -15,6 +15,17 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: '20'
+        cache: 'npm'
+
+    - name: Cache Playwright Browsers
+      id: playwright-cache
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+
     - name: Install dependencies
       run: npm ci
 

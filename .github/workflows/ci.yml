@@ -36,29 +36,9 @@ jobs:
     - name: Run Tests
       run: npm test
 
-  e2e:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 20.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      # - name: Run E2E Tests
-      #   run: npx playwright test
-
   # Deploy to Render after successful CI (main branch only)
   deploy:
-    needs: [build, e2e]
+    needs: [build]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
