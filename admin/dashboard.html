@@ -384,6 +384,8 @@
                     <h3>⚙️ System & Cache</h3>
                     <div id="systemStats" style="font-size:0.9em; line-height:1.6;">Loading...</div>
                     <div style="margin-top:20px; display:flex; gap:5px; flex-wrap:wrap;">
+                        <button class="btn-sm" onclick="testDBConnection(this)"
+                            style="border-color:#58a6ff; color:#58a6ff;">🛢️ Test DB</button>
                         <button class="btn-sm" onclick="confirmClear('parser')">Clear Parsers</button>
                         <button class="btn-sm" onclick="confirmClear('weather')">Clear Weather</button>
                         <button class="btn-sm" onclick="confirmClear('traffic')">Clear Traffic</button>
@@ -1093,6 +1095,28 @@
                 btn.style.borderColor = "var(--border-color)";
                 btn.style.color = "#c9d1d9";
             }, 5000);
+        }
+        async function testDBConnection(btn) {
+            const originalText = btn.innerText;
+            btn.innerText = "⏳ Testing...";
+            btn.disabled = true;
+            try {
+                const res = await fetchWithAuth(`${API_BASE_URL}/admin/db/check`, { method: 'POST' });
+                const json = await res.json();
+
+                if (json.status === 'healthy' || json.status === 'warning') {
+                    const mb = json.sizeInfo ? json.sizeInfo.totalSizeMB : '?';
+                    alert(`✅ Database Connected!\n\nStatus: ${json.status.toUpperCase()}\nSize: ${mb} MB\n\n${json.message}`);
+                    btn.innerText = "✅ OK";
+                } else {
+                    alert(`❌ Database Error:\n\n${json.message}`);
+                    btn.innerText = "❌ Fail";
+                }
+            } catch (e) {
+                alert(`Connection Error: ${e.message}`);
+                btn.innerText = "❌ Net Fail";
+            }
+            setTimeout(() => { btn.disabled = false; btn.innerText = originalText; }, 3000);
         }
         async function fetchWeather() {
             try {

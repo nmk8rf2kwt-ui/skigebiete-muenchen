@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { getUsageStats } from "../services/system/usage.js";
-import { webcamMonitor } from "../services/system/monitoring.js";
+import { webcamMonitor, checkDatabaseHealth } from "../services/system/monitoring.js";
 import { getAllResortsLive, forceRefreshResort, getResortsStatus } from "../services/resorts/service.js";
 import { fetchTravelTimes } from "../services/tomtom.js"; // Import TomTom service
 import { parserCache, weatherCache, trafficCache } from "../services/cache.js";
@@ -48,6 +48,16 @@ router.get("/system", (req, res) => {
         res.json({ cache: cacheStats, traffic_csv: trafficCsv });
     } catch (e) {
         res.status(500).json({ error: e.message });
+    }
+});
+
+// POST /api/admin/db/check
+router.post("/db/check", async (req, res) => {
+    try {
+        const result = await checkDatabaseHealth();
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
     }
 });
 
