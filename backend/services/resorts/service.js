@@ -126,25 +126,31 @@ export function getResortConfig(id) {
 export function getResortsStatus() {
     const resorts = getStaticResorts();
     return resorts.map(resort => {
-        const cached = parserCache.get(resort.id);
+        // Access raw cache item to get timestamp
+        const cachedItem = parserCache.cache.get(resort.id);
+        const cachedData = cachedItem ? cachedItem.data : null;
+
+        // Check for expiry manually or rely on cleanup? 
+        // Let's rely on cleanup for status view to be fast.
+
         const traffic = trafficCache.get(resort.id);
 
         return {
             id: resort.id,
             name: resort.name,
             country: getCountry(resort),
-            status: cached ? 'live' : 'pending', // 'pending' means not in cache yet
+            status: cachedData ? 'live' : 'pending',
             hasParser: !!PARSERS[resort.id],
-            liftsOpen: cached ? cached.liftsOpen : null,
-            liftsTotal: cached ? cached.liftsTotal : null,
-            liftsDiff: cached ? (cached.liftsDiff || 0) : 0,
-            lastUpdated: cached && cached.timestamp && !isNaN(new Date(cached.timestamp).getTime())
-                ? new Date(cached.timestamp).toISOString()
+            liftsOpen: cachedData ? cachedData.liftsOpen : null,
+            liftsTotal: cachedData ? cachedData.liftsTotal : null,
+            liftsDiff: cachedData ? (cachedData.liftsDiff || 0) : 0,
+            lastUpdated: cachedItem && cachedItem.timestamp
+                ? new Date(cachedItem.timestamp).toISOString()
                 : null,
             nextRun: getNextScheduledRun(),
             trafficDelay: traffic ? traffic.delay_min : null,
             updatesToday: parserCache.getHistory(resort.id).length,
-            lastDetails: cached ? cached : null // Expose full cached object for debugging
+            lastDetails: cachedData // Expose data explicitly
         };
     });
 }

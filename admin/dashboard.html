@@ -980,7 +980,10 @@
                 // Not authenticated or token invalid
                 const creds = prompt("🔒 Admin Authentication Required\nPlease enter 'username:password':");
                 if (creds && creds.includes(':')) {
-                    const encoded = btoa(creds);
+                    // Safe handling for Unicode (e.g. München)
+                    // btoa alone fails for non-latin1 chars: "The string did not match the expected pattern"
+                    const encoded = btoa(unescape(encodeURIComponent(creds)));
+
                     sessionStorage.setItem('admin_auth', encoded);
                     // Retry once
                     headers['Authorization'] = `Basic ${encoded}`;
