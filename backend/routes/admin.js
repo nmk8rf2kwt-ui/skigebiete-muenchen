@@ -113,13 +113,16 @@ router.post("/webcams/check", async (req, res) => {
 // GET /api/admin/parsers
 router.get("/parsers", async (req, res) => {
     try {
+        console.log("[Admin Parsers] Starting getResortsStatus...");
         // Use fast status check instead of potentially triggering scrapes
         const resorts = getResortsStatus();
+        console.log(`[Admin Parsers] Success: ${resorts?.length} resorts`);
 
         // Pass full data object to frontend
         res.json(resorts);
     } catch (error) {
-        console.error("Admin Parsers Error:", error.message, error.stack);
+        console.error("[Admin Parsers] ERROR:", error.message);
+        console.error("[Admin Parsers] Stack:", error.stack);
         res.status(500).json({ error: error.message });
     }
 });
