@@ -40,7 +40,7 @@ test('Homepage loads and displays title', async ({ page }) => {
 });
 
 test('Resort data is populated', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?results=true');
 
     // Check if either Top 3 cards or table rows are visible
     const top3Cards = page.locator('.top3-card');
@@ -55,7 +55,7 @@ test('Resort data is populated', async ({ page }) => {
 });
 
 test('Content is visible on load', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?results=true');
 
     // Verify that the main UI containers are present
     await expect(page.locator('#top3Cards')).toBeVisible();
@@ -85,7 +85,7 @@ test('Traffic tooltip renders history stats', async ({ page }) => {
         });
     });
 
-    await page.goto('/');
+    await page.goto('/?results=true');
 
     // Ensure results view is active (wait for Top 3)
     await expect(page.locator('#top3Cards')).toBeVisible();
