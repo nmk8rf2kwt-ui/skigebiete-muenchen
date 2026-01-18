@@ -167,9 +167,9 @@ async function load() {
  * Global render trigger
  */
 function render() {
-  const { resorts, viewMode, currentDomain } = store.get();
+  const { resorts, viewMode, currentDomain, displayLimit } = store.get();
   debugGroup("🎨 DIAGNOSTIC: Render Phase");
-  debugLog(`State: Mode=${viewMode}, Domain=${currentDomain}, Resorts=${resorts?.length}`);
+  debugLog(`State: Mode=${viewMode}, Domain=${currentDomain}, Resorts=${resorts?.length}, DisplayLimit=${displayLimit}`);
 
   if (!resorts || !resorts.length) {
     console.warn("⚠️ Render called with empty resorts!");
@@ -185,9 +185,18 @@ function render() {
   const sortedResorts = [...resorts].sort((a, b) => b.smartScore - a.smartScore);
   debugLog(`Top Resort: ${sortedResorts[0].name} (Score: ${sortedResorts[0].smartScore})`);
 
+  // Use displayLimit for load more functionality (default 3)
+  const limit = displayLimit || 3;
+
   if (viewMode === 'top3') {
-    debugLog("👉 Delegating to renderTop3Cards");
-    import("./render.js").then(module => module.renderTop3Cards(sortedResorts.slice(0, 3)));
+    debugLog(`👉 Delegating to renderTop3Cards (limit: ${limit})`);
+    import("./render.js").then(module => module.renderTop3Cards(sortedResorts.slice(0, limit), limit > 3));
+
+    // Update load more button visibility
+    const loadMoreBtn = document.getElementById('loadMore3');
+    if (loadMoreBtn) {
+      loadMoreBtn.style.display = limit >= sortedResorts.length ? 'none' : 'inline-block';
+    }
   } else if (viewMode === 'table') {
     debugLog("👉 Delegating to renderTable");
     renderTable(sortedResorts, undefined, 'all');
@@ -195,6 +204,12 @@ function render() {
     debugLog("👉 Delegating to Map (Init & Update)");
     initMap(sortedResorts);
     updateMap(sortedResorts);
+
+    // Show user location on map
+    const userLoc = getCurrentSearchLocation();
+    if (userLoc && userLoc.latitude && userLoc.longitude) {
+      showUserLocation(userLoc.latitude, userLoc.longitude);
+    }
   }
 
   debugGroupEnd();
