@@ -812,6 +812,35 @@ tr.unavailable {
   }
 }
 
+/* ================= USER LOCATION MARKER ================= */
+
+.user-location-marker {
+  background: none;
+  border: none;
+}
+
+.user-marker-inner {
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: user-pulse 2s infinite;
+}
+
+@keyframes user-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(52, 152, 219, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+  }
+}
+
 /* ================= ENHANCED POPUPS ================= */
 
 .map-popup-content {

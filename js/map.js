@@ -15,27 +15,41 @@ export function initMap(resorts) {
     updateMap(resorts);
 }
 
-// Update or add user location marker
+// Update or add user location marker with 150km radius
 export function showUserLocation(lat, lng) {
     if (!map) return;
 
-    // Remove existing user marker if any (we should track it but for now let's just add new one or relying on map clearnup)
-    // To do it properly, let's add a global variable for it
+    // Remove existing user marker and radius if any
     if (window.userMarker) {
         map.removeLayer(window.userMarker);
     }
+    if (window.userRadius) {
+        map.removeLayer(window.userRadius);
+    }
 
+    // Add 150km radius circle
+    window.userRadius = L.circle([lat, lng], {
+        radius: 150000, // 150km in meters
+        color: '#3498db',
+        fillColor: '#3498db',
+        fillOpacity: 0.06,
+        weight: 2,
+        dashArray: '10, 5'
+    }).addTo(map);
+
+    // Blue pulsing user location marker
     const icon = L.divIcon({
         className: 'user-location-marker',
-        iconSize: [20, 20],
-        iconAnchor: [10, 10]
+        html: '<div class="user-marker-inner"></div>',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
     });
 
-    window.userMarker = L.marker([lat, lng], { icon: icon }).addTo(map);
-    window.userMarker.bindPopup("Ihr Standort").openPopup();
+    window.userMarker = L.marker([lat, lng], { icon: icon, zIndexOffset: 1000 }).addTo(map);
+    window.userMarker.bindPopup("📍 Ihr Standort");
 
-    // Zoom to fit user and resorts? Or just pan?
-    // map.setView([lat, lng], 10);
+    // Center map on user with appropriate zoom to show radius
+    map.setView([lat, lng], 8);
 }
 
 export function updateMap(resorts) {
@@ -114,20 +128,27 @@ export function updateMap(resorts) {
             }
         }
 
-        // Weather: Handle Object vs String
-        let weatherInfo = '-';
+        // Weather: Extract emoji, description, and temperature
+        let weatherEmoji = '🌤️';
+        let weatherDesc = '-';
+        let tempInfo = '';
         if (resort.weather) {
             if (typeof resort.weather === 'object') {
-                // Try to get icon/emoji
-                weatherInfo = resort.weather.icon || resort.weather.weather || '🌤️';
-            } else {
-                weatherInfo = resort.weather;
+                weatherEmoji = resort.weather.icon || '🌤️';
+                weatherDesc = resort.weather.desc || resort.weather.weather || '-';
+                if (resort.weather.temp !== undefined) {
+                    tempInfo = `${resort.weather.temp}°C`;
+                }
+            } else if (typeof resort.weather === 'string') {
+                // Parse "☀️ Klar" format
+                const match = resort.weather.match(/^([^\s]+)\s+(.+)$/);
+                if (match) {
+                    weatherEmoji = match[1];
+                    weatherDesc = match[2];
+                } else {
+                    weatherDesc = resort.weather;
+                }
             }
-        } else if (resort.status === 'live') {
-            // If live but no weather string, maybe show -
-            weatherInfo = '-';
-        } else {
-            weatherInfo = 'Unknown';
         }
 
         const popupContent = `
@@ -145,7 +166,7 @@ export function updateMap(resorts) {
                         <span>🚗</span> <strong>${trafficInfo}</strong>
                     </div>
                     <div class="map-popup-item" title="Wetter">
-                        <span>🌤️</span> <strong>${weatherInfo}</strong>
+                        <strong>${weatherEmoji} ${tempInfo || weatherDesc}</strong>
                     </div>
                 </div>
 
