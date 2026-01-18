@@ -618,8 +618,22 @@ tr.unavailable {
     align-items: center;
   }
 
+  /* Child 1: Score - visual badge on mobile */
   td:nth-child(1) {
-    display: none;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    color: var(--text-main);
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+  }
+
+  td:nth-child(1)::before {
+    content: "🏆 SmartScore";
+    color: #555;
+    font-weight: normal;
   }
 
   /* Status Indicator */
@@ -634,13 +648,14 @@ tr.unavailable {
   }
 
   /* Responsive Cell Labels */
+  /* Responsive Cell Labels - Updated for 15 Columns */
   td:nth-child(3)::before {
     content: "🏔️ Typ";
     color: var(--text-light);
   }
 
   td:nth-child(4)::before {
-    content: "🎿 Pisten";
+    content: "📏 Größe";
     color: var(--text-light);
   }
 
@@ -655,37 +670,37 @@ tr.unavailable {
   }
 
   td:nth-child(7)::before {
-    content: "📍 Distanz (km)";
+    content: "📍 Distanz";
     color: var(--text-light);
   }
 
   td:nth-child(8)::before {
-    content: "🚗 Fahrzeit (Basis)";
+    content: "🚗 Fahrzeit (Netto)";
     color: var(--text-light);
   }
 
   td:nth-child(9)::before {
-    content: "🚦 Stauzeit";
+    content: "⚠️ Delay";
     color: var(--text-light);
   }
 
   td:nth-child(10)::before {
-    content: "🕒 Fahrzeit (Live)";
+    content: "⏱️ Fahrzeit (Live)";
     color: var(--text-light);
   }
 
   td:nth-child(11)::before {
-    content: "📈 Stau-Trend";
+    content: "📈 Prognose";
     color: var(--text-light);
   }
 
   td:nth-child(12)::before {
-    content: "🌤️ Wetterprognose";
+    content: "🌤️ Wetter";
     color: var(--text-light);
   }
 
   td:nth-child(13)::before {
-    content: "❄️ Schneehöhen";
+    content: "❄️ Schnee";
     color: var(--text-light);
   }
 
@@ -699,19 +714,9 @@ tr.unavailable {
     color: var(--text-light);
   }
 
-  td:nth-child(16)::before {
-    content: "🏆 Score";
-    color: var(--text-main);
-    font-weight: bold;
-  }
-
+  /* Cleanup old 16th child */
   td:nth-child(16) {
-    background-color: rgba(0, 0, 0, 0.02);
-    font-weight: bold;
-    margin-top: 10px;
-    padding: 10px 8px;
-    border-top: 1px dashed var(--border-color);
-    border-radius: var(--radius-sm);
+    display: none;
   }
 
   /* Disable striping on mobile */
