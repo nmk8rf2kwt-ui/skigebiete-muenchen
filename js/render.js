@@ -30,8 +30,12 @@ export function calculateScore(resort, userPref, domainId = 'ski') {
   // === POSITIVE FACTORS ===
 
   // 1. Lifts Open Percentage (biggest positive factor)
-  const liftsTotal = resort.liftsTotal || resort.lifts || 0;
-  const liftsOpen = resort.liftsOpen ?? 0;
+  let liftsTotal = resort.liftsTotal;
+  if (Array.isArray(liftsTotal)) liftsTotal = liftsTotal.length;
+  if (!liftsTotal && Array.isArray(resort.lifts)) liftsTotal = resort.lifts.length;
+  liftsTotal = parseInt(liftsTotal) || 0;
+
+  const liftsOpen = parseInt(resort.liftsOpen) || 0;
   let liftPct = liftsTotal > 0 ? (liftsOpen / liftsTotal) : 0;
 
   let liftPts = Math.round(liftPct * SCORE_WEIGHTS.LIFTS_OPEN_PCT);
@@ -63,7 +67,8 @@ export function calculateScore(resort, userPref, domainId = 'ski') {
   }
 
   // 3. Piste Kilometers (size)
-  const piste = resort.piste_km || 0;
+  // 3. Piste Kilometers (size)
+  const piste = parseFloat(resort.piste_km) || 0;
   let pistePts = Math.round(piste * SCORE_WEIGHTS.PISTE_KM);
   if (pref === 'large') pistePts = Math.round(pistePts * SCORE_WEIGHTS.PREFERENCE_MULTIPLIER);
 
@@ -128,7 +133,7 @@ export function calculateScore(resort, userPref, domainId = 'ski') {
   }
 
   // 7. Price
-  const price = resort.price || 0;
+  const price = parseFloat(resort.price) || 0;
   if (price > 0) {
     let pricePts = Math.round((price / 10) * SCORE_WEIGHTS.PRICE_PER_10EUR);
     if (pref === 'price') pricePts = Math.round(pricePts * SCORE_WEIGHTS.PREFERENCE_MULTIPLIER);
