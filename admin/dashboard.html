@@ -285,6 +285,19 @@
             </div>
         </div>
 
+        <!-- NEW: RANKING SIMULATION WIDGET (Full Width) -->
+        <div class="card" style="grid-column: span 2;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2>🏆 Ranking Simulation (All Filters)</h2>
+                <button class="btn-sm" onclick="window.runRankingSimulation()">▶ Run Simulation</button>
+            </div>
+            <div id="rankingSimulationContainer"
+                style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
+                <div style="color:var(--muted-color); font-style:italic;">Click 'Run Simulation' to calculate rankings
+                    for all user preferences...</div>
+            </div>
+        </div>
+
         <!-- Traffic Status Grid -->
         <div class="grid" style="grid-template-columns: 3fr 1fr;"> <!-- Wider left col -->
 
@@ -454,7 +467,161 @@
 
     </div>
 
-    <script>
+    <script type="module">
+        import { calculateScore, formatPoints } from '../js/render.js';
+        import { DOMAIN_CONFIGS } from '../js/domainConfigs.js';
+        import { store } from '../js/store.js'; // Needed by calculateScore probably? No, calculateScore gets args.
+
+        // Expose functions required by HTML event handlers to window
+        window.fetchAll = fetchAll;
+        window.fetchLogs = fetchLogs;
+        window.testWeatherAPI = testWeatherAPI;
+        window.triggerWeatherRefresh = triggerWeatherRefresh;
+        window.fetchWeather = fetchWeather;
+        window.testDBConnection = testDBConnection;
+        window.confirmClear = confirmClear;
+        window.testTrafficAPI = testTrafficAPI;
+        window.testORSAPI = testORSAPI;
+        window.checkWebcams = checkWebcams;
+        window.sortTable = sortTable;
+        window.toggleOlderIssues = toggleOlderIssues;
+
+        // New Simulation Function
+        window.runRankingSimulation = async function () {
+            const container = document.getElementById('rankingSimulationContainer');
+            container.innerHTML = '<div class="loader">Loading resorts...</div>';
+
+            try {
+                // 1. Fetch Data (Resorts)
+                console.log("Fetching resorts...");
+                const res = await fetchWithAuth(`${API_BASE_URL}/resorts`); // Public endpoint usually sufficient? Or admin? Public for consistency.
+                // Wait, /api/resorts is public.
+                // But we need fetchWithAuth if we want to be consistent? No, public endpoint.
+                // However, render.js expects specific structure.
+                let rawData = await res.json();
+
+                // Ensure data is array
+                if (!Array.isArray(rawData)) rawData = rawData.resorts || [];
+
+                console.log(`Simulating for ${rawData.length} resorts...`);
+
+                // 2. Iterate Prefs (Ski Domain)
+                const skiConfig = DOMAIN_CONFIGS['ski'];
+                if (!skiConfig) throw new Error("Ski config not found");
+
+                const prefs = skiConfig.prefs;
+
+                container.innerHTML = ''; // Clear
+
+                // 3. Calc and Render
+                prefs.forEach(pref => {
+                    const section = document.createElement('div');
+                    section.className = 'simulation-section';
+                    section.style.border = '1px solid var(--border-color)';
+                    section.style.borderRadius = '6px';
+                    section.style.marginBottom = '10px';
+                    section.style.overflow = 'hidden';
+
+                    // Header (Collapsible)
+                    const header = document.createElement('div');
+                    header.style.padding = '10px 15px';
+                    header.style.background = '#21262d';
+                    header.style.cursor = 'pointer';
+                    header.style.display = 'flex';
+                    header.style.justifyContent = 'space-between';
+                    header.style.alignItems = 'center';
+                    header.onclick = () => {
+                        const body = section.querySelector('.sim-body');
+                        const icon = header.querySelector('.toggle-icon');
+                        if (body.style.display === 'none') {
+                            body.style.display = 'block';
+                            icon.innerText = '▼';
+                        } else {
+                            body.style.display = 'none';
+                            icon.innerText = '▶';
+                        }
+                    };
+
+                    const prefLabel = pref.label;
+                    const prefId = pref.id;
+
+                    // Calc Scores
+                    const ranked = rawData.map(r => {
+                        // Clone to avoid mutation issues
+                        const rClone = JSON.parse(JSON.stringify(r));
+                        const score = calculateScore(rClone, prefId, 'ski');
+                        return {
+                            ...rClone,
+                            _simScore: score,
+                            _simBreakdown: rClone.scoreBreakdown || [] // calculateScore populates this
+                        };
+                    }).sort((a, b) => b._simScore - a._simScore).slice(0, 10); // Top 10
+
+                    // Top 1 resort name for header
+                    const winner = ranked[0]?.name || 'N/A';
+
+                    header.innerHTML = `
+                        <div>
+                            <strong>${pref.icon} ${prefLabel}</strong> 
+                            <span style="color:var(--muted-color); font-size:0.9em; margin-left:10px;">Top: ${winner}</span>
+                        </div>
+                        <span class="toggle-icon">▶</span>
+                    `;
+
+                    // Body
+                    const body = document.createElement('div');
+                    body.className = 'sim-body';
+                    body.style.display = 'none'; // Collapsed by default
+                    body.style.padding = '0';
+                    body.style.borderTop = '1px solid var(--border-color)';
+
+                    // Table
+                    let tableHtml = `
+                        <table style="width:100%; margin:0;">
+                            <thead style="background:#161b22;">
+                                <tr>
+                                    <th style="width:50px;">Rank</th>
+                                    <th>Resort</th>
+                                    <th>Score</th>
+                                    <th>Reasoning / Breakdown</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                    ranked.forEach((r, idx) => {
+                        const breakdownHtml = r._simBreakdown.map(b => {
+                            const color = b.type === 'good' ? '#2ea043' : (b.type === 'bad' ? '#da3633' : '#dbad09');
+                            const ptsStr = b.pts > 0 ? `+${b.pts}` : `${b.pts}`;
+                            return `<span style="display:inline-block; margin-right:8px; font-size:0.85em; background:#21262d; padding:2px 6px; border-radius:4px; border-left:3px solid ${color};">
+                                ${b.icon} ${b.text} <strong style="color:${color}">(${ptsStr})</strong>
+                            </span>`;
+                        }).join(' ');
+
+                        tableHtml += `
+                            <tr>
+                                <td style="text-align:center;">#${idx + 1}</td>
+                                <td><strong>${r.name}</strong></td>
+                                <td>${r._simScore}</td>
+                                <td>${breakdownHtml}</td>
+                            </tr>
+                        `;
+                    });
+
+                    tableHtml += `</tbody></table>`;
+                    body.innerHTML = tableHtml;
+
+                    section.appendChild(header);
+                    section.appendChild(body);
+                    container.appendChild(section);
+                });
+
+
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = `<div style="color:red">Simulation failed: ${e.message}</div>`;
+            }
+        };
         const API_LIMIT = 2500;
         let chartInstance = null;
 
