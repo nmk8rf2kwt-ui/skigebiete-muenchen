@@ -164,14 +164,31 @@ export function initEventListeners(handlers) {
         });
     }
 
-    // Restart Wizard
+    // Restart Wizard - Go to Preference Step (not Location)
     document.getElementById("restartWizard").addEventListener("click", () => {
         resultsView.style.display = "none";
         wizardContainer.style.display = "block";
-        stepLocation.style.display = "block";
+        stepLocation.style.display = "none";
         stepActivity.style.display = "none";
-        stepPrefs.style.display = "none";
+        stepPrefs.style.display = "block"; // Go to prefs step
     });
+
+    // Load More 3 Button
+    const loadMore3Btn = document.getElementById("loadMore3");
+    if (loadMore3Btn) {
+        loadMore3Btn.addEventListener("click", () => {
+            const state = store.get();
+            const currentLimit = state.displayLimit || 3;
+            const newLimit = currentLimit + 3;
+            store.setState({ displayLimit: newLimit }, render);
+
+            // Hide button if we've shown all resorts
+            const totalResorts = state.resorts?.length || 0;
+            if (newLimit >= totalResorts) {
+                loadMore3Btn.style.display = 'none';
+            }
+        });
+    }
 
     // Geolocation Success (Auto-advance)
     const originalHandleGeo = handleGeolocation;

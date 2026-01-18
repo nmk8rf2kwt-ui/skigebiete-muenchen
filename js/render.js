@@ -155,10 +155,11 @@ export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirect
     skiTable.style.display = "none";
     top3Container.style.display = "grid";
 
-    // Expansion Level
-    let limit = 3;
-    if (filter === 'top5') limit = 5;
-    if (filter === 'top10') limit = 10;
+    // Use displayLimit from store (load more functionality)
+    const storeLimit = store.get().displayLimit || 3;
+    let limit = storeLimit;
+    if (filter === 'top5') limit = Math.max(5, storeLimit);
+    if (filter === 'top10') limit = Math.max(10, storeLimit);
     if (filter === 'all') limit = 1000;
 
     const displayData = [...enrichedData].sort((a, b) => b.score - a.score).slice(0, limit);

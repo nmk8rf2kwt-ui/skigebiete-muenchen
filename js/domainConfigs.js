@@ -25,18 +25,28 @@ export const DOMAIN_CONFIGS = {
                     const w = r.weather;
                     if (!w) return '🌤️';
 
-                    // 1. If string contains Emoji, return it (simple heuristic)
-                    const emojiMatch = typeof w === 'string' && w.match(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
-                    if (emojiMatch) return emojiMatch[0];
+                    // Parse weather string or object
+                    const text = typeof w === 'string' ? w : (w.description || w.desc || '');
 
-                    // 2. Keyword mapping (Fallback for plain text)
-                    const text = (typeof w === 'string' ? w : (w.description || '')).toLowerCase();
-                    if (text.includes('sonne') || text.includes('klar') || text.includes('sun') || text.includes('clear')) return '☀️';
-                    if (text.includes('schnee') || text.includes('snow')) return '❄️';
-                    if (text.includes('regen') || text.includes('rain')) return '🌧️';
-                    if (text.includes('nebel') || text.includes('fog')) return '🌫️';
-                    if (text.includes('gewitter') || text.includes('storm')) return '⛈️';
-                    if (text.includes('wolke') || text.includes('cloud') || text.includes('overcast') || text.includes('trüb')) return '☁️';
+                    // Check for explicit sun emoji variants first (☀️, ☀, 🌞)
+                    if (text.includes('☀') || text.includes('🌞')) return '☀️';
+                    if (text.includes('🌤')) return '🌤️';
+                    if (text.includes('⛅')) return '⛅';
+                    if (text.includes('☁')) return '☁️';
+                    if (text.includes('🌧')) return '🌧️';
+                    if (text.includes('🌨')) return '🌨️';
+                    if (text.includes('❄')) return '❄️';
+                    if (text.includes('🌫')) return '🌫️';
+                    if (text.includes('⛈')) return '⛈️';
+
+                    // Keyword fallback for text without emojis
+                    const lowerText = text.toLowerCase();
+                    if (lowerText.includes('klar') || lowerText.includes('sonne') || lowerText.includes('clear') || lowerText.includes('sun')) return '☀️';
+                    if (lowerText.includes('schnee') || lowerText.includes('snow')) return '❄️';
+                    if (lowerText.includes('regen') || lowerText.includes('rain')) return '🌧️';
+                    if (lowerText.includes('nebel') || lowerText.includes('fog')) return '🌫️';
+                    if (lowerText.includes('gewitter') || lowerText.includes('storm')) return '⛈️';
+                    if (lowerText.includes('wolke') || lowerText.includes('cloud') || lowerText.includes('bedeckt') || lowerText.includes('bewölkt')) return '☁️';
 
                     return '🌤️';
                 },
