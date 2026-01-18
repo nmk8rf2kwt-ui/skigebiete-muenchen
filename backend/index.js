@@ -54,7 +54,7 @@ app.set('trust proxy', 1);
 
 // Security Middleware - CSP disabled for local development
 app.use(helmet({
-  contentSecurityPolicy: IS_PROD ? {
+  contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "unpkg.com", "js-de.sentry-cdn.com", "browser.sentry-cdn.com"],
@@ -63,9 +63,9 @@ app.use(helmet({
       connectSrc: ["'self'", "https://api.open-meteo.com", "*.sentry.io"],
       fontSrc: ["'self'", "fonts.gstatic.com"],
       objectSrc: ["'none'"],
-      upgradeInsecureRequests: [],
+      upgradeInsecureRequests: IS_PROD ? [] : null,
     },
-  } : false,  // Disable CSP for local development
+  },
 }));
 
 // Rate Limiting
