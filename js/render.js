@@ -22,8 +22,8 @@ const SCORE_WEIGHTS = {
 };
 
 // Helper to calculate a score for ranking WITH BREAKDOWN
-export function calculateScore(resort) {
-  const pref = store.get().preference || 'travel';
+export function calculateScore(resort, userPref, domainId = 'ski') {
+  const pref = userPref || store.get().preference || 'travel';
   const breakdown = [];
   let score = BASE_SCORE;
 
@@ -156,8 +156,8 @@ export function calculateScore(resort) {
   }
 
   // 9. Size Penalty / Bonus (User Request)
-  // Penalize small valid ski resorts if preference is NOT easy
-  if (pref !== 'easy' && liftsTotal > 0 && liftsTotal < 5) {
+  // Penalize small valid ski resorts if preference is NOT easy - ONLY FOR SKI
+  if (domainId === 'ski' && pref !== 'easy' && liftsTotal > 0 && liftsTotal < 5) {
     const penalty = (5 - liftsTotal) * 10;
     score -= penalty;
     breakdown.push({
@@ -167,8 +167,8 @@ export function calculateScore(resort) {
       type: 'bad'
     });
   }
-  // Reward explicitly large resorts
-  if (liftsTotal > 20) {
+  // Reward explicitly large resorts - ONLY SKI
+  if (domainId === 'ski' && liftsTotal > 20) {
     score += 15;
     breakdown.push({
       icon: '🏔️',
@@ -403,8 +403,8 @@ export function renderTop3Cards(topData, isExpanded = false) {
 }
 
 function generateReasoning(resort, pref, domainId = 'ski') {
-  // Use the pre-calculated scoreBreakdown if available (from calculateScore)
-  if (resort.scoreBreakdown && resort.scoreBreakdown.length > 0) {
+  // Use the pre-calculated scoreBreakdown if available (from calculateScore) AND we are in ski mode
+  if (domainId === 'ski' && resort.scoreBreakdown && resort.scoreBreakdown.length > 0) {
     return resort.scoreBreakdown.map(item => ({
       type: item.type,
       icon: item.icon,

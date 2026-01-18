@@ -6,6 +6,29 @@ test('Winterwandern (Walk) flow working', async ({ page }) => {
         await route.fulfill({ json: [] });
     });
 
+    // Mock Winter Walks API
+    await page.route('**/api/winter-walks', async route => {
+        await route.fulfill({
+            json: [
+                {
+                    "id": "eibsee",
+                    "name": "Eibsee Rundweg",
+                    "category": "walk",
+                    "address": "Eibsee, 82491 Grainau",
+                    "latitude": 47.4560,
+                    "longitude": 10.9930,
+                    "duration": 2.0,
+                    "distance": 90,
+                    "level": "easy",
+                    "view": true,
+                    "description": "Traumhafte Kulisse unter der Zugspitze. Fast eben.",
+                    "weather": { "temp": -1, "icon": "☀️" },
+                    "traffic": { "duration": 5400, "delay": 0 }
+                }
+            ]
+        });
+    });
+
     // 1. Open App with Debug Mode & Walk Domain
     await page.goto('/?debug=true&domain=walk');
 
