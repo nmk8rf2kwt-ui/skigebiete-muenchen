@@ -33,7 +33,7 @@ export const store = {
      */
     saveUserLocation(location) {
         try {
-            localStorage.setItem('skigebiete_user_location', JSON.stringify(location));
+            sessionStorage.setItem('skigebiete_user_location', JSON.stringify(location));
         } catch (e) {
             console.warn('Failed to save location', e);
         }
@@ -41,7 +41,7 @@ export const store = {
 
     getUserLocation() {
         try {
-            const data = localStorage.getItem('skigebiete_user_location');
+            const data = sessionStorage.getItem('skigebiete_user_location');
             return data ? JSON.parse(data) : null;
         } catch (e) {
             console.warn('Failed to load/parse location', e);

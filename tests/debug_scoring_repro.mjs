@@ -10,6 +10,10 @@ global.localStorage = {
     getItem: () => null,
     setItem: () => { }
 };
+global.sessionStorage = {
+    getItem: () => null,
+    setItem: () => { }
+};
 
 console.log("Loading module...");
 // Dynamic Import to ensure mocks exist before module evaluation
