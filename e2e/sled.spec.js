@@ -43,7 +43,7 @@ test.describe('Sledding Domain (Rodeln)', () => {
 
         // Bypass Step 1 by setting storage
         await page.addInitScript(() => {
-            localStorage.setItem('skigebiete_user_location', JSON.stringify({
+            sessionStorage.setItem('skigebiete_user_location', JSON.stringify({
                 latitude: 48.1351,
                 longitude: 11.5820,
                 name: "München (Test)"
