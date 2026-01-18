@@ -1,6 +1,6 @@
 import { renderTable, calculateScore } from "./render.js";
 import { initMap, updateMap, showUserLocation } from "./map.js";
-import { API_BASE_URL } from "./config.js";
+import { API_BASE_URL } from "./config.js?v=1.11.1";
 import { store } from "./store.js";
 import { escapeHtml, getDistanceFromLatLonInKm, debugLog, debugGroup, debugGroupEnd } from "./utils.js";
 import { initEventListeners } from "./events.js";
