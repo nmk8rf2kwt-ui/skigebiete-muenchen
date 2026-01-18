@@ -37,11 +37,12 @@ test.describe('Skitour Domain', () => {
 
         // Bypass Step 1
         await page.addInitScript(() => {
-            sessionStorage.setItem('skigebiete_user_location', JSON.stringify({
+            const loc = JSON.stringify({
                 latitude: 48.1351,
                 longitude: 11.5820,
                 name: "München (Test)"
-            }));
+            });
+            sessionStorage.setItem('skigebiete_user_location', btoa(loc));
         });
 
         await page.goto('/');
