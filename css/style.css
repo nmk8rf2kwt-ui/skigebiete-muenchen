@@ -1015,22 +1015,43 @@ tr.unavailable {
 }
 
 .top3-card {
-  background: var(--card-bg);
-  border-radius: var(--radius-lg);
+  background: white;
+  border-radius: 20px;
   padding: 0;
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  /* Soft deeply diffused shadow */
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   position: relative;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+/* Gold Effect for Place #1 */
+.top3-card:first-child {
+  border: 2px solid rgba(241, 196, 15, 0.5);
+  /* Gold Border */
+  background: linear-gradient(to bottom, #fffdf5, #ffffff);
+  /* Subtle warm tint */
+  box-shadow: 0 15px 40px rgba(241, 196, 15, 0.15);
+  /* Golden Glow */
+}
+
+.top3-card:first-child::before {
+  background: linear-gradient(90deg, #f1c40f, #f39c12);
+  /* Gold Top Bar */
+  height: 8px;
+}
+
+.top3-card:first-child .top3-badge {
+  background: linear-gradient(135deg, #f1c40f, #ae8625);
+  box-shadow: 0 2px 6px rgba(243, 156, 18, 0.4);
 }
 
 .top3-card:hover {
-  transform: translateY(-8px) rotateX(2deg);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
 
 .top3-card::before {
@@ -1786,26 +1807,109 @@ tr.unavailable {
 
 /* Components: Top 3 Cards */
 .top3-header-new {
-  background: #f8f9fa;
-  padding: 15px;
-  border-bottom: 1px solid #eee;
+  background: transparent;
+  padding: 20px 24px 5px 24px;
+  border-bottom: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .top3-badge {
   display: inline-block;
-  padding: 2px 8px;
+  padding: 6px 12px;
   background: #3498db;
   color: white;
-  border-radius: 4px;
-  font-size: 0.7em;
-  font-weight: bold;
-  margin-bottom: 5px;
+  border-radius: 20px;
+  font-size: 0.75em;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
 }
 
 .top3-resort-name {
-  margin: 0;
-  font-size: 1.25em;
+  font-size: 1.6em;
+  font-weight: 800;
   color: #2c3e50;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* ================= TABLE WOW EFFECT ================= */
+
+#skiTable {
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  /* Spacing between rows */
+  width: 100%;
+}
+
+#skiTable thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  font-weight: 700;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  border: none;
+}
+
+#skiTable thead tr:first-child th:first-child {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+#skiTable thead tr:first-child th:last-child {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+#skiTable tbody tr {
+  background: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02), 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  /* Note: requires border-collapse: separate */
+}
+
+#skiTable tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+  z-index: 5;
+  position: relative;
+}
+
+#skiTable td {
+  padding: 16px;
+  vertical-align: middle;
+  border-top: 1px solid rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+#skiTable td:first-child {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  border-left: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+#skiTable td:last-child {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-right: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+#skiTable thead tr.text-left.text-xs.bg-white.text-gray-500.border-b-2.border-primary-light {
+  display: none !important;
+  /* Hide the secondary header row if it exists, or style it better */
 }
 
 .metrics-container {
