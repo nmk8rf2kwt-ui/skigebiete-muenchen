@@ -36,7 +36,7 @@ test.beforeEach(async ({ page }) => {
 test('Homepage loads and displays title', async ({ page }) => {
     await page.goto('/');
     // Use a regex that is flexible
-    await expect(page).toHaveTitle(/Skigebiet/);
+    await expect(page).toHaveTitle(/Where to Go/);
 });
 
 test('Resort data is populated', async ({ page }) => {
