@@ -133,7 +133,7 @@ export function calculateScore(resort, userPref, domainId = 'ski') {
   }
 
   // 7. Price
-  const price = parseFloat(resort.price) || 0;
+  const price = parseFloat(resort.price) || parseFloat(resort.priceDetail?.adult) || 0;
   if (price > 0) {
     let pricePts = Math.round((price / 10) * SCORE_WEIGHTS.PRICE_PER_10EUR);
     if (pref === 'price') pricePts = Math.round(pricePts * SCORE_WEIGHTS.PREFERENCE_MULTIPLIER);
@@ -498,27 +498,29 @@ export function renderRow(row, data) {
   let price = "-";
 
   // Dynamic Price Check
-  const pd = getCurrentPriceDetail(data);
+  let pd = getCurrentPriceDetail(data);
+  if (!pd) pd = {};
 
-  if (pd) {
-    const cur = pd.currency || "€";
-    const fmt = (v) => v ? v.toFixed(2).replace('.', ',') + ' ' + cur : null;
-
-    const pAdult = fmt(pd.adult);
-    const pYouth = fmt(pd.youth);
-    const pChild = fmt(pd.child);
-    const safeInfo = escapeHtml(pd.info || 'Zur Preisübersicht');
-
-    price = `
-      <a href="${safeWebsite}" target="_blank" class="price-link" title="${safeInfo}">
-        ${pAdult ? `<div class="no-wrap">Erw.: ${pAdult}</div>` : ''}
-        ${pYouth ? `<div class="no-wrap">Jugendl.: ${pYouth}</div>` : ''}
-        ${pChild ? `<div class="no-wrap">Kind: ${pChild}</div>` : ''}
-      </a>
-    `;
-  } else if (data.price) {
-    price = `€${data.price.toFixed(2)}`;
+  // Backfill from flat price if structured data is missing
+  if (!pd.adult && data.price) {
+    pd.adult = parseFloat(data.price);
   }
+
+  const cur = pd.currency || "€";
+  const fmt = (v) => (v && !isNaN(v)) ? v.toFixed(2).replace('.', ',') + ' ' + cur : '-';
+
+  const pAdult = fmt(pd.adult);
+  const pYouth = fmt(pd.youth);
+  const pChild = fmt(pd.child);
+  const safeInfo = escapeHtml(pd.info || 'Zur Preisübersicht');
+
+  price = `
+      <a href="${safeWebsite}" target="_blank" class="price-link" title="${safeInfo}">
+        <div class="no-wrap">Erw.: ${pAdult}</div>
+        <div class="no-wrap">Jgd.: ${pYouth}</div>
+        <div class="no-wrap">Kind: ${pChild}</div>
+      </a>
+  `;
 
   // Format lifts
   let liftStatus = "-";
