@@ -157,15 +157,25 @@ async function load() {
         resort.longitude
       );
 
+      // Normalization: raw 'distance' in JSON is sometimes seconds (e.g. 4118), sometimes minutes (e.g. 170)
+      // Heuristic: If > 600, it's seconds (10 mins is too close for any resort, 600 mins is 10h).
+      let staticDurationMin = resort.distance || 0;
+      if (staticDurationMin > 600) {
+        staticDurationMin = Math.round(staticDurationMin / 60);
+      }
+
+      // Update the resort object with normalized static duration
+      const normalizedResort = { ...resort, distance: staticDurationMin };
+
       // Score remains ski-specific for now if it uses lifts, otherwise generalize
-      const smartScore = calculateScore(resort, store.get().preference, domainId);
+      const smartScore = calculateScore(normalizedResort, store.get().preference, domainId);
 
       if (isNaN(smartScore)) {
         console.warn(`⚠️ NaN Score for ${resort.name}`, resort);
       }
 
       return {
-        ...resort,
+        ...normalizedResort,
         domain: domainId,
         distance_km: Math.round(dist),
         smartScore
