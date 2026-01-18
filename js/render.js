@@ -240,6 +240,8 @@ export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirect
   // 2. View Mode & Filtering Logic
   if (viewMode === 'map') {
     top3Container.style.display = "none";
+    const loadMoreBtn = document.getElementById("loadMore3");
+    if (loadMoreBtn) loadMoreBtn.style.display = "none";
     if (expandContainer) expandContainer.style.display = "none";
     skiTable.style.display = "none";
     mapView.style.display = "block";
@@ -261,6 +263,12 @@ export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirect
     if (filter === 'top10') limit = Math.max(10, storeLimit);
     if (filter === 'all') limit = 1000;
 
+    // Manage Load More visibility for Top 3 view
+    const loadMoreBtn = document.getElementById("loadMore3");
+    if (loadMoreBtn) {
+      loadMoreBtn.style.display = (limit < enrichedData.length && filter !== 'all') ? "inline-block" : "none";
+    }
+
     const displayData = [...enrichedData].sort((a, b) => b.score - a.score).slice(0, limit);
     renderTop3Cards(displayData, limit > 3);
 
@@ -277,6 +285,8 @@ export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirect
     // TABLE VIEW (Legacy or Explicit)
     mapView.style.display = "none";
     top3Container.style.display = "none";
+    const loadMoreBtn = document.getElementById("loadMore3");
+    if (loadMoreBtn) loadMoreBtn.style.display = "none";
     if (expandContainer) expandContainer.style.display = "none";
     skiTable.style.display = "table";
 
