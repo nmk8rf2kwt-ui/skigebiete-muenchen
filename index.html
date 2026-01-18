@@ -193,18 +193,23 @@
     <div id="tableView" class="d-none">
       <table id="skiTable">
         <thead>
-          <th data-sort="traffic_duration" title="Fahrzeit mit aktuellem Verkehr - Klicken zum Sortieren"
-            class="cursor-pointer">Fahrzeit (mit Verkehrslage) ↕️</th>
-          <th title="Stauprognose basierend auf historischen Daten (aus München)">🚦 Prognose (aus M)</th>
-          <th title="Wettervorhersage (3 Tage) - Hover für Details">Wetterprognose</th>
-          <th data-sort="snow" title="Schneehöhen (Berg/Tal) & Letzter Schneefall - Klicken zum Sortieren"
-            class="cursor-pointer">
-            Schneehöhen ↕️</th>
-          <th title="Link zur Webcam">Webcam</th>
-          <th title="Lifte & Pisten Details">Details</th>
-          <th data-sort="smartScore" title="SmartScore (0-100) - Klicken zum Sortieren" class="cursor-pointer">
-            Score <span id="scoreInfoTrigger" class="cursor-help text-link">ⓘ</span> ↕️
-          </th>
+          <tr>
+            <th data-sort="smartScore" title="SmartScore (0-100)" class="cursor-pointer" style="min-width: 60px;">Score
+              ↕️</th>
+            <th class="text-left">Gebiet</th>
+            <th>Typ</th>
+            <th>Größe</th>
+            <th>Lifte</th>
+            <th data-sort="price" class="cursor-pointer">Preis ↕️</th>
+            <th>Distanz</th>
+            <th>Fahrzeit (Netto)</th>
+            <th>Delay</th>
+            <th data-sort="traffic_duration" class="cursor-pointer">Fahrzeit (Live) ↕️</th>
+            <th>Prognose</th>
+            <th>Wetter</th>
+            <th data-sort="snow" class="cursor-pointer">Schnee ↕️</th>
+            <th>Webcam</th>
+            <th>Details</th>
           </tr>
         </thead>
         <tbody id="resortRows">
