@@ -501,130 +501,100 @@ export function displayResortDetails(resort) {
   `;
 
     setTimeout(() => {
-        if (!resort.lifts && !resort.slopes) {
+        // Robust check: If we have liftsOpen/Total metrics but no arrays, we should still show something
+        const hasLiftMetrics = (resort.liftsOpen !== undefined || resort.liftsTotal !== undefined);
+        const hasLiftArray = Array.isArray(resort.lifts) && resort.lifts.length > 0;
+        const hasSlopeArray = Array.isArray(resort.slopes) && resort.slopes.length > 0;
+
+        if (!hasLiftMetrics && !hasLiftArray && !hasSlopeArray) {
             container.innerHTML = "<p>Keine detaillierten Daten verfügbar</p>";
             return;
         }
 
         let html = "";
-
-
-
-        // Create Flex Container for Layout
         html += `<div style="display: flex; flex-wrap: wrap; gap: 20px;">`;
 
         // Lifts Section
-        if (resort.lifts && resort.lifts.length > 0) {
-            html += `<div class="details-section" style="flex: 1; min-width: 300px;">
-      <h3>🚡 Lifte (${resort.liftsOpen || 0}/${resort.liftsTotal || resort.lifts.length})</h3>
+        const openLifts = resort.liftsOpen ?? (hasLiftArray ? resort.lifts.filter(l => l.status === 'open').length : '-');
+        const totalLifts = resort.liftsTotal ?? (hasLiftArray ? resort.lifts.length : resort.lifts || '-');
+
+        html += `<div class="details-section" style="flex: 1; min-width: 300px;">
+      <h3>🚡 Lifte (${openLifts}/${totalLifts})</h3>
       <div class="facilities-list" style="max-height: 400px; overflow-y: auto;">`;
 
+        if (hasLiftArray) {
             resort.lifts.forEach(lift => {
                 const statusClass = lift.status === "open" ? "status-open" :
                     lift.status === "closed" ? "status-closed" : "status-unknown";
                 const statusIcon = lift.status === "open" ? "🟢" :
                     lift.status === "closed" ? "🔴" : "⚪";
-
                 const safeLiftName = escapeHtml(lift.name);
 
                 html += `<div class="facility-item">
-        <div class="facility-header">
-          <span class="facility-status ${statusClass}">${statusIcon}</span>
-          <span class="facility-name">${safeLiftName}</span>
-        </div>`;
+          <div class="facility-header">
+            <span class="facility-status ${statusClass}">${statusIcon}</span>
+            <span class="facility-name">${safeLiftName}</span>
+          </div>`;
 
-                // Metadata
                 const metadata = [];
                 if (lift.type) metadata.push(`Typ: ${escapeHtml(lift.type)}`);
                 if (lift.length) metadata.push(`Länge: ${lift.length}m`);
                 if (lift.altitudeStart) metadata.push(`Höhe: ${lift.altitudeStart}m`);
 
-                let hoursHtml = "";
-                if (lift.operatingHours) {
-                    hoursHtml = `<div style="margin-top:2px; font-size:0.9em; color:#666;">⏰ ${escapeHtml(lift.operatingHours)}</div>`;
-                }
-
                 if (metadata.length > 0) {
                     html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
                 }
-                html += hoursHtml;
-
                 html += `</div>`;
             });
-
-            html += `</div></div>`;
+        } else {
+            html += `<div class="facility-item" style="color: #666; font-style: italic;">
+                 Detaillierte Liftliste aktuell nicht verfügbar.<br>
+                 Betriebsstatus: ${resort.status === 'closed' ? 'Geschlossen 🔴' : 'Geöffnet 🟢'}
+             </div>`;
         }
 
+        html += `</div></div>`; // End Lifts Section
+
         // Slopes Section
-        if (resort.slopes && resort.slopes.length > 0) {
-            const slopesOpen = resort.slopes.filter(s => s.status === "open").length;
-            html += `<div class="details-section" style="flex: 1; min-width: 300px;">
-      <h3>⛷️ Pisten (${slopesOpen}/${resort.slopes.length})</h3>
+        const slopeCount = hasSlopeArray ? resort.slopes.length : (resort.slopes || '-');
+        const openSlopes = hasSlopeArray ? resort.slopes.filter(s => s.status === 'open').length : '-';
+
+        html += `<div class="details-section" style="flex: 1; min-width: 300px;">
+      <h3>⛷️ Pisten (${openSlopes}/${slopeCount})</h3>
       <div class="facilities-list" style="max-height: 400px; overflow-y: auto;">`;
 
+        if (hasSlopeArray) {
             resort.slopes.forEach(slope => {
                 const statusClass = slope.status === "open" ? "status-open" :
                     slope.status === "closed" ? "status-closed" : "status-unknown";
                 const statusIcon = slope.status === "open" ? "🟢" :
                     slope.status === "closed" ? "🔴" : "⚪";
-
-                // Map difficulty to text/badge, NOT circle
-                let diffBadge = "";
-                let diffClass = "";
-                switch (slope.difficulty) {
-                    case "blue": diffBadge = "Blau"; diffClass = "badge-blue"; break;
-                    case "red": diffBadge = "Rot"; diffClass = "badge-red"; break;
-                    case "black": diffBadge = "Schwarz"; diffClass = "badge-black"; break;
-                    case "freeride": diffBadge = "Freeride"; diffClass = "badge-warning"; break;
-                    default: diffBadge = "";
-                }
-
-                // Inline badge style for simplicity (or add to CSS)
-                const badgeStyle = `
-                  font-size: 0.75em; 
-                  padding: 2px 6px; 
-                  border-radius: 4px; 
-                  margin-right: 6px; 
-                  font-weight: bold;
-                  color: white;
-                  background-color: ${slope.difficulty === 'blue' ? '#3498db' :
-                        slope.difficulty === 'red' ? '#e74c3c' :
-                            slope.difficulty === 'black' ? '#2c3e50' : '#f39c12'
-                    };
-                `;
+                const diffBadge = slope.difficulty === "blue" ? "🟦" :
+                    slope.difficulty === "red" ? "🟥" :
+                        slope.difficulty === "black" ? "⬛" : "⬜";
 
                 const safeSlopeName = escapeHtml(slope.name);
 
                 html += `<div class="facility-item">
-        <div class="facility-header">
-          <span class="facility-status ${statusClass}" title="${slope.status === 'open' ? 'Geöffnet' : 'Geschlossen'}">${statusIcon}</span>
-          ${diffBadge ? `<span style="${badgeStyle}" title="Schwierigkeit: ${diffBadge}">${diffBadge}</span>` : ''}
-          <span class="facility-name">${safeSlopeName}</span>
-        </div>`;
-
-                // Metadata
-                const metadata = [];
-                if (slope.length) metadata.push(`Länge: ${slope.length}m`);
-                if (slope.altitudeStart) metadata.push(`Höhe: ${slope.altitudeStart}m`);
-                // Operating hours with line break if other metadata exists, or just alone
-                let hoursHtml = "";
-                if (slope.operatingHours) {
-                    hoursHtml = `<div style="margin-top:2px; font-size:0.9em; color:#666;">⏰ ${escapeHtml(slope.operatingHours)}</div>`;
-                }
-
-                if (metadata.length > 0) {
-                    html += `<div class="facility-meta">${metadata.join(' • ')}</div>`;
-                }
-                html += hoursHtml;
-
+          <div class="facility-header">
+            <span class="facility-status ${statusClass}">${statusIcon}</span>
+            <span style="font-size:0.8em; margin-right:6px;">${diffBadge}</span>
+            <span class="facility-name">${safeSlopeName}</span>
+          </div>`;
                 html += `</div>`;
             });
-
-            html += `</div></div>`;
+        } else {
+            html += `<div class="facility-item" style="color: #666; font-style: italic;">
+                 Detaillierte Pistenliste aktuell nicht verfügbar.
+             </div>`;
+            if (resort.snow) {
+                html += `<div class="facility-item">❄️ Schneehöhe: ${resort.snow.mountain || resort.snow} cm</div>`;
+            }
         }
 
-        html += `</div>`; // End Flex Container
+        html += `</div></div>`; // End Slopes Section
 
+        html += `</div>`; // End Flex Container
         container.innerHTML = html;
     }, 100);
 }

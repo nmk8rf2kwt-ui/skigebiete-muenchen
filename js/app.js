@@ -277,9 +277,32 @@ async function handleAddressSearch() {
  */
 async function fetchTrafficForLocation(lat, lon, name) {
   try {
+    // RATE LIMITING: Check if we pushed traffic update for this location recently
+    const cacheKey = `traffic_upt_${lat.toFixed(2)}_${lon.toFixed(2)}`;
+    const lastUpdate = localStorage.getItem(cacheKey);
+    const now = Date.now();
+    const COOLDOWN = 30 * 60 * 1000; // 30 Minutes
+
+    if (lastUpdate && (now - parseInt(lastUpdate)) < COOLDOWN) {
+      logToUI("Verkehrsdaten aktuell (Cache)", "info");
+      console.log(`⏳ Traffic update skipped (Cool-down active: ${Math.round((COOLDOWN - (now - parseInt(lastUpdate))) / 60000)} min remaining)`);
+      await load(); // Just load resorts, assuming backend has cached data
+      return;
+    }
+
     showLoading(`Berechne Fahrzeiten von ${name}...`);
+    // Pass user location to backend to update traffic cache
     const response = await fetch(`${API_BASE_URL}/api/traffic-all?lat=${lat}&lon=${lon}`);
-    if (!response.ok) throw new Error("Verkehrsdaten-Fehler");
+
+    if (response.status === 429) {
+      console.warn("Traffic API Rate Limit Hit");
+      logToUI("Traffic API Limit erreicht - Nutze historische Daten", "warn");
+    } else if (!response.ok) {
+      throw new Error("Verkehrsdaten-Fehler");
+    } else {
+      // Success -> Update Timestamp
+      localStorage.setItem(cacheKey, now.toString());
+    }
 
     // We update results silently in background
     await load();

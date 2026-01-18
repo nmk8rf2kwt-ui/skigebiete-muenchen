@@ -155,6 +155,29 @@ export function calculateScore(resort) {
     });
   }
 
+  // 9. Size Penalty / Bonus (User Request)
+  // Penalize small valid ski resorts if preference is NOT easy
+  if (pref !== 'easy' && liftsTotal > 0 && liftsTotal < 5) {
+    const penalty = (5 - liftsTotal) * 10;
+    score -= penalty;
+    breakdown.push({
+      icon: '📉',
+      text: `Klein (${liftsTotal} Lifte)`,
+      pts: -penalty,
+      type: 'bad'
+    });
+  }
+  // Reward explicitly large resorts
+  if (liftsTotal > 20) {
+    score += 15;
+    breakdown.push({
+      icon: '🏔️',
+      text: `Groß (${liftsTotal} Lifte)`,
+      pts: 15,
+      type: 'good'
+    });
+  }
+
   // Clamp score to reasonable range (0-150)
   score = Math.max(0, Math.min(150, Math.round(score)));
 

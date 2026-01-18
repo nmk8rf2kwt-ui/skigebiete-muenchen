@@ -6,7 +6,18 @@ export const DOMAIN_CONFIGS = {
         subline: 'Heute sinnvoll?',
         endpoint: '/api/resorts',
         metrics: [
-            { id: 'lifts', label: 'Offen', icon: '🚠', formatter: (r) => (r.liftsOpen !== null && r.liftsOpen !== undefined) ? `${Math.round((r.liftsOpen / (r.liftsTotal || r.lifts || 1)) * 100)}%` : '-' },
+            {
+                id: 'lifts',
+                label: 'Offen',
+                icon: '🚠',
+                formatter: (r) => {
+                    const total = r.liftsTotal || r.lifts || 0;
+                    const open = r.liftsOpen ?? 0;
+                    if (total === 0) return '-';
+                    const pct = Math.round((open / total) * 100);
+                    return `${open}/${total} (${pct}%)`;
+                }
+            },
             {
                 id: 'snow',
                 label: 'Schnee',
@@ -24,11 +35,8 @@ export const DOMAIN_CONFIGS = {
                 icon: (r) => {
                     const w = r.weather;
                     if (!w) return '🌤️';
-
-                    // Parse weather string or object
                     const text = typeof w === 'string' ? w : (w.description || w.desc || '');
 
-                    // Check for explicit sun emoji variants first (☀️, ☀, 🌞)
                     if (text.includes('☀') || text.includes('🌞')) return '☀️';
                     if (text.includes('🌤')) return '🌤️';
                     if (text.includes('⛅')) return '⛅';
@@ -39,30 +47,37 @@ export const DOMAIN_CONFIGS = {
                     if (text.includes('🌫')) return '🌫️';
                     if (text.includes('⛈')) return '⛈️';
 
-                    // Keyword fallback for text without emojis
                     const lowerText = text.toLowerCase();
-                    if (lowerText.includes('klar') || lowerText.includes('sonne') || lowerText.includes('clear') || lowerText.includes('sun')) return '☀️';
+                    if (lowerText.includes('klar') || lowerText.includes('sonne')) return '☀️';
                     if (lowerText.includes('schnee') || lowerText.includes('snow')) return '❄️';
                     if (lowerText.includes('regen') || lowerText.includes('rain')) return '🌧️';
-                    if (lowerText.includes('nebel') || lowerText.includes('fog')) return '🌫️';
-                    if (lowerText.includes('gewitter') || lowerText.includes('storm')) return '⛈️';
-                    if (lowerText.includes('wolke') || lowerText.includes('cloud') || lowerText.includes('bedeckt') || lowerText.includes('bewölkt')) return '☁️';
+                    if (lowerText.includes('wolke') || lowerText.includes('cloud') || lowerText.includes('bedeckt')) return '☁️';
 
                     return '🌤️';
                 },
                 formatter: (r) => {
                     const w = r.weather;
                     if (!w) return '-';
-                    if (typeof w === 'string') {
-                        // Optional: Strip emoji from text if we display it above?
-                        // User screenshot showed only text. But our data has emoji.
-                        // Let's keep it as is for now to minimize risk.
-                        return w.replace(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/, '').trim() || w;
+                    let temp = '';
+                    if (typeof w === 'object' && (w.temp !== undefined)) {
+                        temp = `${w.temp}°C`;
                     }
-                    return `${w.temp || ''}`.trim();
+                    // If weather is string, we can't easily extract temp unless we parse
+                    return temp || 'n/a';
                 }
             },
-            { id: 'eta', label: 'Anfahrt', icon: '🚗', formatter: (r) => `${Math.round((r.traffic?.duration || 0) / 60 || r.distance || 0)} min` }
+            {
+                id: 'price',
+                label: 'Tagespass',
+                icon: '💶',
+                formatter: (r) => r.price ? `${r.price}€` : '-'
+            },
+            {
+                id: 'eta',
+                label: 'Anfahrt',
+                icon: '🚗',
+                formatter: (r) => `${Math.round((r.traffic?.duration || 0) / 60 || r.distance || 0)} min`
+            }
         ],
         prefs: [
             { id: 'travel', label: 'Schnell & wenig Stau', icon: '🚀' },
