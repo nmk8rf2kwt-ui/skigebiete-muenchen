@@ -59,12 +59,19 @@ export const DOMAIN_CONFIGS = {
                     const w = r.weather;
                     if (!w) return '-';
                     let temp = '';
-                    if (typeof w === 'object' && (w.temp !== undefined)) {
-                        temp = `${w.temp}°C`;
+                    if (typeof w === 'object' && w.tempMax !== undefined && w.tempMin !== undefined) {
+                        temp = `<div style="font-size:0.75em; color:#666; font-weight:normal;">${Math.round(w.tempMax)}° / ${Math.round(w.tempMin)}°</div>`;
+                    } else if (typeof w === 'object' && w.temp !== undefined) {
+                        temp = `<div style="font-size:0.75em; color:#666; font-weight:normal;">${w.temp}°C</div>`;
                     }
-                    // If weather is string, we can't easily extract temp unless we parse
-                    return temp || 'n/a';
+                    return `${temp || 'n/a'}`;
                 }
+            },
+            {
+                id: 'size',
+                label: 'Größe',
+                icon: '🏔️',
+                formatter: (r) => `${r.piste_km || 0} km`
             },
             {
                 id: 'price',
