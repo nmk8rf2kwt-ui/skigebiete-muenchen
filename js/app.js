@@ -7,10 +7,33 @@ import { initEventListeners } from "./events.js";
 import { DOMAIN_CONFIGS } from "./domainConfigs.js";
 
 // Global Error Handler
+// Global Error Handler
 window.onerror = function (msg, url, lineNo, columnNo, error) {
   showError(`Global Error: ${msg} (Line: ${lineNo})`);
   return false;
 };
+
+// Listener for Sort Chips (Result View) - v1.11.6
+window.addEventListener('preference-update', (e) => {
+  const newPref = e.detail;
+  const { resorts, currentDomain } = store.get();
+
+  if (!newPref || !resorts) return;
+
+  debugLog(`🔄 Preference changed to: ${newPref}`);
+  store.setState({ preference: newPref });
+
+  // Recalculate Scores
+  const updatedResorts = resorts.map(r => {
+    const newResort = { ...r };
+    // calculateScore mutates newResort.scoreBreakdown
+    newResort.smartScore = calculateScore(newResort, newPref, currentDomain);
+    return newResort;
+  });
+
+  // Update Store -> triggers render()
+  store.setState({ resorts: updatedResorts }, render);
+});
 
 // Munich Marienplatz coordinates (default)
 const MUNICH_DEFAULT = {

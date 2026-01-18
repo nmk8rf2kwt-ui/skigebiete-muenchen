@@ -233,6 +233,11 @@ export function renderTable(data, sortKey = 'score', filter = 'top3', sortDirect
   const expandContainer = document.getElementById("expandContainer");
   const viewMode = store.get().viewMode || 'top3';
 
+  // Render Result Filters (Chips) - v1.11.6
+  const domainId = store.get().currentDomain || 'ski';
+  const config = DOMAIN_CONFIGS[domainId];
+  renderResultFilters(config);
+
   // Update Timestamp
   const tsElement = document.getElementById("timestamp");
   if (tsElement) {
@@ -882,4 +887,28 @@ export function renderRow(row, data) {
     </td>
     <td>${smartScoreDisplay}</td>
   `;
+}
+
+// Render Sorting Chips in Results View
+export function renderResultFilters(config) {
+  const container = document.getElementById('resultsFilterContainer');
+  if (!container || !config || !config.prefs) return;
+
+  container.innerHTML = '';
+  const currentPref = store.get().preference || config.prefs[0].id;
+
+  config.prefs.forEach(pref => {
+    const btn = document.createElement('div');
+    btn.className = `filter-chip ${pref.id === currentPref ? 'active' : ''}`;
+    btn.innerHTML = `<span class="filter-chip-icon">${pref.icon}</span> ${pref.label}`;
+    btn.onclick = () => {
+      // Optimistic UI update
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Dispatch Event
+      window.dispatchEvent(new CustomEvent('preference-update', { detail: pref.id }));
+    };
+    container.appendChild(btn);
+  });
 }

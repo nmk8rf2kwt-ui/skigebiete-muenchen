@@ -1881,3 +1881,44 @@ tr.unavailable {
 .subtitle-context.visible {
   opacity: 1;
 }
+
+/* Results Filter Chips (v1.11.6) */
+.results-filter-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 4px 4px 16px 4px; /* Padding for shadow */
+  margin-bottom: 8px;
+  -webkit-overflow-scrolling: touch; /* Smooth scroll iOS */
+  scrollbar-width: none; /* Hide scrollbar Firefox */
+}
+.results-filter-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar Chrome */
+}
+
+.filter-chip {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  background: #f1f3f5;
+  color: #666;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+  background: #e9ecef;
+  transform: translateY(-1px);
+}
+
+.filter-chip.active {
+  background: #3498db; /* Primary Blue */
+  color: white;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.25);
+}
