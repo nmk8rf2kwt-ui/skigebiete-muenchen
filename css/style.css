@@ -1854,3 +1854,12 @@ tr.unavailable {
 .footer-container {
   background: transparent;
 }
+
+/* Full width preference button (e.g. Winterwanderung) */
+.pref-btn-full {
+  width: 100%;
+  margin-top: 15px; /* Harmonize with .pref-grid gap */
+  flex-direction: row;
+  padding: 16px;
+  text-align: left;
+}
