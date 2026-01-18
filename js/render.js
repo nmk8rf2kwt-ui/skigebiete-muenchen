@@ -1,4 +1,4 @@
-// Score calculation constants
+// Score calculation constants - BALANCED for positive scores
 import { sortResorts } from './sorting.js';
 import { escapeHtml, debugLog, debugGroup, debugGroupEnd } from './utils.js';
 import { renderCongestionCell } from './congestionForecast.js';
@@ -6,92 +6,163 @@ import { renderCongestionCell } from './congestionForecast.js';
 import { store } from './store.js';
 import { DOMAIN_CONFIGS } from './domainConfigs.js';
 
+const BASE_SCORE = 100;
+
+// Weights designed to produce scores roughly 0-100
 const SCORE_WEIGHTS = {
-  PISTE_KM: 2,
-  DISTANCE: -0.5,
-  PRICE: -0.5,
-  OPEN_LIFTS: 3,
-  SNOW: 0.5,
-  TRAFFIC_DELAY: -2.0,
-  FAMILY_BONUS: 30,
-  DEFAULT_DISTANCE: 100,
-  DEFAULT_PRICE: 50
+  PISTE_KM: 0.3,        // 100km = +30 pts
+  LIFTS_OPEN_PCT: 50,   // 100% open = +50 pts
+  SNOW: 0.2,            // 100cm = +20 pts
+  WEATHER_BONUS: 15,    // Sunny = +15 pts
+  DISTANCE_PER_100KM: -15,  // 100km = -15 pts
+  PRICE_PER_10EUR: -2,      // 10€ = -2 pts (50€ = -10)
+  TRAFFIC_DELAY_PER_30MIN: -8, // 30min delay = -8 pts
+  FAMILY_BONUS: 10,
+  PREFERENCE_MULTIPLIER: 1.5  // Boost for matching preference
 };
 
-// Helper to calculate a score for ranking
+// Helper to calculate a score for ranking WITH BREAKDOWN
 export function calculateScore(resort) {
-  const pref = store.get().preference || 'fast';
+  const pref = store.get().preference || 'travel';
+  const breakdown = [];
+  let score = BASE_SCORE;
 
+  // === POSITIVE FACTORS ===
+
+  // 1. Lifts Open Percentage (biggest positive factor)
+  const liftsTotal = resort.liftsTotal || resort.lifts || 0;
+  const liftsOpen = resort.liftsOpen ?? 0;
+  let liftPct = liftsTotal > 0 ? (liftsOpen / liftsTotal) : 0;
+
+  let liftPts = Math.round(liftPct * SCORE_WEIGHTS.LIFTS_OPEN_PCT);
+  if (pref === 'conditions') liftPts = Math.round(liftPts * SCORE_WEIGHTS.PREFERENCE_MULTIPLIER);
+
+  score += liftPts;
+  if (liftPts !== 0) {
+    breakdown.push({
+      icon: liftPct >= 0.8 ? '✅' : liftPct >= 0.5 ? '⚠️' : '❌',
+      text: `${Math.round(liftPct * 100)}% Lifte offen`,
+      pts: liftPts,
+      type: liftPts >= 0 ? 'good' : 'bad'
+    });
+  }
+
+  // 2. Snow Depth
+  const snow = resort.snow?.mountain ?? resort.snow?.valley ?? 0;
+  let snowPts = Math.round(snow * SCORE_WEIGHTS.SNOW);
+  if (pref === 'conditions') snowPts = Math.round(snowPts * SCORE_WEIGHTS.PREFERENCE_MULTIPLIER);
+
+  score += snowPts;
+  if (snow > 0) {
+    breakdown.push({
+      icon: snow >= 50 ? '❄️' : '🌨️',
+      text: `${snow} cm Schnee`,
+      pts: snowPts,
+      type: 'good'
+    });
+  }
+
+  // 3. Piste Kilometers (size)
   const piste = resort.piste_km || 0;
-  const dist = resort.distance || SCORE_WEIGHTS.DEFAULT_DISTANCE;
-  const price = resort.price || SCORE_WEIGHTS.DEFAULT_PRICE;
-  const openLifts = resort.liftsOpen || 0;
-  const snow = resort.snow?.mountain ?? 0;
-  // Traffic delay in minutes
-  const trafficDelayMins = (resort.traffic?.delay || 0) / 60;
+  let pistePts = Math.round(piste * SCORE_WEIGHTS.PISTE_KM);
+  if (pref === 'large') pistePts = Math.round(pistePts * SCORE_WEIGHTS.PREFERENCE_MULTIPLIER);
 
-  // Classification check
+  score += pistePts;
+  if (piste > 0) {
+    breakdown.push({
+      icon: piste >= 100 ? '🏔️' : '⛷️',
+      text: `${piste} km Pisten`,
+      pts: pistePts,
+      type: 'good'
+    });
+  }
+
+  // 4. Weather Bonus
+  const weatherStr = typeof resort.weather === 'string' ? resort.weather : (resort.weather?.desc || '');
+  const isSunny = weatherStr.toLowerCase().includes('klar') || weatherStr.toLowerCase().includes('sonne') || weatherStr.includes('☀');
+
+  if (isSunny) {
+    let weatherPts = SCORE_WEIGHTS.WEATHER_BONUS;
+    if (pref === 'weather') weatherPts = Math.round(weatherPts * SCORE_WEIGHTS.PREFERENCE_MULTIPLIER);
+    score += weatherPts;
+    breakdown.push({
+      icon: '☀️',
+      text: 'Sonniges Wetter',
+      pts: weatherPts,
+      type: 'good'
+    });
+  }
+
+  // === NEGATIVE FACTORS ===
+
+  // 5. Distance/Travel Time
+  const distanceMin = resort.traffic?.duration_min || Math.round((resort.traffic?.duration || 0) / 60) || resort.distance || 0;
+  const distanceKm = resort.traffic?.distanceKm || resort.distanceKm || Math.round(distanceMin * 1.2); // rough estimate
+
+  if (distanceMin > 0) {
+    let distPts = Math.round((distanceKm / 100) * SCORE_WEIGHTS.DISTANCE_PER_100KM);
+    if (pref === 'travel') distPts = Math.round(distPts * SCORE_WEIGHTS.PREFERENCE_MULTIPLIER);
+
+    score += distPts;
+    breakdown.push({
+      icon: distanceMin <= 60 ? '📍' : '🚗',
+      text: distanceMin <= 60 ? `Nur ${distanceMin} min Anfahrt` : `${distanceMin} min Anfahrt`,
+      pts: distPts,
+      type: distanceMin <= 60 ? 'good' : (distanceMin <= 120 ? 'neutral' : 'bad')
+    });
+  }
+
+  // 6. Traffic Delay
+  const trafficDelay = Math.round((resort.traffic?.delay || 0) / 60);
+  if (trafficDelay > 5) {
+    let trafficPts = Math.round((trafficDelay / 30) * SCORE_WEIGHTS.TRAFFIC_DELAY_PER_30MIN);
+    if (pref === 'travel') trafficPts = Math.round(trafficPts * SCORE_WEIGHTS.PREFERENCE_MULTIPLIER);
+
+    score += trafficPts;
+    breakdown.push({
+      icon: '🚦',
+      text: `+${trafficDelay} min Stau`,
+      pts: trafficPts,
+      type: 'bad'
+    });
+  }
+
+  // 7. Price
+  const price = resort.price || 0;
+  if (price > 0) {
+    let pricePts = Math.round((price / 10) * SCORE_WEIGHTS.PRICE_PER_10EUR);
+    if (pref === 'price') pricePts = Math.round(pricePts * SCORE_WEIGHTS.PREFERENCE_MULTIPLIER);
+
+    score += pricePts;
+    breakdown.push({
+      icon: price <= 30 ? '💚' : (price <= 50 ? '💛' : '💸'),
+      text: price <= 30 ? `Günstig (${price}€)` : `${price}€ Tageskarte`,
+      pts: pricePts,
+      type: price <= 30 ? 'good' : (price <= 50 ? 'neutral' : 'bad')
+    });
+  }
+
+  // 8. Family/Easy Bonus
   const cls = (resort.classification || "").toLowerCase();
-  const isFamily = cls.includes("familie") || cls.includes("family") || cls.includes("anfänger") || (piste > 0 && piste < 30);
-
-  let weights = { ...SCORE_WEIGHTS };
-
-  // Adjust weights based on preference
-  // Adjust weights based on preference
-  if (pref === 'travel') {
-    // "Schnell & Wenig Stau"
-    weights.DISTANCE = -2.5;
-    weights.TRAFFIC_DELAY = -3.0; // Strong penalty for traffic
-  } else if (pref === 'conditions') {
-    // "Gute Bedingungen (Schnee & Lifte)"
-    weights.SNOW = 3.0;
-    weights.OPEN_LIFTS = 3.0;
-  } else if (pref === 'large') {
-    // "Großes Skigebiet" (formerly Variety)
-    weights.PISTE_KM = 4.0;
-    weights.OPEN_LIFTS = 3.0;
-  } else if (pref === 'easy') {
-    // "Einfaches Skigebiet" (formerly Family)
-    weights.PRICE = -1.0;
-    weights.PISTE_KM = -0.5; // Favor smaller
-    // Bonus for family classification handles the rest
-  } else if (pref === 'price') {
-    weights.PRICE = -8.0; // Drastically increased from -2.0 to filter out expensive resorts
-    weights.DISTANCE = -4.0; // Usually cheap means local
-    weights.PISTE_KM = 0.5; // Dampen influence of size
-    weights.OPEN_LIFTS = 1.0; // Dampen influence of lift count
-  } else if (pref === 'weather') {
-    // handled via overrides below
-  }
-
-  let score =
-    (piste * weights.PISTE_KM) +
-    (dist * weights.DISTANCE) +
-    (price * weights.PRICE) +
-    (openLifts * weights.OPEN_LIFTS) +
-    (snow * weights.SNOW) +
-    (trafficDelayMins * weights.TRAFFIC_DELAY);
-
+  const isFamily = cls.includes("familie") || cls.includes("family") || cls.includes("anfänger");
   if (pref === 'easy' && isFamily) {
-    score += weights.FAMILY_BONUS;
+    score += SCORE_WEIGHTS.FAMILY_BONUS;
+    breakdown.push({
+      icon: '👨‍👩‍👧',
+      text: 'Familienfreundlich',
+      pts: SCORE_WEIGHTS.FAMILY_BONUS,
+      type: 'good'
+    });
   }
 
-  // Sled specific overrides
-  if (resort.has_lift) score += 20;
-  if (resort.length > 5) score += 10;
-  if (resort.night_light && pref === 'large') score += 15;
+  // Clamp score to reasonable range (0-150)
+  score = Math.max(0, Math.min(150, Math.round(score)));
 
-  // Skitour overrides
-  if (resort.avalancheLevel === 1) score += 30;
-  if (resort.newSnow > 15) score += 20;
-  if (pref === 'conditions' && resort.newSnow > 10) score += 20;
+  // Store breakdown on resort for later use
+  resort.scoreBreakdown = breakdown;
+  resort.smartScore = score;
 
-  // Walk overrides
-  if (resort.view) score += 20;
-  if (pref === 'weather' && (resort.weather?.icon?.includes('☀️') || typeof resort.weather === 'string' && resort.weather.includes('Sunny'))) score += 30;
-  if (pref === 'easy' && resort.level === 'easy') score += 20;
-
-  return Math.round(score);
+  return score;
 }
 
 // Helper for weather icons
@@ -309,65 +380,50 @@ export function renderTop3Cards(topData, isExpanded = false) {
 }
 
 function generateReasoning(resort, pref, domainId = 'ski') {
+  // Use the pre-calculated scoreBreakdown if available (from calculateScore)
+  if (resort.scoreBreakdown && resort.scoreBreakdown.length > 0) {
+    return resort.scoreBreakdown.map(item => ({
+      type: item.type,
+      icon: item.icon,
+      text: `${item.text} ${formatPoints(item.pts)}`
+    }));
+  }
+
+  // Fallback for other domains without breakdown
   const reasons = [];
 
-  if (domainId === 'ski') {
-    // Robust check for missing data
-    const liftsTotal = resort.liftsTotal || resort.lifts || 0;
-    const hasLiftData = resort.liftsOpen !== null && resort.liftsOpen !== undefined;
-
-    // Only calculate pct if we have data and total > 0
-    let liftPct = 0;
-    if (hasLiftData && liftsTotal > 0) {
-      liftPct = resort.liftsOpen / liftsTotal;
-
-      if (liftPct > 0.8) reasons.push({ type: 'good', icon: '✅', text: `${Math.round(liftPct * 100)}% Lifte offen` });
-      else if (liftPct > 0.5) reasons.push({ type: 'ok', icon: '⚠️', text: `Nur ${Math.round(liftPct * 100)}% Lifte offen` });
-      else if (liftPct === 0 && resort.status === 'live') reasons.push({ type: 'bad', icon: '⛔', text: 'Kein Liftbetrieb' });
-    }
-    // If no data, do NOT push "Nur 0% offen" warning
-
-    const snow = resort.snow?.mountain ?? resort.snow?.valley ?? 0;
-    const eta = Math.round((resort.traffic?.duration || 0) / 60 || resort.distance || 0);
-
-    if (snow > 80) reasons.push({ type: 'good', icon: '✅', text: `${snow} cm Schnee (Top)` });
-    else if (snow > 30) reasons.push({ type: 'ok', icon: '✅', text: `${snow} cm Schnee` });
-
-    if (eta < 90 && eta > 0) reasons.push({ type: 'good', icon: '✅', text: `Schnelle Anfahrt (${eta} min)` });
-    else if (eta > 150) reasons.push({ type: 'bad', icon: '⚠️', text: `Längere Anfahrt (${eta} min)` });
-  } else if (domainId === 'sled') {
-    // Sledding specific reasoning
+  if (domainId === 'sled') {
     if (resort.length > 3) reasons.push({ type: 'good', icon: '📏', text: `Extra lange Bahn (${resort.length} km)` });
     if (resort.has_lift) reasons.push({ type: 'good', icon: '🚠', text: 'Aufstiegshilfe vorhanden' });
     if (resort.night_light) reasons.push({ type: 'ok', icon: '🌙', text: 'Nachtrodeln möglich' });
     if (resort.walk_min > 30 && !resort.has_lift) reasons.push({ type: 'bad', icon: '🥾', text: `${resort.walk_min} min Aufstieg` });
   } else if (domainId === 'skitour') {
-    // Skitour reasoning
     if (resort.newSnow > 10) reasons.push({ type: 'good', icon: '❄️', text: `${resort.newSnow} cm Neuschnee` });
     if (resort.avalancheLevel <= 2) reasons.push({ type: 'good', icon: '✅', text: `Lawinenstufe ${resort.avalancheLevel} (Sicher)` });
     else reasons.push({ type: 'bad', icon: '⚠️', text: `Lawinenstufe ${resort.avalancheLevel}!` });
-
-    if (resort.elevation_gain > 800) reasons.push({ type: 'ok', icon: '🏔️', text: `${resort.elevation_gain}hm Aufstieg` });
     if (resort.elevation_gain > 800) reasons.push({ type: 'ok', icon: '🏔️', text: `${resort.elevation_gain}hm Aufstieg` });
   } else if (domainId === 'skate') {
-    // Skate reasoning
     if (resort.isOpen) reasons.push({ type: 'good', icon: '✅', text: 'Geöffnet' });
     else reasons.push({ type: 'bad', icon: '⛔', text: 'Geschlossen' });
-
     if (resort.type === 'natural') reasons.push({ type: 'ok', icon: '🌲', text: 'Natureisbahn' });
     if (resort.type === 'indoor') reasons.push({ type: 'ok', icon: '🏟️', text: 'Eishalle (Wetterunabhängig)' });
   } else if (domainId === 'walk') {
-    // Walk reasoning
     if (resort.view) reasons.push({ type: 'good', icon: '🏔️', text: 'Panorama-Ausblick' });
     if (resort.level === 'easy') reasons.push({ type: 'good', icon: '👟', text: 'Leichter Rundweg' });
     if (resort.duration > 2) reasons.push({ type: 'ok', icon: '⏱️', text: `Längere Tour (${resort.duration}h)` });
   } else {
-    // Basic reasons for other placeholder domains
+    // Basic fallback
     reasons.push({ type: 'good', icon: '✅', text: 'Heute gute Bedingungen' });
-    reasons.push({ type: 'ok', icon: '📍', text: 'Gut erreichbar' });
   }
 
   return reasons;
+}
+
+// Helper to format points nicely
+function formatPoints(pts) {
+  if (pts === 0) return '';
+  if (pts > 0) return `(+${pts})`;
+  return `(${pts})`;
 }
 
 
