@@ -52,9 +52,9 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 // Trust proxy for Render.com (fixes rate-limit X-Forwarded-For warning)
 app.set('trust proxy', 1);
 
-// Security Middleware
+// Security Middleware - CSP disabled for local development
 app.use(helmet({
-  contentSecurityPolicy: {
+  contentSecurityPolicy: IS_PROD ? {
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "unpkg.com", "js-de.sentry-cdn.com", "browser.sentry-cdn.com"],
@@ -65,7 +65,7 @@ app.use(helmet({
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
     },
-  },
+  } : false,  // Disable CSP for local development
 }));
 
 // Rate Limiting
