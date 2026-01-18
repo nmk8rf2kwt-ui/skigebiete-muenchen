@@ -1731,3 +1731,63 @@ tr.unavailable {
 .wizard-step { display: none; }
 .wizard-step.active { display: block; }
 
+
+/* ================= REBRANDING & FOOTER POLISH ================= */
+
+#mainTitle {
+  text-align: center;
+  padding-bottom: 4px; /* Move closer to subtitle */
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1.1em;
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.centered-footer {
+  text-align: center;
+  padding: 32px 16px;
+  border-top: 1px solid var(--border-color);
+  margin-top: 48px;
+  background-color: var(--bg-color); /* Ensure readability */
+}
+
+.footer-copyright {
+  color: #999;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.text-light-gray {
+  color: #aaa;
+  font-size: 0.8em;
+}
+
+.text-link-gray {
+  color: #999;
+  text-decoration: underline;
+}
+.text-link-gray:hover {
+  color: var(--text-link);
+}
+
+.footer-link-gray {
+  color: #999;
+  text-decoration: none;
+}
+.footer-link-gray:hover {
+  text-decoration: underline;
+}
+
+.separator {
+  margin: 0 8px;
+  color: #ddd;
+}
