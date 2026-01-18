@@ -243,7 +243,13 @@
 <body>
     <div class="auth-overlay" id="authOverlay">
         <h2>🔒 Admin Dashboard</h2>
-        <p>Authentication required...</p>
+        <form id="loginForm" onsubmit="handleLogin(event)"
+            style="display:flex; flex-direction:column; gap:10px; width: 300px;">
+            <input type="password" id="adminPassword" placeholder="username:password" required
+                style="padding:10px; border-radius:4px; border:1px solid #30363d; background:#0d1117; color:#fff; font-size:16px;">
+            <button type="submit" class="btn" style="padding:10px;">Login</button>
+        </form>
+        <p id="authError" style="color:var(--danger-color); display:none; margin-top:10px;">Login Failed</p>
     </div>
     <div class="container" id="mainContainer">
         <header>
@@ -1151,28 +1157,46 @@
             const res = await fetch(url, config);
 
             if (res.status === 401) {
-                // Not authenticated or token invalid
-                const creds = prompt("🔒 Admin Authentication Required\nPlease enter 'username:password':");
-                if (creds && creds.includes(':')) {
-                    // Safe handling for Unicode (e.g. München)
-                    // btoa alone fails for non-latin1 chars: "The string did not match the expected pattern"
-                    const encoded = btoa(unescape(encodeURIComponent(creds)));
-
-                    sessionStorage.setItem('admin_auth', encoded);
-                    // Retry once
-                    headers['Authorization'] = `Basic ${encoded}`;
-                    return fetch(url, { ...options, headers });
-                } else if (creds) {
-                    alert("Invalid format. Please use 'username:password'");
-                }
-            }
-
-            // If still 401, throw or return res to handle in UI
-            if (res.status === 401) {
-                throw new Error("Unauthorized");
+                // Show Login UI
+                document.getElementById('authOverlay').style.display = 'flex';
+                document.getElementById('mainContainer').style.display = 'none';
+                throw new Error("Unauthorized - Login Required");
             }
 
             return res;
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const creds = document.getElementById('adminPassword').value;
+            if (!creds || !creds.includes(':')) {
+                document.getElementById('authError').textContent = "Format: username:password";
+                document.getElementById('authError').style.display = 'block';
+                return;
+            }
+
+            const encoded = btoa(unescape(encodeURIComponent(creds)));
+            sessionStorage.setItem('admin_auth', encoded);
+
+            // Test Auth by re-fetching system
+            try {
+                const testRes = await fetch(`${API_BASE_URL}/admin/system`, {
+                    headers: { 'Authorization': `Basic ${encoded}` }
+                });
+
+                if (testRes.ok) {
+                    document.getElementById('authOverlay').style.display = 'none';
+                    document.getElementById('mainContainer').style.display = 'block';
+                    fetchAll(); // Restart dashboard
+                } else {
+                    document.getElementById('authError').textContent = "Invalid Credentials";
+                    document.getElementById('authError').style.display = 'block';
+                    sessionStorage.removeItem('admin_auth');
+                }
+            } catch (err) {
+                document.getElementById('authError').textContent = "Connection Error";
+                document.getElementById('authError').style.display = 'block';
+            }
         }
 
         async function fetchLogs(type) {

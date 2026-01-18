@@ -27,9 +27,9 @@ export function showUserLocation(lat, lng) {
         map.removeLayer(window.userRadius);
     }
 
-    // Add 150km radius circle
+    // Add 150km radius circle (initial default)
     window.userRadius = L.circle([lat, lng], {
-        radius: 150000, // 150km in meters
+        radius: 150000,
         color: '#3498db',
         fillColor: '#3498db',
         fillOpacity: 0.06,
@@ -63,16 +63,6 @@ export function updateMap(resorts) {
     resorts.forEach(resort => {
         if (!resort.latitude || !resort.longitude) return;
 
-        // Determine Status Class
-        let statusClass = 'is-closed'; // Default
-        if (resort.status === 'live' || resort.status === 'ok') {
-            statusClass = 'is-live';
-        } else if (resort.status === 'static_only') {
-            statusClass = 'is-static';
-        } else if (resort.status === 'error') {
-            statusClass = 'is-error';
-        }
-
         // Determine Icon based on domain
         let emoji = '⛷️';
         if (resort.domain === 'sled') emoji = '🛷';
@@ -80,109 +70,114 @@ export function updateMap(resorts) {
         else if (resort.domain === 'skate') emoji = '⛸️';
         else if (resort.domain === 'walk') emoji = '🚶';
 
-        // Custom Marker Icon
+        // Gradient & Score Styling
+        const score = resort.smartScore || 0;
+        const hue = Math.max(0, Math.min(120, score * 1.2)); // 0 (Red) -> 120 (Green)
+        const bgColor = `hsl(${hue}, 70%, 50%)`;
+        const shadowColor = `hsl(${hue}, 70%, 30%)`;
+
+        // "Wow" Marker: Gradient Pill
         const icon = L.divIcon({
             className: 'custom-map-marker',
             html: `
-                <div class="marker-pin ${statusClass}"></div>
-                <div class="marker-icon">${emoji}</div>
+                <div class="wow-marker" style="background: linear-gradient(135deg, ${bgColor}, ${shadowColor}); box-shadow: 0 4px 10px ${shadowColor}80;">
+                    <div class="marker-score">${score}</div>
+                    <div class="marker-emoji">${emoji}</div>
+                </div>
             `,
-            iconSize: [30, 42],
-            iconAnchor: [15, 42],
-            popupAnchor: [0, -35]
+            iconSize: [40, 40], // Larger
+            iconAnchor: [20, 20],
+            popupAnchor: [0, -25]
         });
 
-        const marker = L.marker([resort.latitude, resort.longitude], { icon: icon }).addTo(map);
+        const marker = L.marker([resort.latitude, resort.longitude], { icon: icon, smartScore: score }).addTo(map);
 
         // Enhanced Popup Content with Robust Checks
         let trafficInfo = 'N/A';
         if (resort.traffic) {
             const mins = resort.traffic.duration_min || Math.round((resort.traffic.duration || 0) / 60);
             trafficInfo = `${mins} min`;
+        } else if (resort.staticDuration) {
+            trafficInfo = `~${resort.staticDuration} min`; // Tilde for static
         } else if (resort.distance) {
-            // Fallback to static distance (stored as seconds in resort.distance)
-            trafficInfo = `~${Math.round(resort.distance / 60)} min`;
+            // Fallback if distance is minutes (normalized in app.js)
+            trafficInfo = `~${resort.distance} min`;
         }
 
-        // Snow: Handle Object vs String
+        // Snow Info
         let snowInfo = 'N/A';
         if (resort.snow) {
             if (typeof resort.snow === 'object') {
-                const depth = resort.snow.mountain ?? resort.snow.valley ?? 0;
-                snowInfo = `${depth} cm`;
+                snowInfo = `${resort.snow.mountain ?? resort.snow.valley ?? '?'} cm`;
             } else {
                 snowInfo = resort.snow;
             }
         }
 
-        // Lifts: Handle missing liftsTotal and missing live data
-        const total = resort.liftsTotal || resort.lifts || 0;
-        const open = resort.liftsOpen; // Might be null
-        let liftsInfo = 'N/A';
-
-        if (total > 0) {
-            if (open !== null && open !== undefined) {
-                liftsInfo = `${open}/${total}`;
-            } else {
-                liftsInfo = `?/${total}`;
-            }
-        }
-
-        // Weather: Extract emoji, description, and temperature
-        let weatherEmoji = '🌤️';
-        let weatherDesc = '-';
-        let tempInfo = '';
-        if (resort.weather) {
-            if (typeof resort.weather === 'object') {
-                weatherEmoji = resort.weather.icon || '🌤️';
-                weatherDesc = resort.weather.desc || resort.weather.weather || '-';
-                if (resort.weather.temp !== undefined) {
-                    tempInfo = `${resort.weather.temp}°C`;
-                }
-            } else if (typeof resort.weather === 'string') {
-                // Parse "☀️ Klar" format
-                const match = resort.weather.match(/^([^\s]+)\s+(.+)$/);
-                if (match) {
-                    weatherEmoji = match[1];
-                    weatherDesc = match[2];
-                } else {
-                    weatherDesc = resort.weather;
-                }
-            }
-        }
-
         const popupContent = `
-            <div class="map-popup-content">
-                <div class="map-popup-header">${resort.name}</div>
-                
-                <div class="map-popup-grid">
-                    <div class="map-popup-item" title="Geöffnete Lifte">
-                        <span>🚡</span> <strong>${liftsInfo}</strong>
-                    </div>
-                    <div class="map-popup-item" title="Schneehöhe">
-                        <span>❄️</span> <strong>${snowInfo}</strong>
-                    </div>
-                    <div class="map-popup-item" title="Anreisezeit">
-                        <span>🚗</span> <strong>${trafficInfo}</strong>
-                    </div>
-                    <div class="map-popup-item" title="Wetter">
-                        <strong>${weatherEmoji} ${tempInfo || weatherDesc}</strong>
-                    </div>
+            <div class="map-popup">
+                <h3>${resort.name}</h3>
+                <div class="popup-meta">
+                    <span>🚗 ${trafficInfo}</span>
+                    <span>❄️ ${snowInfo}</span>
                 </div>
-
-                <div class="map-popup-actions">
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=${resort.latitude},${resort.longitude}" 
-                       target="_blank" class="map-btn map-btn-primary">
-                       Google Maps
-                    </a>
-                    <a href="${resort.website}" target="_blank" class="map-btn map-btn-secondary">
-                        Website
-                    </a>
-                </div>
+                <div class="popup-score" style="color:${bgColor}">Score: ${score}</div>
+                <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${resort.latitude},${resort.longitude}')">Route ➔</button>
             </div>
         `;
-
         marker.bindPopup(popupContent);
         markers.push(marker);
     });
+
+    // Auto-Zoom: Fits bounds of all markers by default, 
+    // OR prioritize "Top 10" if requested. 
+    // User requested "Zoomstufe wo mind. 10 pins erscheinen".
+    // If we fit bounds of Top 10, we ensure the best are visible.
+
+    if (markers.length > 0) {
+        // Sort markers by score descending to find Top 10
+        const sortedMarkers = markers.slice().sort((a, b) => (b.options.smartScore || 0) - (a.options.smartScore || 0));
+        const top10 = sortedMarkers.slice(0, 10); // Take top 10
+
+        // Create feature group of top 10 to get bounds
+        const group = new L.featureGroup(top10.length > 0 ? top10 : markers);
+        map.fitBounds(group.getBounds().pad(0.2));
+    }
+}
+
+// Distance Filter Logic
+export function setMapDistance(km) {
+    if (!map || !window.userMarker) return;
+    const userLatLng = window.userMarker.getLatLng();
+
+    // Update Radius Circle
+    if (window.userRadius) map.removeLayer(window.userRadius);
+    window.userRadius = L.circle(userLatLng, {
+        radius: km * 1000,
+        color: '#3498db',
+        fillColor: '#3498db',
+        fillOpacity: 0.05,
+        weight: 1,
+        dashArray: '5, 5'
+    }).addTo(map);
+
+    // Filter Markers visually
+    const group = new L.featureGroup();
+    let count = 0;
+    markers.forEach(m => {
+        const dist = m.getLatLng().distanceTo(userLatLng);
+        if (dist <= km * 1000) {
+            map.addLayer(m);
+            group.addLayer(m);
+            count++;
+        } else {
+            map.removeLayer(m);
+        }
+    });
+
+    // Zoom to fit filtered if > 0
+    if (count > 0) {
+        // Limit zoom to avoid too close
+        map.fitBounds(group.getBounds().pad(0.1), { maxZoom: 10 });
+    }
 }

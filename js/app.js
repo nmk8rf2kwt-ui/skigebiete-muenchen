@@ -1,8 +1,11 @@
-import { renderTable, calculateScore } from "./render.js?v=1.11.2";
-import { initMap, updateMap, showUserLocation } from "./map.js";
+import { renderTable, renderTop3Cards, calculateScore } from "./render.js?v=1.11.2";
+import { initMap, showUserLocation, updateMap, setMapDistance } from "./map.js";
 import { API_BASE_URL } from "./config.js?v=1.11.1";
 import { store } from "./store.js";
 import { escapeHtml, getDistanceFromLatLonInKm, debugLog, debugGroup, debugGroupEnd } from "./utils.js";
+
+// Expose Map Functions for UI
+window.setMapDistance = setMapDistance;
 import { initEventListeners } from "./events.js";
 import { DOMAIN_CONFIGS } from "./domainConfigs.js";
 

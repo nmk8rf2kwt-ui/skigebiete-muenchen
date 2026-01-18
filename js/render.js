@@ -859,7 +859,7 @@ export function renderRow(row, data) {
     : '<span class="text-gray">-</span>';
 
   row.innerHTML = `
-    <td>${dataFreshnessDisplay}</td>
+    <td>${smartScoreDisplay}</td>
     <td><a href="${safeWebsite}" target="_blank" class="decoration-none font-bold text-dark">${safeName}</a></td>
     <td>${typeDisplay}</td>
     <td>${data.piste_km ?? "-"} km</td>
@@ -885,7 +885,6 @@ export function renderRow(row, data) {
         ${detailsDisplay}
       </div>
     </td>
-    <td>${smartScoreDisplay}</td>
   `;
 }
 
