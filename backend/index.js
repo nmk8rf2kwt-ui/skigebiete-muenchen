@@ -97,6 +97,7 @@ app.use('/admin', basicAuth, express.static(path.join(__dirname, '../admin')));
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
+app.get('/favicon.png', (req, res) => res.sendFile(path.join(__dirname, '../favicon.png')));
 
 // -- API ROUTES --
 

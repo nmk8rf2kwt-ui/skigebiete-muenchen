@@ -26,32 +26,32 @@ export async function getWeatherForecast(latitude, longitude) {
 
         // const data = await res.json(); // handled in rawWeatherFetch
 
-        // Map weather codes to simple descriptions and emojis
+        // Map weather codes to simple descriptions (German) and emojis
         const weatherCodeMap = {
-            0: { desc: "Clear", emoji: "☀️" },
-            1: { desc: "Mainly Clear", emoji: "🌤️" },
-            2: { desc: "Partly Cloudy", emoji: "⛅" },
-            3: { desc: "Overcast", emoji: "☁️" },
-            45: { desc: "Foggy", emoji: "🌫️" },
-            48: { desc: "Foggy", emoji: "🌫️" },
-            51: { desc: "Light Drizzle", emoji: "🌦️" },
-            53: { desc: "Drizzle", emoji: "🌦️" },
-            55: { desc: "Heavy Drizzle", emoji: "🌧️" },
-            61: { desc: "Light Rain", emoji: "🌧️" },
-            63: { desc: "Rain", emoji: "🌧️" },
-            65: { desc: "Heavy Rain", emoji: "🌧️" },
-            71: { desc: "Light Snow", emoji: "🌨️" },
-            73: { desc: "Snow", emoji: "❄️" },
-            75: { desc: "Heavy Snow", emoji: "❄️" },
-            77: { desc: "Snow Grains", emoji: "❄️" },
-            80: { desc: "Light Showers", emoji: "🌦️" },
-            81: { desc: "Showers", emoji: "🌧️" },
-            82: { desc: "Heavy Showers", emoji: "🌧️" },
-            85: { desc: "Light Snow Showers", emoji: "🌨️" },
-            86: { desc: "Snow Showers", emoji: "❄️" },
-            95: { desc: "Thunderstorm", emoji: "⛈️" },
-            96: { desc: "Thunderstorm + Hail", emoji: "⛈️" },
-            99: { desc: "Thunderstorm + Hail", emoji: "⛈️" }
+            0: { desc: "Klar", emoji: "☀️" },
+            1: { desc: "Überwiegend klar", emoji: "🌤️" },
+            2: { desc: "Teilweise bewölkt", emoji: "⛅" },
+            3: { desc: "Bedeckt", emoji: "☁️" },
+            45: { desc: "Neblig", emoji: "🌫️" },
+            48: { desc: "Neblig", emoji: "🌫️" },
+            51: { desc: "Leichter Nieselregen", emoji: "🌦️" },
+            53: { desc: "Nieselregen", emoji: "🌦️" },
+            55: { desc: "Starker Nieselregen", emoji: "🌧️" },
+            61: { desc: "Leichter Regen", emoji: "🌧️" },
+            63: { desc: "Regen", emoji: "🌧️" },
+            65: { desc: "Starker Regen", emoji: "🌧️" },
+            71: { desc: "Leichter Schneefall", emoji: "🌨️" },
+            73: { desc: "Schneefall", emoji: "❄️" },
+            75: { desc: "Starker Schneefall", emoji: "❄️" },
+            77: { desc: "Schneegriesel", emoji: "❄️" },
+            80: { desc: "Leichte Schauer", emoji: "🌦️" },
+            81: { desc: "Schauer", emoji: "🌧️" },
+            82: { desc: "Starke Schauer", emoji: "🌧️" },
+            85: { desc: "Leichte Schneeschauer", emoji: "🌨️" },
+            86: { desc: "Schneeschauer", emoji: "❄️" },
+            95: { desc: "Gewitter", emoji: "⛈️" },
+            96: { desc: "Gewitter mit Hagel", emoji: "⛈️" },
+            99: { desc: "Gewitter mit Hagel", emoji: "⛈️" }
         };
 
         const forecast = data.daily.time.map((date, index) => {
