@@ -16,6 +16,8 @@ backend/logs/
 
 # Cache
 backend/cache/
+data/cache_dump.json
+backend/data/api_usage.json
 
 # IDE
 .vscode/
