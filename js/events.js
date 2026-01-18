@@ -12,8 +12,12 @@ function setDomain(domainId) {
     });
 
     // Update UI Elements
-    const mainTitle = document.getElementById('mainTitle');
-    if (mainTitle) mainTitle.textContent = `${config.icon} ${config.label}-Finder`;
+    // Update Context Subtitle (3rd line)
+    const contextEl = document.getElementById('activityContext');
+    if (contextEl && config.label) {
+        contextEl.textContent = `${config.icon} ${config.label}`;
+        contextEl.classList.add('visible');
+    }
 
     const locationHeading = document.getElementById('locationHeadingElement');
     if (locationHeading) locationHeading.textContent = `${config.icon} Von wo startest du?`;

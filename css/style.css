@@ -1863,3 +1863,21 @@ tr.unavailable {
   padding: 16px;
   text-align: left;
 }
+
+/* Activity Context (3rd Line) */
+.subtitle-context {
+  display: block;
+  font-size: 0.85rem;
+  color: #3498db;
+  font-weight: 600;
+  margin-top: -24px;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  min-height: 1.2em; /* Prevent layout jump */
+}
+.subtitle-context.visible {
+  opacity: 1;
+}
