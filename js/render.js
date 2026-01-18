@@ -52,7 +52,7 @@ export function calculateScore(resort, userPref, domainId = 'ski') {
   }
 
   // 2. Snow Depth
-  const snow = resort.snow?.mountain ?? resort.snow?.valley ?? 0;
+  const snow = parseInt(resort.snow?.mountain ?? resort.snow?.valley ?? 0) || 0;
   let snowPts = Math.round(snow * SCORE_WEIGHTS.SNOW);
   if (pref === 'conditions') snowPts = Math.round(snowPts * SCORE_WEIGHTS.PREFERENCE_MULTIPLIER);
 
@@ -101,8 +101,16 @@ export function calculateScore(resort, userPref, domainId = 'ski') {
   // === NEGATIVE FACTORS ===
 
   // 5. Distance/Travel Time
-  const distanceMin = resort.traffic?.duration_min || Math.round((resort.traffic?.duration || 0) / 60) || resort.distance || 0;
-  const distanceKm = resort.traffic?.distanceKm || resort.distanceKm || Math.round(distanceMin * 1.2); // rough estimate
+  // 5. Distance/Travel Time
+  const trafficDuration = parseInt(resort.traffic?.duration) || 0;
+  const durationFromTraffic = trafficDuration > 0 ? Math.round(trafficDuration / 60) : 0;
+
+  // Try to find duration: traffic duration > static duration_min > resort.distance (assuming min)
+  const rawDuration = resort.traffic?.duration_min || durationFromTraffic || resort.distance;
+  const distanceMin = parseInt(rawDuration) || 0;
+
+  const rawDistKm = resort.traffic?.distanceKm || resort.distanceKm;
+  const distanceKm = parseFloat(rawDistKm) || Math.round(distanceMin * 1.2);
 
   if (distanceMin > 0) {
     let distPts = Math.round((distanceKm / 100) * SCORE_WEIGHTS.DISTANCE_PER_100KM);
