@@ -44,7 +44,7 @@ jobs:
         
         # Stage possible changes
         git add backend/resorts.json
-        git add backend/data/api_usage.json
+        git add -f backend/data/api_usage.json
         
         # Only commit if there are staged changes
         if ! git diff --staged --quiet; then
