@@ -1,14 +1,14 @@
 {
   "daily": {
     "2026-01-19": {
-      "requests": 240,
+      "requests": 300,
       "breakdown": {
-        "tomtom": 240
+        "tomtom": 300
       },
       "limitReached": false,
-      "last_updated": "2026-01-19T15:53:42.221Z"
+      "last_updated": "2026-01-19T17:00:16.474Z"
     }
   },
-  "total_requests": 240,
-  "last_updated": "2026-01-19T15:53:42.221Z"
+  "total_requests": 300,
+  "last_updated": "2026-01-19T17:00:16.474Z"
 }
