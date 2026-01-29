@@ -91,14 +91,14 @@
       "limitReachedBy": "matrix_batch"
     },
     "2026-01-29": {
-      "requests": 408,
+      "requests": 468,
       "breakdown": {
-        "tomtom": 408
+        "tomtom": 468
       },
       "limitReached": false,
-      "last_updated": "2026-01-29T11:37:07.748Z"
+      "last_updated": "2026-01-29T13:12:06.251Z"
     }
   },
-  "total_requests": 6408,
-  "last_updated": "2026-01-29T11:37:07.748Z"
+  "total_requests": 6468,
+  "last_updated": "2026-01-29T13:12:06.251Z"
 }
