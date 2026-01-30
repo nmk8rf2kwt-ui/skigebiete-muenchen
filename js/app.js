@@ -217,6 +217,14 @@ function render() {
   const tableView = document.getElementById("tableView");
   const mapView = document.getElementById("map-view");
 
+  // Ensure filters are rendered for ALL views (Top3, Map, Table)
+  // Dynamic Import to avoid circular dependency issues if render.js imports app.js (store is separate)
+  import("./render.js").then(module => {
+    if (module.renderResultFilters) {
+      module.renderResultFilters(DOMAIN_CONFIGS[currentDomain]);
+    }
+  });
+
   // Filter and Sort based on current UI state
   const sortedResorts = [...resorts].sort((a, b) => b.smartScore - a.smartScore);
   debugLog(`Top Resort: ${sortedResorts[0].name} (Score: ${sortedResorts[0].smartScore})`);

@@ -87,11 +87,11 @@ export const DOMAIN_CONFIGS = {
             }
         ],
         prefs: [
-            { id: 'travel', label: 'Schnell & wenig Stau', icon: '🚀' },
-            { id: 'conditions', label: 'Gute Bedingungen', icon: '✨' },
-            { id: 'weather', label: 'Gutes Wetter', icon: '☀️' },
-            { id: 'large', label: 'Großes Skigebiet', icon: '🏔️' },
-            { id: 'easy', label: 'Einfaches Skigebiet', icon: '😌' },
+            { id: 'travel', label: 'Schnell', icon: '🚀' },
+            { id: 'conditions', label: 'Top Pisten', icon: '✨' },
+            { id: 'weather', label: 'Wetter', icon: '☀️' },
+            { id: 'large', label: 'Groß', icon: '🏔️' },
+            { id: 'easy', label: 'Einfach', icon: '😌' },
             { id: 'price', label: 'Günstig', icon: '💰' }
         ]
     },
