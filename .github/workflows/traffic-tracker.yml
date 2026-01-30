@@ -2,8 +2,8 @@ name: Traffic Tracker
 
 on:
   schedule:
-    # Run every 30 minutes between 6:00 and 22:00 CET (UTC 5:00 - 21:00)
-    - cron: '*/30 5-21 * * *'
+    # Run every 2 hours between 6:00 and 22:00 CET (UTC 5:00 - 21:00)
+    - cron: '0 5-21/2 * * *'
   workflow_dispatch: # Allow manual trigger
 
 permissions:
