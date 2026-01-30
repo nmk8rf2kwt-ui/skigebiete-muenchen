@@ -2144,6 +2144,8 @@ tr.unavailable {
   align-items: center;
   justify-content: center;
   padding: 40px 20px 20px;
+  /* Fix body padding gap */
+  margin: -16px -16px 16px -16px;
   background: var(--bg-color);
   background: linear-gradient(to bottom, #fcfdfe, #f4f6f9);
 }
@@ -2362,3 +2364,33 @@ tr.unavailable {
     text-align: center;
   }
 }
+
+/* Activity Switcher in Header */
+.activity-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #3498db;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  padding: 4px 24px 4px 8px; /* Extra right padding for arrow if we add one, or just to balance */
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.activity-select:hover {
+  background: rgba(52, 152, 219, 0.1);
+  text-decoration: underline;
+}
+
+.activity-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Optional: Checkmark/Arrow customization could go here but default OS behavior is often best for selects */

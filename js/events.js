@@ -12,11 +12,21 @@ function setDomain(domainId) {
     });
 
     // Update UI Elements
-    // Update Context Subtitle (3rd line)
+    // Update Context Subtitle (3rd line) with Switcher
     const contextEl = document.getElementById('activityContext');
-    if (contextEl && config.label) {
-        contextEl.textContent = `${config.icon} ${config.label}`;
+    if (contextEl) {
+        // Generate options (sorting keys to keep order if needed, or Object.values)
+        const options = Object.values(DOMAIN_CONFIGS).map(c => 
+            `<option value="${c.id}" ${c.id === domainId ? 'selected' : ''}>${c.icon} ${c.label}</option>`
+        ).join('');
+        
+        contextEl.innerHTML = `<select class="activity-select">${options}</select>`;
         contextEl.classList.add('visible');
+
+        // Attach listener
+        contextEl.querySelector('select').addEventListener('change', (e) => {
+            setDomain(e.target.value);
+        });
     }
 
     const locationHeading = document.getElementById('locationHeadingElement');
@@ -30,7 +40,10 @@ function setDomain(domainId) {
     // Trigger data reload for new domain
     if (appLoad) appLoad();
 
-    // Transition to Preferences Step (Step 3)
+    // Transition to Preferences Step (Step 3) & Reset View
+    document.getElementById('wizardContainer').style.display = 'block';
+    document.getElementById('resultsView').style.display = 'none';
+    
     document.getElementById('step-activity').style.display = 'none';
     document.getElementById('step-prefs').style.display = 'block';
 }
