@@ -364,8 +364,8 @@ export async function handleGeolocation() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        setCurrentSearchLocation({ latitude, longitude, name: "Ihre aktuelle Position" });
-        store.saveUserLocation({ latitude, longitude, name: "Ihre aktuelle Position" });
+        setCurrentSearchLocation({ latitude, longitude, name: "Ihrer aktuellen Position" });
+        store.saveUserLocation({ latitude, longitude, name: "Ihrer aktuellen Position" });
         logToUI("Eigener Standort gefunden", "success");
         fetchTrafficForLocation(latitude, longitude, "Ihre Position");
         resolve(true);
