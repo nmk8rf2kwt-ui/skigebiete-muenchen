@@ -3,6 +3,7 @@ import { initMap, showUserLocation, updateMap, setMapDistance } from "./map.js";
 import { API_BASE_URL } from "./config.js?v=1.11.1";
 import { store } from "./store.js";
 import { escapeHtml, getDistanceFromLatLonInKm, debugLog, debugGroup, debugGroupEnd } from "./utils.js";
+import { initAutocomplete } from "./autocomplete.js";
 
 // Expose Map Functions for UI
 window.setMapDistance = setMapDistance;
@@ -469,6 +470,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (stepPrefs) stepPrefs.style.display = 'none';
   }
 
+  // Initialize Address Autocomplete
+  initAutocomplete();
+
+  // Listen for autocomplete selections
+  const addressInput = document.getElementById("addressInput");
+  if (addressInput) {
+    addressInput.addEventListener("autocomplete-select", async (e) => {
+      const { name, latitude, longitude } = e.detail;
+      if (latitude && longitude) {
+        setCurrentSearchLocation({ latitude, longitude, name });
+        store.saveUserLocation({ latitude, longitude, name });
+        logToUI(`Standort: ${name}`, "success");
+      }
+    });
+  }
+
   initEventListeners({
     load,
     render,
@@ -478,3 +495,4 @@ document.addEventListener("DOMContentLoaded", () => {
     getCurrentSearchLocation
   });
 });
+

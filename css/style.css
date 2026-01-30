@@ -1307,6 +1307,78 @@ tr.unavailable {
     opacity: 1;
   }
 
+  /* Autocomplete Dropdown */
+  .autocomplete-wrapper {
+    position: relative;
+  }
+
+  .autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 2px solid #3498db;
+    border-top: none;
+    border-radius: 0 0 14px 14px;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    display: none;
+  }
+
+  .autocomplete-list.active {
+    display: block;
+  }
+
+  .autocomplete-item {
+    padding: 14px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .autocomplete-item:last-child {
+    border-bottom: none;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .autocomplete-item:hover,
+  .autocomplete-item.active {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ecf0f1 100%);
+  }
+
+  .autocomplete-item .icon {
+    font-size: 1.3em;
+    opacity: 0.7;
+  }
+
+  .autocomplete-item .name {
+    font-weight: 500;
+    color: #2c3e50;
+  }
+
+  .autocomplete-item .region {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    margin-left: auto;
+  }
+
+  /* Mobile-optimized touch targets */
+  @media (max-width: 768px) {
+    .autocomplete-item {
+      padding: 16px 20px;
+      min-height: 48px;
+    }
+  }
+
   .wizard-next-btn {
     background: #3498db;
     color: white;
@@ -2390,5 +2462,4 @@ tr.unavailable {
     outline: none;
     box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
   }
-
-  /* Optional: Checkmark/Arrow customization could go here but default OS behavior is often best for selects */
+}

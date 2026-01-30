@@ -1,6 +1,6 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
-import { geocodeAddress as geocodeORS } from "../services/ors.js";
+import { geocodeAddress as geocodeORS, autocompleteAddress } from "../services/ors.js";
 
 const router = express.Router();
 
@@ -9,6 +9,13 @@ const geocodeLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 60, // Max 60 requests per 15 minutes per IP
     message: { error: "Too many geocoding requests. Please try again later." }
+});
+
+// Rate limiting for autocomplete (more lenient since it's called frequently)
+const autocompleteLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 30, // Max 30 requests per minute per IP
+    message: { error: "Too many autocomplete requests. Please slow down." }
 });
 
 // GET /api/locating/geocode?q=Address
@@ -26,4 +33,19 @@ router.get("/geocode", geocodeLimiter, async (req, res) => {
     }
 });
 
+// GET /api/locating/autocomplete?q=Mün
+router.get("/autocomplete", autocompleteLimiter, async (req, res) => {
+    const q = req.query.q || req.query.query;
+    if (!q || q.length < 2) return res.json([]);
+
+    try {
+        const results = await autocompleteAddress(q);
+        res.json(results);
+    } catch (error) {
+        console.error("Locating Autocomplete error:", error);
+        res.status(500).json({ error: "Autocomplete failed" });
+    }
+});
+
 export default router;
+
