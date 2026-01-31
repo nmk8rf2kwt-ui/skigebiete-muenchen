@@ -363,27 +363,38 @@ async function fetchTrafficForLocation(lat, lon, name) {
  */
 export async function handleGeolocation() {
   if (!navigator.geolocation) {
-    showError("Geolocation is not supported by your browser");
-    return;
+    showError("Geolocation wird von deinem Browser nicht unterstützt");
+    return false;
   }
 
   showLoading("Ermittle Standort...");
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const { latitude, longitude } = position.coords;
         setCurrentSearchLocation({ latitude, longitude, name: "Ihrer aktuellen Position" });
         store.saveUserLocation({ latitude, longitude, name: "Ihrer aktuellen Position" });
         logToUI("Eigener Standort gefunden", "success");
-        fetchTrafficForLocation(latitude, longitude, "Ihre Position");
+        hideLoading();
+        await fetchTrafficForLocation(latitude, longitude, "Ihre Position");
         resolve(true);
       },
       (err) => {
-        showError(`Geolocation failed: ${err.message}`);
         hideLoading();
-        resolve(false); // Resolve false so we don't crash, but user stays on step 1
-      }
+        // Map error codes to user-friendly messages
+        let errorMsg = "Standort konnte nicht ermittelt werden";
+        if (err.code === 1) {
+          errorMsg = "Standortzugriff verweigert. Bitte erlaube den Zugriff in deinen Browser-Einstellungen.";
+        } else if (err.code === 2) {
+          errorMsg = "Standort nicht verfügbar. Bitte versuche es später erneut.";
+        } else if (err.code === 3) {
+          errorMsg = "Zeitüberschreitung beim Ermitteln des Standorts.";
+        }
+        showError(errorMsg);
+        resolve(false);
+      },
+      { timeout: 10000, enableHighAccuracy: false }
     );
   });
 }
