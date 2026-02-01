@@ -14,15 +14,15 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version: '20'
         cache: 'npm'
 
     - name: Cache Playwright Browsers
       id: playwright-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/.cache/ms-playwright
         key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
@@ -38,7 +38,7 @@ jobs:
     - name: Run Playwright tests
       run: npx playwright test
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       if: always()
       with:
         name: playwright-report
