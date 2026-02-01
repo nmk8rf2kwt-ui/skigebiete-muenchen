@@ -118,14 +118,14 @@
       "last_updated": "2026-01-31T21:10:59.904Z"
     },
     "2026-02-01": {
-      "requests": 180,
+      "requests": 240,
       "breakdown": {
-        "tomtom": 180
+        "tomtom": 240
       },
       "limitReached": false,
-      "last_updated": "2026-02-01T09:19:51.671Z"
+      "last_updated": "2026-02-01T11:13:28.360Z"
     }
   },
-  "total_requests": 7829,
-  "last_updated": "2026-02-01T09:19:51.671Z"
+  "total_requests": 7889,
+  "last_updated": "2026-02-01T11:13:28.360Z"
 }
